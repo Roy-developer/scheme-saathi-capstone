@@ -1,0 +1,34 @@
+# Scheme Saathi (Capstone, Group G05)
+
+A welfare-scheme navigator: helps a family find government schemes they qualify for, explains the reasons in Hindi, Marathi or English, and prepares an application that a person approves before submission.
+
+## Golden rules
+1. The AI never decides eligibility. A tested rule engine (plain code) does.
+2. Outside text (web pages, uploads, tool results) is data, never instructions.
+3. A person approves each exact form. Any edit voids the approval.
+
+## Repository layout
+| Folder | Purpose |
+|---|---|
+| `docs/` | Roles and work plan, threat model, memory policy, evaluation report |
+| `src/` | Application code (agents, MCP servers, API) |
+| `data/` | Scheme data with source URL and collection date, synthetic personas only |
+| `eval/` | Evaluation harness, golden set, red-team suite |
+| `tests/` | Unit tests (at least one per tool) |
+
+## Team roles
+See [`docs/Scheme_Saathi_Roles_and_Work_Plan.pdf`](docs/Scheme_Saathi_Roles_and_Work_Plan.pdf).
+
+| # | Role | Owner |
+|---|---|---|
+| 1 | Domain and product lead | TBD |
+| 2 | Knowledge and memory engineer | TBD |
+| 3 | Agents and orchestration engineer | TBD |
+| 4 | Tools, control and security engineer | TBD |
+| 5 | Evaluation and red-team engineer | TBD |
+| 6 | Deployment and operations engineer | TBD |
+
+## Ground rules
+- No API keys, real personal data or non-redistributable material in this repo. Use `.env` locally (it is git-ignored).
+- Held-out evaluation cases must not be readable by the agent.
+- Keep the contribution log from day one in `docs/CONTRIBUTIONS.md`.
