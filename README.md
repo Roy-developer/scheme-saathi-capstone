@@ -32,3 +32,12 @@ See [`docs/Scheme_Saathi_Roles_and_Work_Plan.pdf`](docs/Scheme_Saathi_Roles_and_
 - No API keys, real personal data or non-redistributable material in this repo. Use `.env` locally (it is git-ignored).
 - Held-out evaluation cases must not be readable by the agent.
 - Keep the contribution log from day one in `docs/CONTRIBUTIONS.md`.
+
+## Frontend prototype
+
+The current Role 6 work is an explicitly synthetic frontend shell intended for
+deployment to Azure Container Apps. It does not make eligibility decisions or
+contact government services.
+
+The container listens on port `8501` and exposes Streamlit's health endpoint at
+`/_stcore/health`.
