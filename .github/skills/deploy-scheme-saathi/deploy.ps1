@@ -37,6 +37,30 @@ function Invoke-Checked {
     }
 }
 
+function Invoke-CheckedOutput {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Description,
+        [Parameter(Mandatory)]
+        [scriptblock]$Command
+    )
+
+    Write-Host "==> $Description"
+    $previousErrorActionPreference = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = "Continue"
+        $output = & $Command
+        $exitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
+    if ($exitCode -ne 0) {
+        throw "$Description failed with exit code $exitCode."
+    }
+    return $output
+}
+
 Push-Location $repoRoot
 try {
     $branch = (git branch --show-current).Trim()
@@ -106,6 +130,32 @@ try {
             --output none
     }
 
+    $registryServer = (
+        Invoke-CheckedOutput -Description "Read existing registry" -Command {
+            az containerapp show `
+                --name $AppName `
+                --resource-group $ResourceGroup `
+                --query "properties.configuration.registries[0].server" `
+                --output tsv
+        }
+    ).Trim()
+    if (-not $registryServer.EndsWith(".azurecr.io")) {
+        throw "The existing app does not use an Azure Container Registry."
+    }
+    $registryName = $registryServer.Split(".")[0]
+    $appLocation = (
+        Invoke-CheckedOutput -Description "Verify existing app location" -Command {
+            az containerapp show `
+                --name $AppName `
+                --resource-group $ResourceGroup `
+                --query location `
+                --output tsv
+        }
+    ).Trim().Replace(" ", "").ToLowerInvariant()
+    if ($appLocation -ne $Location.ToLowerInvariant()) {
+        throw "Container App '$AppName' is not in '$Location'."
+    }
+
     Write-Host "Checks passed."
     Write-Host "Commit: $commit"
     Write-Host "Target: $ResourceGroup/$AppName"
@@ -115,25 +165,53 @@ try {
         exit 0
     }
 
-    Invoke-Checked -Description "Build and deploy source" -Command {
-        az containerapp up `
-            --name $AppName `
-            --resource-group $ResourceGroup `
-            --location $Location `
-            --environment $Environment `
-            --source $repoRoot `
-            --ingress external `
-            --target-port 8501
+    $imageTag = "git-$($commit.Substring(0, 12))"
+    $image = "$registryServer/${AppName}:$imageTag"
+    $buildRunId = (
+        Invoke-CheckedOutput -Description "Queue source build" -Command {
+            az acr build `
+                --registry $registryName `
+                --image "${AppName}:$imageTag" `
+                --no-logs `
+                --query runId `
+                --output tsv `
+                $repoRoot
+        }
+    ).Trim()
+    if (-not $buildRunId) {
+        throw "Azure Container Registry did not return a build run ID."
     }
 
-    $version = "git-$($commit.Substring(0, 7))"
-    Invoke-Checked -Description "Apply scale-to-zero settings" -Command {
+    for ($attempt = 1; $attempt -le 40; $attempt++) {
+        $buildStatus = (
+            Invoke-CheckedOutput -Description "Check build $buildRunId" -Command {
+                az acr task show-run `
+                    --registry $registryName `
+                    --run-id $buildRunId `
+                    --query status `
+                    --output tsv
+            }
+        ).Trim()
+        if ($buildStatus -eq "Succeeded") {
+            break
+        }
+        if ($buildStatus -notin @("Queued", "Started", "Running")) {
+            throw "Azure build $buildRunId finished with status '$buildStatus'."
+        }
+        if ($attempt -eq 40) {
+            throw "Azure build $buildRunId did not finish in time."
+        }
+        Start-Sleep -Seconds 15
+    }
+
+    Invoke-Checked -Description "Deploy built image" -Command {
         az containerapp update `
             --name $AppName `
             --resource-group $ResourceGroup `
+            --image $image `
             --min-replicas 0 `
             --max-replicas 1 `
-            --set-env-vars "APP_VERSION=$version" `
+            --set-env-vars "APP_VERSION=$imageTag" `
             --output none
     }
 
