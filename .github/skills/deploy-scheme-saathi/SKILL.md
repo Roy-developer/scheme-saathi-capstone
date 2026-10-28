@@ -9,14 +9,16 @@ Use `deploy.ps1` from this skill directory for frontend deployments.
 
 ## Required process
 
-1. Explain that the deployment updates an existing Azure Container App and may
+1. Invoke `validate-scheme-saathi` and require a successful exact-commit
+   GitHub Actions result.
+2. Explain that the deployment updates an existing Azure Container App and may
    incur Azure build, registry, logging and runtime charges.
-2. Run the script with `-DryRun` first.
-3. If the checks fail, stop and explain the failure. Do not bypass a failed Git,
+3. Run the script with `-DryRun` first.
+4. If the checks fail, stop and explain the failure. Do not bypass a failed Git,
    GitHub Actions or Azure resource check.
-4. If the checks pass and the user has explicitly requested deployment, run the
+5. If the checks pass and the user has explicitly requested deployment, run the
    script without `-DryRun`.
-5. Report the deployed Git commit, Azure revision, stable application URL and
+6. Report the deployed Git commit, Azure revision, stable application URL and
    health result.
 
 ## Safety rules
