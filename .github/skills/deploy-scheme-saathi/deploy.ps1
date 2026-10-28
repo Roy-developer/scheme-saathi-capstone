@@ -120,8 +120,7 @@ try {
             --environment $Environment `
             --source $repoRoot `
             --ingress external `
-            --target-port 8501 `
-            --output none
+            --target-port 8501
     }
 
     $version = "git-$($commit.Substring(0, 7))"
