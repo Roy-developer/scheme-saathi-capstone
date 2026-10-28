@@ -8,9 +8,6 @@ description: Safely deploy the existing Scheme Saathi Streamlit frontend to its 
 Use `trigger-shared-deploy.ps1` to deploy the current pushed branch through
 GitHub Actions. Team members do not need Azure credentials.
 
-`deploy.ps1` is retained only as a maintainer recovery tool and is not the
-normal deployment path.
-
 ## Required process
 
 1. Explain that the workflow validates the exact selected commit again before
