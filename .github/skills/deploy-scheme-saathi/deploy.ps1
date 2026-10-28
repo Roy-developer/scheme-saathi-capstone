@@ -20,9 +20,17 @@ function Invoke-Checked {
     )
 
     Write-Host "==> $Description"
-    & $Command
-    if ($LASTEXITCODE -ne 0) {
-        throw "$Description failed with exit code $LASTEXITCODE."
+    $previousErrorActionPreference = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = "Continue"
+        & $Command
+        $exitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
+    if ($exitCode -ne 0) {
+        throw "$Description failed with exit code $exitCode."
     }
 }
 
@@ -81,22 +89,18 @@ try {
         throw "Azure CLI is not authenticated to an enabled subscription."
     }
 
-    az containerapp env show `
-        --name $Environment `
-        --resource-group $ResourceGroup `
-        --query name `
-        --output tsv *> $null
-    if ($LASTEXITCODE -ne 0) {
-        throw "Azure Container Apps environment '$Environment' was not found in '$ResourceGroup'."
+    Invoke-Checked -Description "Verify Azure Container Apps environment" -Command {
+        az containerapp env show `
+            --name $Environment `
+            --resource-group $ResourceGroup `
+            --output none
     }
 
-    az containerapp show `
-        --name $AppName `
-        --resource-group $ResourceGroup `
-        --query name `
-        --output tsv *> $null
-    if ($LASTEXITCODE -ne 0) {
-        throw "Container App '$AppName' was not found in '$ResourceGroup'."
+    Invoke-Checked -Description "Verify existing Container App" -Command {
+        az containerapp show `
+            --name $AppName `
+            --resource-group $ResourceGroup `
+            --output none
     }
 
     Write-Host "Checks passed."
