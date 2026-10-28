@@ -1,5 +1,6 @@
 import pytest
 
+from src.ui.approval import approval_matches, draft_fingerprint
 from src.ui.data_provider import FixtureDataProvider
 
 
@@ -70,6 +71,39 @@ def test_document_requirements_are_not_invented(
     provider: FixtureDataProvider,
 ) -> None:
     assert provider.fixtures.policy.documents_status == "not_verified"
+
+
+def test_eligible_demo_has_matching_application_draft(
+    provider: FixtureDataProvider,
+) -> None:
+    scenario = provider.get_scenario("eligible-age-40")
+    draft = scenario.application_draft
+
+    assert draft is not None
+    assert draft.scheme_id == provider.fixtures.policy.scheme_id
+    assert draft.age == scenario.profile.age
+    assert draft.bpl_status == scenario.profile.bpl_status
+
+
+def test_draft_fingerprint_is_stable_and_changes_after_edit(
+    provider: FixtureDataProvider,
+) -> None:
+    draft = provider.get_scenario("eligible-age-40").application_draft
+    assert draft is not None
+
+    original = draft_fingerprint(draft)
+    repeated = draft_fingerprint(draft)
+    edited = draft_fingerprint(
+        draft.model_copy(update={"district": "Mumbai"})
+    )
+
+    assert original == repeated
+    assert original != edited
+    assert approval_matches(original, draft)
+    assert not approval_matches(
+        original,
+        draft.model_copy(update={"district": "Mumbai"}),
+    )
 
 
 def test_unknown_scenario_fails_clearly(

@@ -36,6 +36,17 @@ held-out evaluation cases.
 4. Future fixture responses must include clause, source URL and collection date.
 5. Future backend state must remain outside Streamlit session state.
 6. Unverified document requirements or exclusions must not be invented.
+7. Frontend approval applies only to the exact synthetic draft fingerprint.
+
+## Approval simulation
+
+The eligible development scenario can prepare a synthetic application draft.
+The frontend calculates a SHA-256 fingerprint from the full draft. Editing any
+field changes the fingerprint and invalidates the earlier approval.
+
+This behavior is a UX demonstration only. It does not provide server-side
+authorization, expiry, one-time tokens or durable persistence. Those controls
+belong in the later FastAPI and LangGraph approval implementation.
 
 ## Replacement path
 

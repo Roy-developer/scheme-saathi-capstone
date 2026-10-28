@@ -46,3 +46,7 @@ The current fixture-backed journey uses seven synthetic development personas
 against a draft interpretation of the official Maharashtra IGNWPS policy. It
 shows three representative outcomes in the UI. These fixtures are not held-out
 evaluation cases and must not be presented as final policy approval.
+
+The eligible scenario also demonstrates exact-draft approval. Editing the
+synthetic draft invalidates its previous frontend fingerprint. Submission goes
+only to an in-session mock confirmation; no external portal is contacted.

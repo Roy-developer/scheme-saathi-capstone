@@ -84,6 +84,20 @@
           "IGNWPS-MH-BPL-01"
         ],
         "missing_fields": []
+      },
+      "application_draft": {
+        "draft_id": "SYNTHETIC-DRAFT-IGNWPS-001",
+        "scheme_id": "IGNWPS-MH",
+        "applicant_reference": "Synthetic Applicant 001",
+        "district": "Pune",
+        "age": 40,
+        "is_widow": true,
+        "bpl_status": "confirmed",
+        "declaration": {
+          "en": "I confirm that this synthetic demonstration draft matches the information shown above.",
+          "hi": "मैं पुष्टि करता/करती हूँ कि यह कृत्रिम प्रदर्शन मसौदा ऊपर दिखाई गई जानकारी से मेल खाता है।",
+          "mr": "हा कृत्रिम प्रात्यक्षिक मसुदा वर दर्शविलेल्या माहितीशी जुळतो याची मी पुष्टी करतो/करते."
+        }
       }
     },
     {

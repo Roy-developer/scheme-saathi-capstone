@@ -55,12 +55,24 @@ class ExpectedVerdict(StrictModel):
     missing_fields: list[str] = Field(default_factory=list)
 
 
+class ApplicationDraft(StrictModel):
+    draft_id: str
+    scheme_id: str
+    applicant_reference: str
+    district: str
+    age: int = Field(ge=0, le=125)
+    is_widow: bool
+    bpl_status: Literal["confirmed", "not_confirmed", "unknown"]
+    declaration: LocalizedText
+
+
 class DevelopmentScenario(StrictModel):
     scenario_id: str
     visible_in_ui: bool
     label: LocalizedText
     profile: SyntheticProfile
     expected_verdict: ExpectedVerdict
+    application_draft: ApplicationDraft | None = None
 
 
 class FixtureSet(StrictModel):
@@ -94,5 +106,26 @@ class FixtureSet(StrictModel):
                 raise ValueError(
                     f"{scenario.scenario_id} must identify missing fields"
                 )
+
+            draft = scenario.application_draft
+            if draft is not None:
+                if scenario.expected_verdict.result != "eligible":
+                    raise ValueError(
+                        f"{scenario.scenario_id} cannot have an application "
+                        "draft unless its expected verdict is eligible"
+                    )
+                if draft.scheme_id != self.policy.scheme_id:
+                    raise ValueError(
+                        f"{scenario.scenario_id} draft uses a different scheme"
+                    )
+                if (
+                    draft.age != scenario.profile.age
+                    or draft.is_widow != scenario.profile.is_widow
+                    or draft.bpl_status != scenario.profile.bpl_status
+                ):
+                    raise ValueError(
+                        f"{scenario.scenario_id} draft does not match its "
+                        "synthetic profile"
+                    )
 
         return self
