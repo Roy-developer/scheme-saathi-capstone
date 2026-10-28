@@ -283,6 +283,9 @@ with st.sidebar:
         f'{os.getenv("APP_VERSION", fixtures.fixture_version)}</p>',
         unsafe_allow_html=True,
     )
+    deployed_ref = os.getenv("DEPLOYED_REF")
+    if deployed_ref:
+        st.caption(f"Deployed branch: {deployed_ref}")
     if st.button(text["forget"], use_container_width=True):
         clear_workflow_state(include_inputs=True)
         st.session_state.show_forgotten = True
