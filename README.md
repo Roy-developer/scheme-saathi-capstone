@@ -41,3 +41,8 @@ contact government services.
 
 The container listens on port `8501` and exposes Streamlit's health endpoint at
 `/_stcore/health`.
+
+The current fixture-backed journey uses seven synthetic development personas
+against a draft interpretation of the official Maharashtra IGNWPS policy. It
+shows three representative outcomes in the UI. These fixtures are not held-out
+evaluation cases and must not be presented as final policy approval.

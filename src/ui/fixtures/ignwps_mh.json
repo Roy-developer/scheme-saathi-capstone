@@ -1,0 +1,269 @@
+{
+  "fixture_version": "0.1.0",
+  "status": "draft_pending_role_review",
+  "synthetic_personas": true,
+  "policy": {
+    "scheme_id": "IGNWPS-MH",
+    "scheme_name": {
+      "en": "Indira Gandhi National Widow Pension Scheme — Maharashtra",
+      "hi": "इंदिरा गांधी राष्ट्रीय विधवा पेंशन योजना — महाराष्ट्र",
+      "mr": "इंदिरा गांधी राष्ट्रीय विधवा निवृत्तीवेतन योजना — महाराष्ट्र"
+    },
+    "benefit_summary": {
+      "en": "The official Maharashtra page states total assistance of ₹1,500 per month: ₹300 from the Central Government and ₹1,200 through the state-sponsored Sanjay Gandhi Niradhar Anudan Yojana.",
+      "hi": "महाराष्ट्र की आधिकारिक वेबसाइट के अनुसार कुल सहायता ₹1,500 प्रति माह है: ₹300 केंद्र सरकार से और ₹1,200 राज्य प्रायोजित संजय गांधी निराधार अनुदान योजना से।",
+      "mr": "महाराष्ट्राच्या अधिकृत पृष्ठानुसार एकूण मदत दरमहा ₹1,500 आहे: केंद्र सरकारकडून ₹300 आणि राज्य पुरस्कृत संजय गांधी निराधार अनुदान योजनेतून ₹1,200."
+    },
+    "source": {
+      "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+      "source_url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
+      "collected_at": "2026-10-28",
+      "official_eligibility_text": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
+      "publication_date_status": "not_confirmed"
+    },
+    "rules": [
+      {
+        "rule_id": "IGNWPS-MH-WIDOW-01",
+        "field": "is_widow",
+        "operator": "eq",
+        "value": true,
+        "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01"
+      },
+      {
+        "rule_id": "IGNWPS-MH-AGE-MIN-01",
+        "field": "age",
+        "operator": "gte",
+        "value": 40,
+        "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01"
+      },
+      {
+        "rule_id": "IGNWPS-MH-AGE-MAX-01",
+        "field": "age",
+        "operator": "lte",
+        "value": 79,
+        "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01"
+      },
+      {
+        "rule_id": "IGNWPS-MH-BPL-01",
+        "field": "bpl_status",
+        "operator": "eq",
+        "value": "confirmed",
+        "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01"
+      }
+    ],
+    "documents_status": "not_verified"
+  },
+  "scenarios": [
+    {
+      "scenario_id": "eligible-age-40",
+      "visible_in_ui": true,
+      "label": {
+        "en": "Eligible example — lower age boundary",
+        "hi": "पात्र उदाहरण — न्यूनतम आयु सीमा",
+        "mr": "पात्र उदाहरण — किमान वयोमर्यादा"
+      },
+      "profile": {
+        "synthetic": true,
+        "profile_id": "SYNTHETIC-IGNWPS-001",
+        "age": 40,
+        "is_widow": true,
+        "bpl_status": "confirmed",
+        "state": "Maharashtra"
+      },
+      "expected_verdict": {
+        "result": "eligible",
+        "reason": {
+          "en": "This synthetic profile satisfies the reviewed draft conditions: widow, age 40–79 inclusive, and confirmed BPL status.",
+          "hi": "यह कृत्रिम प्रोफ़ाइल समीक्षा की गई मसौदा शर्तें पूरी करती है: विधवा, आयु 40–79 वर्ष सहित, और पुष्टि की गई BPL स्थिति।",
+          "mr": "ही कृत्रिम प्रोफाइल पुनरावलोकन केलेल्या मसुदा अटी पूर्ण करते: विधवा, वय 40–79 वर्षे समावेशक आणि पुष्टी केलेली BPL स्थिती."
+        },
+        "deciding_rule_ids": [
+          "IGNWPS-MH-WIDOW-01",
+          "IGNWPS-MH-AGE-MIN-01",
+          "IGNWPS-MH-AGE-MAX-01",
+          "IGNWPS-MH-BPL-01"
+        ],
+        "missing_fields": []
+      }
+    },
+    {
+      "scenario_id": "eligible-age-79",
+      "visible_in_ui": false,
+      "label": {
+        "en": "Eligible example — upper age boundary",
+        "hi": "पात्र उदाहरण — अधिकतम आयु सीमा",
+        "mr": "पात्र उदाहरण — कमाल वयोमर्यादा"
+      },
+      "profile": {
+        "synthetic": true,
+        "profile_id": "SYNTHETIC-IGNWPS-002",
+        "age": 79,
+        "is_widow": true,
+        "bpl_status": "confirmed",
+        "state": "Maharashtra"
+      },
+      "expected_verdict": {
+        "result": "eligible",
+        "reason": {
+          "en": "Age 79 is included in the published 40–79 age range, and the other draft conditions are satisfied.",
+          "hi": "आयु 79 प्रकाशित 40–79 आयु सीमा में शामिल है और अन्य मसौदा शर्तें पूरी होती हैं।",
+          "mr": "वय 79 हे प्रकाशित 40–79 वयोगटात समाविष्ट आहे आणि इतर मसुदा अटी पूर्ण होतात."
+        },
+        "deciding_rule_ids": [
+          "IGNWPS-MH-WIDOW-01",
+          "IGNWPS-MH-AGE-MIN-01",
+          "IGNWPS-MH-AGE-MAX-01",
+          "IGNWPS-MH-BPL-01"
+        ],
+        "missing_fields": []
+      }
+    },
+    {
+      "scenario_id": "not-eligible-age-39",
+      "visible_in_ui": true,
+      "label": {
+        "en": "Not eligible example — below minimum age",
+        "hi": "अपात्र उदाहरण — न्यूनतम आयु से कम",
+        "mr": "अपात्र उदाहरण — किमान वयापेक्षा कमी"
+      },
+      "profile": {
+        "synthetic": true,
+        "profile_id": "SYNTHETIC-IGNWPS-003",
+        "age": 39,
+        "is_widow": true,
+        "bpl_status": "confirmed",
+        "state": "Maharashtra"
+      },
+      "expected_verdict": {
+        "result": "not_eligible",
+        "reason": {
+          "en": "This synthetic profile is below the published minimum age of 40 for this scheme.",
+          "hi": "यह कृत्रिम प्रोफ़ाइल इस योजना की प्रकाशित न्यूनतम आयु 40 वर्ष से कम है।",
+          "mr": "ही कृत्रिम प्रोफाइल या योजनेच्या प्रकाशित किमान वय 40 वर्षांपेक्षा कमी आहे."
+        },
+        "deciding_rule_ids": [
+          "IGNWPS-MH-AGE-MIN-01"
+        ],
+        "missing_fields": []
+      }
+    },
+    {
+      "scenario_id": "not-eligible-age-80",
+      "visible_in_ui": false,
+      "label": {
+        "en": "Not eligible example — above maximum age",
+        "hi": "अपात्र उदाहरण — अधिकतम आयु से अधिक",
+        "mr": "अपात्र उदाहरण — कमाल वयापेक्षा जास्त"
+      },
+      "profile": {
+        "synthetic": true,
+        "profile_id": "SYNTHETIC-IGNWPS-004",
+        "age": 80,
+        "is_widow": true,
+        "bpl_status": "confirmed",
+        "state": "Maharashtra"
+      },
+      "expected_verdict": {
+        "result": "not_eligible",
+        "reason": {
+          "en": "This synthetic profile is above the published maximum age of 79 for this scheme.",
+          "hi": "यह कृत्रिम प्रोफ़ाइल इस योजना की प्रकाशित अधिकतम आयु 79 वर्ष से अधिक है।",
+          "mr": "ही कृत्रिम प्रोफाइल या योजनेच्या प्रकाशित कमाल वय 79 वर्षांपेक्षा जास्त आहे."
+        },
+        "deciding_rule_ids": [
+          "IGNWPS-MH-AGE-MAX-01"
+        ],
+        "missing_fields": []
+      }
+    },
+    {
+      "scenario_id": "not-eligible-not-widow",
+      "visible_in_ui": false,
+      "label": {
+        "en": "Not eligible example — widow condition not met",
+        "hi": "अपात्र उदाहरण — विधवा शर्त पूरी नहीं",
+        "mr": "अपात्र उदाहरण — विधवा अट पूर्ण नाही"
+      },
+      "profile": {
+        "synthetic": true,
+        "profile_id": "SYNTHETIC-IGNWPS-005",
+        "age": 52,
+        "is_widow": false,
+        "bpl_status": "confirmed",
+        "state": "Maharashtra"
+      },
+      "expected_verdict": {
+        "result": "not_eligible",
+        "reason": {
+          "en": "This synthetic profile does not meet the scheme's widow condition.",
+          "hi": "यह कृत्रिम प्रोफ़ाइल योजना की विधवा शर्त पूरी नहीं करती।",
+          "mr": "ही कृत्रिम प्रोफाइल योजनेची विधवा अट पूर्ण करत नाही."
+        },
+        "deciding_rule_ids": [
+          "IGNWPS-MH-WIDOW-01"
+        ],
+        "missing_fields": []
+      }
+    },
+    {
+      "scenario_id": "not-eligible-not-bpl",
+      "visible_in_ui": false,
+      "label": {
+        "en": "Not eligible example — BPL condition not met",
+        "hi": "अपात्र उदाहरण — BPL शर्त पूरी नहीं",
+        "mr": "अपात्र उदाहरण — BPL अट पूर्ण नाही"
+      },
+      "profile": {
+        "synthetic": true,
+        "profile_id": "SYNTHETIC-IGNWPS-006",
+        "age": 52,
+        "is_widow": true,
+        "bpl_status": "not_confirmed",
+        "state": "Maharashtra"
+      },
+      "expected_verdict": {
+        "result": "not_eligible",
+        "reason": {
+          "en": "This synthetic profile has confirmed that the family is not on the BPL list required by the published rule.",
+          "hi": "इस कृत्रिम प्रोफ़ाइल में पुष्टि है कि परिवार प्रकाशित नियम द्वारा आवश्यक BPL सूची में नहीं है।",
+          "mr": "या कृत्रिम प्रोफाइलमध्ये कुटुंब प्रकाशित नियमानुसार आवश्यक BPL यादीत नसल्याची पुष्टी आहे."
+        },
+        "deciding_rule_ids": [
+          "IGNWPS-MH-BPL-01"
+        ],
+        "missing_fields": []
+      }
+    },
+    {
+      "scenario_id": "cant-tell-bpl-unknown",
+      "visible_in_ui": true,
+      "label": {
+        "en": "More information needed — BPL status unknown",
+        "hi": "अधिक जानकारी आवश्यक — BPL स्थिति अज्ञात",
+        "mr": "अधिक माहिती आवश्यक — BPL स्थिती अज्ञात"
+      },
+      "profile": {
+        "synthetic": true,
+        "profile_id": "SYNTHETIC-IGNWPS-007",
+        "age": 52,
+        "is_widow": true,
+        "bpl_status": "unknown",
+        "state": "Maharashtra"
+      },
+      "expected_verdict": {
+        "result": "cant_tell",
+        "reason": {
+          "en": "The published rule requires BPL status, but this synthetic profile does not confirm whether the family is on the BPL list.",
+          "hi": "प्रकाशित नियम में BPL स्थिति आवश्यक है, लेकिन यह कृत्रिम प्रोफ़ाइल पुष्टि नहीं करती कि परिवार BPL सूची में है या नहीं।",
+          "mr": "प्रकाशित नियमानुसार BPL स्थिती आवश्यक आहे, परंतु ही कृत्रिम प्रोफाइल कुटुंब BPL यादीत आहे की नाही याची पुष्टी करत नाही."
+        },
+        "deciding_rule_ids": [
+          "IGNWPS-MH-BPL-01"
+        ],
+        "missing_fields": [
+          "bpl_status"
+        ]
+      }
+    }
+  ]
+}

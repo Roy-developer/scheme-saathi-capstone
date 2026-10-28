@@ -26,10 +26,10 @@ jobs:
           cache: pip
 
       - name: Install application
-        run: python -m pip install .
+        run: python -m pip install ".[dev]"
 
       - name: Compile Python sources
         run: python -m compileall -q src
 
-      - name: Verify dependencies
-        run: python -c "import streamlit; print(streamlit.__version__)"
+      - name: Run frontend fixture tests
+        run: python -m pytest
