@@ -1,4 +1,5 @@
 import json
+from importlib import resources
 from pathlib import Path
 
 from src.ui.models import DevelopmentScenario, FixtureSet
@@ -6,10 +7,16 @@ from src.ui.models import DevelopmentScenario, FixtureSet
 
 class FixtureDataProvider:
     def __init__(self, fixture_path: Path | None = None) -> None:
-        path = fixture_path or (
-            Path(__file__).parent / "fixtures" / "ignwps_mh.json"
-        )
-        payload = json.loads(path.read_text(encoding="utf-8"))
+        if fixture_path is None:
+            fixture_text = (
+                resources.files("src.ui")
+                .joinpath("fixtures", "ignwps_mh.json")
+                .read_text(encoding="utf-8")
+            )
+        else:
+            fixture_text = fixture_path.read_text(encoding="utf-8")
+
+        payload = json.loads(fixture_text)
         self._fixtures = FixtureSet.model_validate(payload)
 
     @property
