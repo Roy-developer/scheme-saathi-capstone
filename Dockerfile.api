@@ -12,6 +12,8 @@ RUN pip install --no-cache-dir .
 
 EXPOSE 8000
 
+# Revision readiness depends on the API responding inside its own container;
+# the deployment workflow separately verifies that public ingress also works.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
 

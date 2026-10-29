@@ -14,7 +14,8 @@ on:
 permissions:
   contents: read
 
-# Every member targets the same backend app and URL, so deployments must queue.
+# Every member targets the same backend app and URL. Queuing prevents an older
+# run from racing a newer run and leaving the shared app on an unintended image.
 concurrency:
   group: scheme-saathi-shared-api
   cancel-in-progress: false
@@ -24,7 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
-      # Deployment uses this tested SHA even if the branch moves afterward.
+      # Resolve the user-supplied ref once. Deploying this tested SHA closes the
+      # gap in which a branch could move after validation but before checkout.
       target_sha: ${{ steps.target.outputs.sha }}
 
     steps:
@@ -81,8 +83,8 @@ jobs:
         with:
           ref: ${{ needs.validate.outputs.target_sha }}
 
-      # Stop before Azure login if setup is incomplete or the checkout differs
-      # from the exact commit that passed validation.
+      # Stop before obtaining Azure credentials if configuration is incomplete
+      # or checkout is not the exact commit that passed validation.
       - name: Verify deployment configuration
         shell: bash
         run: |
@@ -132,7 +134,8 @@ jobs:
           test "$actual_location" = "$AZURE_LOCATION"
 
       # Build the API-specific Dockerfile and tag the image with the immutable
-      # tested commit. Polling avoids relying on streamed build logs.
+      # tested commit. Poll the server-side run because queueing a build only
+      # confirms acceptance; it does not mean the image is ready to deploy.
       - name: Build selected commit
         id: build
         shell: bash
@@ -181,8 +184,10 @@ jobs:
           echo "image=$image" >> "$GITHUB_OUTPUT"
           echo "image_tag=$image_tag" >> "$GITHUB_OUTPUT"
 
-      # The first run creates exactly one externally reachable API app. Later
-      # runs update that same app and keep its stable URL.
+      # The first run must create ingress and its target port; update cannot do
+      # that for a missing app. Later runs change only the named existing app,
+      # preserving its identity and stable URL. Zero minimum replicas permits
+      # idle scale-to-zero; one maximum replica bounds this shared dev service.
       - name: Create or update shared API
         shell: bash
         run: |
@@ -220,8 +225,10 @@ jobs:
               --output none
           fi
 
-      # Azure keeps the old healthy revision until the new one is ready. The
-      # public /health request proves teammates can reach the deployed API.
+      # Readiness requires Azure's latest revision to also be the latest ready
+      # revision, not merely for the app resource to report success. The public
+      # /health call then checks ingress and application startup from the same
+      # route teammates use, including a possible scale-from-zero cold start.
       - name: Verify deployed API
         id: verify
         shell: bash

@@ -1,3 +1,5 @@
+"""Verify fixture provenance, boundary cases, and approval safety behavior."""
+
 import pytest
 
 from src.ui.approval import approval_matches, draft_fingerprint
@@ -6,12 +8,16 @@ from src.ui.data_provider import FixtureDataProvider
 
 @pytest.fixture
 def provider() -> FixtureDataProvider:
+    """Load the packaged fixture set for each test."""
+
     return FixtureDataProvider()
 
 
 def test_fixture_pack_has_expected_size(
     provider: FixtureDataProvider,
 ) -> None:
+    """The pack includes all boundary cases but exposes only reviewed demos."""
+
     assert len(provider.fixtures.scenarios) == 7
     assert len(provider.visible_scenarios()) == 3
 
@@ -19,6 +25,8 @@ def test_fixture_pack_has_expected_size(
 def test_fixture_pack_is_draft_and_synthetic(
     provider: FixtureDataProvider,
 ) -> None:
+    """Fixture metadata prevents draft personas from being treated as real data."""
+
     assert provider.fixtures.status == "draft_pending_role_review"
     assert provider.fixtures.synthetic_personas is True
     assert all(
@@ -44,6 +52,8 @@ def test_reviewed_draft_boundary_expectations(
     scenario_id: str,
     expected_result: str,
 ) -> None:
+    """Every documented eligibility boundary keeps its reviewed outcome."""
+
     scenario = provider.get_scenario(scenario_id)
 
     assert scenario.expected_verdict.result == expected_result
@@ -52,6 +62,8 @@ def test_reviewed_draft_boundary_expectations(
 def test_cant_tell_case_names_missing_information(
     provider: FixtureDataProvider,
 ) -> None:
+    """Indeterminate results state which fact must be collected."""
+
     scenario = provider.get_scenario("cant-tell-bpl-unknown")
 
     assert scenario.expected_verdict.missing_fields == ["bpl_status"]
@@ -60,6 +72,8 @@ def test_cant_tell_case_names_missing_information(
 def test_policy_source_is_official_and_dated(
     provider: FixtureDataProvider,
 ) -> None:
+    """Policy evidence retains its official host and collection metadata."""
+
     source = provider.fixtures.policy.source
 
     assert source.source_url.host == "sjsa.maharashtra.gov.in"
@@ -70,12 +84,16 @@ def test_policy_source_is_official_and_dated(
 def test_document_requirements_are_not_invented(
     provider: FixtureDataProvider,
 ) -> None:
+    """Unverified document requirements remain explicitly absent."""
+
     assert provider.fixtures.policy.documents_status == "not_verified"
 
 
 def test_eligible_demo_has_matching_application_draft(
     provider: FixtureDataProvider,
 ) -> None:
+    """Only the eligible demo carries a draft matching its source profile."""
+
     scenario = provider.get_scenario("eligible-age-40")
     draft = scenario.application_draft
 
@@ -88,6 +106,8 @@ def test_eligible_demo_has_matching_application_draft(
 def test_draft_fingerprint_is_stable_and_changes_after_edit(
     provider: FixtureDataProvider,
 ) -> None:
+    """A draft edit changes its fingerprint and invalidates prior approval."""
+
     draft = provider.get_scenario("eligible-age-40").application_draft
     assert draft is not None
 
@@ -109,5 +129,7 @@ def test_draft_fingerprint_is_stable_and_changes_after_edit(
 def test_unknown_scenario_fails_clearly(
     provider: FixtureDataProvider,
 ) -> None:
+    """Unknown scenario IDs fail with a useful lookup error."""
+
     with pytest.raises(KeyError, match="Unknown development scenario"):
         provider.get_scenario("not-present")

@@ -1,3 +1,5 @@
+"""Expose the minimal shared FastAPI service and operational metadata."""
+
 import os
 
 from fastapi import FastAPI
@@ -5,10 +7,14 @@ from pydantic import BaseModel
 
 
 class HealthResponse(BaseModel):
+    """Represent the API health-check response."""
+
     status: str
 
 
 class ServiceInfo(BaseModel):
+    """Describe the deployed service without exposing sensitive configuration."""
+
     name: str
     api_version: str
     app_version: str
@@ -25,11 +31,15 @@ app = FastAPI(
 
 @app.get("/health", response_model=HealthResponse, tags=["operations"])
 def health() -> HealthResponse:
+    """Report that the API process is available."""
+
     return HealthResponse(status="healthy")
 
 
 @app.get("/api/v1/info", response_model=ServiceInfo, tags=["service"])
 def service_info() -> ServiceInfo:
+    """Return safe build and deployment identifiers for diagnostics."""
+
     return ServiceInfo(
         name="scheme-saathi-api",
         api_version=app.version,

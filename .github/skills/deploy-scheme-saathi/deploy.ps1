@@ -1,3 +1,34 @@
+<#
+.SYNOPSIS
+Validates and deploys the approved Scheme Saathi UI commit to Azure.
+
+.DESCRIPTION
+Refuses deployment unless the required branch is clean, pushed, and has a
+successful Frontend checks run for its exact HEAD commit. It then builds that
+commit in the existing registry, updates the existing Container App, waits for
+the new revision, and verifies the public Streamlit health endpoint.
+
+.PARAMETER DryRun
+Runs all local, GitHub, and Azure target checks without building or deploying.
+
+.PARAMETER ResourceGroup
+Existing Azure resource group that contains the shared development resources.
+
+.PARAMETER Location
+Required Azure location, in normalized Azure CLI form.
+
+.PARAMETER Environment
+Existing Azure Container Apps environment to verify.
+
+.PARAMETER AppName
+Existing Azure Container App to update.
+
+.PARAMETER RequiredBranch
+Only this branch may be deployed by the script.
+
+.EXAMPLE
+.\deploy.ps1 -DryRun
+#>
 [CmdletBinding()]
 param(
     [switch]$DryRun,
@@ -63,6 +94,8 @@ function Invoke-CheckedOutput {
 
 Push-Location $repoRoot
 try {
+    # These Git and Actions gates bind deployment to reviewed, remotely
+    # reproducible content rather than uncommitted or unpushed local files.
     $branch = (git branch --show-current).Trim()
     if ($LASTEXITCODE -ne 0 -or $branch -ne $RequiredBranch) {
         throw "Deployment requires branch '$RequiredBranch'; current branch is '$branch'."
@@ -83,6 +116,7 @@ try {
         throw "The branch has $unpushed unpushed commit(s). Push before deployment."
     }
 
+    # All later image and workflow checks use this immutable commit identifier.
     $commit = (git rev-parse HEAD).Trim()
     if ($LASTEXITCODE -ne 0) {
         throw "Could not read the current Git commit."
@@ -130,6 +164,8 @@ try {
             --output none
     }
 
+    # Discover the registry from the existing app instead of accepting an
+    # arbitrary registry target from the command line.
     $registryServer = (
         Invoke-CheckedOutput -Description "Read existing registry" -Command {
             az containerapp show `
@@ -182,6 +218,8 @@ try {
         throw "Azure Container Registry did not return a build run ID."
     }
 
+    # ACR returning a run ID means the build was queued, not completed. Poll
+    # the server-side status before allowing that image tag to be deployed.
     for ($attempt = 1; $attempt -le 40; $attempt++) {
         $buildStatus = (
             Invoke-CheckedOutput -Description "Check build $buildRunId" -Command {
@@ -204,6 +242,8 @@ try {
         Start-Sleep -Seconds 15
     }
 
+    # Scale-to-zero controls idle cost; max one replica avoids splitting
+    # Streamlit's in-memory session state across concurrent replicas.
     Invoke-Checked -Description "Deploy built image" -Command {
         az containerapp update `
             --name $AppName `
@@ -215,6 +255,8 @@ try {
             --output none
     }
 
+    # Do not treat the update command as readiness. Wait until Azure reports
+    # the latest revision itself as ready and the app as running.
     $app = $null
     for ($attempt = 1; $attempt -le 20; $attempt++) {
         $appJson = az containerapp show `
@@ -241,6 +283,8 @@ try {
         Start-Sleep -Seconds 15
     }
 
+    # Exercise public ingress, application startup, and the health endpoint.
+    # Retries also allow time for the first scale-from-zero request.
     $url = "https://$($app.fqdn)"
     $healthy = $false
     for ($attempt = 1; $attempt -le 12; $attempt++) {

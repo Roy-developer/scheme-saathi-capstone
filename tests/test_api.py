@@ -1,3 +1,5 @@
+"""Verify the shared API exposes only its intended minimal contract."""
+
 from fastapi.testclient import TestClient
 
 from src.api.app import app
@@ -7,6 +9,8 @@ client = TestClient(app)
 
 
 def test_health_endpoint() -> None:
+    """The operations endpoint reports a healthy process."""
+
     response = client.get("/health")
 
     assert response.status_code == 200
@@ -16,6 +20,8 @@ def test_health_endpoint() -> None:
 def test_service_info_is_safe_for_shared_development(
     monkeypatch,
 ) -> None:
+    """Deployment metadata remains explicit and marks the service synthetic."""
+
     monkeypatch.setenv("APP_VERSION", "git-abc123")
     monkeypatch.setenv("DEPLOYED_REF", "feature/example")
 
@@ -32,6 +38,8 @@ def test_service_info_is_safe_for_shared_development(
 
 
 def test_openapi_document_is_available() -> None:
+    """FastAPI publishes an OpenAPI document with the expected identity."""
+
     response = client.get("/openapi.json")
 
     assert response.status_code == 200

@@ -1,3 +1,5 @@
+"""Render the fixture-backed Scheme Saathi Streamlit demonstration."""
+
 import os
 
 import streamlit as st
@@ -185,13 +187,18 @@ RESULT_PRESENTATION = {
 
 
 def localize(value: object, locale: str) -> str:
+    """Select localized text from a validated multilingual model."""
+
     return getattr(value, locale)
 
 
 def show_result_message(kind: str, message: str) -> None:
+    """Render a Streamlit status message using the configured severity."""
+
     getattr(st, kind)(message)
 
 
+# Workflow state is kept separate so changing a scenario cannot retain approval.
 WORKFLOW_STATE_KEYS = {
     "approved_fingerprint",
     "draft_district",
@@ -206,6 +213,8 @@ DEMO_INPUT_KEYS = {"demo_consent", "demo_scenario"}
 
 
 def clear_workflow_state(*, include_inputs: bool = False) -> None:
+    """Clear derived workflow state and optionally reset demonstration inputs."""
+
     keys = (
         WORKFLOW_STATE_KEYS | DEMO_INPUT_KEYS
         if include_inputs
@@ -424,6 +433,7 @@ if st.session_state.selected_result:
                     current_draft,
                 )
             ):
+                # Any edit invalidates approval before mock submission is offered.
                 st.session_state.approved_fingerprint = None
                 st.session_state.draft_submitted = False
                 st.warning(text["invalidated"])
