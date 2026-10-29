@@ -1,0 +1,53 @@
+name: Frontend checks
+
+on:
+  workflow_dispatch:
+  # Main currently contains only the initial scaffold. Avoid running Python
+  # application checks on workflow-only or documentation-only changes.
+  pull_request:
+    paths:
+      - "Dockerfile"
+      - "pyproject.toml"
+      - "src/**"
+      - "tests/**"
+  push:
+    branches:
+      - main
+      - role6-deployment-ops-roy
+    paths:
+      - "Dockerfile"
+      - "pyproject.toml"
+      - "src/**"
+      - "tests/**"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install application
+        run: python -m pip install ".[dev]"
+
+      - name: Compile Python sources
+        run: python -m compileall -q src
+
+      - name: Run frontend fixture tests
+        run: python -m pytest
+
+      - name: Verify installed fixture package
+        working-directory: /tmp
+        run: |
+          python -c "from src.ui.data_provider import FixtureDataProvider; fixtures = FixtureDataProvider().fixtures; print(fixtures.policy.scheme_id)"
