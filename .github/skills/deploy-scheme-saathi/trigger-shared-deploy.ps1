@@ -1,3 +1,21 @@
+<#
+.SYNOPSIS
+Starts the reviewed shared UI deployment workflow for the current branch.
+
+.DESCRIPTION
+Requires a clean, pushed branch and the shared-dev environment configuration.
+The workflow definition is always loaded from main, while the current branch
+is supplied only as the application ref to validate and deploy.
+
+.PARAMETER DryRun
+Checks local and GitHub prerequisites without starting a workflow run.
+
+.PARAMETER Workflow
+Name of the shared UI deployment workflow registered on main.
+
+.EXAMPLE
+.\trigger-shared-deploy.ps1 -DryRun
+#>
 [CmdletBinding()]
 param(
     [switch]$DryRun,

@@ -35,6 +35,8 @@ jobs:
       - name: Run frontend fixture tests
         run: python -m pytest
 
+      # Import from outside the checkout so source files cannot mask package
+      # data that is missing from the built installation.
       - name: Verify installed fixture package
         working-directory: /tmp
         run: |

@@ -1,3 +1,18 @@
+<#
+.SYNOPSIS
+Confirms GitHub Actions validation for the current pushed commit.
+
+.DESCRIPTION
+Requires a clean worktree and no unpushed commits. Reuses an existing workflow
+run for the exact immutable HEAD commit or dispatches one when none exists, then
+waits for a successful conclusion.
+
+.PARAMETER Workflow
+Validation workflow file to query or dispatch.
+
+.EXAMPLE
+.\validate.ps1
+#>
 [CmdletBinding()]
 param(
     [string]$Workflow = "frontend-checks.yml"
@@ -45,6 +60,8 @@ try {
         throw "The branch has $unpushed unpushed commit(s). Push before validation."
     }
 
+    # Query by immutable SHA so a successful run for an earlier branch tip
+    # cannot authorize the current local commit.
     $commit = (git rev-parse HEAD).Trim()
     if ($LASTEXITCODE -ne 0) {
         throw "Could not read the current Git commit."

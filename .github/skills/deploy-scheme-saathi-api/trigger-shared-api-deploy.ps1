@@ -1,3 +1,21 @@
+<#
+.SYNOPSIS
+Starts the reviewed shared API deployment workflow for the current branch.
+
+.DESCRIPTION
+Requires a clean, pushed branch and the API app environment variable. The
+workflow runs from main and receives the current branch as the application ref,
+so branch code cannot replace the reviewed deployment permissions or gates.
+
+.PARAMETER DryRun
+Checks local and GitHub prerequisites without starting a workflow run.
+
+.PARAMETER Workflow
+Name of the shared API deployment workflow registered on the default branch.
+
+.EXAMPLE
+.\trigger-shared-api-deploy.ps1 -DryRun
+#>
 [CmdletBinding()]
 param(
     [switch]$DryRun,
@@ -60,7 +78,8 @@ try {
         throw "Could not determine the GitHub repository."
     }
 
-    # Manual deployment workflows must be registered on the default branch.
+    # Use the registered default-branch workflow; the selected branch supplies
+    # application code only, not deployment permissions or workflow logic.
     gh workflow view $Workflow --repo $repo *> $null
     if ($LASTEXITCODE -ne 0) {
         throw "$Workflow must be merged into main before API deployment."

@@ -1,3 +1,5 @@
+"""Define strict contracts for policy evidence and synthetic demonstrations."""
+
 from datetime import date
 from typing import Literal
 
@@ -5,16 +7,22 @@ from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
 
 
 class StrictModel(BaseModel):
+    """Reject undeclared fields in fixture data instead of silently ignoring them."""
+
     model_config = ConfigDict(extra="forbid")
 
 
 class LocalizedText(StrictModel):
+    """Store equivalent interface text in the supported locales."""
+
     en: str
     hi: str
     mr: str
 
 
 class PolicySource(StrictModel):
+    """Record provenance and collection details for an official policy source."""
+
     publisher: str
     source_url: HttpUrl
     collected_at: date
@@ -23,6 +31,8 @@ class PolicySource(StrictModel):
 
 
 class PolicyRule(StrictModel):
+    """Represent one normalized rule traced to a source clause."""
+
     rule_id: str
     field: Literal["is_widow", "age", "bpl_status"]
     operator: Literal["eq", "gte", "lte"]
@@ -31,6 +41,8 @@ class PolicyRule(StrictModel):
 
 
 class PolicyFixture(StrictModel):
+    """Combine scheme metadata, cited rules, and verification status."""
+
     scheme_id: str
     scheme_name: LocalizedText
     benefit_summary: LocalizedText
@@ -40,6 +52,8 @@ class PolicyFixture(StrictModel):
 
 
 class SyntheticProfile(StrictModel):
+    """Describe a bounded, explicitly synthetic household profile."""
+
     synthetic: Literal[True]
     profile_id: str
     age: int = Field(ge=0, le=125)
@@ -49,6 +63,8 @@ class SyntheticProfile(StrictModel):
 
 
 class ExpectedVerdict(StrictModel):
+    """Capture a reviewed fixture result and the evidence behind it."""
+
     result: Literal["eligible", "not_eligible", "cant_tell"]
     reason: LocalizedText
     deciding_rule_ids: list[str]
@@ -56,6 +72,8 @@ class ExpectedVerdict(StrictModel):
 
 
 class ApplicationDraft(StrictModel):
+    """Represent a synthetic application draft eligible for explicit approval."""
+
     draft_id: str
     scheme_id: str
     applicant_reference: str
@@ -67,6 +85,8 @@ class ApplicationDraft(StrictModel):
 
 
 class DevelopmentScenario(StrictModel):
+    """Pair a synthetic profile with its expected reviewed outcome."""
+
     scenario_id: str
     visible_in_ui: bool
     label: LocalizedText
@@ -76,6 +96,8 @@ class DevelopmentScenario(StrictModel):
 
 
 class FixtureSet(StrictModel):
+    """Validate the policy fixture pack as one internally consistent unit."""
+
     fixture_version: str
     status: Literal["draft_pending_role_review", "approved"]
     synthetic_personas: Literal[True]
@@ -84,6 +106,8 @@ class FixtureSet(StrictModel):
 
     @model_validator(mode="after")
     def validate_scenario_set(self) -> "FixtureSet":
+        """Enforce cross-record references and safe draft eligibility."""
+
         scenario_ids = [scenario.scenario_id for scenario in self.scenarios]
         if len(scenario_ids) != len(set(scenario_ids)):
             raise ValueError("Scenario IDs must be unique")
