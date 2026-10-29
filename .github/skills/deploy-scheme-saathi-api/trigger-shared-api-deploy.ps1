@@ -61,7 +61,7 @@ try {
     }
 
     # Manual deployment workflows must be registered on the default branch.
-    gh workflow view $Workflow --repo $repo --ref main *> $null
+    gh workflow view $Workflow --repo $repo *> $null
     if ($LASTEXITCODE -ne 0) {
         throw "$Workflow must be merged into main before API deployment."
     }
