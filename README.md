@@ -32,3 +32,21 @@ See [`docs/Scheme_Saathi_Roles_and_Work_Plan.pdf`](docs/Scheme_Saathi_Roles_and_
 - No API keys, real personal data or non-redistributable material in this repo. Use `.env` locally (it is git-ignored).
 - Held-out evaluation cases must not be readable by the agent.
 - Keep the contribution log from day one in `docs/CONTRIBUTIONS.md`.
+
+## Frontend prototype
+
+The current Role 6 work is an explicitly synthetic frontend shell intended for
+deployment to Azure Container Apps. It does not make eligibility decisions or
+contact government services.
+
+The container listens on port `8501` and exposes Streamlit's health endpoint at
+`/_stcore/health`.
+
+The current fixture-backed journey uses seven synthetic development personas
+against a draft interpretation of the official Maharashtra IGNWPS policy. It
+shows three representative outcomes in the UI. These fixtures are not held-out
+evaluation cases and must not be presented as final policy approval.
+
+The eligible scenario also demonstrates exact-draft approval. Editing the
+synthetic draft invalidates its previous frontend fingerprint. Submission goes
+only to an in-session mock confirmation; no external portal is contacted.

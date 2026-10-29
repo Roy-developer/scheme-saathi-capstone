@@ -2,23 +2,11 @@ name: Frontend checks
 
 on:
   workflow_dispatch:
-  # Main currently contains only the initial scaffold. Avoid running Python
-  # application checks on workflow-only or documentation-only changes.
   pull_request:
-    paths:
-      - "Dockerfile"
-      - "pyproject.toml"
-      - "src/**"
-      - "tests/**"
   push:
     branches:
       - main
       - role6-deployment-ops-roy
-    paths:
-      - "Dockerfile"
-      - "pyproject.toml"
-      - "src/**"
-      - "tests/**"
 
 permissions:
   contents: read

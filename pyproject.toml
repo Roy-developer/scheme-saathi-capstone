@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scheme-saathi-capstone"
+version = "0.1.0"
+description = "Scheme Saathi capstone application"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.8,<3",
+  "streamlit>=1.40,<2",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3,<9",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.setuptools.package-data]
+"src.ui" = ["fixtures/*.json"]
