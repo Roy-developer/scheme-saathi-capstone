@@ -50,7 +50,6 @@ evaluation cases and must not be presented as final policy approval.
 The eligible scenario also demonstrates exact-draft approval. Editing the
 synthetic draft invalidates its previous frontend fingerprint. Submission goes
 only to an in-session mock confirmation; no external portal is contacted.
-
 ## Minimal backend
 
 The shared FastAPI foundation exposes only development-safe endpoints:
