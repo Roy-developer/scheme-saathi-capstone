@@ -1,0 +1,283 @@
+# This workflow deploys any pushed team branch to one shared development API.
+# It validates the selected commit before building or changing Azure.
+name: Shared API deploy
+run-name: "Shared API: ${{ inputs.ref }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch, tag, or commit to validate and deploy
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+# Every member targets the same backend app and URL, so deployments must queue.
+concurrency:
+  group: scheme-saathi-shared-api
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      # Deployment uses this tested SHA even if the branch moves afterward.
+      target_sha: ${{ steps.target.outputs.sha }}
+
+    steps:
+      - name: Check out selected ref
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Record selected commit
+        id: target
+        shell: bash
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install application
+        run: python -m pip install ".[dev]"
+
+      - name: Compile Python sources
+        run: python -m compileall -q src
+
+      - name: Run all tests
+        run: python -m pytest
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: shared-dev
+    permissions:
+      contents: read
+      # GitHub exchanges this short-lived OIDC token for Azure access. No
+      # password or client secret is stored for team members.
+      id-token: write
+    env:
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
+      AZURE_API_APP: ${{ vars.AZURE_API_APP }}
+      AZURE_CONTAINER_ENVIRONMENT: ${{ vars.AZURE_CONTAINER_ENVIRONMENT }}
+      AZURE_ACR_NAME: ${{ vars.AZURE_ACR_NAME }}
+      AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
+      TARGET_REF: ${{ inputs.ref }}
+      TARGET_SHA: ${{ needs.validate.outputs.target_sha }}
+
+    steps:
+      - name: Check out validated commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.validate.outputs.target_sha }}
+
+      # Stop before Azure login if setup is incomplete or the checkout differs
+      # from the exact commit that passed validation.
+      - name: Verify deployment configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          required_variables=(
+            AZURE_CLIENT_ID
+            AZURE_TENANT_ID
+            AZURE_SUBSCRIPTION_ID
+            AZURE_RESOURCE_GROUP
+            AZURE_API_APP
+            AZURE_CONTAINER_ENVIRONMENT
+            AZURE_ACR_NAME
+            AZURE_LOCATION
+            TARGET_REF
+            TARGET_SHA
+          )
+          for variable in "${required_variables[@]}"; do
+            if [[ -z "${!variable}" ]]; then
+              echo "::error::$variable is not configured"
+              exit 1
+            fi
+          done
+          test "$(git rev-parse HEAD)" = "$TARGET_SHA"
+
+      - name: Log in to Azure with OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      # The environment must already exist in Central India. The workflow may
+      # create only the named API app during its first deployment.
+      - name: Verify Azure environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_location="$(
+            az containerapp env show \
+              --name "$AZURE_CONTAINER_ENVIRONMENT" \
+              --resource-group "$AZURE_RESOURCE_GROUP" \
+              --query location \
+              --output tsv |
+            tr -d ' ' |
+            tr '[:upper:]' '[:lower:]'
+          )"
+          test "$actual_location" = "$AZURE_LOCATION"
+
+      # Build the API-specific Dockerfile and tag the image with the immutable
+      # tested commit. Polling avoids relying on streamed build logs.
+      - name: Build selected commit
+        id: build
+        shell: bash
+        run: |
+          set -euo pipefail
+          image_tag="git-${TARGET_SHA:0:12}"
+          image="${AZURE_ACR_NAME}.azurecr.io/${AZURE_API_APP}:${image_tag}"
+          build_run_id="$(
+            az acr build \
+              --registry "$AZURE_ACR_NAME" \
+              --file Dockerfile.api \
+              --image "${AZURE_API_APP}:${image_tag}" \
+              --no-logs \
+              --query runId \
+              --output tsv \
+              .
+          )"
+          test -n "$build_run_id"
+
+          for attempt in {1..40}; do
+            status="$(
+              az acr task show-run \
+                --registry "$AZURE_ACR_NAME" \
+                --run-id "$build_run_id" \
+                --query status \
+                --output tsv
+            )"
+            case "$status" in
+              Succeeded)
+                break
+                ;;
+              Queued|Started|Running)
+                ;;
+              *)
+                echo "::error::ACR build $build_run_id finished with status $status"
+                exit 1
+                ;;
+            esac
+            if [[ "$attempt" -eq 40 ]]; then
+              echo "::error::ACR build $build_run_id did not finish in time"
+              exit 1
+            fi
+            sleep 15
+          done
+
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+          echo "image_tag=$image_tag" >> "$GITHUB_OUTPUT"
+
+      # The first run creates exactly one externally reachable API app. Later
+      # runs update that same app and keep its stable URL.
+      - name: Create or update shared API
+        shell: bash
+        run: |
+          set -euo pipefail
+          if az containerapp show \
+            --name "$AZURE_API_APP" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --output none 2> /dev/null; then
+            az containerapp update \
+              --name "$AZURE_API_APP" \
+              --resource-group "$AZURE_RESOURCE_GROUP" \
+              --image "${{ steps.build.outputs.image }}" \
+              --min-replicas 0 \
+              --max-replicas 1 \
+              --set-env-vars \
+                "APP_VERSION=${{ steps.build.outputs.image_tag }}" \
+                "DEPLOYED_REF=$TARGET_REF" \
+              --output none
+          else
+            az containerapp up \
+              --name "$AZURE_API_APP" \
+              --resource-group "$AZURE_RESOURCE_GROUP" \
+              --environment "$AZURE_CONTAINER_ENVIRONMENT" \
+              --image "${{ steps.build.outputs.image }}" \
+              --ingress external \
+              --target-port 8000
+            az containerapp update \
+              --name "$AZURE_API_APP" \
+              --resource-group "$AZURE_RESOURCE_GROUP" \
+              --min-replicas 0 \
+              --max-replicas 1 \
+              --set-env-vars \
+                "APP_VERSION=${{ steps.build.outputs.image_tag }}" \
+                "DEPLOYED_REF=$TARGET_REF" \
+              --output none
+          fi
+
+      # Azure keeps the old healthy revision until the new one is ready. The
+      # public /health request proves teammates can reach the deployed API.
+      - name: Verify deployed API
+        id: verify
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in {1..20}; do
+            app_json="$(
+              az containerapp show \
+                --name "$AZURE_API_APP" \
+                --resource-group "$AZURE_RESOURCE_GROUP" \
+                --output json
+            )"
+            latest="$(jq -r '.properties.latestRevisionName' <<< "$app_json")"
+            ready="$(jq -r '.properties.latestReadyRevisionName' <<< "$app_json")"
+            running="$(jq -r '.properties.runningStatus' <<< "$app_json")"
+            fqdn="$(jq -r '.properties.configuration.ingress.fqdn' <<< "$app_json")"
+            if [[ "$latest" = "$ready" && "$running" = "Running" ]]; then
+              break
+            fi
+            if [[ "$attempt" -eq 20 ]]; then
+              echo "::error::The API revision did not become ready in time"
+              exit 1
+            fi
+            sleep 15
+          done
+
+          url="https://${fqdn}"
+          for attempt in {1..12}; do
+            if curl \
+              --fail \
+              --silent \
+              --show-error \
+              --max-time 30 \
+              "${url}/health" > /dev/null; then
+              echo "revision=$ready" >> "$GITHUB_OUTPUT"
+              echo "url=$url" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::The public API health check failed"
+          exit 1
+
+      - name: Publish deployment summary
+        shell: bash
+        run: |
+          {
+            echo "## Shared API deployment"
+            echo
+            echo "- Ref: \`$TARGET_REF\`"
+            echo "- Commit: \`$TARGET_SHA\`"
+            echo "- Revision: \`${{ steps.verify.outputs.revision }}\`"
+            echo "- URL: ${{ steps.verify.outputs.url }}"
+            echo "- Docs: ${{ steps.verify.outputs.url }}/docs"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Log out of Azure
+        if: always()
+        run: az logout
