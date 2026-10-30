@@ -399,7 +399,7 @@ if st.session_state.selected_result:
             st.session_state.rejected_draft = False
             st.rerun()
 
-        if st.session_state.draft_scenario_id == selected.scenario_id:
+        if st.session_state.get("draft_scenario_id") == selected.scenario_id:
             st.divider()
             st.subheader(text["application"])
 
