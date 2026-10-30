@@ -82,7 +82,7 @@ try {
 
     # Always execute the reviewed workflow definition from main. The selected
     # member branch supplies application code, not deployment permissions.
-    gh workflow view $Workflow --repo $repo --ref main *> $null
+    gh workflow view $Workflow --repo $repo --ref main --yaml *> $null
     if ($LASTEXITCODE -ne 0) {
         throw "$Workflow must be merged into main before shared deployment."
     }
