@@ -1,3 +1,5 @@
+"""Define strict contracts for policy evidence and synthetic demonstrations."""
+
 from datetime import date
 from typing import Literal
 
@@ -5,16 +7,22 @@ from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
 
 
 class StrictModel(BaseModel):
+    """Reject undeclared fields in fixture data instead of silently ignoring them."""
+
     model_config = ConfigDict(extra="forbid")
 
 
 class LocalizedText(StrictModel):
+    """Store equivalent interface text in the supported locales."""
+
     en: str
     hi: str
     mr: str
 
 
 class PolicySource(StrictModel):
+    """Record provenance and collection details for an official policy source."""
+
     publisher: str
     source_url: HttpUrl
     collected_at: date
@@ -23,6 +31,8 @@ class PolicySource(StrictModel):
 
 
 class PolicyRule(StrictModel):
+    """Represent one normalized rule traced to a source clause."""
+
     rule_id: str
     field: Literal["is_widow", "age", "bpl_status"]
     operator: Literal["eq", "gte", "lte"]
@@ -30,25 +40,64 @@ class PolicyRule(StrictModel):
     source_clause_id: str
 
 
+def calculate_age_on(date_of_birth: date, as_of_date: date) -> int:
+    """Return completed years on a date; a Feb. 29 birthday advances on March 1."""
+
+    return as_of_date.year - date_of_birth.year - (
+        (as_of_date.month, as_of_date.day)
+        < (date_of_birth.month, date_of_birth.day)
+    )
+
+
 class PolicyFixture(StrictModel):
+    """Combine scheme metadata, cited rules, and verification status."""
+
     scheme_id: str
     scheme_name: LocalizedText
     benefit_summary: LocalizedText
     source: PolicySource
     rules: list[PolicyRule]
+    age_as_of: Literal["application_date"]
+    age_boundaries_inclusive: Literal[True]
+    bpl_confirmation: Literal["government_bpl_card_shown"]
     documents_status: Literal["not_verified"]
 
 
 class SyntheticProfile(StrictModel):
+    """Describe a bounded, explicitly synthetic household profile."""
+
     synthetic: Literal[True]
     profile_id: str
-    age: int = Field(ge=0, le=125)
+    date_of_birth: date
+    application_date: date
     is_widow: bool
-    bpl_status: Literal["confirmed", "not_confirmed", "unknown"]
+    bpl_card_shown: bool
     state: Literal["Maharashtra"]
+
+    @model_validator(mode="after")
+    def validate_application_date(self) -> "SyntheticProfile":
+        if self.date_of_birth > self.application_date:
+            raise ValueError("date_of_birth cannot be after application_date")
+        if calculate_age_on(self.date_of_birth, self.application_date) > 125:
+            raise ValueError("age on application_date cannot exceed 125")
+        return self
+
+    @property
+    def age(self) -> int:
+        """Calculate completed age on the application date."""
+
+        return calculate_age_on(self.date_of_birth, self.application_date)
+
+    @property
+    def bpl_status(self) -> Literal["confirmed", "unknown"]:
+        """A shown government card confirms BPL only for this mock."""
+
+        return "confirmed" if self.bpl_card_shown else "unknown"
 
 
 class ExpectedVerdict(StrictModel):
+    """Capture a reviewed fixture result and the evidence behind it."""
+
     result: Literal["eligible", "not_eligible", "cant_tell"]
     reason: LocalizedText
     deciding_rule_ids: list[str]
@@ -56,17 +105,42 @@ class ExpectedVerdict(StrictModel):
 
 
 class ApplicationDraft(StrictModel):
+    """Represent a synthetic application draft eligible for explicit approval."""
+
     draft_id: str
     scheme_id: str
     applicant_reference: str
     district: str
-    age: int = Field(ge=0, le=125)
+    date_of_birth: date
+    application_date: date
     is_widow: bool
-    bpl_status: Literal["confirmed", "not_confirmed", "unknown"]
+    bpl_card_shown: bool
     declaration: LocalizedText
+
+    @model_validator(mode="after")
+    def validate_application_date(self) -> "ApplicationDraft":
+        if self.date_of_birth > self.application_date:
+            raise ValueError("date_of_birth cannot be after application_date")
+        if calculate_age_on(self.date_of_birth, self.application_date) > 125:
+            raise ValueError("age on application_date cannot exceed 125")
+        return self
+
+    @property
+    def age(self) -> int:
+        """Calculate completed age on the application date."""
+
+        return calculate_age_on(self.date_of_birth, self.application_date)
+
+    @property
+    def bpl_status(self) -> Literal["confirmed", "unknown"]:
+        """A shown government card confirms BPL only for this mock."""
+
+        return "confirmed" if self.bpl_card_shown else "unknown"
 
 
 class DevelopmentScenario(StrictModel):
+    """Pair a synthetic profile with its expected reviewed outcome."""
+
     scenario_id: str
     visible_in_ui: bool
     label: LocalizedText
@@ -75,15 +149,29 @@ class DevelopmentScenario(StrictModel):
     application_draft: ApplicationDraft | None = None
 
 
+class ReviewerApproval(StrictModel):
+    """Record the human review scope for a synthetic mock fixture."""
+
+    reviewer_name: str
+    decision: Literal["approved_for_mock_portal"]
+    reviewed_at: date
+    scope: Literal["synthetic_mock_portal_only"]
+
+
 class FixtureSet(StrictModel):
+    """Validate the policy fixture pack as one internally consistent unit."""
+
     fixture_version: str
-    status: Literal["draft_pending_role_review", "approved"]
+    status: Literal["draft_pending_technical_review", "approved"]
     synthetic_personas: Literal[True]
+    reviewer_approval: ReviewerApproval
     policy: PolicyFixture
     scenarios: list[DevelopmentScenario]
 
     @model_validator(mode="after")
     def validate_scenario_set(self) -> "FixtureSet":
+        """Enforce cross-record references and safe draft eligibility."""
+
         scenario_ids = [scenario.scenario_id for scenario in self.scenarios]
         if len(scenario_ids) != len(set(scenario_ids)):
             raise ValueError("Scenario IDs must be unique")
@@ -119,9 +207,12 @@ class FixtureSet(StrictModel):
                         f"{scenario.scenario_id} draft uses a different scheme"
                     )
                 if (
-                    draft.age != scenario.profile.age
+                    draft.date_of_birth != scenario.profile.date_of_birth
+                    or draft.application_date
+                    != scenario.profile.application_date
                     or draft.is_widow != scenario.profile.is_widow
-                    or draft.bpl_status != scenario.profile.bpl_status
+                    or draft.bpl_card_shown
+                    != scenario.profile.bpl_card_shown
                 ):
                     raise ValueError(
                         f"{scenario.scenario_id} draft does not match its "

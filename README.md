@@ -32,6 +32,9 @@ See [`docs/Scheme_Saathi_Roles_and_Work_Plan.pdf`](docs/Scheme_Saathi_Roles_and_
 - No API keys, real personal data or non-redistributable material in this repo. Use `.env` locally (it is git-ignored).
 - Held-out evaluation cases must not be readable by the agent.
 - Keep the contribution log from day one in `docs/CONTRIBUTIONS.md`.
+- Review the proposed end-to-end journey and phased implementation plan in [`docs/END_TO_END_IMPLEMENTATION_PLAN.md`](docs/END_TO_END_IMPLEMENTATION_PLAN.md); role-owner and policy sign-off is still pending.
+- Review the 40–60 scheme corpus shortlist, proposed 15-scheme gold set, evaluation protections, and gated delivery plan in [`docs/SCHEME_CATALOGUE_AND_DELIVERY_PLAN.md`](docs/SCHEME_CATALOGUE_AND_DELIVERY_PLAN.md). The shortlist is not yet a verified policy corpus.
+- Use the [`review-scheme-evidence` skill](.github/skills/review-scheme-evidence/SKILL.md) to prepare a reusable, source-cited LLM-assisted rule review. Its report is not policy approval; human sign-off is required.
 
 ## Frontend prototype
 

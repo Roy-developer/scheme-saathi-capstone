@@ -76,6 +76,8 @@ jobs:
     environment: shared-dev
     permissions:
       contents: read
+      # Required only so azure/login can exchange GitHub's short-lived identity
+      # token; it does not grant repository write access.
       id-token: write
     env:
       AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
@@ -204,7 +206,8 @@ jobs:
 
       # Updating the image creates an Azure Container Apps revision. Single
       # revision mode keeps the previous healthy revision serving traffic until
-      # the new revision is ready.
+      # the new revision is ready. Zero minimum replicas allows idle shutdown;
+      # one maximum replica avoids competing Streamlit in-memory sessions.
       - name: Deploy built image
         shell: bash
         run: |
@@ -220,8 +223,9 @@ jobs:
               "DEPLOYED_REF=$TARGET_REF" \
             --output none
 
-      # Wait for Azure to identify the latest revision as ready, then call the
-      # Streamlit health endpoint through the same public URL used by testers.
+      # Wait until the newly created revision, rather than an older healthy one,
+      # is Azure's latest ready revision. Then call Streamlit through the public
+      # ingress used by testers, allowing retries for a scale-from-zero startup.
       - name: Verify deployed revision
         id: verify
         shell: bash

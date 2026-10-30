@@ -1,3 +1,5 @@
+"""Render the fixture-backed Scheme Saathi Streamlit demonstration."""
+
 import os
 
 import streamlit as st
@@ -12,7 +14,7 @@ COPY = {
         "title": "Scheme Saathi",
         "subtitle": "Explore a cited welfare-scheme decision journey",
         "banner": "SYNTHETIC DEMONSTRATION — NOT A GOVERNMENT SERVICE",
-        "draft": "Policy interpretation awaiting team review",
+        "draft": "Mock rules reviewed; fixture implementation awaiting technical checks",
         "consent_title": "Demonstration notice",
         "consent_text": "This prototype uses preset synthetic households. It does not collect your personal information or submit an application.",
         "consent": "I understand and want to view the demonstration.",
@@ -22,19 +24,21 @@ COPY = {
         "scenario": "Choose a synthetic development scenario",
         "profile": "Synthetic household profile",
         "age": "Age",
+        "age_as_of": "Age calculated on application date",
+        "application_date": "Application date",
+        "date_of_birth": "Date of birth",
         "widow": "Widow status",
         "bpl": "BPL status",
         "state": "State",
         "yes": "Confirmed widow",
         "no": "Not widowed",
-        "confirmed": "Confirmed BPL",
-        "not_confirmed": "Confirmed not BPL",
-        "unknown": "Unknown",
+        "confirmed": "Government BPL card shown",
+        "unknown": "Government BPL card not shown — status unverified",
         "evaluate": "View expected fixture result",
         "result": "Expected development result",
         "eligible": "Appears eligible",
         "not_eligible": "Does not appear eligible",
-        "cant_tell": "Cannot determine",
+        "cant_tell": "Need more information",
         "reason": "Why this result was assigned",
         "rules": "Deciding reviewed-draft rules",
         "missing": "Information still needed",
@@ -68,7 +72,7 @@ COPY = {
         "title": "स्कीम साथी",
         "subtitle": "उद्धृत कल्याण-योजना निर्णय यात्रा देखें",
         "banner": "कृत्रिम प्रदर्शन — यह सरकारी सेवा नहीं है",
-        "draft": "नीति की व्याख्या टीम की समीक्षा की प्रतीक्षा में है",
+        "draft": "मॉक नियमों की समीक्षा हो चुकी है; फ़िक्स्चर की तकनीकी जाँच बाकी है",
         "consent_title": "प्रदर्शन सूचना",
         "consent_text": "यह प्रोटोटाइप पूर्वनिर्धारित कृत्रिम परिवारों का उपयोग करता है। यह आपकी व्यक्तिगत जानकारी एकत्र नहीं करता और आवेदन जमा नहीं करता।",
         "consent": "मैं समझता/समझती हूँ और प्रदर्शन देखना चाहता/चाहती हूँ।",
@@ -78,19 +82,21 @@ COPY = {
         "scenario": "कृत्रिम विकास उदाहरण चुनें",
         "profile": "कृत्रिम परिवार प्रोफ़ाइल",
         "age": "आयु",
+        "age_as_of": "आवेदन की तारीख पर आयु की गणना",
+        "application_date": "आवेदन की तारीख",
+        "date_of_birth": "जन्म तिथि",
         "widow": "विधवा स्थिति",
         "bpl": "BPL स्थिति",
         "state": "राज्य",
         "yes": "विधवा की पुष्टि",
         "no": "विधवा नहीं",
-        "confirmed": "BPL की पुष्टि",
-        "not_confirmed": "BPL नहीं होने की पुष्टि",
-        "unknown": "अज्ञात",
+        "confirmed": "सरकारी BPL कार्ड दिखाया गया",
+        "unknown": "सरकारी BPL कार्ड नहीं दिखाया — स्थिति सत्यापित नहीं",
         "evaluate": "अपेक्षित फ़िक्स्चर परिणाम देखें",
         "result": "अपेक्षित विकास परिणाम",
         "eligible": "पात्र प्रतीत होते हैं",
         "not_eligible": "पात्र प्रतीत नहीं होते",
-        "cant_tell": "निर्णय नहीं किया जा सकता",
+        "cant_tell": "अधिक जानकारी चाहिए",
         "reason": "यह परिणाम क्यों दिया गया",
         "rules": "निर्णायक समीक्षा-मसौदा नियम",
         "missing": "अभी आवश्यक जानकारी",
@@ -124,7 +130,7 @@ COPY = {
         "title": "स्कीम साथी",
         "subtitle": "उद्धृत कल्याण-योजना निर्णय प्रवास पाहा",
         "banner": "कृत्रिम प्रात्यक्षिक — ही सरकारी सेवा नाही",
-        "draft": "धोरणाच्या अर्थाला टीमच्या पुनरावलोकनाची प्रतीक्षा आहे",
+        "draft": "मॉक नियमांचे पुनरावलोकन झाले; फिक्स्चरची तांत्रिक तपासणी बाकी आहे",
         "consent_title": "प्रात्यक्षिक सूचना",
         "consent_text": "हा नमुना पूर्वनिश्चित कृत्रिम कुटुंबे वापरतो. तो तुमची वैयक्तिक माहिती गोळा करत नाही किंवा अर्ज सादर करत नाही.",
         "consent": "मला समजले आहे आणि मला प्रात्यक्षिक पाहायचे आहे.",
@@ -134,19 +140,21 @@ COPY = {
         "scenario": "कृत्रिम विकास उदाहरण निवडा",
         "profile": "कृत्रिम कुटुंब प्रोफाइल",
         "age": "वय",
+        "age_as_of": "अर्जाच्या तारखेला वयाची गणना",
+        "application_date": "अर्जाची तारीख",
+        "date_of_birth": "जन्मतारीख",
         "widow": "विधवा स्थिती",
         "bpl": "BPL स्थिती",
         "state": "राज्य",
         "yes": "विधवा असल्याची पुष्टी",
         "no": "विधवा नाही",
-        "confirmed": "BPL ची पुष्टी",
-        "not_confirmed": "BPL नसल्याची पुष्टी",
-        "unknown": "माहित नाही",
+        "confirmed": "सरकारी BPL कार्ड दाखवले",
+        "unknown": "सरकारी BPL कार्ड दाखवले नाही — स्थिती पडताळलेली नाही",
         "evaluate": "अपेक्षित फिक्स्चर निकाल पाहा",
         "result": "अपेक्षित विकास निकाल",
         "eligible": "पात्र असल्याचे दिसते",
         "not_eligible": "पात्र असल्याचे दिसत नाही",
-        "cant_tell": "निर्णय देता येत नाही",
+        "cant_tell": "अधिक माहिती आवश्यक",
         "reason": "हा निकाल का देण्यात आला",
         "rules": "निर्णायक पुनरावलोकन-मसुदा नियम",
         "missing": "अजून आवश्यक माहिती",
@@ -185,13 +193,18 @@ RESULT_PRESENTATION = {
 
 
 def localize(value: object, locale: str) -> str:
+    """Select localized text from a validated multilingual model."""
+
     return getattr(value, locale)
 
 
 def show_result_message(kind: str, message: str) -> None:
+    """Render a Streamlit status message using the configured severity."""
+
     getattr(st, kind)(message)
 
 
+# Workflow state is kept separate so changing a scenario cannot retain approval.
 WORKFLOW_STATE_KEYS = {
     "approved_fingerprint",
     "draft_district",
@@ -206,6 +219,8 @@ DEMO_INPUT_KEYS = {"demo_consent", "demo_scenario"}
 
 
 def clear_workflow_state(*, include_inputs: bool = False) -> None:
+    """Clear derived workflow state and optionally reset demonstration inputs."""
+
     keys = (
         WORKFLOW_STATE_KEYS | DEMO_INPUT_KEYS
         if include_inputs
@@ -318,6 +333,9 @@ profile_columns[1].metric(
 )
 profile_columns[2].metric(text["bpl"], text[profile.bpl_status])
 profile_columns[3].metric(text["state"], profile.state)
+st.caption(
+    f'{text["age_as_of"]}: {profile.application_date.isoformat()}'
+)
 
 if st.button(
     text["evaluate"],
@@ -398,6 +416,12 @@ if st.session_state.selected_result:
             st.write(
                 {
                     text["age"]: draft_template.age,
+                    text["date_of_birth"]: (
+                        draft_template.date_of_birth.isoformat()
+                    ),
+                    text["application_date"]: (
+                        draft_template.application_date.isoformat()
+                    ),
                     text["widow"]: text["yes"],
                     text["bpl"]: text[draft_template.bpl_status],
                 }
@@ -424,6 +448,7 @@ if st.session_state.selected_result:
                     current_draft,
                 )
             ):
+                # Any edit invalidates approval before mock submission is offered.
                 st.session_state.approved_fingerprint = None
                 st.session_state.draft_submitted = False
                 st.warning(text["invalidated"])

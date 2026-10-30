@@ -1,7 +1,13 @@
 {
-  "fixture_version": "0.1.0",
-  "status": "draft_pending_role_review",
+  "fixture_version": "0.2.0",
+  "status": "draft_pending_technical_review",
   "synthetic_personas": true,
+  "reviewer_approval": {
+    "reviewer_name": "Debadyuti Roy",
+    "decision": "approved_for_mock_portal",
+    "reviewed_at": "2026-10-30",
+    "scope": "synthetic_mock_portal_only"
+  },
   "policy": {
     "scheme_id": "IGNWPS-MH",
     "scheme_name": {
@@ -51,6 +57,9 @@
         "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01"
       }
     ],
+    "age_as_of": "application_date",
+    "age_boundaries_inclusive": true,
+    "bpl_confirmation": "government_bpl_card_shown",
     "documents_status": "not_verified"
   },
   "scenarios": [
@@ -65,17 +74,18 @@
       "profile": {
         "synthetic": true,
         "profile_id": "SYNTHETIC-IGNWPS-001",
-        "age": 40,
+        "date_of_birth": "1986-10-30",
+        "application_date": "2026-10-30",
         "is_widow": true,
-        "bpl_status": "confirmed",
+        "bpl_card_shown": true,
         "state": "Maharashtra"
       },
       "expected_verdict": {
         "result": "eligible",
         "reason": {
-          "en": "This synthetic profile satisfies the reviewed draft conditions: widow, age 40–79 inclusive, and confirmed BPL status.",
-          "hi": "यह कृत्रिम प्रोफ़ाइल समीक्षा की गई मसौदा शर्तें पूरी करती है: विधवा, आयु 40–79 वर्ष सहित, और पुष्टि की गई BPL स्थिति।",
-          "mr": "ही कृत्रिम प्रोफाइल पुनरावलोकन केलेल्या मसुदा अटी पूर्ण करते: विधवा, वय 40–79 वर्षे समावेशक आणि पुष्टी केलेली BPL स्थिती."
+          "en": "This synthetic profile meets the mock conditions: widow, completed age 40–79 on the application date, and government BPL card shown.",
+          "hi": "यह कृत्रिम प्रोफ़ाइल मॉक शर्तें पूरी करती है: विधवा, आवेदन की तारीख पर पूरी आयु 40–79 वर्ष, और सरकारी BPL कार्ड दिखाया गया।",
+          "mr": "ही कृत्रिम प्रोफाइल मॉक अटी पूर्ण करते: विधवा, अर्जाच्या तारखेला पूर्ण वय 40–79 वर्षे आणि सरकारी BPL कार्ड दाखवलेले."
         },
         "deciding_rule_ids": [
           "IGNWPS-MH-WIDOW-01",
@@ -90,9 +100,10 @@
         "scheme_id": "IGNWPS-MH",
         "applicant_reference": "Synthetic Applicant 001",
         "district": "Pune",
-        "age": 40,
+        "date_of_birth": "1986-10-30",
+        "application_date": "2026-10-30",
         "is_widow": true,
-        "bpl_status": "confirmed",
+        "bpl_card_shown": true,
         "declaration": {
           "en": "I confirm that this synthetic demonstration draft matches the information shown above.",
           "hi": "मैं पुष्टि करता/करती हूँ कि यह कृत्रिम प्रदर्शन मसौदा ऊपर दिखाई गई जानकारी से मेल खाता है।",
@@ -111,9 +122,10 @@
       "profile": {
         "synthetic": true,
         "profile_id": "SYNTHETIC-IGNWPS-002",
-        "age": 79,
+        "date_of_birth": "1947-10-30",
+        "application_date": "2026-10-30",
         "is_widow": true,
-        "bpl_status": "confirmed",
+        "bpl_card_shown": true,
         "state": "Maharashtra"
       },
       "expected_verdict": {
@@ -143,9 +155,10 @@
       "profile": {
         "synthetic": true,
         "profile_id": "SYNTHETIC-IGNWPS-003",
-        "age": 39,
+        "date_of_birth": "1987-10-30",
+        "application_date": "2026-10-30",
         "is_widow": true,
-        "bpl_status": "confirmed",
+        "bpl_card_shown": true,
         "state": "Maharashtra"
       },
       "expected_verdict": {
@@ -172,9 +185,10 @@
       "profile": {
         "synthetic": true,
         "profile_id": "SYNTHETIC-IGNWPS-004",
-        "age": 80,
+        "date_of_birth": "1946-10-30",
+        "application_date": "2026-10-30",
         "is_widow": true,
-        "bpl_status": "confirmed",
+        "bpl_card_shown": true,
         "state": "Maharashtra"
       },
       "expected_verdict": {
@@ -201,9 +215,10 @@
       "profile": {
         "synthetic": true,
         "profile_id": "SYNTHETIC-IGNWPS-005",
-        "age": 52,
+        "date_of_birth": "1974-10-30",
+        "application_date": "2026-10-30",
         "is_widow": false,
-        "bpl_status": "confirmed",
+        "bpl_card_shown": true,
         "state": "Maharashtra"
       },
       "expected_verdict": {
@@ -220,62 +235,67 @@
       }
     },
     {
-      "scenario_id": "not-eligible-not-bpl",
+      "scenario_id": "eligible-bpl-card-shown",
       "visible_in_ui": false,
       "label": {
-        "en": "Not eligible example — BPL condition not met",
-        "hi": "अपात्र उदाहरण — BPL शर्त पूरी नहीं",
-        "mr": "अपात्र उदाहरण — BPL अट पूर्ण नाही"
+        "en": "Eligible example — government BPL card shown",
+        "hi": "पात्र उदाहरण — सरकारी BPL कार्ड दिखाया गया",
+        "mr": "पात्र उदाहरण — सरकारी BPL कार्ड दाखवले"
       },
       "profile": {
         "synthetic": true,
         "profile_id": "SYNTHETIC-IGNWPS-006",
-        "age": 52,
+        "date_of_birth": "1974-10-30",
+        "application_date": "2026-10-30",
         "is_widow": true,
-        "bpl_status": "not_confirmed",
+        "bpl_card_shown": true,
         "state": "Maharashtra"
       },
       "expected_verdict": {
-        "result": "not_eligible",
+        "result": "eligible",
         "reason": {
-          "en": "This synthetic profile has confirmed that the family is not on the BPL list required by the published rule.",
-          "hi": "इस कृत्रिम प्रोफ़ाइल में पुष्टि है कि परिवार प्रकाशित नियम द्वारा आवश्यक BPL सूची में नहीं है।",
-          "mr": "या कृत्रिम प्रोफाइलमध्ये कुटुंब प्रकाशित नियमानुसार आवश्यक BPL यादीत नसल्याची पुष्टी आहे."
+          "en": "The synthetic profile shows a government BPL card, which confirms BPL status for this mock.",
+          "hi": "इस कृत्रिम प्रोफ़ाइल में सरकारी BPL कार्ड दिखाया गया है, जिससे इस मॉक के लिए BPL स्थिति की पुष्टि होती है।",
+          "mr": "या कृत्रिम प्रोफाइलमध्ये सरकारी BPL कार्ड दाखवले आहे, त्यामुळे या मॉकसाठी BPL स्थितीची पुष्टी होते."
         },
         "deciding_rule_ids": [
+          "IGNWPS-MH-WIDOW-01",
+          "IGNWPS-MH-AGE-MIN-01",
+          "IGNWPS-MH-AGE-MAX-01",
           "IGNWPS-MH-BPL-01"
         ],
         "missing_fields": []
       }
     },
     {
-      "scenario_id": "cant-tell-bpl-unknown",
+      "scenario_id": "cant-tell-bpl-card-not-shown",
       "visible_in_ui": true,
       "label": {
-        "en": "More information needed — BPL status unknown",
-        "hi": "अधिक जानकारी आवश्यक — BPL स्थिति अज्ञात",
-        "mr": "अधिक माहिती आवश्यक — BPL स्थिती अज्ञात"
+        "en": "More information needed — government BPL card not shown",
+        "hi": "अधिक जानकारी आवश्यक — सरकारी BPL कार्ड नहीं दिखाया गया",
+        "mr": "अधिक माहिती आवश्यक — सरकारी BPL कार्ड दाखवले नाही"
       },
       "profile": {
         "synthetic": true,
         "profile_id": "SYNTHETIC-IGNWPS-007",
-        "age": 52,
+        "date_of_birth": "1974-10-30",
+        "application_date": "2026-10-30",
         "is_widow": true,
-        "bpl_status": "unknown",
+        "bpl_card_shown": false,
         "state": "Maharashtra"
       },
       "expected_verdict": {
         "result": "cant_tell",
         "reason": {
-          "en": "The published rule requires BPL status, but this synthetic profile does not confirm whether the family is on the BPL list.",
-          "hi": "प्रकाशित नियम में BPL स्थिति आवश्यक है, लेकिन यह कृत्रिम प्रोफ़ाइल पुष्टि नहीं करती कि परिवार BPL सूची में है या नहीं।",
-          "mr": "प्रकाशित नियमानुसार BPL स्थिती आवश्यक आहे, परंतु ही कृत्रिम प्रोफाइल कुटुंब BPL यादीत आहे की नाही याची पुष्टी करत नाही."
+          "en": "No government BPL card has been shown. BPL status is unverified for this mock, so more information is needed; this is not a confirmed negative.",
+          "hi": "सरकारी BPL कार्ड नहीं दिखाया गया है। इस मॉक के लिए BPL स्थिति सत्यापित नहीं है, इसलिए अधिक जानकारी चाहिए; इसे पुष्टि की गई नकारात्मक स्थिति न मानें।",
+          "mr": "सरकारी BPL कार्ड दाखवलेले नाही. या मॉकसाठी BPL स्थिती पडताळलेली नाही, त्यामुळे अधिक माहिती आवश्यक आहे; याला नकाराची पुष्टी समजू नका."
         },
         "deciding_rule_ids": [
           "IGNWPS-MH-BPL-01"
         ],
         "missing_fields": [
-          "bpl_status"
+          "government_bpl_card"
         ]
       }
     }
