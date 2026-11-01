@@ -273,6 +273,27 @@ def test_journey_endpoint_returns_orchestrated_search(
     assert calls[0][1].query == "widow pension"
 
 
+def test_journey_endpoint_runs_and_forgets_with_async_sqlite_checkpoint(
+    client: TestClient,
+) -> None:
+    conversation_id = "fd87b10d-13a3-4f8d-959b-7ca964d2043d"
+    response = client.post(
+        "/api/v1/journey",
+        json={
+            "action": "evaluate",
+            "conversation_id": conversation_id,
+            "scheme_id": "IGNWPS-MH",
+            "profile": request_payload(),
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "eligible"
+
+    forgotten = client.delete(f"/api/v1/journey/{conversation_id}")
+    assert forgotten.status_code == 204
+
+
 def test_forget_journey_rejects_non_uuid_id(client: TestClient) -> None:
     response = client.delete("/api/v1/journey/not-a-uuid")
 

@@ -3,16 +3,16 @@
 from contextlib import asynccontextmanager
 import logging
 import os
-import sqlite3
 import sys
 from pathlib import Path
 from typing import AsyncIterator
 from uuid import UUID
 
+import aiosqlite
 from fastapi import FastAPI, HTTPException, Query, Request
 # Client connects to the MCP server; parameters explain how to launch stdio.
 from mcp import Client, StdioServerParameters
-from langgraph.checkpoint.sqlite import SqliteSaver
+from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
 from src.config import PROJECT_ROOT
 from src.api.eligibility import (
@@ -71,12 +71,9 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         )
     )
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
-    checkpoint_connection = sqlite3.connect(
-        checkpoint_path,
-        check_same_thread=False,
-    )
-    checkpointer = SqliteSaver(checkpoint_connection)
-    checkpointer.setup()
+    checkpoint_connection = await aiosqlite.connect(checkpoint_path)
+    checkpointer = AsyncSqliteSaver(checkpoint_connection)
+    await checkpointer.setup()
 
     # Find the project root so the child process can import the `src` package.
     project_root = PROJECT_ROOT
@@ -117,7 +114,7 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         logger.exception("Failed to connect to the Saathi MCP server")
         raise
     finally:
-        checkpoint_connection.close()
+        await checkpoint_connection.close()
 
 
 app = FastAPI(
@@ -227,7 +224,7 @@ async def journey(
 
 
 @app.delete("/api/v1/journey/{conversation_id}", status_code=204)
-def forget_journey(conversation_id: str, request: Request) -> None:
+async def forget_journey(conversation_id: str, request: Request) -> None:
     """Delete the synthetic conversation's persisted graph checkpoints."""
 
     try:
@@ -237,4 +234,4 @@ def forget_journey(conversation_id: str, request: Request) -> None:
             status_code=422,
             detail="conversation_id must be a UUID.",
         ) from error
-    request.app.state.journey_checkpointer.delete_thread(conversation_id)
+    await request.app.state.journey_checkpointer.adelete_thread(conversation_id)
