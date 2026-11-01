@@ -18,6 +18,11 @@ dependencies = [
   "mcp>=2,<3",
 ]
 
+[project.optional-dependencies]
+dev = [
+  "pytest>=8",
+]
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["src*"]
