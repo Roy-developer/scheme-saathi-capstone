@@ -7,10 +7,7 @@ from pydantic import ValidationError
 
 # These models define the facts sent to the tool and the response expected.
 from src.api.eligibility import EligibilityRequest, EligibilityResponse
-
-
-class EligibilityToolError(RuntimeError):
-    """Application-level error for failed or invalid MCP tool calls."""
+from src.workflow.errors import MCPToolError
 
 
 async def evaluate_eligibility(
@@ -32,13 +29,13 @@ async def evaluate_eligibility(
         )
     # Preserve the original cause for developers while exposing a safe error.
     except Exception as error:
-        raise EligibilityToolError(
+        raise MCPToolError(
             "Could not call the MCP eligibility tool."
         ) from error
 
     # Do not mistake a failed call or missing structured data for a verdict.
     if result.is_error or result.structured_content is None:
-        raise EligibilityToolError(
+        raise MCPToolError(
             "The MCP eligibility tool returned an error."
         )
 
@@ -47,6 +44,6 @@ async def evaluate_eligibility(
         return EligibilityResponse.model_validate(result.structured_content)
     # Reject malformed output rather than returning success-shaped data.
     except ValidationError as error:
-        raise EligibilityToolError(
+        raise MCPToolError(
             "The MCP eligibility tool returned an invalid response."
         ) from error

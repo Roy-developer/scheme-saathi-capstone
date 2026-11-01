@@ -1,17 +1,20 @@
 """Test deterministic mock eligibility API behavior."""
 
 import logging
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
 
 from src.api.app import app
+from src.api.scheme_search import load_passages
+from src.workflow.journey import JourneyResponse
 
 
 ENDPOINT = "/api/v1/schemes/IGNWPS-MH/evaluate"
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def client() -> TestClient:
     """Run API startup, including launching and connecting to the MCP server."""
 
@@ -44,7 +47,7 @@ def test_startup_logs_loaded_package_details(caplog: pytest.LogCaptureFixture) -
     # Startup should report the rules package loaded before serving requests.
     assert "IGNWPS-MH v1.0.0 (4 rules)" in caplog.text
     # The API should also log that its MCP client connected successfully.
-    assert "Connected to the local MCP rule-engine server" in caplog.text
+    assert "Connected to the local Saathi MCP server" in caplog.text
 
 
 def test_health_endpoint(client: TestClient) -> None:
@@ -143,3 +146,142 @@ def test_birth_date_after_application_date_is_rejected(client: TestClient) -> No
     )
 
     assert response.status_code == 422
+
+
+def test_search_endpoint_calls_adapter_with_filters_and_limit(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls = []
+
+    async def fake_search(
+        mcp_client,
+        query,
+        *,
+        jurisdiction,
+        language,
+        limit,
+    ):
+        calls.append((query, jurisdiction, language, limit))
+        return list(
+            load_passages(
+                Path(__file__).resolve().parents[1]
+                / "data"
+                / "schemes"
+                / "passages.json"
+            )[:limit]
+        )
+
+    monkeypatch.setattr("src.api.app.search_scheme_passages", fake_search)
+    response = client.get(
+        "/api/v1/schemes/search",
+        params={
+            "query": "below poverty line",
+            "jurisdiction": "IN-MH",
+            "language": "en",
+            "limit": 2,
+        },
+    )
+
+    assert response.status_code == 200
+    passages = response.json()
+    assert len(passages) == 2
+    assert passages[0]["scheme_id"] == "IGNWPS-MH"
+    assert passages[0]["review_status"] == "reviewed"
+    assert calls == [("below poverty line", "IN-MH", "en", 2)]
+
+
+def test_search_endpoint_returns_empty_list_for_no_match(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def fake_search(*args, **kwargs):
+        return []
+
+    monkeypatch.setattr("src.api.app.search_scheme_passages", fake_search)
+    response = client.get(
+        "/api/v1/schemes/search",
+        params={"query": "widow", "jurisdiction": "IN-KA"},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_search_endpoint_rejects_limit_above_maximum(client: TestClient) -> None:
+    response = client.get(
+        "/api/v1/schemes/search",
+        params={"query": "widow", "limit": 101},
+    )
+
+    assert response.status_code == 422
+
+
+def test_search_endpoint_limits_results(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    async def fake_search(*args, **kwargs):
+        return []
+
+    monkeypatch.setattr("src.api.app.search_scheme_passages", fake_search)
+    response = client.get(
+        "/api/v1/schemes/search",
+        params={"query": "widow", "limit": 2},
+    )
+
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_journey_endpoint_returns_orchestrated_search(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    conversation_id = "0e8fa6c3-46a1-44db-b4f3-4f2c9d981af1"
+    passage = load_passages(
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "schemes"
+        / "passages.json"
+    )[0]
+    calls = []
+
+    async def fake_run_journey(graph, journey_request):
+        calls.append((graph, journey_request))
+        return JourneyResponse(
+            conversation_id=journey_request.conversation_id,
+            plan="Find a source-cited scheme.",
+            status="search_results",
+            message="Found one cited passage.",
+            passages=[passage],
+        )
+
+    monkeypatch.setattr("src.api.app.run_journey", fake_run_journey)
+    response = client.post(
+        "/api/v1/journey",
+        json={
+            "action": "search",
+            "conversation_id": conversation_id,
+            "query": "widow pension",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "search_results"
+    assert response.json()["passages"][0]["passage_id"] == passage.passage_id
+    assert calls[0][1].query == "widow pension"
+
+
+def test_forget_journey_rejects_non_uuid_id(client: TestClient) -> None:
+    response = client.delete("/api/v1/journey/not-a-uuid")
+
+    assert response.status_code == 422
+
+
+def test_forget_journey_deletes_checkpoint_thread(client: TestClient) -> None:
+    response = client.delete(
+        "/api/v1/journey/0e8fa6c3-46a1-44db-b4f3-4f2c9d981af1"
+    )
+
+    assert response.status_code == 204

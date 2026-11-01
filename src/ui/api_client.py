@@ -1,4 +1,4 @@
-"""HTTP client for the deterministic eligibility API."""
+"""HTTP client for the orchestrated Scheme Saathi journey API."""
 
 import json
 import os
@@ -8,54 +8,62 @@ from urllib.request import Request, urlopen
 
 from pydantic import ValidationError
 
-from src.api.eligibility import EligibilityResponse
-from src.ui.models import SyntheticProfile
+from src.workflow.journey import JourneyRequest, JourneyResponse
 
 
-class EligibilityApiError(Exception):
-    """Report a safe, user-actionable API request or response failure."""
+class JourneyApiError(Exception):
+    """Report a safe, user-actionable orchestrated journey failure."""
 
 
-def evaluate_profile(
-    scheme_id: str,
-    profile: SyntheticProfile,
-) -> EligibilityResponse:
-    """Send synthetic profile facts to the API and validate its response."""
+def run_journey(journey: JourneyRequest) -> JourneyResponse:
+    """Run one conversational step through the LangGraph API."""
 
     base_url = os.getenv("SCHEME_SAATHI_API_URL", "http://127.0.0.1:8000")
-    endpoint = (
-        f"{base_url.rstrip('/')}/api/v1/schemes/"
-        f"{quote(scheme_id, safe='')}/evaluate"
-    )
-    payload = {
-        "date_of_birth": profile.date_of_birth.isoformat(),
-        "application_date": profile.application_date.isoformat(),
-        "is_widow": profile.is_widow,
-        "bpl_card_shown": profile.bpl_card_shown,
-    }
     request = Request(
-        endpoint,
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
+        f"{base_url.rstrip('/')}/api/v1/journey",
+        data=journey.model_dump_json().encode("utf-8"),
+        headers={
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
         method="POST",
     )
-
     try:
-        with urlopen(request, timeout=5) as response:
+        with urlopen(request, timeout=60) as response:
             response_body = response.read()
     except HTTPError as error:
-        raise EligibilityApiError(
-            f"The eligibility API returned HTTP {error.code}."
+        raise JourneyApiError(
+            f"The journey API returned HTTP {error.code}."
         ) from error
     except (URLError, TimeoutError) as error:
-        raise EligibilityApiError(
-            "Could not reach the eligibility API. Start it locally and try again."
+        raise JourneyApiError(
+            "Could not reach the journey API. Start the API and try again."
         ) from error
 
     try:
-        response_data = json.loads(response_body)
-        return EligibilityResponse.model_validate(response_data)
+        return JourneyResponse.model_validate(json.loads(response_body))
     except (json.JSONDecodeError, ValidationError) as error:
-        raise EligibilityApiError(
-            "The eligibility API returned an invalid response."
+        raise JourneyApiError(
+            "The journey API returned an invalid response."
+        ) from error
+
+
+def forget_journey(conversation_id: str) -> None:
+    """Delete the session's persisted LangGraph checkpoint."""
+
+    base_url = os.getenv("SCHEME_SAATHI_API_URL", "http://127.0.0.1:8000")
+    request = Request(
+        f"{base_url.rstrip('/')}/api/v1/journey/{quote(conversation_id, safe='')}",
+        method="DELETE",
+    )
+    try:
+        with urlopen(request, timeout=10):
+            pass
+    except HTTPError as error:
+        raise JourneyApiError(
+            "The journey API could not clear the saved session."
+        ) from error
+    except (URLError, TimeoutError) as error:
+        raise JourneyApiError(
+            "Could not clear the saved journey. The API may be unavailable."
         ) from error

@@ -1,0 +1,40 @@
+"""Register scheme-passage search on the shared MCP server."""
+
+from mcp.server import MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
+
+from src.config import PROJECT_ROOT
+from src.api.scheme_search import (
+    HybridSchemeRetriever,
+    SchemePassage,
+    load_passages,
+)
+
+
+def register_tools(mcp: MCPServer) -> None:
+    """Add BM25 retrieval for RAG context to the shared MCP server."""
+
+    passage_file = PROJECT_ROOT / "data" / "schemes" / "passages.json"
+    passages = load_passages(passage_file)
+    retriever = HybridSchemeRetriever(passages)
+
+    @mcp.tool()
+    def search_schemes(
+        query: str,
+        jurisdiction: str | None = None,
+        language: str | None = None,
+        limit: int = 10,
+    ) -> list[SchemePassage]:
+        """Retrieve BM25-ranked passages with citations for downstream RAG."""
+
+        try:
+            return list(
+                retriever.search(
+                    query,
+                    jurisdiction=jurisdiction,
+                    language=language,
+                    limit=limit,
+                )
+            )
+        except ValueError as error:
+            raise ToolError(str(error)) from error

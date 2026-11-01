@@ -59,6 +59,83 @@ The eligible scenario also demonstrates exact-draft approval. Editing the
 synthetic draft invalidates its previous frontend fingerprint. Submission goes
 only to an in-session mock confirmation; no external portal is contacted.
 
+## Scheme passage search
+
+The shared Saathi MCP server exposes `search_schemes`; the API makes it
+available at `GET /api/v1/schemes/search`. Search accepts a query, optional
+jurisdiction and language filters, and an optional result limit (default 10,
+maximum 100). Results include the passage ID, source citation, and review
+status. Search rewrites the query into a simpler keyword query, retrieves
+candidates with BM25 and multilingual vectors in Qdrant, combines both ranked
+lists using Reciprocal Rank Fusion, and reranks the candidates with a
+cross-encoder. The tool returns evidence for retrieval-augmented answers; it
+does not generate an answer or determine eligibility.
+
+The versioned corpus is `data/schemes/passages.json`. It currently contains
+13 English passages across IGNWPS-MH and PM-KISAN-IN. Their `reviewed` status
+was set per the user's human-review attestation; it is not legal or policy
+approval. The PM-KISAN source-currentness caveats are recorded in the review
+workbook. This remains a technical pilot, not the complete 40–60-scheme
+corpus, and retrieval does not determine eligibility.
+
+The current pilot uses the OpenRouter `voyageai/voyage-4` multilingual
+embedding model and the multilingual BGE reranker v2 M3 INT8 model. Copy
+`.env.example` to `.env`; configure `OPENROUTER_API_KEY` for intake query
+rewrites and `OPENROUTER_API_KEY_FREE` for embeddings (`OPEN_ROUTER_FREE` is
+also accepted as an embedding-key alias). `.env` is ignored by Git and loaded
+by `src.config`; the MCP child process receives only the embedding credential.
+The first search embeds the public passage corpus through OpenRouter, and the
+reranker model is downloaded if it is not cached.
+The Qdrant index is rebuilt in memory when the MCP server starts; persistent
+vector storage remains future work.
+Search queries are also sent to OpenRouter for embedding.
+
+### First LangGraph user journey
+
+The UI calls `POST /api/v1/journey`; it does not call MCP directly. A fixed
+LangGraph route runs the orchestrator node, then intake. Intake uses the
+standard OpenRouter key only to normalize the user's query for search; the
+search tool returns cited passages. For the supported IGNWPS-MH mock scheme,
+the UI then supplies a synthetic profile and the eligibility agent calls the
+deterministic rule-engine MCP tool. PM-KISAN remains information-only because
+there is no reviewed rule package for it. No model produces or changes an
+eligibility verdict.
+
+Typed graph state and conversation turns are checkpointed in the local SQLite
+file `data/runtime/journey.sqlite3`; `DELETE /api/v1/journey/{conversation_id}`
+deletes a session's checkpoint. This is prototype short-term session memory,
+not a consent-managed household profile. This first slice has no guardrails,
+document checker, mock-portal writes, or long-term memory; those remain
+capstone work.
+
+A 43-query, synthetic, unprotected development set is available at
+`data/schemes/retrieval_eval_dev.json`. Run its Recall@5 baseline with:
+
+```powershell
+python scripts/evaluate_scheme_retrieval.py --k 5 --skip-reranker --output data/schemes/retrieval_eval_dev_results.json
+```
+
+The local cross-encoder may fail to initialize on memory-constrained machines.
+For a separately labeled BM25 + vector + RRF baseline that does not load it,
+pass `--skip-reranker`. The current BM25 + vector + RRF baseline, without the
+reranker, achieved 83.7% passage Recall@5 and 100% scheme hit rate. Recall@5
+by query language was English 97.0%, Hindi 20.0%, and Marathi 60.0%. These
+multilingual results expose a retrieval gap; do not describe the pilot as
+validated for Hindi or Marathi. The 13 added Hindi, Marathi, and cross-scheme
+queries have provisional corpus-grounded labels and still require bilingual
+domain review. All metrics are synthetic development results, not a protected
+evaluation or evidence of production quality.
+
+The curation workbook is `data/schemes/scheme_passages_review_v0.4_human_attested.xlsx`.
+After editing it, regenerate the runtime corpus with:
+
+```powershell
+python scripts/export_scheme_dataset.py --corpus-version 0.3.0
+```
+
+The exporter requires reviewed passage statuses, valid source references,
+unique passage IDs, and source locators. It refuses to export pending passages.
+
 ## Local development
 
 Create and activate a virtual environment, then install the project and test
@@ -76,6 +153,11 @@ Run the API and UI in separate terminals:
 python -m uvicorn src.api.app:app --reload --port 8000
 python -m streamlit run src/ui/app.py
 ```
+
+The deployment image starts both processes together with
+`python -m src.run_services`; the UI calls its local API at `127.0.0.1:8000`.
+Set both OpenRouter credentials in the container environment using the
+deployment platform's secret mechanism. Never bake `.env` into the image.
 
 The API health check is at `http://127.0.0.1:8000/health`; interactive API
 documentation is at `http://127.0.0.1:8000/docs`. Run the test suite with

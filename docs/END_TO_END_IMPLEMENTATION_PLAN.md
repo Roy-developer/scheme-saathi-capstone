@@ -12,15 +12,19 @@ anything to a real government service.
 
 ## What we have now
 
-- A Streamlit screen that shows a synthetic scheme example.
-- A small FastAPI service that reports health and version information.
-- Seven made-up examples for the Maharashtra widow-pension scheme.
-- A demo showing that changing a form changes its fingerprint.
+- A Streamlit UI backed by FastAPI and a shared stdio MCP server.
+- A fixed LangGraph journey for source-cited scheme search and synthetic
+  eligibility checks.
+- Seven synthetic Maharashtra widow-pension examples and reviewed,
+  versioned pilot rules.
+- Short-term SQLite conversation checkpoints, including a forget action.
+- A demo showing that changing a mock form changes its fingerprint.
 
-**What we do not have yet:** the real backend journey, scheme search, rule
-evaluation, question asking, secure approval, mock submission, or restart and
-forget behavior. The current scheme rules are still marked as a draft for
-review. Its document requirements are not verified.
+**What we do not have yet:** a conversational fact-collection agent,
+document checks, secure approval and mock submission, long-term memory, or the
+broader 40–60-scheme corpus. PM-KISAN is information-only because it has no
+reviewed deterministic eligibility package. The pilot is not a real
+eligibility decision or application service.
 
 ## Picture the journey
 
@@ -111,13 +115,32 @@ untrusted document contents.
 
 ## MCP tools and workflow implementation plan
 
-The current local baseline has a deterministic FastAPI eligibility endpoint
-and versioned rule packages. The MCP servers and LangGraph workflow below are
-planned work, not implemented components. Build and verify this locally before
-adding Azure-hosted services; eligibility evaluation does not require a RAG
-database.
+The current local baseline has a deterministic FastAPI eligibility endpoint,
+versioned rule packages, and one shared Saathi MCP server with eligibility and
+scheme-passage search tools. Search uses BM25 plus multilingual Qdrant vectors,
+query decomposition, Reciprocal Rank Fusion, and a cross-encoder reranker. Its
+versioned JSON corpus currently has 13 passages across the IGNWPS-MH and
+PM-KISAN-IN pilot schemes, marked reviewed per the user's human-review
+attestation; this is not legal or policy approval or the planned 40–60-scheme
+corpus. The 43-query development evaluation set is available; persistent
+vector storage and a separate held-out evaluation remain outstanding.
+Vector embeddings use OpenRouter `voyageai/voyage-4`; configure
+`OPENROUTER_API_KEY_FREE` (also accepted as `OPEN_ROUTER_FREE`). Search sends
+corpus passages and user queries to OpenRouter. The multilingual BGE reranker
+model is fetched locally on first use.
+The first LangGraph user journey is implemented locally: a fixed orchestrator
+routes to an intake step, then either cited scheme search or the deterministic
+eligibility tool. SQLite checkpoints retain the short-term conversation by
+session ID. The LLM only normalizes search queries; it does not plan
+autonomously or decide eligibility. PM-KISAN remains information-only because
+the pilot has no reviewed rule package. Document checks, application drafting,
+and the remaining MCP boundaries below are future work.
 
-### MCP service boundaries
+### MCP tool boundaries
+
+The current local implementation runs one `saathi_mcp_server` process and
+registers each tool from a separate module. Keep these logical tool groups
+separate in code and permissions; they do not require one process per group.
 
 Keep tools grouped by purpose, with typed inputs/outputs and structured errors:
 
@@ -128,40 +151,31 @@ Keep tools grouped by purpose, with typed inputs/outputs and structured errors:
 | `doc-check` | `check_documents(scheme_id, supplied_document_metadata)` | Read-only and synthetic-only initially. Reports missing items or mismatches; it does not assert authenticity or make an eligibility decision. |
 | `mock-portal` | `create_draft`, `get_draft`, `submit_draft`, `get_status` | Separate mock data store. Only the application workflow may receive write access. Submission requires explicit approval bound to the exact draft version/fingerprint. Never connect this tool to a real government portal. |
 
-### First vertical slice
+### Implemented first vertical slice
 
-1. Freeze a typed request/response contract for `rule-engine.evaluate`,
-   reusing the existing API models and result semantics.
-2. Wrap the current deterministic evaluator in one FastMCP server. Keep the
-   reviewed/versioned JSON rule package as its source; do not introduce a
-   database or copy the rules into prompts.
-3. Add a local MCP client and a focused test that calls the server through
-   MCP, including eligible, not-eligible, unknown/missing-answer, invalid
-   input, and cited-evidence cases.
-4. Put a small LangGraph flow behind the FastAPI application. The graph owns
-   typed, synthetic demo state and checkpoints; it calls MCP tools through the
-   MCP client. The UI calls FastAPI, not MCP servers directly.
-5. In the first graph, route a known profile to the rule tool. For
-   `need_more_information`, ask only for a missing fact that can change the
-   result, update the profile, and re-evaluate. For a settled result, explain
-   the API/tool response and show its source. Tool failure must be visible;
-   never substitute a fixture's expected verdict.
-6. Add graph tests for routing, question/re-evaluation, state resume, tool
-   errors, and the invariant that identical answers produce identical
-   deterministic verdicts across locales.
+The typed FastAPI contract and shared stdio MCP server expose source-cited
+scheme search and the deterministic rule evaluator. The LangGraph has a fixed
+orchestrator, an intake step, a search route, and an eligibility route. It
+validates synthetic profile facts before calling the rule tool; the UI calls
+FastAPI and displays citations and eligibility results. SQLite checkpoints
+resume and delete a conversation by session ID. Tests cover routing,
+information-only schemes, invalid or missing profile facts, MCP failures, and
+conversation resume. Tool failures remain visible; no fixture verdict
+substitutes for a failed call.
 
 ### Expand the workflow safely
 
-After the first slice passes, add read-only `schemes-kb` retrieval, then
-synthetic-only `doc-check`. Add application drafting only after those outputs
-are stable. Pause the graph before any portal write so the person can review,
-edit, approve, or reject the exact draft. Any edit invalidates approval; resume
-and submit only the approved fingerprint. Keep write-server credentials and
-tool access unavailable to other agents/nodes.
+Next, add synthetic-only `doc-check` and the remaining scheme knowledge tools.
+Add application drafting only after those outputs are stable. Pause the graph
+before any portal write so the person can review, edit, approve, or reject the
+exact draft. Any edit invalidates approval; resume and submit only the approved
+fingerprint. Keep write-server credentials and tool access unavailable to
+other agents/nodes.
 
-Use the capstone's four logical MCP boundaries even if development initially
-runs them as separate local processes or packages. Begin with stdio for local
-development; choose and test the deployment transport when containerizing.
+Keep the capstone's four logical MCP boundaries even when the local
+development server hosts multiple tool groups in one process. Begin with stdio
+for local development; choose and test the deployment transport when
+containerizing.
 Keep operational diagnostics on stdout/stderr. Add persistence only for a
 clear need: SQLite can support local graph checkpoints and synthetic state;
 RAG storage and any durable audit trail are separate later decisions. Do not

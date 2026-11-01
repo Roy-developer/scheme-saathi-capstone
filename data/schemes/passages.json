@@ -1,16 +1,239 @@
 {
-  "passage_id": "IGNWPS-MH-ELIGIBILITY-01",
-  "scheme_id": "IGNWPS-MH",
-  "scheme_name": "Indira Gandhi National Widow Pension Scheme",
-  "jurisdiction": "IN-MH",
-  "language": "en",
-  "section": "eligibility",
-  "text": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
-  "source": {
-    "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
-    "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
-    "collected_at": "2026-10-28",
-    "publication_date": null
-  },
-  "review_status": "pending_review"
+  "corpus_version": "0.3.0",
+  "passages": [
+    {
+      "passage_id": "IGNWPS-MH-ELIGIBILITY-01",
+      "scheme_id": "IGNWPS-MH",
+      "scheme_name": "Indira Gandhi National Widow Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
+      "source": {
+        "source_id": "SRC-IGNWPS-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "Scheme page; eligibility (precise heading/paragraph not rechecked)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNWPS-MH-BENEFICIARY-01",
+      "scheme_id": "IGNWPS-MH",
+      "scheme_name": "Indira Gandhi National Widow Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "All Category Widows",
+      "source": {
+        "source_id": "SRC-IGNWPS-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "Scheme page; beneficiary (precise heading/paragraph not rechecked)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNWPS-MH-BENEFIT-01",
+      "scheme_id": "IGNWPS-MH",
+      "scheme_name": "Indira Gandhi National Widow Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Under this scheme, Rs. 1500 per month is given to each beneficiary.",
+      "source": {
+        "source_id": "SRC-IGNWPS-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "Scheme page; benefit (precise heading/paragraph not rechecked)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNWPS-MH-APPLICATION-01",
+      "scheme_id": "IGNWPS-MH",
+      "scheme_name": "Indira Gandhi National Widow Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "The applicant can apply at the Collector?s Office / Tehsildar?s Office, Sanjay Gandhi Niradhar Anudan Yojana Branch / Talathi Office.",
+      "source": {
+        "source_id": "SRC-IGNWPS-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "Scheme page; application (precise heading/paragraph not rechecked)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-BENEFIT-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Under the Scheme an amount of Rs.6000/- per year is released by the Central Government online directly into the bank accounts of the eligible farmers under Direct Benefit Transfer mode, subject to certain exclusions.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "PDF p. 2, section 2: Objective and Benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-ELIGIBILITY-LAND-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "who owns cultivable land as per land records of the concerned State/UT",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "PDF p. 2, section 3: Definition of farmer?s family; clause fragment"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-IDENTIFICATION-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "identification",
+      "text": "The existing land-ownership system will be used for identification of beneficiaries for calculation of benefit.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "PDF p. 2, section 3: Definition of farmer?s family"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "All Institutional Land holders",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "PDF p. 2, section 4.1(a): Exclusions"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-EXCLUSION-02",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "All Persons who paid Income Tax in last assessment year.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "PDF p. 3, section 4.1(b)(v): Exclusions"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-IDENTIFICATION-02",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "identification",
+      "text": "Responsibility of identifying the land holder farmer family eligible for benefit under the scheme shall be of the State / UT Government.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "PDF p. 6, section 6.1: Strategy for Implementation"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-PORTAL-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Beneficiaries under the scheme are to be identified by the respective State and Union Territory.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "PDF p. 8, section 9.1: PM-Kisan Portal for implementation"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-PAYMENT-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The amount due to the beneficiaries under the scheme is to be paid directly into their bank accounts through the mechanism of Direct Benefit Transfer (DBT).",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "PDF p. 11, section 10.4(a): Transfer of funds"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-OPERATIONS-001",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "operations",
+      "text": "eKYC is MANDATORY for PMKISAN Registered Farmers. Biometric-based eKYC option is now available for CSC VLE Logins, PM-KISAN Mobile Application and State Authorized User Logins.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "Official homepage notice: eKYC message"
+      },
+      "review_status": "reviewed"
+    }
+  ]
 }

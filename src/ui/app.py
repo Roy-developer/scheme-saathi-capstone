@@ -1,12 +1,18 @@
 """Render the fixture-backed Scheme Saathi Streamlit demonstration."""
 
 import os
+from uuid import UUID, uuid4
 
 import streamlit as st
 
 from src.ui.approval import approval_matches, draft_fingerprint
-from src.ui.api_client import EligibilityApiError, evaluate_profile
+from src.ui.api_client import (
+    JourneyApiError,
+    forget_journey,
+    run_journey,
+)
 from src.ui.data_provider import FixtureDataProvider
+from src.workflow.journey import JourneyRequest
 
 
 COPY = {
@@ -67,6 +73,20 @@ COPY = {
         "submitted": "Submitted to the mock portal. No government service was contacted.",
         "forget": "Forget my demonstration data",
         "forgotten": "The demonstration session was cleared.",
+        "forget_error": "Could not clear the saved conversation",
+        "conversation": "Conversation",
+        "finder_title": "Find a scheme",
+        "finder_help": "Ask in English, Hindi, or Marathi. Your query is sent to OpenRouter for search phrasing and embeddings; do not enter personal or financial identifiers. Search returns citations and does not decide eligibility.",
+        "finder_query": "What support or scheme are you looking for?",
+        "finder_submit": "Search schemes",
+        "finder_error": "Scheme search is unavailable",
+        "finder_empty": "No matching passages were found. Try different wording.",
+        "finder_choose": "Choose a scheme to explore",
+        "finder_continue": "Continue to the synthetic eligibility demo",
+        "finder_back": "Choose another scheme",
+        "finder_info_only": "This scheme currently has source passages for information only. A reviewed deterministic eligibility rule package is not available, so no eligibility decision will be shown.",
+        "finder_citation": "Source citation",
+        "finder_review": "Review status",
         "footer": "These are development fixtures, not held-out evaluation cases. No language model determines the verdict.",
     },
     "hi": {
@@ -126,6 +146,20 @@ COPY = {
         "submitted": "मॉक पोर्टल पर जमा किया गया। किसी सरकारी सेवा से संपर्क नहीं किया गया।",
         "forget": "मेरा प्रदर्शन डेटा भूलें",
         "forgotten": "प्रदर्शन सत्र साफ़ कर दिया गया।",
+        "forget_error": "सहेजी गई बातचीत साफ़ नहीं हो सकी",
+        "conversation": "बातचीत",
+        "finder_title": "योजना खोजें",
+        "finder_help": "अंग्रेज़ी, हिन्दी या मराठी में पूछें। खोज के लिए आपका प्रश्न OpenRouter को भेजा जाता है; व्यक्तिगत या वित्तीय पहचान संख्या न लिखें। खोज स्रोत सहित अंश दिखाती है, पात्रता तय नहीं करती।",
+        "finder_query": "आप किस सहायता या योजना की तलाश में हैं?",
+        "finder_submit": "योजनाएँ खोजें",
+        "finder_error": "योजना खोज उपलब्ध नहीं है",
+        "finder_empty": "मिलते-जुलते अंश नहीं मिले। प्रश्न को दूसरे शब्दों में लिखें।",
+        "finder_choose": "देखने के लिए योजना चुनें",
+        "finder_continue": "कृत्रिम पात्रता प्रदर्शन जारी रखें",
+        "finder_back": "दूसरी योजना चुनें",
+        "finder_info_only": "इस योजना के स्रोत अंश अभी केवल जानकारी के लिए उपलब्ध हैं। समीक्षा किया हुआ नियतात्मक पात्रता नियम-पैकेज उपलब्ध नहीं है, इसलिए पात्रता का निर्णय नहीं दिखाया जाएगा।",
+        "finder_citation": "स्रोत उद्धरण",
+        "finder_review": "समीक्षा स्थिति",
         "footer": "ये विकास फ़िक्स्चर हैं, सुरक्षित मूल्यांकन मामले नहीं। कोई भाषा मॉडल परिणाम तय नहीं करता।",
     },
     "mr": {
@@ -185,6 +219,20 @@ COPY = {
         "submitted": "मॉक पोर्टलवर सादर केले. कोणत्याही सरकारी सेवेशी संपर्क केला नाही.",
         "forget": "माझा प्रात्यक्षिक डेटा विसरा",
         "forgotten": "प्रात्यक्षिक सत्र साफ केले.",
+        "forget_error": "जतन केलेले संभाषण साफ करता आले नाही",
+        "conversation": "संभाषण",
+        "finder_title": "योजना शोधा",
+        "finder_help": "इंग्रजी, हिंदी किंवा मराठीत विचारा. शोधासाठी तुमचा प्रश्न OpenRouter कडे पाठवला जातो; वैयक्तिक किंवा आर्थिक ओळख क्रमांक देऊ नका. शोधात स्रोतासह उतारे दिसतात; पात्रता ठरत नाही.",
+        "finder_query": "तुम्ही कोणत्या मदतीचा किंवा योजनेचा शोध घेत आहात?",
+        "finder_submit": "योजना शोधा",
+        "finder_error": "योजना शोध उपलब्ध नाही",
+        "finder_empty": "जुळणारे उतारे सापडले नाहीत. प्रश्न वेगळ्या शब्दांत विचारा.",
+        "finder_choose": "पाहण्यासाठी योजना निवडा",
+        "finder_continue": "कृत्रिम पात्रता प्रात्यक्षिक सुरू ठेवा",
+        "finder_back": "दुसरी योजना निवडा",
+        "finder_info_only": "या योजनेचे स्रोत उतारे सध्या फक्त माहितीसाठी उपलब्ध आहेत. पुनरावलोकन केलेले निर्धारक पात्रता नियम-पॅकेज उपलब्ध नसल्यामुळे पात्रतेचा निर्णय दाखवला जाणार नाही.",
+        "finder_citation": "स्रोत उद्धरण",
+        "finder_review": "पुनरावलोकन स्थिती",
         "footer": "ही विकास फिक्स्चर आहेत, सुरक्षित मूल्यमापन प्रकरणे नाहीत. कोणतेही भाषा मॉडेल निकाल ठरवत नाही.",
     },
 }
@@ -223,8 +271,21 @@ WORKFLOW_STATE_KEYS = {
     "draft_submitted",
     "rejected_draft",
     "selected_result",
+    "journey_started",
+    "journey_scheme_id",
+    "conversation_id",
+    "journey_plan",
+    "journey_status",
+    "journey_conversation",
+    "scheme_search_error",
+    "scheme_search_results",
+    "selected_search_scheme",
 }
-DEMO_INPUT_KEYS = {"demo_consent", "demo_scenario"}
+DEMO_INPUT_KEYS = {
+    "demo_consent",
+    "demo_scenario",
+    "scheme_query",
+}
 
 
 def clear_workflow_state(*, include_inputs: bool = False) -> None:
@@ -237,6 +298,24 @@ def clear_workflow_state(*, include_inputs: bool = False) -> None:
     )
     for key in keys:
         st.session_state.pop(key, None)
+
+
+def clear_application_state() -> None:
+    """Clear only the synthetic application state, preserving conversation."""
+
+    for key in (
+        "approved_fingerprint",
+        "draft_district",
+        "draft_edit_mode",
+        "draft_reference",
+        "draft_scenario_id",
+        "draft_submitted",
+        "rejected_draft",
+    ):
+        st.session_state.pop(key, None)
+    st.session_state.selected_result = None
+    st.session_state.api_result = None
+    st.session_state.api_error = None
 
 
 st.set_page_config(
@@ -281,6 +360,15 @@ st.session_state.setdefault("approved_fingerprint", None)
 st.session_state.setdefault("draft_edit_mode", False)
 st.session_state.setdefault("draft_submitted", False)
 st.session_state.setdefault("rejected_draft", False)
+st.session_state.setdefault("scheme_search_results", None)
+st.session_state.setdefault("scheme_search_error", None)
+st.session_state.setdefault("journey_started", False)
+st.session_state.setdefault("journey_scheme_id", None)
+st.session_state.setdefault("conversation_id", None)
+st.session_state.setdefault("journey_conversation", [])
+st.session_state.setdefault("journey_plan", None)
+st.session_state.setdefault("journey_status", None)
+st.session_state.setdefault("forget_error", None)
 
 locale = st.selectbox(
     "Language / भाषा / भाषा",
@@ -313,12 +401,132 @@ with st.sidebar:
     if deployed_ref:
         st.caption(f"Deployed branch: {deployed_ref}")
     if st.button(text["forget"], use_container_width=True):
-        clear_workflow_state(include_inputs=True)
-        st.session_state.show_forgotten = True
-        st.rerun()
+        conversation_id = st.session_state.conversation_id
+        try:
+            if conversation_id:
+                forget_journey(conversation_id)
+        except JourneyApiError as error:
+            st.session_state.forget_error = str(error)
+        else:
+            clear_workflow_state(include_inputs=True)
+            st.session_state.show_forgotten = True
+            st.session_state.forget_error = None
+            st.rerun()
 
+if st.session_state.forget_error:
+    st.error(f'{text["forget_error"]}: {st.session_state.forget_error}')
 if st.session_state.pop("show_forgotten", False):
     st.success(text["forgotten"])
+
+if st.session_state.journey_started:
+    st.caption(
+        f'{text["finder_choose"]}: {st.session_state.journey_scheme_id}'
+    )
+    if st.button(text["finder_back"]):
+        st.session_state.journey_started = False
+        st.session_state.journey_scheme_id = None
+        st.session_state.conversation_id = None
+        clear_application_state()
+        st.rerun()
+else:
+    st.subheader(text["finder_title"])
+    st.caption(text["finder_help"])
+    query = st.text_input(text["finder_query"], key="scheme_query")
+    if st.button(text["finder_submit"]):
+        st.session_state.scheme_search_results = None
+        st.session_state.scheme_search_error = None
+        st.session_state.pop("selected_search_scheme", None)
+        if not query.strip():
+            st.session_state.scheme_search_error = text["finder_empty"]
+        else:
+            try:
+                journey = run_journey(
+                    JourneyRequest(
+                        action="search",
+                        conversation_id=(
+                            UUID(st.session_state.conversation_id)
+                            if st.session_state.conversation_id
+                            else uuid4()
+                        ),
+                        query=query,
+                    )
+                )
+                st.session_state.scheme_search_results = [
+                    passage.model_dump(mode="json")
+                    for passage in journey.passages
+                ]
+                st.session_state.conversation_id = str(
+                    journey.conversation_id
+                )
+                st.session_state.journey_plan = journey.plan
+                st.session_state.journey_conversation = journey.conversation
+            except JourneyApiError as error:
+                st.session_state.scheme_search_error = str(error)
+
+    if st.session_state.scheme_search_error:
+        st.error(
+            f'{text["finder_error"]}: '
+            f'{st.session_state.scheme_search_error}'
+        )
+
+    search_results = st.session_state.scheme_search_results
+    if search_results is not None:
+        if st.session_state.journey_plan:
+            st.caption(st.session_state.journey_plan)
+        if st.session_state.journey_conversation:
+            with st.expander(text["conversation"]):
+                for turn in st.session_state.journey_conversation:
+                    st.markdown(
+                        f'**{turn["role"].title()}:** {turn["content"]}'
+                    )
+        if not search_results:
+            st.info(text["finder_empty"])
+        else:
+            scheme_names = {}
+            for passage in search_results:
+                scheme_names.setdefault(
+                    passage["scheme_id"], passage["scheme_name"]
+                )
+            selected_scheme_id = st.selectbox(
+                text["finder_choose"],
+                options=list(scheme_names),
+                format_func=lambda value: (
+                    f'{scheme_names[value]} ({value})'
+                ),
+                key="selected_search_scheme",
+            )
+            for passage in search_results:
+                if passage["scheme_id"] != selected_scheme_id:
+                    continue
+                with st.expander(
+                    f'{passage["section"].replace("_", " ").title()} · '
+                    f'{passage["passage_id"]}'
+                ):
+                    st.write(passage["text"])
+                    st.caption(
+                        f'{text["finder_citation"]}: '
+                        f'{passage["source"]["publisher"]} · '
+                        f'{passage["source"].get("locator") or ""}'
+                    )
+                    st.caption(
+                        f'{text["finder_review"]}: '
+                        f'{passage["review_status"]}'
+                    )
+                    st.link_button(
+                        passage["source"]["publisher"],
+                        passage["source"]["url"],
+                    )
+
+            if selected_scheme_id == fixtures.policy.scheme_id:
+                if st.button(text["finder_continue"], type="primary"):
+                    st.session_state.journey_scheme_id = selected_scheme_id
+                    st.session_state.journey_started = True
+                    clear_application_state()
+                    st.rerun()
+            else:
+                st.info(text["finder_info_only"])
+
+    st.stop()
 
 st.subheader(text["consent_title"])
 st.info(text["consent_text"])
@@ -353,19 +561,43 @@ if st.button(
     type="primary",
     disabled=not consent,
 ):
-    clear_workflow_state()
+    clear_application_state()
     st.session_state.selected_result = scenario.scenario_id
     st.session_state.api_result = None
     st.session_state.api_error = None
     try:
-        api_response = evaluate_profile(
-            fixtures.policy.scheme_id,
-            scenario.profile,
+        journey = run_journey(
+            JourneyRequest(
+                action="evaluate",
+                conversation_id=(
+                    UUID(st.session_state.conversation_id)
+                    if st.session_state.conversation_id
+                    else uuid4()
+                ),
+                scheme_id=fixtures.policy.scheme_id,
+                profile={
+                    "date_of_birth": (
+                        scenario.profile.date_of_birth.isoformat()
+                    ),
+                    "application_date": (
+                        scenario.profile.application_date.isoformat()
+                    ),
+                    "is_widow": scenario.profile.is_widow,
+                    "bpl_card_shown": scenario.profile.bpl_card_shown,
+                },
+            )
         )
-    except EligibilityApiError as error:
+        st.session_state.journey_status = journey.status
+        st.session_state.conversation_id = str(journey.conversation_id)
+        st.session_state.journey_conversation = journey.conversation
+        st.session_state.api_result = (
+            journey.eligibility_result.model_dump(mode="json")
+            if journey.eligibility_result is not None
+            else None
+        )
+        st.session_state.journey_plan = journey.plan
+    except JourneyApiError as error:
         st.session_state.api_error = str(error)
-    else:
-        st.session_state.api_result = api_response.model_dump(mode="json")
 
 if st.session_state.api_error:
     st.error(f'{text["api_error"]}: {st.session_state.api_error}')

@@ -2,24 +2,38 @@
 
 from contextlib import asynccontextmanager
 import logging
-from pathlib import Path
+import os
+import sqlite3
 import sys
+from pathlib import Path
 from typing import AsyncIterator
+from uuid import UUID
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Query, Request
 # Client connects to the MCP server; parameters explain how to launch stdio.
 from mcp import Client, StdioServerParameters
+from langgraph.checkpoint.sqlite import SqliteSaver
 
+from src.config import PROJECT_ROOT
 from src.api.eligibility import (
     EligibilityRequest,
     EligibilityResponse,
 )
+from src.api.scheme_search import SchemePassage
 from src.rules.data_provider import RulePackageProvider
 # This adapter calls the MCP tool and translates failures for the API layer.
 from src.workflow.eligibility import (
-    EligibilityToolError,
     evaluate_eligibility,
 )
+from src.workflow.errors import MCPToolError
+from src.workflow.intake import IntakeAgentError
+from src.workflow.journey import (
+    JourneyRequest,
+    JourneyResponse,
+    build_journey_graph,
+    run_journey,
+)
+from src.workflow.scheme_search import search_scheme_passages
 
 
 logger = logging.getLogger(__name__)
@@ -50,12 +64,38 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         package_details,
     )
 
+    checkpoint_path = Path(
+        os.getenv(
+            "SCHEME_SAATHI_CHECKPOINT_DB",
+            str(PROJECT_ROOT / "data" / "runtime" / "journey.sqlite3"),
+        )
+    )
+    checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    checkpoint_connection = sqlite3.connect(
+        checkpoint_path,
+        check_same_thread=False,
+    )
+    checkpointer = SqliteSaver(checkpoint_connection)
+    checkpointer.setup()
+
     # Find the project root so the child process can import the `src` package.
-    project_root = Path(__file__).resolve().parents[2]
+    project_root = PROJECT_ROOT
     # Launch the MCP server with the same Python executable as this API.
     server_parameters = StdioServerParameters(
         command=sys.executable,
-        args=["-m", "src.mcp_servers.rule_engine"],
+        args=["-m", "src.mcp_servers.saathi_mcp_server"],
+        env={
+            "SCHEME_SAATHI_DISABLE_DOTENV": "1",
+            **{
+                name: value
+                for name in (
+                    "OPENROUTER_API_KEY_FREE",
+                    "OPEN_ROUTER_FREE",
+                    "OPENROUTER_EMBEDDING_MODEL",
+                )
+                if (value := os.getenv(name)) is not None
+            },
+        },
         cwd=project_root,
     )
     # Entering Client starts the child MCP process and opens the stdio link.
@@ -63,13 +103,21 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         async with Client(server_parameters) as mcp_client:
             # Make the connected client available to API request handlers.
             application.state.mcp_client = mcp_client
-            logger.info("Connected to the local MCP rule-engine server")
+            application.state.journey_checkpointer = checkpointer
+            application.state.journey_graph = build_journey_graph(
+                mcp_client,
+                packages,
+                checkpointer=checkpointer,
+            )
+            logger.info("Connected to the local Saathi MCP server")
             # FastAPI serves requests inside this context. On shutdown, leaving
             # it closes the client and stops its child process.
             yield
     except Exception:
-        logger.exception("Failed to connect to the MCP rule-engine server")
+        logger.exception("Failed to connect to the Saathi MCP server")
         raise
+    finally:
+        checkpoint_connection.close()
 
 
 app = FastAPI(
@@ -111,10 +159,82 @@ async def evaluate(
             scheme_id,
             eligibility_request,
         )
-    except EligibilityToolError as error:
+    except MCPToolError as error:
         # Return a service error, never a made-up or fixture-based verdict.
         logger.exception("MCP eligibility tool failed for scheme %s", scheme_id)
         raise HTTPException(
             status_code=502,
             detail="The eligibility tool is unavailable.",
         ) from error
+
+
+@app.get(
+    "/api/v1/schemes/search",
+    response_model=list[SchemePassage],
+)
+async def search_schemes(
+    request: Request,
+    query: str,
+    jurisdiction: str | None = None,
+    language: str | None = None,
+    limit: int = Query(default=10, ge=1, le=100),
+) -> list[SchemePassage]:
+    """Search scheme passages through the shared Saathi MCP server."""
+
+    if not query.strip():
+        raise HTTPException(status_code=422, detail="Search query cannot be empty")
+
+    try:
+        return await search_scheme_passages(
+            request.app.state.mcp_client,
+            query,
+            jurisdiction=jurisdiction,
+            language=language,
+            limit=limit,
+        )
+    except MCPToolError as error:
+        logger.exception("MCP scheme search failed")
+        raise HTTPException(
+            status_code=502,
+            detail="The scheme search tool is unavailable.",
+        ) from error
+
+
+@app.post("/api/v1/journey", response_model=JourneyResponse)
+async def journey(
+    journey_request: JourneyRequest,
+    request: Request,
+) -> JourneyResponse:
+    """Run one orchestrated discovery or synthetic eligibility step."""
+
+    try:
+        return await run_journey(
+            request.app.state.journey_graph,
+            journey_request,
+        )
+    except MCPToolError as error:
+        logger.exception("A journey MCP tool failed")
+        raise HTTPException(
+            status_code=502,
+            detail="A journey tool is unavailable.",
+        ) from error
+    except IntakeAgentError as error:
+        logger.exception("The intake agent failed")
+        raise HTTPException(
+            status_code=502,
+            detail="The intake agent is unavailable.",
+        ) from error
+
+
+@app.delete("/api/v1/journey/{conversation_id}", status_code=204)
+def forget_journey(conversation_id: str, request: Request) -> None:
+    """Delete the synthetic conversation's persisted graph checkpoints."""
+
+    try:
+        UUID(conversation_id)
+    except ValueError as error:
+        raise HTTPException(
+            status_code=422,
+            detail="conversation_id must be a UUID.",
+        ) from error
+    request.app.state.journey_checkpointer.delete_thread(conversation_id)
