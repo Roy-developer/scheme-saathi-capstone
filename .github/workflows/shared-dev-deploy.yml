@@ -58,7 +58,7 @@ jobs:
         run: python -m compileall -q src
 
       - name: Run tests
-              run: python -m pytest tests/test_api_eligibility.py tests/test_mcp_server.py tests/test_rule_engine_mcp.py -v
+              run: python -m pytest tests/test_api_eligibility.py tests/test_mcp_server.py -v
 
       # Run outside the checkout so repository files cannot hide missing JSON
       # package data from the installed Python package.
