@@ -1,9 +1,12 @@
 """Verify fixture provenance, boundary cases, and approval safety behavior."""
 
 import pytest
+from pydantic import ValidationError
 
 from src.ui.approval import approval_matches, draft_fingerprint
 from src.ui.data_provider import FixtureDataProvider
+from src.rules.data_provider import RulePackageProvider
+from src.rules.models import Rule, RulePackage
 
 
 @pytest.fixture
@@ -29,11 +32,8 @@ def test_fixture_pack_is_draft_and_synthetic(
 
     assert provider.fixtures.status == "draft_pending_technical_review"
     assert provider.fixtures.synthetic_personas is True
-    assert provider.fixtures.reviewer_approval.reviewer_name == "Debadyuti Roy"
-    assert (
-        provider.fixtures.reviewer_approval.decision
-        == "approved_for_mock_portal"
-    )
+    assert provider.rule_package.reviewer_name == "Debadyuti Roy"
+    assert provider.rule_package.approval_status == "approved_for_mock_portal"
     assert all(
         scenario.profile.synthetic
         for scenario in provider.fixtures.scenarios
@@ -109,24 +109,87 @@ def test_no_bpl_card_is_unknown_not_a_verified_negative(
     assert scenario.expected_verdict.result == "cant_tell"
 
 
-def test_fixture_records_mock_rule_interpretations(
+def test_rule_package_records_mock_approval_source_and_interpretations(
     provider: FixtureDataProvider,
 ) -> None:
-    """The reviewer-approved mock assumptions are explicit fixture data."""
+    """Rules, their provenance and mock-only approval live together."""
 
-    policy = provider.fixtures.policy
+    package = provider.rule_package
 
-    assert policy.age_as_of == "application_date"
-    assert policy.age_boundaries_inclusive is True
-    assert policy.bpl_confirmation == "government_bpl_card_shown"
+    assert package.package_version == "1.0.0"
+    assert package.age_as_of == "application_date"
+    assert package.age_boundaries_inclusive is True
+    assert package.bpl_confirmation == "government_bpl_card_shown"
+    assert package.source.source_url.host == "sjsa.maharashtra.gov.in"
+    assert package.approval_scope == "synthetic_mock_portal_only"
 
 
-def test_policy_source_is_official_and_dated(
+@pytest.mark.parametrize(
+    ("field", "operator", "value"),
+    [
+        ("age", "gte", "confirmed"),
+        ("age", "gte", True),
+        ("is_widow", "gte", True),
+        ("bpl_status", "eq", "unknown"),
+    ],
+)
+def test_rule_rejects_unsupported_combinations(
+    field: str,
+    operator: str,
+    value: bool | int | str,
+) -> None:
+    """Rule fields cannot use incompatible operators or value types."""
+
+    with pytest.raises(ValidationError, match="Invalid operator or value"):
+        Rule(
+            rule_id="INVALID-RULE",
+            field=field,
+            operator=operator,
+            value=value,
+            source_clause_id="TEST-SOURCE",
+        )
+
+
+def test_rule_package_rejects_duplicate_rule_ids(
+    provider: FixtureDataProvider,
+) -> None:
+    """Duplicate identifiers cannot make evidence ambiguous."""
+
+    payload = provider.rule_package.model_dump(mode="json")
+    payload["rules"][1]["rule_id"] = payload["rules"][0]["rule_id"]
+
+    with pytest.raises(ValidationError, match="Policy rule IDs must be unique"):
+        RulePackage.model_validate(payload)
+
+
+def test_rule_package_rejects_incomplete_or_inconsistent_age_bounds(
+    provider: FixtureDataProvider,
+) -> None:
+    """The mock policy requires both ordered age limits."""
+
+    payload = provider.rule_package.model_dump(mode="json")
+    payload["rules"] = [
+        rule for rule in payload["rules"]
+        if rule["rule_id"] != "IGNWPS-MH-AGE-MAX-01"
+    ]
+    with pytest.raises(ValidationError):
+        RulePackage.model_validate(payload)
+
+    payload = provider.rule_package.model_dump(mode="json")
+    minimum_rule = next(
+        rule for rule in payload["rules"] if rule["operator"] == "gte"
+    )
+    minimum_rule["value"] = 80
+    with pytest.raises(ValidationError, match="Minimum age cannot exceed"):
+        RulePackage.model_validate(payload)
+
+
+def test_rule_package_source_is_official_and_dated(
     provider: FixtureDataProvider,
 ) -> None:
     """Policy evidence retains its official host and collection metadata."""
 
-    source = provider.fixtures.policy.source
+    source = provider.rule_package.source
 
     assert source.source_url.host == "sjsa.maharashtra.gov.in"
     assert source.collected_at.isoformat() == "2026-10-28"
@@ -138,8 +201,21 @@ def test_document_requirements_are_not_invented(
 ) -> None:
     """Unverified document requirements remain explicitly absent."""
 
-    assert provider.fixtures.policy.documents_status == "not_verified"
+    assert provider.rule_package.documents_status == "not_verified"
 
+
+def test_rule_package_provider_rejects_duplicate_scheme_packages(
+    provider: FixtureDataProvider,
+    tmp_path,
+) -> None:
+    """One scheme ID must resolve to exactly one package in the registry."""
+
+    package_json = provider.rule_package.model_dump_json()
+    (tmp_path / "first.json").write_text(package_json, encoding="utf-8")
+    (tmp_path / "second.json").write_text(package_json, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Duplicate rule package"):
+        RulePackageProvider(tmp_path)
 
 def test_eligible_demo_has_matching_application_draft(
     provider: FixtureDataProvider,

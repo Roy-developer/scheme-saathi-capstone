@@ -11,7 +11,7 @@
 - Jurisdiction: Maharashtra implementation of the central scheme
 - Applicable-as-of date requested: 2026-10-30
 - Reviewer-approved baseline: `0.1.0`; implementation fixture: `0.2.0`
-- Input: `src/ui/fixtures/ignwps_mh.json`; schema: `src/ui/models.py`
+- Review input: `src/rules/packages/ignwps_mh.v1.json`; package schema: `src/rules/models.py`; synthetic scenarios: `src/ui/fixtures/ignwps_mh.json`
 - Review date: 2026-10-30
 - Review pass: 3; reviewer decisions recorded after the independent AI check
 - Primary reviewer model/provider: not available in session metadata
@@ -114,17 +114,23 @@ human policy review or approval.
    February 29 birthdays advance on March 1 in non-leap years in this
    implementation. This convention is a technical choice for the demo and
    should be revisited if a real application flow is ever considered.
-4. The generic `PolicyRule.value: bool | int | str` and independent
-   `field`/`operator` fields allow combinations that may be semantically
-   invalid (for example, an age comparison with a text value). Add
-   cross-field validation and explicit units before using these models as
-   executable rules.
+4. At the time of review, the generic rule `value: bool | int | str` and
+   independent `field`/`operator` fields allowed invalid combinations.
+   Follow-up added cross-field checks for supported value types, operators,
+   unique rule IDs, the required widow/age/BPL rule set, and ordered age bounds
+   in `src/rules/models.py`. The approved mock rules, provenance, reviewer
+   scope, and package version now live in `src/rules/packages/ignwps_mh.v1.json`;
+   scenario examples remain in the UI fixture. The API validates and preloads
+   rule packages during startup. These checks do not verify policy currentness
+   or translations.
 5. Fixture version `0.2.0` records whether a government BPL card was shown.
    A card not shown maps to unknown BPL status and `cant_tell`, not a verified
    negative. A separate verified-negative state is not represented.
-6. The fixture records reviewer name, decision, date, and mock-only scope.
-   Its overall status remains `draft_pending_technical_review`; reviewer
-   approval does not mean the implementation has passed technical checks.
+6. The versioned rule package records reviewer name, decision, date, and
+   mock-only scope. The UI fixture status remains
+   `draft_pending_technical_review`. Automated checks validate package
+   structure, but do not verify policy currentness, translation quality, or
+   real-world applicability.
 7. Each scenario embeds an `expected_verdict`. Keep this existing development
    fixture out of prompts/tools used for evaluation runs. It is not a
    held-out set and must not be treated as independent evaluation evidence.
@@ -140,7 +146,7 @@ human policy review or approval.
 | Currentness for real applications | The reviewer accepts S1 as the latest baseline for the mock, but its displayed date is ambiguous and no later-amendment search was completed. Do not extend the mock assumption to real applications. | Roles 1 and 2, if the project later targets real-world guidance |
 | Record source mapping | `IGNWPS-MH-ELIGIBILITY-01` is not printed as an official clause number; map it to the exact quoted text and URL as an internal identifier. | Roles 1 and 2 |
 | Verify translations | English, Hindi, and Marathi scheme names, benefit text, and expected explanations were not independently checked. | Role 1 and fluent language reviewers |
-| Verify technical behavior | Run the focused fixture tests and confirm the UI shows the calculated age and card evidence correctly. | Technical owner |
+| Rule schema enforcement | Automated checks reject invalid field/operator/value combinations, duplicate IDs, missing mock rules, and reversed age limits; focused and full suites pass (38 tests, 2026-10-30). Explicit units and independent technical review remain future work. | Technical owner |
 
 ## Reviewer-approved mock development cases
 
@@ -170,9 +176,10 @@ The project reviewer has approved the inclusive boundaries, application-date
 age calculation, use of a government BPL card, and S1 as the baseline for
 this mock only. Fixture version `0.2.0` now records those decisions using
 synthetic dates, card-shown state, and reviewer metadata. The page itself does
-not establish those operational details or prove currentness. Technical
-checks remain before this fixture can be treated as an approved executable
-ruleset.
+not establish those operational details or prove currentness. Follow-up code
+validation now rejects malformed mock rules, and all 38 tests pass. The
+fixture remains mock-only; source currentness, translation review, and real-
+world applicability remain unresolved.
 
 The second pass re-fetched the same page and reviewed fixture version `0.1.0`;
 the source text and rule values were unchanged. An independent second-model

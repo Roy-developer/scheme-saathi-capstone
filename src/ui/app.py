@@ -5,6 +5,7 @@ import os
 import streamlit as st
 
 from src.ui.approval import approval_matches, draft_fingerprint
+from src.ui.api_client import EligibilityApiError, evaluate_profile
 from src.ui.data_provider import FixtureDataProvider
 
 
@@ -34,14 +35,15 @@ COPY = {
         "no": "Not widowed",
         "confirmed": "Government BPL card shown",
         "unknown": "Government BPL card not shown — status unverified",
-        "evaluate": "View expected fixture result",
-        "result": "Expected development result",
+        "evaluate": "Check eligibility",
+        "result": "Eligibility result from the rule API",
         "eligible": "Appears eligible",
         "not_eligible": "Does not appear eligible",
         "cant_tell": "Need more information",
         "reason": "Why this result was assigned",
-        "rules": "Deciding reviewed-draft rules",
+        "rules": "Rules checked by the API",
         "missing": "Information still needed",
+        "api_error": "Could not check eligibility",
         "human": "Refer to a human caseworker",
         "policy": "Policy evidence",
         "official_clause": "Published eligibility text",
@@ -92,14 +94,15 @@ COPY = {
         "no": "विधवा नहीं",
         "confirmed": "सरकारी BPL कार्ड दिखाया गया",
         "unknown": "सरकारी BPL कार्ड नहीं दिखाया — स्थिति सत्यापित नहीं",
-        "evaluate": "अपेक्षित फ़िक्स्चर परिणाम देखें",
-        "result": "अपेक्षित विकास परिणाम",
+        "evaluate": "पात्रता जाँचें",
+        "result": "नियम API से पात्रता परिणाम",
         "eligible": "पात्र प्रतीत होते हैं",
         "not_eligible": "पात्र प्रतीत नहीं होते",
         "cant_tell": "अधिक जानकारी चाहिए",
         "reason": "यह परिणाम क्यों दिया गया",
-        "rules": "निर्णायक समीक्षा-मसौदा नियम",
+        "rules": "API द्वारा जाँचे गए नियम",
         "missing": "अभी आवश्यक जानकारी",
+        "api_error": "पात्रता की जाँच नहीं हो सकी",
         "human": "मानव केसवर्कर को भेजें",
         "policy": "नीति प्रमाण",
         "official_clause": "प्रकाशित पात्रता पाठ",
@@ -150,14 +153,15 @@ COPY = {
         "no": "विधवा नाही",
         "confirmed": "सरकारी BPL कार्ड दाखवले",
         "unknown": "सरकारी BPL कार्ड दाखवले नाही — स्थिती पडताळलेली नाही",
-        "evaluate": "अपेक्षित फिक्स्चर निकाल पाहा",
-        "result": "अपेक्षित विकास निकाल",
+        "evaluate": "पात्रता तपासा",
+        "result": "नियम API मधून पात्रता निकाल",
         "eligible": "पात्र असल्याचे दिसते",
         "not_eligible": "पात्र असल्याचे दिसत नाही",
         "cant_tell": "अधिक माहिती आवश्यक",
         "reason": "हा निकाल का देण्यात आला",
-        "rules": "निर्णायक पुनरावलोकन-मसुदा नियम",
+        "rules": "API ने तपासलेले नियम",
         "missing": "अजून आवश्यक माहिती",
+        "api_error": "पात्रता तपासता आली नाही",
         "human": "मानवी केसवर्करकडे पाठवा",
         "policy": "धोरण पुरावा",
         "official_clause": "प्रकाशित पात्रता मजकूर",
@@ -189,6 +193,11 @@ RESULT_PRESENTATION = {
     "eligible": ("✅", "success"),
     "not_eligible": ("⛔", "error"),
     "cant_tell": ("⚠️", "warning"),
+}
+API_RESULT_TO_UI = {
+    "eligible": "eligible",
+    "not_eligible": "not_eligible",
+    "need_more_information": "cant_tell",
 }
 
 
@@ -265,6 +274,8 @@ st.markdown(
 provider = FixtureDataProvider()
 fixtures = provider.fixtures
 st.session_state.setdefault("selected_result", None)
+st.session_state.setdefault("api_result", None)
+st.session_state.setdefault("api_error", None)
 st.session_state.setdefault("draft_scenario_id", None)
 st.session_state.setdefault("approved_fingerprint", None)
 st.session_state.setdefault("draft_edit_mode", False)
@@ -344,48 +355,72 @@ if st.button(
 ):
     clear_workflow_state()
     st.session_state.selected_result = scenario.scenario_id
+    st.session_state.api_result = None
+    st.session_state.api_error = None
+    try:
+        api_response = evaluate_profile(
+            fixtures.policy.scheme_id,
+            scenario.profile,
+        )
+    except EligibilityApiError as error:
+        st.session_state.api_error = str(error)
+    else:
+        st.session_state.api_result = api_response.model_dump(mode="json")
 
-if st.session_state.selected_result:
+if st.session_state.api_error:
+    st.error(f'{text["api_error"]}: {st.session_state.api_error}')
+
+if st.session_state.selected_result and st.session_state.api_result:
     selected = provider.get_scenario(st.session_state.selected_result)
-    verdict = selected.expected_verdict
-    icon, message_kind = RESULT_PRESENTATION[verdict.result]
+    verdict = st.session_state.api_result
+    display_result = API_RESULT_TO_UI[verdict["result"]]
+    icon, message_kind = RESULT_PRESENTATION[display_result]
 
     st.divider()
     st.subheader(text["result"])
     show_result_message(
         message_kind,
-        f'{icon} {text[verdict.result]}',
+        f'{icon} {text[display_result]}',
     )
     st.markdown(f'**{text["reason"]}**')
-    st.write(localize(verdict.reason, locale))
+    st.write(verdict["reason"])
 
     st.markdown(f'**{text["rules"]}**')
-    for rule_id in verdict.deciding_rule_ids:
+    for rule_id in verdict["deciding_rule_ids"]:
         st.code(rule_id, language=None)
 
-    if verdict.missing_fields:
+    if verdict["missing_fields"]:
         st.warning(
-            f'{text["missing"]}: {", ".join(verdict.missing_fields)}'
+            f'{text["missing"]}: {", ".join(verdict["missing_fields"])}'
         )
         st.button(text["human"], disabled=True)
+
+    for evidence in verdict["evidence"]:
+        with st.expander(evidence["rule_id"]):
+            st.write(evidence["source_text"])
+            st.caption(evidence["source_clause_id"])
+            st.link_button(text["source"], evidence["source_url"])
 
     st.subheader(text["policy"])
     st.markdown(f'**{localize(fixtures.policy.scheme_name, locale)}**')
     with st.expander(text["official_clause"], expanded=True):
-        st.write(fixtures.policy.source.official_eligibility_text)
+        st.write(provider.rule_package.source.official_eligibility_text)
         st.caption(
-            f'{fixtures.policy.source.publisher} · '
-            f'{fixtures.policy.source.collected_at.isoformat()}'
+            f'{provider.rule_package.source.publisher} · '
+            f'{provider.rule_package.source.collected_at.isoformat()}'
         )
     st.markdown(f'**{text["benefit"]}**')
     st.write(localize(fixtures.policy.benefit_summary, locale))
     st.link_button(
         text["source"],
-        str(fixtures.policy.source.source_url),
+        str(provider.rule_package.source.source_url),
     )
     st.info(text["documents"])
 
-    if verdict.result == "eligible" and selected.application_draft is not None:
+    if (
+        verdict["result"] == "eligible"
+        and selected.application_draft is not None
+    ):
         draft_template = selected.application_draft
         if st.button(text["prepare"]):
             st.session_state.draft_scenario_id = selected.scenario_id

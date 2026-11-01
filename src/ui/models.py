@@ -3,7 +3,7 @@
 from datetime import date
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class StrictModel(BaseModel):
@@ -20,26 +20,6 @@ class LocalizedText(StrictModel):
     mr: str
 
 
-class PolicySource(StrictModel):
-    """Record provenance and collection details for an official policy source."""
-
-    publisher: str
-    source_url: HttpUrl
-    collected_at: date
-    official_eligibility_text: str
-    publication_date_status: Literal["verified", "not_confirmed"]
-
-
-class PolicyRule(StrictModel):
-    """Represent one normalized rule traced to a source clause."""
-
-    rule_id: str
-    field: Literal["is_widow", "age", "bpl_status"]
-    operator: Literal["eq", "gte", "lte"]
-    value: bool | int | str
-    source_clause_id: str
-
-
 def calculate_age_on(date_of_birth: date, as_of_date: date) -> int:
     """Return completed years on a date; a Feb. 29 birthday advances on March 1."""
 
@@ -50,17 +30,11 @@ def calculate_age_on(date_of_birth: date, as_of_date: date) -> int:
 
 
 class PolicyFixture(StrictModel):
-    """Combine scheme metadata, cited rules, and verification status."""
+    """Store scheme display content separately from its approved rule package."""
 
     scheme_id: str
     scheme_name: LocalizedText
     benefit_summary: LocalizedText
-    source: PolicySource
-    rules: list[PolicyRule]
-    age_as_of: Literal["application_date"]
-    age_boundaries_inclusive: Literal[True]
-    bpl_confirmation: Literal["government_bpl_card_shown"]
-    documents_status: Literal["not_verified"]
 
 
 class SyntheticProfile(StrictModel):
@@ -149,22 +123,12 @@ class DevelopmentScenario(StrictModel):
     application_draft: ApplicationDraft | None = None
 
 
-class ReviewerApproval(StrictModel):
-    """Record the human review scope for a synthetic mock fixture."""
-
-    reviewer_name: str
-    decision: Literal["approved_for_mock_portal"]
-    reviewed_at: date
-    scope: Literal["synthetic_mock_portal_only"]
-
-
 class FixtureSet(StrictModel):
-    """Validate the policy fixture pack as one internally consistent unit."""
+    """Validate the UI demonstration fixtures."""
 
     fixture_version: str
     status: Literal["draft_pending_technical_review", "approved"]
     synthetic_personas: Literal[True]
-    reviewer_approval: ReviewerApproval
     policy: PolicyFixture
     scenarios: list[DevelopmentScenario]
 
@@ -176,17 +140,7 @@ class FixtureSet(StrictModel):
         if len(scenario_ids) != len(set(scenario_ids)):
             raise ValueError("Scenario IDs must be unique")
 
-        known_rules = {rule.rule_id for rule in self.policy.rules}
         for scenario in self.scenarios:
-            unknown_rules = (
-                set(scenario.expected_verdict.deciding_rule_ids) - known_rules
-            )
-            if unknown_rules:
-                raise ValueError(
-                    f"{scenario.scenario_id} references unknown rules: "
-                    f"{sorted(unknown_rules)}"
-                )
-
             if (
                 scenario.expected_verdict.result == "cant_tell"
                 and not scenario.expected_verdict.missing_fields

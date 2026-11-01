@@ -10,7 +10,7 @@ A welfare-scheme navigator: helps a family find government schemes they qualify 
 ## Repository layout
 | Folder | Purpose |
 |---|---|
-| `docs/` | Roles and work plan, threat model, memory policy, evaluation report |
+| `docs/` | Roles and work plan, threat model, memory policy, evaluation report, and the [page-referenced capstone guide notes](docs/CAPSTONE_PROJECT_GUIDE_REFERENCE.md) |
 | `src/` | Application code (agents, MCP servers, API) |
 | `data/` | Scheme data with source URL and collection date, synthetic personas only |
 | `eval/` | Evaluation harness, golden set, red-team suite |
@@ -38,18 +38,45 @@ See [`docs/Scheme_Saathi_Roles_and_Work_Plan.pdf`](docs/Scheme_Saathi_Roles_and_
 
 ## Frontend prototype
 
-The current Role 6 work is an explicitly synthetic frontend shell intended for
-deployment to Azure Container Apps. It does not make eligibility decisions or
-contact government services.
+The current Role 6 work includes an explicitly synthetic Streamlit UI and a
+small FastAPI eligibility endpoint. Approved mock rules, source provenance,
+review scope, and package version are kept in the version-controlled
+`src/rules/packages/` directory, separately from the UI's synthetic scenarios.
+The API validates and loads these packages once during startup; requests only
+evaluate applicant facts against the in-memory package. Rule changes take
+effect after the API restarts or is redeployed. The endpoint evaluates only the
+reviewed IGNWPS-MH mock rules; it does not decide real applications or contact
+government services.
 
 The container listens on port `8501` and exposes Streamlit's health endpoint at
 `/_stcore/health`.
 
-The current fixture-backed journey uses seven synthetic development personas
-against a draft interpretation of the official Maharashtra IGNWPS policy. It
-shows three representative outcomes in the UI. These fixtures are not held-out
-evaluation cases and must not be presented as final policy approval.
+The fixture-backed UI uses seven synthetic development personas and currently
+shows three representative outcomes. These fixtures are not held-out
+evaluation cases.
 
 The eligible scenario also demonstrates exact-draft approval. Editing the
 synthetic draft invalidates its previous frontend fingerprint. Submission goes
 only to an in-session mock confirmation; no external portal is contacted.
+
+## Local development
+
+Create and activate a virtual environment, then install the project and test
+dependencies:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev]"
+```
+
+Run the API and UI in separate terminals:
+
+```powershell
+python -m uvicorn src.api.app:app --reload --port 8000
+python -m streamlit run src/ui/app.py
+```
+
+The API health check is at `http://127.0.0.1:8000/health`; interactive API
+documentation is at `http://127.0.0.1:8000/docs`. Run the test suite with
+`python -m pytest -q`.

@@ -95,6 +95,90 @@ name the role owners yet.** The team should fill in owners and backups together.
 | **5. Evaluation and red-team** | Checks answers independently and tries to find failures. | Test examples and attack checks kept separate from the people tuning the system. |
 | **6. Deployment and operations** | Makes the whole thing easy to run and check. | A local run command, health checks, automated tests, and later deployment. |
 
+## Hooks and callbacks
+
+As the system grows, prefer using framework hooks and callbacks at appropriate
+extension points—for example, lifecycle hooks for startup and shutdown,
+request/error hooks for diagnostics, and workflow callbacks for orchestration
+traces. Use them where they make behavior observable, reusable, or easier to
+test; do not add every available hook just because it exists or duplicate the
+same work across hooks.
+
+Keep operational diagnostics on stdout/stderr for collection by the hosting
+platform. Record audit-worthy actions separately through a deliberate,
+shared audit service when needed. Do not log applicant data, secrets, or
+untrusted document contents.
+
+## MCP tools and workflow implementation plan
+
+The current local baseline has a deterministic FastAPI eligibility endpoint
+and versioned rule packages. The MCP servers and LangGraph workflow below are
+planned work, not implemented components. Build and verify this locally before
+adding Azure-hosted services; eligibility evaluation does not require a RAG
+database.
+
+### MCP service boundaries
+
+Keep tools grouped by purpose, with typed inputs/outputs and structured errors:
+
+| MCP service | Initial tools | Access |
+|---|---|---|
+| `rule-engine` | `evaluate(profile, scheme_id)` | Read-only and deterministic. Calls the existing rule evaluator; it does not duplicate rules or ask an LLM to decide eligibility. Returns verdict, reason, missing fields, rule IDs, and source evidence. |
+| `schemes-kb` | `search_schemes(query, locale)`, `get_scheme(scheme_id)`, `get_documents(scheme_id)` | Read-only. Returns source-linked information. Do not claim document requirements until verified. A retrieval database can be added later. |
+| `doc-check` | `check_documents(scheme_id, supplied_document_metadata)` | Read-only and synthetic-only initially. Reports missing items or mismatches; it does not assert authenticity or make an eligibility decision. |
+| `mock-portal` | `create_draft`, `get_draft`, `submit_draft`, `get_status` | Separate mock data store. Only the application workflow may receive write access. Submission requires explicit approval bound to the exact draft version/fingerprint. Never connect this tool to a real government portal. |
+
+### First vertical slice
+
+1. Freeze a typed request/response contract for `rule-engine.evaluate`,
+   reusing the existing API models and result semantics.
+2. Wrap the current deterministic evaluator in one FastMCP server. Keep the
+   reviewed/versioned JSON rule package as its source; do not introduce a
+   database or copy the rules into prompts.
+3. Add a local MCP client and a focused test that calls the server through
+   MCP, including eligible, not-eligible, unknown/missing-answer, invalid
+   input, and cited-evidence cases.
+4. Put a small LangGraph flow behind the FastAPI application. The graph owns
+   typed, synthetic demo state and checkpoints; it calls MCP tools through the
+   MCP client. The UI calls FastAPI, not MCP servers directly.
+5. In the first graph, route a known profile to the rule tool. For
+   `need_more_information`, ask only for a missing fact that can change the
+   result, update the profile, and re-evaluate. For a settled result, explain
+   the API/tool response and show its source. Tool failure must be visible;
+   never substitute a fixture's expected verdict.
+6. Add graph tests for routing, question/re-evaluation, state resume, tool
+   errors, and the invariant that identical answers produce identical
+   deterministic verdicts across locales.
+
+### Expand the workflow safely
+
+After the first slice passes, add read-only `schemes-kb` retrieval, then
+synthetic-only `doc-check`. Add application drafting only after those outputs
+are stable. Pause the graph before any portal write so the person can review,
+edit, approve, or reject the exact draft. Any edit invalidates approval; resume
+and submit only the approved fingerprint. Keep write-server credentials and
+tool access unavailable to other agents/nodes.
+
+Use the capstone's four logical MCP boundaries even if development initially
+runs them as separate local processes or packages. Begin with stdio for local
+development; choose and test the deployment transport when containerizing.
+Keep operational diagnostics on stdout/stderr. Add persistence only for a
+clear need: SQLite can support local graph checkpoints and synthetic state;
+RAG storage and any durable audit trail are separate later decisions. Do not
+log personal data, secrets, or raw document contents.
+
+### Completion gates
+
+- The MCP tool schema and errors are documented and tested.
+- The MCP rule tool returns exactly the deterministic evaluator's result and
+  source evidence; no model can override it.
+- The workflow handles all three verdict states and resumes safely after a
+  question or approval pause.
+- Only the application path can write to the mock portal, and approval is
+  bound to the unchanged draft.
+- A local teammate can run the UI, API, workflow, and MCP tools with the
+  documented setup before any Azure database or deployment work begins.
+
 ## Build it in this order
 
 Each step should work before the team builds on top of it. Some roles can work
