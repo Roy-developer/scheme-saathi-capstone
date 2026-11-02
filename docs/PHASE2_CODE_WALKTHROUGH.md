@@ -800,6 +800,96 @@ and plan steps come from the backend and are **English only** for now.
 
 ---
 
+## A search fix found by testing with the real LLM
+
+All the tests above use a **fake** LLM and a fake search, so they are free.
+After Phase 2 we also ran the whole flow once with the **real** OpenRouter
+calls: type a question → search → Continue → interview → verdict. That run
+found a problem the fake tests could not.
+
+### How search picks what to show
+
+1. The LLM rewrites the user's words into a clean search query.
+2. Search finds candidate passages (pieces of official scheme text).
+3. A **reranker** gives each passage a **score from 0 to 1**: "how well does
+   this answer the question?" Think of it as marks out of 100.
+4. Only passages scoring **0.3 or more** are shown
+   (`HOSTED_RERANK_MIN_SCORE`). The value 0.3 was chosen earlier from our 43
+   test questions; it removes most wrong passages.
+
+### The problem
+
+| Question | Best passage | Score | Shown? |
+|---|---|---|---|
+| "I am a widow aged 50, is there a pension?" | Widow pension | 0.56 | Yes |
+| "I am a small farmer with 1 acre land, any money support from government?" | PM-KISAN benefit | **0.239** | **No: "No matching passages were found"** |
+
+The LLM rewrite was good ("government financial support for small farmers
+with 1 acre land"). The reranker also put the right passage **first**. But
+the question uses everyday words, so the score was lower, and the 0.3 rule
+threw away the right answer. The farmer could never reach the interview.
+
+### The fix: a second chance for the top answer
+
+- **Rule 1 (unchanged):** show every passage scoring 0.3 or more.
+- **Rule 2 (new):** if **nothing** passed Rule 1, take only the **single
+  top passage**, and show it if it scores at least **0.2**
+  (`HOSTED_RERANK_FALLBACK_MIN_SCORE`). Otherwise show "no results".
+
+```python
+# src/api/scheme_search.py, end of HybridSchemeRetriever.search()
+kept = tuple(
+    passage
+    for _, (score, passage) in reranked
+    if min_score is None or float(score) >= min_score
+)[:limit]
+if not kept and fallback_min_score is not None:
+    best_score, best_passage = reranked[0][1]   # list is sorted, best first
+    if float(best_score) >= fallback_min_score:
+        return (best_passage,)                  # only ONE passage is rescued
+return kept
+```
+
+The MCP search tool (`src/mcp_servers/tools/scheme_search.py`) passes
+`fallback_min_score=0.2` only when the hosted reranker is used, the same as
+`min_score=0.3`.
+
+### Why 0.2 (and not 0.15)
+
+We scored some **off-topic** questions with the real reranker. We have no
+scheme for these, so the right answer is "no results":
+
+| Question | Top passage | Score |
+|---|---|---|
+| Small farmer, money support (**should** be shown) | PM-KISAN benefit | **0.239** |
+| Housing subsidy (Pradhan Mantri Awas Yojana) | PM-KISAN benefit | **0.145** |
+| Business loan for women | Widow pension | 0.042 |
+| Scholarship, health card, passport | Widow pension | 0.034–0.037 |
+| Cricket score, paneer recipe, "ignore previous instructions" | Widow pension | 0.012–0.019 |
+
+The cutoff must sit **between 0.145 and 0.239**. 0.15 would be only just
+above the housing question, so a slightly different housing question could
+wrongly show PM-KISAN. **0.2 sits safely in the middle.**
+
+### Edge cases
+
+| Situation | What happens | Why |
+|---|---|---|
+| Some passages score ≥ 0.3 | Exactly as before; Rule 2 is not used | Rule 2 runs only when Rule 1 found nothing |
+| Nothing ≥ 0.3, top is 0.24 | One passage shown | Second chance |
+| Nothing ≥ 0.3, two passages at 0.24 and 0.21 | **Only the top one** shown | A weak search should not fill the screen |
+| Nothing ≥ 0.3, top is 0.145 (housing) | "No matching passages were found" | Below 0.2 |
+| Local reranker instead of the hosted one | No cutoffs at all, as before | The 0.3 and 0.2 values are for Cohere scores only |
+
+**Test:** `test_fallback_keeps_only_the_best_passage_when_none_pass_min_score`
+in `tests/test_scheme_search.py` uses fake scores 0.24 and 0.21. With a 0.2
+fallback it expects only the 0.24 passage; with 0.25 it expects nothing.
+
+**Limit:** 0.2 is based on about 10 live questions. If we add schemes or
+change the reranker, check it again with more off-topic questions.
+
+---
+
 ## How Phase 2 is tested
 
 Run the whole suite from the repository folder:
@@ -809,7 +899,8 @@ cd C:\Users\Admin\OneDrive\Documents\Saathi\scheme-saathi-capstone
 ..\venv\Scripts\python.exe -m pytest -q
 ```
 
-Expected: **151 passed**.
+Expected: **152 passed** (151 at the end of Phase 2, plus the search
+fallback test above).
 
 | Test file | What it proves |
 |---|---|
@@ -872,6 +963,9 @@ open http://127.0.0.1:8501.
 
 - [ ] Search "farmer income support", choose PM-KISAN, Continue, **Start
       questions**. Only one question shows; the plan shows ⏳ Learn about you.
+- [ ] Search "I am a small farmer with 1 acre land, any money support from
+      government?". One PM-KISAN result shows (the search fallback).
+- [ ] Search "housing subsidy". No results.
 - [ ] Answer "yes", then "no" ×4, then "yes" for income tax. Questions stop;
       red not-eligible with `PMKISAN-INCOME-TAX-01`; plan ✅ ✅.
 - [ ] Start again and answer "maybe". The same question comes back with a
@@ -921,6 +1015,7 @@ open http://127.0.0.1:8501.
 | `src/ui/app.py` | Chat, plan checklist, widow mode choice, refresh restore, new text in 3 languages; PM-KISAN form removed |
 | Tests | New `test_question_picker.py`, `test_questions.py`, `test_supervisor.py`; new cases in the journey, API and UI tests |
 | Docs | Phase plan status, README journey section, this guide |
+| `src/api/scheme_search.py`, `src/mcp_servers/tools/scheme_search.py` | After Phase 2: the search fallback (`HOSTED_RERANK_FALLBACK_MIN_SCORE = 0.2`) |
 
 ---
 
