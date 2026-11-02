@@ -161,7 +161,7 @@ jobs:
                 --resource-group "$AZURE_RESOURCE_GROUP" \
                 --output json
             )"
-            actual_location="$(jq -r '.location' <<< "$app_json" | tr '[:upper:]' '[:lower:]')"
+            actual_location="$(jq -r '.location' <<< "$app_json" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')"
             actual_environment="$(jq -r '.properties.managedEnvironmentId' <<< "$app_json")"
             if [[ "$actual_location" != "$AZURE_LOCATION" ]]; then
               echo "::error::$app_name is not in the configured Azure location"
