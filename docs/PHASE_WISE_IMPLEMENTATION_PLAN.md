@@ -106,6 +106,8 @@ UI test checklist:
 
 Done when: no fixture profile is needed to reach a verdict.
 
+Code walkthrough for new developers: [PHASE2_CODE_WALKTHROUGH.md](PHASE2_CODE_WALKTHROUGH.md).
+
 What was built (no LLM calls yet, to keep cost at zero):
 
 - `src/workflow/supervisor.py`: builds the plan and moves it forward when a
