@@ -10,8 +10,10 @@ from src.ui.api_client import (
     JourneyApiError,
     forget_journey,
     run_journey,
+    run_pmkisan_eligibility,
 )
 from src.ui.data_provider import FixtureDataProvider
+from src.api.pmkisan_eligibility import PMKisanEligibilityRequest
 from src.workflow.journey import JourneyRequest
 
 
@@ -87,6 +89,25 @@ COPY = {
         "finder_info_only": "This scheme currently has source passages for information only. A reviewed deterministic eligibility rule package is not available, so no eligibility decision will be shown.",
         "finder_citation": "Source citation",
         "finder_review": "Review status",
+        "pmkisan_title": "Synthetic PM-KISAN household",
+        "pmkisan_notice": "Use fictional household facts only. This mock check follows the official guidelines revised in 2020. It does not check the current landholding cutoff or government records, and it is not an official decision.",
+        "pmkisan_land": "Does the farmer family have cultivable land in State/UT records?",
+        "pmkisan_institution": "Is the land held by an institution?",
+        "pmkisan_office": "Does a family member fall under a listed public-office exclusion?",
+        "pmkisan_employee": "Does a family member fall under the specified government-employee exclusion, outside the stated grade exceptions?",
+        "pmkisan_pension": "Does a family member receive a qualifying monthly pension of Rs. 10,000 or more?",
+        "pmkisan_tax": "Did a family member pay income tax in the last assessment year?",
+        "pmkisan_professional": "Is a family member a listed registered professional who is practicing?",
+        "pmkisan_nri": "Is this a new beneficiary whose farmer family is NRI?",
+        "pmkisan_unknown": "Unknown / Not sure",
+        "pmkisan_no": "No",
+        "pmkisan_yes": "Yes",
+        "pmkisan_submit": "Check eligibility",
+        "pmkisan_missing": "Answers still unknown",
+        "pmkisan_unresolved": "Not checked in this mock",
+        "pmkisan_potential": "Does not meet the 2020 mock criteria",
+        "pmkisan_verification": "Check the answers and try again",
+        "pmkisan_error": "Could not run PM-KISAN screen",
         "footer": "These are development fixtures, not held-out evaluation cases. No language model determines the verdict.",
     },
     "hi": {
@@ -160,6 +181,25 @@ COPY = {
         "finder_info_only": "इस योजना के स्रोत अंश अभी केवल जानकारी के लिए उपलब्ध हैं। समीक्षा किया हुआ नियतात्मक पात्रता नियम-पैकेज उपलब्ध नहीं है, इसलिए पात्रता का निर्णय नहीं दिखाया जाएगा।",
         "finder_citation": "स्रोत उद्धरण",
         "finder_review": "समीक्षा स्थिति",
+        "pmkisan_title": "कृत्रिम PM-KISAN परिवार",
+        "pmkisan_notice": "केवल काल्पनिक परिवार की जानकारी दें। यह मॉक जाँच 2020 में संशोधित सरकारी दिशानिर्देशों पर आधारित है। इसमें वर्तमान भूमि-कटऑफ या सरकारी रिकॉर्ड की जाँच नहीं होती, और यह सरकारी निर्णय नहीं है।",
+        "pmkisan_land": "क्या किसान परिवार की खेती योग्य भूमि राज्य/केंद्रशासित प्रदेश के रिकॉर्ड में है?",
+        "pmkisan_institution": "क्या भूमि किसी संस्था के नाम पर है?",
+        "pmkisan_office": "क्या परिवार का कोई सदस्य सूचीबद्ध सार्वजनिक पद की अपवर्जन श्रेणी में आता है?",
+        "pmkisan_employee": "क्या परिवार का कोई सदस्य निर्दिष्ट सरकारी-कर्मचारी अपवर्जन में आता है, बताई गई श्रेणी-छूट को छोड़कर?",
+        "pmkisan_pension": "क्या परिवार के किसी सदस्य को प्रति माह 10,000 रुपये या अधिक की संबंधित पेंशन मिलती है?",
+        "pmkisan_tax": "क्या परिवार के किसी सदस्य ने पिछले आकलन वर्ष में आयकर दिया?",
+        "pmkisan_professional": "क्या परिवार का कोई सदस्य सूचीबद्ध पंजीकृत पेशेवर है और उस पेशे में काम करता है?",
+        "pmkisan_nri": "क्या यह नया लाभार्थी है और किसान परिवार NRI है?",
+        "pmkisan_unknown": "अज्ञात / निश्चित नहीं",
+        "pmkisan_no": "नहीं",
+        "pmkisan_yes": "हाँ",
+        "pmkisan_submit": "पात्रता जाँचें",
+        "pmkisan_missing": "अज्ञात उत्तर",
+        "pmkisan_unresolved": "इस मॉक में जाँच नहीं हुई",
+        "pmkisan_potential": "2020 के मॉक मानदंड पूरे नहीं हुए",
+        "pmkisan_verification": "उत्तर जाँचकर फिर प्रयास करें",
+        "pmkisan_error": "PM-KISAN जाँच नहीं हो सकी",
         "footer": "ये विकास फ़िक्स्चर हैं, सुरक्षित मूल्यांकन मामले नहीं। कोई भाषा मॉडल परिणाम तय नहीं करता।",
     },
     "mr": {
@@ -233,6 +273,25 @@ COPY = {
         "finder_info_only": "या योजनेचे स्रोत उतारे सध्या फक्त माहितीसाठी उपलब्ध आहेत. पुनरावलोकन केलेले निर्धारक पात्रता नियम-पॅकेज उपलब्ध नसल्यामुळे पात्रतेचा निर्णय दाखवला जाणार नाही.",
         "finder_citation": "स्रोत उद्धरण",
         "finder_review": "पुनरावलोकन स्थिती",
+        "pmkisan_title": "कृत्रिम PM-KISAN कुटुंब",
+        "pmkisan_notice": "फक्त काल्पनिक कुटुंबाची माहिती द्या. ही मॉक तपासणी 2020 मध्ये सुधारित अधिकृत मार्गदर्शक तत्त्वांवर आधारित आहे. यात सध्याची जमीन-मर्यादा किंवा सरकारी नोंदी तपासल्या जात नाहीत; हा सरकारी निर्णय नाही.",
+        "pmkisan_land": "शेतकरी कुटुंबाची लागवडीयोग्य जमीन राज्य/केंद्रशासित प्रदेशाच्या नोंदीत आहे का?",
+        "pmkisan_institution": "जमीन एखाद्या संस्थेच्या नावावर आहे का?",
+        "pmkisan_office": "कुटुंबातील सदस्य सूचीबद्ध सार्वजनिक-पद अपात्रता श्रेणीत येतो का?",
+        "pmkisan_employee": "कुटुंबातील सदस्य निर्दिष्ट सरकारी-कर्मचारी अपात्रतेत येतो का, नमूद श्रेणी-सवलती वगळून?",
+        "pmkisan_pension": "कुटुंबातील सदस्याला दरमहा 10,000 रुपये किंवा अधिक संबंधित पेन्शन मिळते का?",
+        "pmkisan_tax": "कुटुंबातील सदस्याने मागील निर्धारण वर्षात आयकर भरला का?",
+        "pmkisan_professional": "कुटुंबातील सदस्य सूचीबद्ध नोंदणीकृत व्यावसायिक असून त्या व्यवसायात कार्यरत आहे का?",
+        "pmkisan_nri": "हा नवीन लाभार्थी असून शेतकरी कुटुंब NRI आहे का?",
+        "pmkisan_unknown": "अज्ञात / खात्री नाही",
+        "pmkisan_no": "नाही",
+        "pmkisan_yes": "होय",
+        "pmkisan_submit": "पात्रता तपासा",
+        "pmkisan_missing": "अज्ञात उत्तरे",
+        "pmkisan_unresolved": "या मॉकमध्ये तपासले नाही",
+        "pmkisan_potential": "2020 च्या मॉक निकषांची पूर्तता होत नाही",
+        "pmkisan_verification": "उत्तरे तपासून पुन्हा प्रयत्न करा",
+        "pmkisan_error": "PM-KISAN तपासणी करता आली नाही",
         "footer": "ही विकास फिक्स्चर आहेत, सुरक्षित मूल्यमापन प्रकरणे नाहीत. कोणतेही भाषा मॉडेल निकाल ठरवत नाही.",
     },
 }
@@ -270,6 +329,8 @@ WORKFLOW_STATE_KEYS = {
     "draft_scenario_id",
     "draft_submitted",
     "rejected_draft",
+    "pmkisan_eligibility_result",
+    "pmkisan_eligibility_error",
     "selected_result",
     "journey_started",
     "journey_scheme_id",
@@ -280,6 +341,8 @@ WORKFLOW_STATE_KEYS = {
     "scheme_search_error",
     "scheme_search_results",
     "selected_search_scheme",
+    "pmkisan_eligibility_result",
+    "pmkisan_eligibility_error",
 }
 DEMO_INPUT_KEYS = {
     "demo_consent",
@@ -362,6 +425,8 @@ st.session_state.setdefault("draft_submitted", False)
 st.session_state.setdefault("rejected_draft", False)
 st.session_state.setdefault("scheme_search_results", None)
 st.session_state.setdefault("scheme_search_error", None)
+st.session_state.setdefault("pmkisan_eligibility_result", None)
+st.session_state.setdefault("pmkisan_eligibility_error", None)
 st.session_state.setdefault("journey_started", False)
 st.session_state.setdefault("journey_scheme_id", None)
 st.session_state.setdefault("conversation_id", None)
@@ -428,6 +493,94 @@ if st.session_state.journey_started:
         st.session_state.conversation_id = None
         clear_application_state()
         st.rerun()
+    elif st.session_state.journey_scheme_id == "PM-KISAN-IN":
+        st.subheader(text["pmkisan_title"])
+        st.warning(text["pmkisan_notice"])
+        answer_labels = (
+            ("landholding_family_in_state_records", "pmkisan_land"),
+            ("institutional_landholder", "pmkisan_institution"),
+            ("listed_public_office_member", "pmkisan_office"),
+            ("excluded_government_employee_member", "pmkisan_employee"),
+            (
+                "pension_at_least_10000_excluding_stated_grades",
+                "pmkisan_pension",
+            ),
+            ("income_tax_paid_last_assessment_year", "pmkisan_tax"),
+            (
+                "registered_practicing_professional_member",
+                "pmkisan_professional",
+            ),
+            ("nri_new_beneficiary", "pmkisan_nri"),
+        )
+        with st.form("pmkisan_eligibility_form"):
+            answers = {}
+            choices = [
+                text["pmkisan_unknown"],
+                text["pmkisan_no"],
+                text["pmkisan_yes"],
+            ]
+            for field_name, label_key in answer_labels:
+                answer = st.selectbox(
+                    text[label_key],
+                    options=choices,
+                    key=f"pmkisan_{field_name}",
+                )
+                answers[field_name] = {
+                    text["pmkisan_unknown"]: None,
+                    text["pmkisan_no"]: False,
+                    text["pmkisan_yes"]: True,
+                }[answer]
+            submitted = st.form_submit_button(
+                text["pmkisan_submit"],
+                type="primary",
+            )
+        if submitted:
+            st.session_state.pmkisan_eligibility_result = None
+            st.session_state.pmkisan_eligibility_error = None
+            try:
+                response = run_pmkisan_eligibility(
+                    PMKisanEligibilityRequest(**answers)
+                )
+                st.session_state.pmkisan_eligibility_result = (
+                    response.model_dump(mode="json")
+                )
+            except JourneyApiError as error:
+                st.session_state.pmkisan_eligibility_error = str(error)
+
+        if st.session_state.pmkisan_eligibility_error:
+            st.error(
+                f'{text["pmkisan_error"]}: '
+                f'{st.session_state.pmkisan_eligibility_error}'
+            )
+
+        result = st.session_state.pmkisan_eligibility_result
+        if result:
+            if result["result"] == "eligible":
+                st.success(text["eligible"])
+            elif result["result"] == "not_eligible":
+                st.error(text["pmkisan_potential"])
+            else:
+                st.warning(text["pmkisan_verification"])
+            st.write(result["reason"])
+            st.warning(result["notice"])
+            if result["missing_fields"]:
+                st.caption(
+                    f'{text["pmkisan_missing"]}: '
+                    f'{", ".join(result["missing_fields"])}'
+                )
+            st.caption(
+                f'{text["pmkisan_unresolved"]}: '
+                f'{", ".join(result["unresolved_checks"])}'
+            )
+            for evidence in result["evidence"]:
+                with st.expander(evidence["rule_id"]):
+                    st.write(evidence["source_text"])
+                    st.caption(evidence["source_location"])
+                    st.link_button(
+                        text["source"],
+                        evidence["source_url"],
+                    )
+        st.stop()
 else:
     st.subheader(text["finder_title"])
     st.caption(text["finder_help"])
@@ -435,6 +588,8 @@ else:
     if st.button(text["finder_submit"]):
         st.session_state.scheme_search_results = None
         st.session_state.scheme_search_error = None
+        st.session_state.pmkisan_eligibility_result = None
+        st.session_state.pmkisan_eligibility_error = None
         st.session_state.pop("selected_search_scheme", None)
         if not query.strip():
             st.session_state.scheme_search_error = text["finder_empty"]
@@ -517,7 +672,10 @@ else:
                         passage["source"]["url"],
                     )
 
-            if selected_scheme_id == fixtures.policy.scheme_id:
+            if selected_scheme_id in (
+                fixtures.policy.scheme_id,
+                "PM-KISAN-IN",
+            ):
                 if st.button(text["finder_continue"], type="primary"):
                     st.session_state.journey_scheme_id = selected_scheme_id
                     st.session_state.journey_started = True

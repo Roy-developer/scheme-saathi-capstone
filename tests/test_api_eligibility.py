@@ -148,6 +148,95 @@ def test_birth_date_after_application_date_is_rejected(client: TestClient) -> No
     assert response.status_code == 422
 
 
+PMKISAN_EVALUATE_ENDPOINT = "/api/v1/schemes/PM-KISAN-IN/evaluate"
+
+
+def test_pmkisan_evaluation_flags_reported_2020_exclusion(
+    client: TestClient,
+) -> None:
+    response = client.post(
+        PMKISAN_EVALUATE_ENDPOINT,
+        json={
+            "landholding_family_in_state_records": True,
+            "institutional_landholder": True,
+            "listed_public_office_member": False,
+            "excluded_government_employee_member": False,
+            "pension_at_least_10000_excluding_stated_grades": False,
+            "income_tax_paid_last_assessment_year": False,
+            "registered_practicing_professional_member": False,
+            "nri_new_beneficiary": False,
+        },
+    )
+
+    body = response.json()
+    assert response.status_code == 200
+    assert body["result"] == "not_eligible"
+    assert body["deciding_rule_ids"] == ["PMKISAN-INSTITUTIONAL-LAND-01"]
+    assert body["evidence"][0]["source_location"] == "Page 2, section 4.1(a)"
+    assert body["unresolved_checks"]
+    assert "2020" in body["notice"]
+
+
+def test_pmkisan_evaluation_returns_eligible_only_under_mock_baseline(
+    client: TestClient,
+) -> None:
+    response = client.post(
+        PMKISAN_EVALUATE_ENDPOINT,
+        json={
+            "landholding_family_in_state_records": True,
+            "institutional_landholder": False,
+            "listed_public_office_member": False,
+            "excluded_government_employee_member": False,
+            "pension_at_least_10000_excluding_stated_grades": False,
+            "income_tax_paid_last_assessment_year": False,
+            "registered_practicing_professional_member": False,
+            "nri_new_beneficiary": False,
+        },
+    )
+
+    body = response.json()
+    assert response.status_code == 200
+    assert body["result"] == "eligible"
+    assert body["deciding_rule_ids"]
+    assert body["unresolved_checks"]
+    assert "not a government decision" in body["notice"]
+
+
+def test_pmkisan_evaluation_rejects_missing_landholding_criterion(
+    client: TestClient,
+) -> None:
+    response = client.post(
+        PMKISAN_EVALUATE_ENDPOINT,
+        json={
+            "landholding_family_in_state_records": False,
+            "institutional_landholder": False,
+            "listed_public_office_member": False,
+            "excluded_government_employee_member": False,
+            "pension_at_least_10000_excluding_stated_grades": False,
+            "income_tax_paid_last_assessment_year": False,
+            "registered_practicing_professional_member": False,
+            "nri_new_beneficiary": False,
+        },
+    )
+
+    body = response.json()
+    assert response.status_code == 200
+    assert body["result"] == "not_eligible"
+    assert body["deciding_rule_ids"] == ["PMKISAN-LAND-FAMILY-01"]
+
+
+def test_pmkisan_evaluation_keeps_unknown_facts_visible(
+    client: TestClient,
+) -> None:
+    response = client.post(PMKISAN_EVALUATE_ENDPOINT, json={})
+
+    body = response.json()
+    assert response.status_code == 200
+    assert body["result"] == "need_more_information"
+    assert "landholding_family_in_state_records" in body["missing_fields"]
+    assert len(body["missing_fields"]) == 8
+
+
 def test_search_endpoint_calls_adapter_with_filters_and_limit(
     client: TestClient,
     monkeypatch: pytest.MonkeyPatch,

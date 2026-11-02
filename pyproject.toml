@@ -37,5 +37,5 @@ where = ["."]
 include = ["src*"]
 
 [tool.setuptools.package-data]
-"src.rules" = ["packages/*.json"]
+"src.rules" = ["packages/*.json", "pmkisan/*.json"]
 "src.ui" = ["fixtures/*.json"]

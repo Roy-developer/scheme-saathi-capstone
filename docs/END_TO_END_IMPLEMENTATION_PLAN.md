@@ -1,328 +1,372 @@
-# Scheme Saathi: one complete user journey
+# Scheme Saathi: end-to-end implementation plan (redesign)
 
 > **This is a proposal for the team to discuss.** It is not an approved policy,
-> a final design, or a list of assigned people. Agree the scheme, policy,
+> a final design, or a list of assigned people. Agree the schemes, policy,
 > owners, and dates together before building against it.
 
 ## The idea in one sentence
 
-Help a person check one possible welfare scheme, understand the result, and
-review a **mock** application—without letting AI decide eligibility or sending
-anything to a real government service.
+A person describes their household in their own words; a **supervisor/planner**
+shows a plan, delegates to specialist agents that ask only verdict-changing
+questions, check every candidate scheme with a deterministic rule engine, list
+documents, and draft a **mock** application that is submitted only after the
+person approves the exact form. AI never decides eligibility, and nothing is
+sent to a real government service.
 
-## What we have now
+## Why this plan was rewritten
 
-- A Streamlit UI backed by FastAPI and a shared stdio MCP server.
-- A fixed LangGraph journey for source-cited scheme search and synthetic
-  eligibility checks.
-- Seven synthetic Maharashtra widow-pension examples and reviewed,
-  versioned pilot rules.
-- Short-term SQLite conversation checkpoints, including a forget action.
-- A demo showing that changing a mock form changes its fingerprint.
+The first vertical slice works and is deployed, but a review against the
+capstone brief (`capstone_projects` PDF, pp. 2–3 and 7–8) found that the
+LangGraph flow and UI deviate from the required architecture. The UI drives
+the journey; the graph only executes one step at a time.
 
-**What we do not have yet:** a conversational fact-collection agent,
-document checks, secure approval and mock submission, long-term memory, or the
-broader 40–60-scheme corpus. PM-KISAN is information-only because it has no
-reviewed deterministic eligibility package. The pilot is not a real
-eligibility decision or application service.
+| Brief requirement | First slice (current code) |
+|---|---|
+| Supervisor **makes a plan and assigns parts of it** to specialists; shows the plan object; **replans when a tool result contradicts it**; handles retries (p. 2, L8, L10). | `orchestrator_agent` returns a fixed sentence chosen by `action`. No plan object, delegation, replanning, retries, or self-correction loop. |
+| Plan for Scheme Saathi: **profile → candidate schemes → rules → documents → draft** (p. 7, step 2). | Only search or one-scheme evaluate, chosen by UI buttons. |
+| **Intake** creates a typed household profile from the message and **asks only the question that resolves the most open verdicts**; stops when verdicts settle or the user does not know (p. 7, step 3; p. 8 "question-selection loop"). | Intake is a one-shot validator. The UI posts a complete fixture profile, so intake never asks anything. |
+| **Eligibility analyst** searches the index filtered by state/gender/age band and sends **each candidate** to the rule engine (p. 7, step 4). | The user picks one scheme from a dropdown; only that scheme is evaluated. |
+| **Document checker** and **application agent**; only the application agent has write access to the mock portal (p. 8, L11). | Neither exists. Drafting, fingerprinting, and approval live in Streamlit session state. |
+| Every world-changing action goes through **`interrupt()`** with approve/edit/reject bound to the exact payload (L14). | No `interrupt()`; approval is a UI-side fingerprint check; no backend mock portal. |
+| Specialists use **ReAct over their own tools** with **typed hand-off messages** (L11). | No ReAct loops or hand-off messages. |
+| Hindi/Marathi/English **chat UI** for citizen/CSC operator; input/output guardrails; pre-tool permission/budget and post-tool logging hooks (pp. 2, 7). | Form-driven UI; the Citizen/CSC selector is never read; no guardrails or tool hooks. |
 
-## Picture the journey
+PM-KISAN was added as a direct UI → `POST /api/v1/schemes/PM-KISAN-IN/evaluate`
+call. That keeps it consistent with the widow-pension screen sequence, but it
+bypasses the graph entirely and must be migrated (Phase 3).
 
-```text
- PERSON
-   |
-   v
- "I want to learn about widow pension"
-   |
-   v
- SAATHI shows the scheme and its official source
-   |
-   v
- SAATHI asks only the facts needed for the rules
-   |
-   v
- RULE CHECKER (ordinary code, not AI)
-   |
-   +---- A fact is missing ------> Ask a question; show "Need more information"
-   |
-   +---- A rule is not met ------> Explain why; do not make an application
-   |
-   +---- All reviewed rules pass -> Show a clearly marked MOCK form
-                                       |
-                                       v
-                               Person checks the form
-                                  /           \
-                              edits            approves
-                                |                 |
-                          approval clears        v
-                                          MOCK PORTAL only
-                                                  |
-                                                  v
-                                      Show mock receipt/status
+## What we have now (keep and reuse)
+
+- FastAPI backend and a shared stdio MCP server with separate tool modules for
+  deterministic eligibility and hybrid scheme search.
+- Hybrid retrieval: BM25 + multilingual Qdrant vectors (OpenRouter
+  `voyageai/voyage-4`), query decomposition, RRF, hosted Cohere rerank with a
+  0.3 cutoff, top 5 passages; 43-query development evaluation set.
+- Reviewed, versioned rule package for IGNWPS-MH; a separately typed,
+  synthetic-only PM-KISAN package based on guidelines revised 2020-03-29
+  (current landholding cutoff and State/UT records unverified).
+- LangGraph with typed state and an SQLite checkpointer; forget-session API.
+- Draft fingerprinting logic (`src/ui/approval.py`) that can move to the
+  backend approval gate.
+- Azure deployment of separate API and UI container apps.
+
+## Target architecture
+
+```mermaid
+flowchart TD
+    U[Citizen / CSC operator<br/>Chat UI: EN / HI / MR] --> IG[Input guardrails<br/>PII mask, injection, scope]
+    IG --> SUP[Supervisor + planner<br/>typed Plan, delegate, replan, retry]
+    SUP <--> ST[(Typed JourneyState<br/>SQLite checkpointer)]
+    SUP --> IN[Intake agent<br/>HouseholdProfile + question selection]
+    SUP --> EA[Eligibility analyst<br/>candidate search + rule checks]
+    SUP --> DC[Document checker<br/>read-only]
+    SUP --> AA[Application agent<br/>only writer]
+    IN --> HK[Hooks<br/>pre: permission + budget<br/>post: PII-scrubbed trace]
+    EA --> HK
+    DC --> HK
+    AA --> HK
+    HK --> KB[schemes-kb MCP]
+    HK --> RE[rule-engine MCP]
+    HK --> DCK[doc-check MCP]
+    HK --> MP[mock-portal MCP]
+    AA --> AP{{interrupt: approve / edit / reject<br/>bound to exact draft fingerprint}}
+    AP --> MP
+    SUP --> OG[Output guardrails<br/>citations, explicit unknowns, leak check]
+    OG --> U
 ```
 
-The AI can help understand a request and explain the result. **It cannot make
-the eligibility decision.** A tested rule checker makes that decision and
-shows which official rule it used.
+### Agents and their tools (least privilege)
 
-## What the person experiences
+| Agent | Responsibility | Tools it may call | Must not |
+|---|---|---|---|
+| **Supervisor/planner** | Build and show the `Plan`; delegate each step via a typed hand-off; mark steps done/blocked; replan on contradiction; bounded retries; decide when to pause for the user. | None directly (routes to specialists). | Decide eligibility; call write tools. |
+| **Intake** | Extract a typed `HouseholdProfile` from free text; pick the single question that resolves the most open verdicts; stop when verdicts settle or the user says they don't know. | `rule-engine.required_facts`, `rule-engine.evaluate` (dry-run to score questions). | Ask for Aadhaar/bank numbers; treat unknown as "no". |
+| **Eligibility analyst** | Search candidate schemes filtered by state/gender/age band; evaluate **each** candidate; return verdict, deciding clause, missing fields. | `schemes-kb.search_schemes`, `schemes-kb.get_scheme`, `rule-engine.evaluate`. | Override or reinterpret rule-engine verdicts. |
+| **Document checker** | List required documents for eligible schemes; compare with what the household reports; flag mismatches and explain correction. | `schemes-kb.get_documents`, `doc-check.check_documents`. | Invent unverified document lists; assert authenticity. |
+| **Application agent** | Create a mock draft for an eligible scheme; pause for approval; submit only the approved fingerprint; report status. | `mock-portal.create_draft/get_draft/submit_draft/get_status`. | Submit without an approval token bound to the unchanged draft. |
 
-| What the person does | What Saathi should do |
+LLMs are used for understanding text, extracting candidate profile facts,
+phrasing questions/explanations, and planning within an allowed step
+vocabulary. **Verdicts, question scoring, and approval checks are code.**
+
+### Typed state (sketch for team agreement)
+
+```python
+class PlanStep(BaseModel):
+    step_id: Literal["profile", "candidates", "rules", "documents", "draft"]
+    owner: Literal["intake", "eligibility", "documents", "application"]
+    status: Literal["pending", "in_progress", "done", "blocked", "skipped"]
+    reason: str | None = None
+
+class Plan(BaseModel):
+    version: int                  # increments on every replan
+    steps: list[PlanStep]
+    replan_reason: str | None = None
+
+class HouseholdProfile(BaseModel):  # every fact optional; None = unknown
+    state: str | None = None
+    applicant_gender: str | None = None
+    date_of_birth: date | None = None
+    is_widow: bool | None = None
+    bpl_card_shown: bool | None = None
+    landholding_family_in_state_records: bool | None = None
+    # ... PM-KISAN exclusions and future scheme facts
+    declined_fields: set[str] = set()   # "I don't know" stops re-asking
+
+class CandidateVerdict(BaseModel):
+    scheme_id: str
+    result: Literal["eligible", "not_eligible", "need_more_information"]
+    deciding_rule_ids: list[str]
+    missing_fields: list[str]
+    evidence: list[RuleEvidence]
+
+class Handoff(BaseModel):          # supervisor -> specialist and back
+    step_id: str
+    task: str
+    inputs: dict[str, Any]
+    outcome: Literal["completed", "needs_user", "failed", "contradiction"] | None = None
+    summary: str | None = None
+
+class JourneyState(TypedDict, total=False):
+    conversation_id: str
+    locale: Literal["en", "hi", "mr"]
+    mode: Literal["citizen", "csc"]
+    messages: Annotated[list[Message], add]
+    plan: Plan
+    profile: HouseholdProfile
+    candidates: list[CandidateVerdict]
+    pending_question: Question | None
+    documents: list[DocumentFinding]
+    draft: MockDraft | None
+    approval: ApprovalDecision | None
+    handoffs: Annotated[list[Handoff], add]
+    retries: dict[str, int]
+    budget: Budget
+```
+
+### Graph shape
+
+```text
+START -> input_guardrails -> supervisor
+supervisor --(next step owner)--> intake | eligibility | documents | application
+intake      -> supervisor   (profile updated; or pending_question -> END turn)
+eligibility -> supervisor   (verdicts; contradiction -> replan)
+documents   -> supervisor
+application -> approval_gate (interrupt) -> application (submit) -> supervisor
+supervisor --(plan complete or awaiting user)--> output_guardrails -> END
+```
+
+- **Self-correction loop:** eligibility → supervisor → intake → eligibility
+  repeats while open verdicts can be resolved by an answerable question.
+- **Pause and resume:** a question or approval ends the turn with state
+  checkpointed; the next user message (or approval decision) resumes the
+  same `conversation_id`. A crash mid-application resumes from the last
+  checkpoint (p. 8).
+- **Retries:** transient MCP failures retry with a bounded count per step;
+  after the limit the step is `blocked` and the user sees the failure. No
+  fixture verdict ever substitutes for a failed tool.
+
+### Replan triggers (each must appear in a trace)
+
+| Trigger | Replan |
 |---|---|
-| Starts the demo | Clearly say this is a synthetic demonstration, not a government decision or real application. |
-| Asks about widow pension in Maharashtra | Show the candidate scheme and its official source. |
-| Answers questions about age, widow status, and BPL status | Ask only for information that could change the result. Do not ask for Aadhaar, bank details, or uploads in the first version. |
-| Has not confirmed BPL status | Say **“We need more information”** and ask about BPL status. Do not guess. |
-| Meets or does not meet the reviewed rules | Explain which rule led to the result and link to the source. |
-| Asks about documents | Say that the requirements have not been verified yet. Do not invent a list. |
-| Qualifies in the synthetic demo | See and check a form clearly labelled **MOCK — NOT SUBMITTED**. |
-| Changes the form | The old approval is cleared; the person must review the changed form again. |
-| Approves the unchanged form | Send it only to the mock portal and show a mock receipt. Never submit to a real portal. |
-| Leaves and returns, or chooses “forget” | Resume the synthetic demo or clear its saved state. Do not store real personal information. |
+| No candidate scheme matches the profile | Mark `rules/documents/draft` skipped; explain and suggest related information-only schemes. |
+| All candidates `not_eligible` | Skip documents/draft; explain deciding clauses. |
+| A new answer contradicts an earlier fact (e.g., age changes) | Re-open `profile`/`rules`; invalidate any draft approval. |
+| Document mismatch found | Insert a "resolve mismatch" step before `draft`. |
+| User asks to submit while a verdict is `need_more_information` | Refuse submit; route back to intake or to human caseworker referral (L14). |
+| Tool repeatedly fails | Mark step `blocked`; offer retry later. |
 
-The first example can use the existing synthetic case where BPL status is
-unknown. A second run can use the eligible synthetic example to show the mock
-form and approval. Role 1 must review the draft scheme interpretation before
-the team describes these results as policy-correct.
+### Intake question-selection loop (code, not LLM)
 
-## How all six roles contribute
+1. Ask the rule engine for each candidate's `required_facts` and current verdict.
+2. For every unknown, not-declined field, count how many open
+   (`need_more_information`) verdicts it could change.
+3. Ask the highest-scoring field first (ties: rule-package order). The LLM only
+   phrases the question in the user's language.
+4. Stop when no open verdict depends on an answerable unknown, or the user
+   answers "don't know" (record in `declined_fields`; the verdict stays
+   "can't tell" and is referred to a human caseworker).
 
-The role numbers below come from the project brief. **The repository does not
-name the role owners yet.** The team should fill in owners and backups together.
+Evaluation must compare this **planned question order** with a fixed order
+(p. 8 ablation): questions per conversation and accuracy.
 
-| Role | In everyday language | What this role gives the next role |
+### Rule engine generalisation
+
+- Move to one rule-package schema that supports both IGNWPS-MH and PM-KISAN
+  (field definitions, operators, question metadata, source evidence,
+  `approval_scope`), validated at startup by `RulePackageProvider`.
+- Add `rule-engine.required_facts(scheme_id)`; `rule-engine.evaluate` accepts
+  a partial `HouseholdProfile` and returns all three verdict states.
+- Retire the PM-KISAN direct endpoint once its package runs through the MCP
+  rule engine; keep its 2020-baseline/currentness notice on every result.
+
+### UI redesign
+
+- Chat-first screen in English, Hindi, and Marathi; the citizen/CSC mode is
+  passed to the backend (CSC mode may show the profile and plan in more detail).
+- Always-visible synthetic-demo warning and the supervisor's **plan panel**
+  (step status and plan version; highlight replans).
+- Intake questions are rendered as chat turns with quick answers
+  (Yes / No / Don't know) where the field is boolean.
+- Verdict cards per candidate scheme with deciding clause, source, and missing
+  facts; document findings; the mock draft with Edit / Approve / Reject that
+  calls the backend approval endpoint.
+- The UI holds no journey logic or approval state; everything comes from the
+  API. Fixture scenarios remain only as "fill with example" shortcuts for demos.
+
+### API contract (to agree before building)
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /api/v1/journey/{conversation_id}/messages` | Send a user message; returns plan, messages, pending question, candidates, documents, draft (streaming optional). |
+| `POST /api/v1/journey/{conversation_id}/approval` | `approve` / `edit` / `reject` bound to the draft fingerprint; resumes the interrupted graph. |
+| `GET /api/v1/journey/{conversation_id}` | Current state for resume after reload/crash. |
+| `DELETE /api/v1/journey/{conversation_id}` | Forget the session (existing). |
+
+The existing `/api/v1/journey` (`search`/`evaluate`) stays until the UI moves
+over, then is removed.
+
+## MCP tool boundaries
+
+One `saathi_mcp_server` process may host several tool groups locally, but
+permissions are enforced per agent by hooks.
+
+| MCP service | Tools | Access |
 |---|---|---|
-| **1. Domain and product** | Checks what the scheme really says and what we should tell people. | Reviewed scheme rules, official source, unclear points, and example cases. |
-| **2. Knowledge and memory** | Makes official scheme information easy to find and cite. | A source passage with its link, date, and identifier. |
-| **3. Agents and orchestration** | Connects the steps of the conversation. | A flow that gathers facts, calls the right services, and explains their result. |
-| **4. Tools, control and security** | Builds safe, limited tools and protects approval. | A rule-checking tool, a mock portal, and controls that prevent unsafe submission. |
-| **5. Evaluation and red-team** | Checks answers independently and tries to find failures. | Test examples and attack checks kept separate from the people tuning the system. |
-| **6. Deployment and operations** | Makes the whole thing easy to run and check. | A local run command, health checks, automated tests, and later deployment. |
+| `rule-engine` | `evaluate(profile, scheme_id)`, `required_facts(scheme_id)` | Read-only, deterministic. Returns verdict, reason, missing fields, rule IDs, and evidence. No LLM. |
+| `schemes-kb` | `search_schemes(query, filters, locale)`, `get_scheme(scheme_id)`, `get_documents(scheme_id)` | Read-only, source-linked. Do not claim unverified document requirements. |
+| `doc-check` | `check_documents(scheme_id, supplied_document_metadata)` | Read-only, synthetic-only. Reports missing items and mismatches; no authenticity claims. |
+| `mock-portal` | `create_draft`, `get_draft`, `submit_draft`, `get_status` | Application agent only. `submit_draft` requires an approval token bound to the exact fingerprint. ID numbers are sent only here. Never a real portal. |
 
-## Hooks and callbacks
+## Guardrails, hooks, and observability
 
-As the system grows, prefer using framework hooks and callbacks at appropriate
-extension points—for example, lifecycle hooks for startup and shutdown,
-request/error hooks for diagnostics, and workflow callbacks for orchestration
-traces. Use them where they make behavior observable, reusable, or easier to
-test; do not add every available hook just because it exists or duplicate the
-same work across hooks.
+- **Input guardrails:** mask Aadhaar/bank-like numbers before any LLM or
+  trace; detect prompt injection, including injection inside scheme text;
+  enforce scope; refuse requests to misstate income or age.
+- **Pre-tool hooks:** per-agent tool allow-list and per-conversation
+  call/token budget. **Post-tool hooks:** PII-scrubbed trace of every LLM and
+  tool call.
+- **Output guardrails:** every verdict cites its clause; unknowns are explicit;
+  no PII leakage; readable output in the selected language.
+- Operational logs to stdout/stderr; no applicant data, secrets, or raw
+  document contents in logs.
+- Metrics (later phase): questions per conversation, can't-tell rate, waiting
+  approvals, masked-ID hits, cost per conversation; alert on can't-tell spikes.
 
-Keep operational diagnostics on stdout/stderr for collection by the hosting
-platform. Record audit-worthy actions separately through a deliberate,
-shared audit service when needed. Do not log applicant data, secrets, or
-untrusted document contents.
+## Build in this order
 
-## MCP tools and workflow implementation plan
+Each phase must pass its gate before the next builds on it.
 
-The current local baseline has a deterministic FastAPI eligibility endpoint,
-versioned rule packages, and one shared Saathi MCP server with eligibility and
-scheme-passage search tools. Search uses BM25 plus multilingual Qdrant vectors,
-query decomposition, Reciprocal Rank Fusion, and a cross-encoder reranker. Its
-versioned JSON corpus currently has 13 passages across the IGNWPS-MH and
-PM-KISAN-IN pilot schemes, marked reviewed per the user's human-review
-attestation; this is not legal or policy approval or the planned 40–60-scheme
-corpus. The 43-query development evaluation set is available; persistent
-vector storage and a separate held-out evaluation remain outstanding.
-Vector embeddings use OpenRouter `voyageai/voyage-4`; configure
-`OPENROUTER_API_KEY_FREE` (also accepted as `OPEN_ROUTER_FREE`). Search sends
-corpus passages and user queries to OpenRouter. The multilingual BGE reranker
-model is fetched locally on first use.
-The first LangGraph user journey is implemented locally: a fixed orchestrator
-routes to an intake step, then either cited scheme search or the deterministic
-eligibility tool. SQLite checkpoints retain the short-term conversation by
-session ID. The LLM only normalizes search queries; it does not plan
-autonomously or decide eligibility. PM-KISAN remains information-only because
-the pilot has no reviewed rule package. Document checks, application drafting,
-and the remaining MCP boundaries below are future work.
+The working build order, with UI built alongside each phase and a UI test
+checklist per phase, is in
+[PHASE_WISE_IMPLEMENTATION_PLAN.md](PHASE_WISE_IMPLEMENTATION_PLAN.md). The
+phases below describe the architecture scope by role.
 
-### MCP tool boundaries
+### Phase 0 — Agree contracts (Roles 1, 3, 4, 5)
 
-The current local implementation runs one `saathi_mcp_server` process and
-registers each tool from a separate module. Keep these logical tool groups
-separate in code and permissions; they do not require one process per group.
+Agree the typed `Plan`, `HouseholdProfile`, `Handoff`, `CandidateVerdict`, the
+generic rule-package schema, and the API contract above.
+**Gate:** reviewed examples for each type; Role 1 confirms profile fields map to
+reviewed rules.
 
-Keep tools grouped by purpose, with typed inputs/outputs and structured errors:
+### Phase 1 — Generic rule engine (Roles 4, 1, 5)
 
-| MCP service | Initial tools | Access |
-|---|---|---|
-| `rule-engine` | `evaluate(profile, scheme_id)` | Read-only and deterministic. Calls the existing rule evaluator; it does not duplicate rules or ask an LLM to decide eligibility. Returns verdict, reason, missing fields, rule IDs, and source evidence. |
-| `schemes-kb` | `search_schemes(query, locale)`, `get_scheme(scheme_id)`, `get_documents(scheme_id)` | Read-only. Returns source-linked information. Do not claim document requirements until verified. A retrieval database can be added later. |
-| `doc-check` | `check_documents(scheme_id, supplied_document_metadata)` | Read-only and synthetic-only initially. Reports missing items or mismatches; it does not assert authenticity or make an eligibility decision. |
-| `mock-portal` | `create_draft`, `get_draft`, `submit_draft`, `get_status` | Separate mock data store. Only the application workflow may receive write access. Submission requires explicit approval bound to the exact draft version/fingerprint. Never connect this tool to a real government portal. |
+One package schema for IGNWPS-MH and PM-KISAN; `required_facts`; partial-profile
+evaluation through MCP.
+**Gate:** existing widow-pension tests and PM-KISAN tests pass through the MCP
+rule engine with identical verdicts.
 
-### Implemented first vertical slice
+### Phase 2 — Supervisor, plan, and intake loop (Role 3, with 4 and 5)
 
-The typed FastAPI contract and shared stdio MCP server expose source-cited
-scheme search and the deterministic rule evaluator. The LangGraph has a fixed
-orchestrator, an intake step, a search route, and an eligibility route. It
-validates synthetic profile facts before calling the rule tool; the UI calls
-FastAPI and displays citations and eligibility results. SQLite checkpoints
-resume and delete a conversation by session ID. Tests cover routing,
-information-only schemes, invalid or missing profile facts, MCP failures, and
-conversation resume. Tool failures remain visible; no fixture verdict
-substitutes for a failed call.
+Supervisor builds/updates the `Plan`, delegates via `Handoff`; intake extracts
+profile facts from text and runs the question-selection loop; pause/resume
+across turns via the checkpointer.
+**Gate:** from "My 62-year-old widowed mother in Pune has a BPL card", the graph
+shows a plan, asks only missing verdict-changing questions, and resumes after a
+restart.
 
-### Expand the workflow safely
+### Phase 3 — Eligibility analyst over all candidates (Roles 3, 2)
 
-Next, add synthetic-only `doc-check` and the remaining scheme knowledge tools.
-Add application drafting only after those outputs are stable. Pause the graph
-before any portal write so the person can review, edit, approve, or reject the
-exact draft. Any edit invalidates approval; resume and submit only the approved
-fingerprint. Keep write-server credentials and tool access unavailable to
-other agents/nodes.
+Filtered candidate search; evaluate every candidate; replan triggers; migrate
+PM-KISAN off its direct endpoint.
+**Gate:** one conversation yields verdicts for both pilot schemes, and a trace
+shows at least one replan.
 
-Keep the capstone's four logical MCP boundaries even when the local
-development server hosts multiple tool groups in one process. Begin with stdio
-for local development; choose and test the deployment transport when
-containerizing.
-Keep operational diagnostics on stdout/stderr. Add persistence only for a
-clear need: SQLite can support local graph checkpoints and synthetic state;
-RAG storage and any durable audit trail are separate later decisions. Do not
-log personal data, secrets, or raw document contents.
+### Phase 4 — Chat UI (Role 6, with 3)
 
-### Completion gates
+Chat-first UI with plan panel, question turns, verdict cards, and mode/locale
+passed to the backend; remove UI-side journey logic.
+**Gate:** a teammate completes the journey locally in all three languages
+without Azure access.
 
-- The MCP tool schema and errors are documented and tested.
-- The MCP rule tool returns exactly the deterministic evaluator's result and
-  source evidence; no model can override it.
-- The workflow handles all three verdict states and resumes safely after a
-  question or approval pause.
-- Only the application path can write to the mock portal, and approval is
-  bound to the unchanged draft.
-- A local teammate can run the UI, API, workflow, and MCP tools with the
-  documented setup before any Azure database or deployment work begins.
+### Phase 5 — Documents, application agent, and approval interrupt (Roles 4, 3, 5)
 
-## Build it in this order
+`doc-check` and `mock-portal` MCP tools; document checker; application agent
+with `interrupt()` approve/edit/reject; fingerprint check moved to the backend.
+**Gate:** an edit invalidates approval; only the unchanged approved draft is
+submitted; repeated or unapproved submits are rejected; crash mid-application
+resumes.
 
-Each step should work before the team builds on top of it. Some roles can work
-in parallel once the team agrees what they are exchanging.
+### Phase 6 — Guardrails, hooks, memory, and evaluation (Roles 4, 5, 2, 6)
 
-### 1. Agree on the demo
+Input/output guardrails; permission/budget hooks; PII-scrubbed traces;
+consent-based household memory with pseudonymous ID, expiry, and delete;
+60 synthetic personas double-labelled; simulated citizen; single-agent
+baseline; planned-vs-fixed question order; 30+ red-team attacks.
+**Gate:** evaluation harness runs in CI with a threshold; attack success and
+false-block rates reported with defences off/on.
 
-Together, decide:
+### Phase 7 — Operations and deployment (Role 6)
 
-- Is the widow-pension example the right first journey?
-- What should the demo show, and what must it clearly say it cannot do?
-- Who owns each role, and who is the backup?
-- Which policy questions still need an answer?
+Docker Compose with app, MCP servers, vector store, Prometheus, and Grafana;
+dashboard and one working alert; Azure deployment via the existing workflow.
+**Gate:** clean-machine install and a documented failed CI run.
 
-**Done when:** everyone can describe the same demo and its limits.
+## How the six roles contribute
 
-### 2. Check the scheme information
+The repository does not name role owners yet; fill these in together.
 
-- **Role 1** checks the official page and the meaning of each eligibility rule.
-- **Role 2** makes the page and relevant passage findable, keeping the source
-  link and collection date.
-- **Role 5** prepares small expected-answer examples before implementation
-  tuning begins.
+| Role | Main ownership in this plan |
+|---|---|
+| **1. Domain and product** | Rule meaning, profile fields, persona expected outcomes, held-out checks against written policy. |
+| **2. Knowledge and memory** | Scheme corpus, filtered candidate search, documents data, consent-based household memory. |
+| **3. Agents and orchestration** | Supervisor/planner, hand-offs, intake loop, replanning, interrupts, resume. |
+| **4. Tools, control and security** | Generic rule engine, MCP services, hooks, approval binding, guardrails. |
+| **5. Evaluation and red-team** | Personas, simulated citizen, ablations, attacks; never writes held-out cases they tune against. |
+| **6. Deployment and operations** | Chat UI wiring, CI evaluation gate, Docker Compose, dashboards, Azure. |
 
-**Done when:** each test example has a reviewed answer or is clearly marked
-uncertain. Keep future held-out tests away from the builders.
+## Completion gates (whole system)
 
-### 3. Agree on what services exchange
-
-The UI, API, rule checker, and other tools need to agree on the shape of the
-information they send each other. Decide this together; this plan does not
-freeze those formats.
-
-At minimum, agree how to represent:
-
-- a person's answers, including answers not yet known;
-- a scheme rule and where that rule came from;
-- the result, the reason, and any missing information;
-- a form, its approval, and errors;
-- service addresses and health checks.
-
-**Done when:** the roles that build and test these pieces have reviewed the
-same examples and interfaces.
-
-### 4. Make the rule checker
-
-- **Role 4** builds the plain-code checker.
-- **Role 1** checks the rule meaning.
-- **Role 2** supplies source references.
-- **Role 5** checks the answers against its prewritten examples.
-
-The checker must return one of: **eligible**, **not eligible**, or **need more
-information**. It must show the source. Unknown facts must not be treated as
-“no.”
-
-**Done when:** the same answers always give the same result, and each result
-can be checked against a source.
-
-### 5. Connect the conversation
-
-- **Role 3** connects the questions, source lookup, and rule checker.
-- **Role 4** limits which tools the conversation can use.
-- **Role 5** checks that the system asks useful questions and handles unsafe
-  requests.
-
-For example, if BPL status is unknown, the system asks about it. It does not
-guess and does not claim eligibility yet.
-
-**Done when:** one synthetic case can be entered, checked, and explained
-without changing the rule checker's answer.
-
-### 6. Connect the screen
-
-- **Role 6** connects the existing Streamlit screen to the API.
-- Keep conversation state in the backend, not only in the browser screen.
-- Show the result, missing facts, and source in English, Hindi, or Marathi.
-
-**Done when:** a teammate can run it on their computer and complete the
-synthetic check without Azure access.
-
-### 7. Add the mock form and approval
-
-- **Role 4** protects the approval and mock submission.
-- **Role 3** connects the conversation to these tools.
-- **Role 6** makes the flow run and retain only the needed demo state.
-- **Role 5** tests edits, repeated submits, and attempts to bypass approval.
-
-An approval must apply to the exact form shown. If any field changes, ask the
-person to review and approve again. A mock receipt is the end of this demo;
-there is no real submission.
-
-**Done when:** only an unchanged, explicitly approved synthetic form can reach
-the mock portal.
-
-### 8. Test the whole journey and make it easy to run
-
-- **Role 5** tests expected answers, citations, unsafe requests, and failures.
-- **Role 6** provides one local startup command, service health checks, and CI.
-- **Role 4** checks that unsafe tool calls and unapproved submissions are
-  blocked.
-- All roles review their own part and help with the demo walkthrough.
-
-Later, after the local version works, the team can decide on dashboards,
-broader evaluation, Docker Compose, and Azure deployment.
-
-**Done when:** a teammate can start the system, run the journey, see the
-evidence, test approval invalidation, and explain what is still only a mock.
+- The supervisor shows a typed plan, delegates via typed hand-offs, and a trace
+  shows a replan.
+- Intake asks only verdict-changing questions and stops correctly on "don't know".
+- Every candidate verdict comes unchanged from the deterministic rule engine,
+  with clause and source.
+- Only the application agent can write to the mock portal, and only with an
+  approval bound to the unchanged draft via `interrupt()`.
+- Conversations resume after a restart, including mid-application.
+- No real personal data is stored, logged, or submitted.
 
 ## Team decisions still needed
 
-Write down the team's answers; do not assume this proposal has settled them.
-
-1. Do we agree to use this scheme and journey first?
-2. Who owns each of the six roles, and who is each backup?
-3. Has Role 1 checked the scheme rules and source?
-4. Which small examples will Role 5 use for development testing?
-5. Which service interfaces do the relevant roles agree on?
-6. What is required for the first demo, and what can wait?
-7. What are the dates and completion checks?
+1. Do we accept this redesign and phase order?
+2. Who owns each role and backup?
+3. Which LLM models are used for the supervisor (stronger) and specialists?
+4. What is the exact `HouseholdProfile` field list for the pilot schemes?
+5. Should PM-KISAN stay on its 2020 mock baseline until policy currentness is verified?
+6. What must be in the next demo, and what can wait?
 
 ## Final demo checklist
 
-- [ ] The user sees the synthetic-demo warning.
-- [ ] The source and its date are shown.
-- [ ] Missing information leads to a question, not a guess.
-- [ ] A plain-code rule checker decides eligibility.
-- [ ] Each result shows its reason and source.
-- [ ] The same case gets the same result in all supported languages.
-- [ ] Unverified document requirements are not invented.
-- [ ] Editing the form clears its previous approval.
-- [ ] Only an unchanged, approved form can reach the mock portal.
-- [ ] No real person data is stored or submitted.
-- [ ] Another teammate can start and test the journey.
+- [ ] The user sees the synthetic-demo warning and the plan.
+- [ ] A free-text household description becomes a typed profile.
+- [ ] Only verdict-changing questions are asked; "don't know" is respected.
+- [ ] All candidate schemes are checked by the plain-code rule engine.
+- [ ] Each verdict shows its deciding clause and source.
+- [ ] A replan is visible when a result contradicts the plan.
+- [ ] Documents are listed only when verified; mismatches are explained.
+- [ ] Editing the draft clears approval; only the approved draft reaches the mock portal.
+- [ ] The conversation resumes after a restart.
+- [ ] The same case gives the same verdict in English, Hindi, and Marathi.
+- [ ] "Forget my data" removes the session.

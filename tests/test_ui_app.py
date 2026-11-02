@@ -2,10 +2,12 @@
 
 from pathlib import Path
 from unittest.mock import patch
+from uuid import uuid4
 
 from streamlit.testing.v1 import AppTest
 
 from src.api.eligibility import EligibilityResponse, RuleEvidence
+from src.api.pmkisan_eligibility import PMKisanEligibilityResponse
 from src.api.scheme_search import load_passages
 from src.workflow.journey import JourneyResponse
 
@@ -99,4 +101,80 @@ def test_evaluating_result_without_prepared_draft_does_not_raise() -> None:
         assert "API response test" in [element.value for element in app.markdown]
         assert any(
             "government_bpl_card" in element.value for element in app.warning
+        )
+
+
+def test_pmkisan_search_uses_the_standard_continue_then_eligibility_flow() -> None:
+    """PM-KISAN questions appear after selecting Continue, not in search."""
+
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    passage = next(
+        passage
+        for passage in load_passages(
+            Path(__file__).resolve().parents[1]
+            / "data"
+            / "schemes"
+            / "passages.json"
+        )
+        if passage.scheme_id == "PM-KISAN-IN"
+    )
+    journey = JourneyResponse(
+        conversation_id=uuid4(),
+        plan="Search for a source-cited scheme.",
+        status="search_results",
+        message="Found one relevant cited passage.",
+        passages=[passage],
+    )
+    eligibility = PMKisanEligibilityResponse(
+        result="eligible",
+        reason="Answers meet the 2020 mock criteria.",
+    )
+
+    with (
+        patch("src.ui.api_client.run_journey", return_value=journey),
+        patch(
+            "src.ui.api_client.run_pmkisan_eligibility",
+            return_value=eligibility,
+        ) as run_eligibility,
+    ):
+        app = AppTest.from_file(app_path).run()
+        app.text_input[0].set_value("PM-KISAN farmer support")
+        next(
+            button for button in app.button if button.label == "Search schemes"
+        ).click().run()
+
+        assert not app.exception
+        assert not any(
+            "current landholding cutoff" in element.value
+            for element in app.warning
+        )
+        assert not any(
+            element.label
+            == "Does the farmer family have cultivable land in State/UT records?"
+            for element in app.selectbox
+        )
+        next(
+            button
+            for button in app.button
+            if button.label == "Continue to the synthetic eligibility demo"
+        ).click().run()
+
+        assert not app.exception
+        assert any(
+            "current landholding cutoff" in element.value
+            for element in app.warning
+        )
+        assert any(
+            element.label
+            == "Does the farmer family have cultivable land in State/UT records?"
+            for element in app.selectbox
+        )
+        next(
+            button for button in app.button if button.label == "Check eligibility"
+        ).click().run()
+        assert not app.exception
+        assert run_eligibility.called
+        assert any(
+            "Appears eligible" in element.value
+            for element in app.success
         )

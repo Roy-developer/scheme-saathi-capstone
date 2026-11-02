@@ -95,6 +95,15 @@ The first search embeds the public passage corpus through OpenRouter, and the
 local BGE reranker model is downloaded if it is not cached.
 The Qdrant index is rebuilt in memory when the MCP server starts; persistent
 vector storage remains future work.
+
+PM-KISAN follows the same scheme-selection journey: select the scheme in
+search results, choose **Continue to the synthetic eligibility demo**, then
+answer the household questions. `POST /api/v1/schemes/PM-KISAN-IN/evaluate`
+evaluates the separate, versioned mock rule package against the operational
+guidelines revised 2020-03-29 and returns `eligible`, `not_eligible`, or
+`need_more_information`. Every result is explicitly limited to that dated
+mock baseline; the current landholding cutoff and State/UT records are not
+verified, so this is not an official eligibility decision.
 Search queries are also sent to OpenRouter for embedding.
 
 ### First LangGraph user journey
@@ -104,9 +113,10 @@ LangGraph route runs the orchestrator node, then intake. Intake uses the
 standard OpenRouter key only to normalize the user's query for search; the
 search tool returns cited passages. For the supported IGNWPS-MH mock scheme,
 the UI then supplies a synthetic profile and the eligibility agent calls the
-deterministic rule-engine MCP tool. PM-KISAN remains information-only because
-there is no reviewed rule package for it. No model produces or changes an
-eligibility verdict.
+deterministic rule-engine MCP tool. PM-KISAN uses its separately typed,
+versioned mock rule package after the same scheme-selection and Continue
+steps; it does not use or alter the widow-pension rule package. No model
+produces or changes an eligibility verdict.
 
 Typed graph state and conversation turns are checkpointed in the local SQLite
 file `data/runtime/journey.sqlite3`; `DELETE /api/v1/journey/{conversation_id}`

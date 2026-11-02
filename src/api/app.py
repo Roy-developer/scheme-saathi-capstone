@@ -20,6 +20,11 @@ from src.api.eligibility import (
     EligibilityResponse,
 )
 from src.api.scheme_search import SchemePassage
+from src.api.pmkisan_eligibility import (
+    PMKisanEligibilityRequest,
+    PMKisanEligibilityResponse,
+    evaluate_pmkisan_eligibility,
+)
 from src.rules.data_provider import RulePackageProvider
 # This adapter calls the MCP tool and translates failures for the API layer.
 from src.workflow.eligibility import (
@@ -138,6 +143,18 @@ def health() -> dict[str, str]:
 
 
 @app.post(
+    "/api/v1/schemes/PM-KISAN-IN/evaluate",
+    response_model=PMKisanEligibilityResponse,
+)
+def evaluate_pmkisan(
+    eligibility_request: PMKisanEligibilityRequest,
+) -> PMKisanEligibilityResponse:
+    """Run the versioned PM-KISAN mock rules through the shared evaluate flow."""
+
+    return evaluate_pmkisan_eligibility(eligibility_request)
+
+
+@app.post(
     "/api/v1/schemes/{scheme_id}/evaluate",
     response_model=EligibilityResponse,
 )
@@ -197,6 +214,8 @@ async def search_schemes(
             status_code=502,
             detail="The scheme search tool is unavailable.",
         ) from error
+
+
 
 
 @app.post("/api/v1/journey", response_model=JourneyResponse)

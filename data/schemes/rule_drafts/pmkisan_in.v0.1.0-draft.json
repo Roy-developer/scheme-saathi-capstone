@@ -1,0 +1,128 @@
+{
+  "package_version": "0.1.0-draft",
+  "scheme_id": "PM-KISAN-IN",
+  "jurisdiction": "IN",
+  "status": "mock_implemented_policy_review_pending",
+  "approval_scope": "synthetic_mock_only",
+  "baseline_source": {
+    "publisher": "Ministry of Agriculture & Farmers Welfare, Government of India",
+    "title": "PM-KISAN Scheme Operational Guidelines",
+    "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+    "revised_as_of": "2020-03-29",
+    "retrieved_on": "2026-11-02"
+  },
+  "human_decision": {
+    "decision": "Use the 2020 guidelines as the source baseline for a synthetic mock draft only.",
+    "rule_approval": "pending",
+    "reviewer": "pending",
+    "date": "2026-11-02"
+  },
+  "independent_model_review": {
+    "performed": true,
+    "reviewed_on": "2026-11-02",
+    "reviewer_identity": "unavailable",
+    "read_first_review": false,
+    "conclusion": "The 2020 guideline supports the listed criteria as historical source text, but does not establish a current landholding cutoff. The user authorized a synthetic mock implementation against this dated baseline; that does not constitute policy approval or establish current eligibility.",
+    "limitations": [
+      "No newer consolidated official guideline was found during the bounded review.",
+      "Later amendments were not exhaustively searched.",
+      "The second review is not human approval, legal advice, or proof of policy currentness."
+    ]
+  },
+  "runtime_safety": {
+    "assessment_endpoint_enabled": true,
+    "endpoint": "POST /api/v1/schemes/PM-KISAN-IN/evaluate",
+    "may_return_eligible": true,
+    "reason": "The eligible result means only that supplied synthetic answers meet the listed 2020 mock criteria. Every result states that the current landholding cutoff and State/UT records are not verified; it is not an official decision."
+  },
+  "rules": [
+    {
+      "rule_id": "PMKISAN-LAND-FAMILY-01",
+      "claim": "A farmer family comprises husband, wife, and minor children and owns cultivable land as per the land records of the concerned State or Union Territory.",
+      "source_location": "Page 2, section 3",
+      "evidence_status": "partially_supported",
+      "review_status": "pending",
+      "implementation_status": "implemented_in_mock_package"
+    },
+    {
+      "rule_id": "PMKISAN-INSTITUTIONAL-LAND-01",
+      "claim": "Institutional landholders are excluded.",
+      "source_location": "Page 2, section 4.1(a)",
+      "evidence_status": "partially_supported",
+      "review_status": "pending",
+      "implementation_status": "implemented_in_mock_package"
+    },
+    {
+      "rule_id": "PMKISAN-OFFICE-HOLDER-01",
+      "claim": "A farmer family is excluded when a member belongs to a listed former or present constitutional, ministerial, legislative, municipal-corporation mayor, or district-panchayat chairperson category.",
+      "source_location": "Page 2, section 4.1(b)(i)-(ii)",
+      "evidence_status": "partially_supported",
+      "review_status": "pending",
+      "implementation_status": "implemented_in_mock_package"
+    },
+    {
+      "rule_id": "PMKISAN-GOV-EMPLOYEE-01",
+      "claim": "Specified serving or retired government, public-sector, autonomous-institution, and local-body employees are excluded, subject to the stated MTS, Class IV, and Group D exceptions.",
+      "source_location": "Pages 2-3, section 4.1(b)(iii)",
+      "evidence_status": "partially_supported",
+      "review_status": "pending",
+      "implementation_status": "implemented_in_mock_package"
+    },
+    {
+      "rule_id": "PMKISAN-PENSION-01",
+      "claim": "Specified superannuated or retired pensioners receiving monthly pension of Rs. 10,000 or more are excluded, subject to the stated employee-category exception.",
+      "source_location": "Page 3, section 4.1(b)(iv)",
+      "evidence_status": "partially_supported",
+      "review_status": "pending",
+      "implementation_status": "implemented_in_mock_package"
+    },
+    {
+      "rule_id": "PMKISAN-INCOME-TAX-01",
+      "claim": "Persons who paid income tax in the last assessment year are excluded.",
+      "source_location": "Page 3, section 4.1(b)(v)",
+      "evidence_status": "partially_supported",
+      "review_status": "pending",
+      "implementation_status": "implemented_in_mock_package"
+    },
+    {
+      "rule_id": "PMKISAN-PROFESSIONAL-01",
+      "claim": "Specified registered professionals who carry out their profession are excluded.",
+      "source_location": "Page 3, section 4.1(b)(vi)",
+      "evidence_status": "partially_supported",
+      "review_status": "pending",
+      "implementation_status": "implemented_in_mock_package"
+    },
+    {
+      "rule_id": "PMKISAN-NRI-01",
+      "claim": "NRI landholding farmer families are excluded when uploaded as new beneficiaries.",
+      "source_location": "Page 3, section 4.1(c)",
+      "evidence_status": "partially_supported",
+      "review_status": "pending",
+      "implementation_status": "implemented_in_mock_package"
+    },
+    {
+      "rule_id": "PMKISAN-LAND-CUTOFF-01",
+      "claim": "A current landholding cutoff and rules for subsequent transfers or inheritance must be established before eligibility can be decided.",
+      "source_location": "Page 3, sections 5.2-5.3.4",
+      "evidence_status": "insufficient_evidence",
+      "review_status": "unresolved",
+      "implementation_status": "blocks_official_determination",
+      "note": "The 2020 guideline sets a 2019 cutoff and says it applies for the next five years. A current replacement or extension has not been verified, so the mock cannot establish current official eligibility."
+    }
+  ],
+  "operational_notes": [
+    {
+      "topic": "eKYC",
+      "source": "https://pmkisan.gov.in/",
+      "source_text": "eKYC is MANDATORY for PMKISAN Registered Farmers.",
+      "treatment": "Registration/servicing step; not an initial eligibility rule."
+    },
+    {
+      "topic": "state_verification",
+      "source_location": "Page 6, section 6.1",
+      "source_text": "Responsibility of identifying the land holder farmer family eligible for benefit under the scheme shall be of the State / UT Government.",
+      "treatment": "Self-reported answers cannot establish verified eligibility in this mock."
+    }
+  ],
+  "review_report": "docs/PMKISAN_RULE_REVIEW_2026-11-02.md"
+}
