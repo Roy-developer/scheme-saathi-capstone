@@ -7,6 +7,20 @@ handles.
 
 Phase 1 plan: [PHASE_WISE_IMPLEMENTATION_PLAN.md](PHASE_WISE_IMPLEMENTATION_PLAN.md).
 
+> **Read this first: which version of the code this describes.**
+> This guide describes the code **as Phase 1 built it** (commit `990a1b9`).
+>
+> - **Steps 1–3** (profile, rule packages, engine) are **unchanged today**.
+>   What you read is what you will find in the code.
+> - **Steps 4–5** (the graph and the screen) were **rebuilt in Phase 2**.
+>   Those sections still explain the Phase 1 design, because Phase 2 builds
+>   on it, and each one has a **"Today (after Phase 2)"** box that says what
+>   you will actually see in the code now. For the current graph and chat,
+>   read [PHASE2_CODE_WALKTHROUGH.md](PHASE2_CODE_WALKTHROUGH.md).
+>
+> To see the exact Phase 1 code, run `git show 990a1b9:src/workflow/journey.py`
+> (or any other file path).
+
 ---
 
 ## The problem Phase 1 solves
@@ -31,8 +45,9 @@ scheme. It also blocks Phase 2, where the intake agent must ask questions for
 - one engine (`evaluate_mock_eligibility`);
 - one path: UI → journey graph → MCP tool → engine.
 
-**What the user sees has not changed.** Phase 1 only changes the plumbing
-behind the screen.
+**At the end of Phase 1, what the user saw had not changed.** Phase 1 only
+changed the plumbing behind the screen. (Phase 2 later replaced the PM-KISAN
+form with a chat; see the Phase 2 guide.)
 
 ---
 
@@ -76,6 +91,43 @@ behind the screen.
 
 We read it from the bottom up: first the data (Steps 1–2), then the engine
 (Step 3), then how a request travels (Step 4), then the screen (Step 5).
+
+### If you were building Phase 1 from scratch
+
+Build in this order. Each step only needs the ones before it, and Steps 1–3
+need **no web server, no graph and no MCP**, so you can test them alone in
+a few minutes.
+
+| Step | File | What you build | Needs | How to check it works |
+|---|---|---|---|---|
+| 1 | `src/rules/models.py` | `HouseholdProfile` (facts that may be unknown) | Pydantic | Create profiles in Python; bad ones raise `ValidationError` |
+| 2 | `src/rules/models.py`, `src/rules/packages/*.json`, `src/rules/data_provider.py` | `Rule`, `RulePackage`, the JSON files, the loader | Step 1 | `RulePackageProvider().packages` loads both schemes |
+| 3 | `src/api/eligibility.py` | `evaluate_mock_eligibility` | Steps 1–2 | The test people give the expected verdicts |
+| 4 | `src/mcp_servers/tools/eligibility.py`, `src/workflow/eligibility.py`, `src/workflow/journey.py`, `src/api/app.py` | The MCP tool, the MCP caller, the graph, the API route | Step 3 | `POST /api/v1/journey` returns a verdict |
+| 5 | `src/ui/api_client.py`, `src/ui/app.py` | Screen calls the API | Step 4 | Click through both schemes |
+
+A good habit: **write the test people first** (the table below), then write
+each step until their results come out right.
+
+### Words you will meet
+
+| Word | Meaning in this project |
+|---|---|
+| **Fact** | One piece of information about the household, e.g. `is_widow` |
+| **Unknown** | A fact we have not been told yet. Stored as `None`. **Not the same as "no"** |
+| **Derived fact** | A fact calculated from others. The only one is `age` (from two dates) |
+| **Profile** | All the facts about one household (`HouseholdProfile`) |
+| **Rule** | One condition on one fact, e.g. "age ≥ 40" |
+| **Rule package** | One JSON file with all of a scheme's rules and their sources |
+| **Verdict** | The engine's answer: `eligible`, `not_eligible` or `need_more_information` |
+| **Deciding rules** | The rules that explain the verdict |
+| **Evidence** | The official source text and link for each deciding rule |
+| **Pydantic model** | A Python class that checks the type of every value when it is created |
+| **Validation** | Checking that data is the right shape before using it |
+| **MCP** | Model Context Protocol: a standard way for one program to offer "tools" another program can call |
+| **LangGraph** | A library for building a flow of steps (nodes) joined by arrows (edges) |
+| **Checkpointer** | Saves the graph's state after each step, so a conversation can continue |
+| **Streamlit** | The Python library that draws the web screen |
 
 ### Meet our test people
 
@@ -176,9 +228,13 @@ typos such as `is_widdow` from being silently ignored.
 |---|---|---|
 | `HouseholdProfile()` (nothing given) | Valid; every fact `None` | Empty is allowed so the chat can start blank |
 | `is_widow="maybe"` | Rejected | Not a yes/no value |
-| `is_widow="yes"`, `"true"` or `"1"` | Accepted as `True` | Pydantic converts these common strings. Phase 2 code must still convert chat answers carefully |
+| `is_widow="yes"`, `"true"`, `"1"`, `"on"`, `"Y"` or the number `1` | Accepted as `True` | Pydantic converts these common values. This is why Phase 2 reads chat answers with its own careful code first |
+| `is_widow="maybe"` | Rejected: not a valid boolean | Only clear yes/no values are converted |
 | Born 29 Feb 1984, application 28 Feb 2024 | Age **39** | The birthday counts on 1 March in non-leap years, so the 40th birthday has not happened yet |
 | Only `date_of_birth` given | Age `None` | Both dates are needed |
+| Only `date_of_birth`, set in the future (2030) | **Allowed for now** | With one date there is nothing to compare. The check runs as soon as the second date arrives |
+| Born 1800, application 2026 | Rejected: "age on application_date cannot exceed 125" | Catches a typo like 1806 for 1986 |
+| `date_of_birth="30/10/1976"` sent to the API | Rejected: not a valid date | The API and JSON use the ISO format `1976-10-30`. (Phase 2's chat accepts `30/10/1976` and converts it) |
 
 ---
 
@@ -217,7 +273,9 @@ Files:
 | Part | Meaning |
 |---|---|
 | `scheme_id` | The scheme's unique name |
-| `approval_status`, `approval_scope` | Who approved it and for what (synthetic mock only) |
+| `approval_status` | The review state. Widow pension: `approved_for_mock_portal`. PM-KISAN: `mock_baseline_pending_human_rule_approval` (not yet signed off by a person) |
+| `reviewer_name`, `reviewed_at` | Who reviewed the rules, and when |
+| `approval_scope` | What the approval allows: only `synthetic_mock_portal_only` |
 | `source` | Where the rules came from, used as evidence |
 | `required_facts` | Every fact this scheme needs. Phase 2 intake reads this list to know what to ask |
 | `reasons` | The message shown for each verdict |
@@ -243,6 +301,14 @@ Read it as: **"age must be greater than or equal to 40."**
 | `eq` | equal to | yes/no facts (`true` / `false`) |
 | `gte` | greater than or equal to | `age` only (a whole number 0–125) |
 | `lte` | less than or equal to | `age` only (a whole number 0–125) |
+
+### Age rules need the two dates in `required_facts`
+
+`required_facts` lists only facts a **profile can store**. `age` is not
+stored, so it is **not allowed** in `required_facts`. An age rule reads
+`date_of_birth` and `application_date` instead (`Rule.input_facts`), so both
+dates **must** be listed. If you forget `application_date`, startup fails
+with: `Rules use facts missing from required_facts: ['application_date']`.
 
 ### "Must have" and "must not have" in one format
 
@@ -299,6 +365,14 @@ verdict later.
 | Two files with the same `scheme_id` | "Duplicate rule package for scheme" |
 | No JSON files at all | "No scheme rule packages were found" |
 | Any unknown key (typo) | Rejected, because extra fields are forbidden |
+| The file is not valid JSON (e.g. a missing `}`) | `JSONDecodeError` |
+| A required part is missing (e.g. no `reasons`) | "Field required" |
+| `rules: []` | "should have at least 1 item" |
+| `source_url` is not a web address | "Input should be a valid URL" |
+| An operator other than `eq`, `gte`, `lte` (e.g. `gt`) | "Input should be 'eq', 'gte' or 'lte'" |
+| `if_not_met` is not `not_eligible` or `need_more_information` | Rejected with the two allowed values |
+| `"age"` listed in `required_facts` | Rejected: only storable facts are allowed |
+| Age rule but `application_date` missing from `required_facts` | "Rules use facts missing from required_facts: ['application_date']" |
 
 ---
 
@@ -341,6 +415,28 @@ for rule in package.rules:
 
 Every rule ends up **passed**, **failed** or **unresolved**.
 
+The whole idea in one table. Here `if_not_met` is the rule's setting:
+
+| The fact's value | Rule met? | `if_not_met = "not_eligible"` (normal) | `if_not_met = "need_more_information"` (proof rule) |
+|---|---|---|---|
+| `None` (unknown) | can't tell | **unresolved**, ask for it | **unresolved**, ask for it |
+| known | yes | passed | passed |
+| known | no | **failed** | **unresolved**, ask for proof |
+
+So `if_not_met` only matters when the fact is **known and fails**. An
+unknown fact is always "unresolved", whatever the setting.
+
+**What goes in `missing_fields`:**
+
+- If the rule has a `missing_field_label`, that label is used, both when
+  the fact is unknown **and** when a proof rule fails. So an unknown BPL card
+  and a "no" BPL card both show `government_bpl_card`.
+- Otherwise the unknown raw facts are listed. For an age rule that is
+  `date_of_birth` and/or `application_date`, never `age`.
+- Each label appears **once**, in the order the rules meet it
+  (`add_missing` skips repeats). Both age rules need the same dates, but
+  they are listed only once.
+
 ### Part C: choosing the verdict (order matters)
 
 ```python
@@ -376,6 +472,26 @@ unresolved_checks        things this mock cannot check
 - need more information → the **unresolved** rules;
 - eligible → **all** rules.
 
+### Following Lata through the engine, rule by rule
+
+Lata: widow, born 30 Oct 1976, application 30 Oct 2026, BPL card **not**
+shown (`False`).
+
+| # | Rule | Value read | Met? | Group | `missing_fields` after |
+|---|---|---|---|---|---|
+| 1 | `IGNWPS-MH-WIDOW-01` is_widow eq true | `True` | yes | passed | `[]` |
+| 2 | `IGNWPS-MH-AGE-MIN-01` age gte 40 | `50` (calculated) | yes | passed | `[]` |
+| 3 | `IGNWPS-MH-AGE-MAX-01` age lte 79 | `50` | yes | passed | `[]` |
+| 4 | `IGNWPS-MH-BPL-01` bpl_card_shown eq true | `False` | **no** | proof rule → **unresolved** | `["government_bpl_card"]` |
+
+Verdict: no failed rules, one unresolved → **need_more_information**,
+deciding rule `IGNWPS-MH-BPL-01`.
+
+Now change one fact: Lata is **not** a widow (`is_widow=False`). Rule 1
+**fails**. Rule 4 is still unresolved, but a failure wins: the verdict is
+**not_eligible**, deciding rule `IGNWPS-MH-WIDOW-01`, and `missing_fields`
+is emptied, because showing a card could not change the answer.
+
 ### Our test people through the engine
 
 | Person | Result | Deciding rules | Missing |
@@ -401,6 +517,9 @@ unresolved_checks        things this mock cannot check
 | PM-KISAN: income tax `True`, everything else unknown | not eligible (`INCOME-TAX-01`) | One failure is enough; no need to ask 7 more questions |
 | PM-KISAN: no land **and** NRI | not eligible; both rules listed | Every failed rule is reported |
 | Widow pension result | `notice` is empty | Only PM-KISAN's package has a notice |
+| Any PM-KISAN result, **even not eligible** | `notice` (2020 guidelines) and the 2 `unresolved_checks` are always included | They are caveats about the whole mock, not rules. They never change the verdict |
+| Widow, age 50, BPL card **unknown** (`None`) | need more information (`government_bpl_card`) | The rule's label is used for unknown facts too |
+| Empty widow profile: order of missing list | `is_widow`, `date_of_birth`, `application_date`, `government_bpl_card` | Rule order; the dates are listed once although two rules need them |
 
 ---
 
@@ -469,6 +588,18 @@ verdict.
 The **checkpointer** saves the state after each step, keyed by
 `conversation_id`. Sending the same ID again continues the same conversation.
 
+> **Today (after Phase 2):** the graph above was replaced. There is no
+> `orchestrator_agent` now. A `supervisor` node writes a visible plan and
+> sends each step to a helper (intake, search, eligibility); every helper
+> reports back to the supervisor. `route_after_intake` now goes to
+> `ask_user` (to pause and ask a question) or back to `supervisor`, never
+> straight to `eligibility_agent`. An `interview` request may start **with no
+> profile at all**, because intake asks for the facts, so the "profile sent?"
+> check applies only to `evaluate` requests. Sending the same
+> `conversation_id` to `POST /api/v1/journey` now starts a **new request** in
+> that conversation; answering a question uses
+> `POST /api/v1/journey/{id}/messages`. See [PHASE2_CODE_WALKTHROUGH.md](PHASE2_CODE_WALKTHROUGH.md), Step 4.
+
 ### Hop 3: the MCP call (`src/workflow/eligibility.py`)
 
 ```python
@@ -511,7 +642,10 @@ It looks up the scheme's rules and runs the engine from Step 3.
 | Scheme chosen but no `profile` | `need_information`, listing that scheme's required facts |
 | Profile with `"maybe"`, a bad date or an unknown field | `invalid_input`, listing the bad fields; engine not called |
 | Profile valid but partly empty (`{}` included) | Passes intake; the engine returns `need_more_information` |
-| MCP tool crashes or sends a broken reply | API returns HTTP **502** "A journey tool is unavailable"; no verdict shown |
+| MCP call itself fails (server stopped, connection lost) | `MCPToolError` "Could not call the MCP eligibility tool." → HTTP **502** |
+| MCP tool returns an error result (e.g. `ToolError("Unknown scheme: …")`) or no structured data | `MCPToolError` "The MCP eligibility tool returned an error." → HTTP **502** |
+| MCP tool returns data in the wrong shape | `MCPToolError` "…returned an invalid response." → HTTP **502** |
+| Any of the three above | Through `/api/v1/journey`: HTTP **502** "A journey tool is unavailable."; through `/schemes/{id}/evaluate`: "The eligibility tool is unavailable." No verdict is ever made up |
 | `/schemes/UNKNOWN/evaluate` | HTTP **404** "Unknown scheme"; MCP not called |
 | `/schemes/{id}/evaluate` with date of birth after application date | HTTP **422** (validation error) |
 | Same `conversation_id` sent twice | The saved conversation continues; earlier turns are kept |
@@ -588,7 +722,16 @@ journey = run_journey(JourneyRequest(
 Widow pension still uses the example-person screen: consent → choose an
 example → check → draft → approve → mock submit. That is unchanged.
 
-### Edge cases for Step 5
+> **Today (after Phase 2):** the PM-KISAN form, its drop-downs and the
+> `pmkisan_eligibility_result` key are **gone**. After Continue, PM-KISAN
+> shows a chat: **Start questions**, then one question at a time
+> (`render_interview`, `st.chat_input`), then the verdict
+> (`render_verdict`). Widow pension now asks **"How do you want to check?"**:
+> *Answer questions* (the chat, the default) or *Use an example person* (the
+> Phase 1 screen described above, still used for the draft and approval
+> demo). See [PHASE2_CODE_WALKTHROUGH.md](PHASE2_CODE_WALKTHROUGH.md), Step 6.
+
+### Edge cases for Step 5 (as built in Phase 1)
 
 | Case | What the user sees |
 |---|---|
@@ -610,14 +753,15 @@ cd C:\Users\Admin\OneDrive\Documents\Saathi\scheme-saathi-capstone
 ..\venv\Scripts\python.exe -m pytest -q
 ```
 
-Expected: **99 passed**.
+Expected: **99 passed** at the end of Phase 1 (commit `990a1b9`).
+Today the suite has **151 tests**, because Phase 2 added its own.
 
 | Test file | What it proves |
 |---|---|
 | `tests/test_api_eligibility.py` | Age limits, BPL card, not-a-widow, evidence, unknown scheme (404), bad dates (422), PM-KISAN exclusions, eligible, missing land, unknowns, **PM-KISAN through the journey graph and MCP** |
 | `tests/test_ui_fixtures.py` | Rule-file mistakes are rejected, and **both schemes load from one registry** |
 | `tests/test_journey_graph.py` | Graph routing, information-only schemes never call the engine, missing profile, conversation memory |
-| `tests/test_ui_app.py` | Search → Continue → check works on screen for **both** schemes using the journey API |
+| `tests/test_ui_app.py` | Phase 1: Search → Continue → check worked on screen for **both** schemes using the journey API. Today the widow test picks "Use an example person", and PM-KISAN is tested through the chat |
 | `tests/test_workflow_state.py` | Phase 2 contracts: helpers can only talk to the supervisor; a changed plan must give a reason |
 
 ### Try it yourself in Python
@@ -640,7 +784,11 @@ print(r.result, r.deciding_rule_ids, r.missing_fields)
 # need_more_information ['IGNWPS-MH-BPL-01'] ['government_bpl_card']
 ```
 
-### Manual UI test checklist
+### Manual UI test checklist (Phase 1 screens)
+
+These were the Phase 1 sign-off checks. Today, PM-KISAN uses the chat
+instead of the form: answer the same questions there (see the Phase 2
+checklist). For widow pension, choose **Use an example person**.
 
 - [ ] Widow pension: search, choose IGNWPS-MH, Continue, consent, check. The
       result matches the old one.
@@ -655,10 +803,11 @@ print(r.result, r.deciding_rule_ids, r.missing_fields)
 
 ---
 
-## Phase 2 contracts added (not used yet)
+## Phase 2 contracts added in Phase 1
 
-`src/workflow/state.py` defines the shapes the supervisor and specialists
-will use in Phase 2:
+`src/workflow/state.py` was added in Phase 1 but **not used until Phase 2**.
+Today the supervisor uses `Plan`, `PlanStep` and `Handoff`;
+`CandidateVerdict` is for Phase 3 (checking several schemes):
 
 | Contract | Meaning | Safety rule |
 |---|---|---|
@@ -683,6 +832,39 @@ will use in Phase 2:
 | `src/workflow/state.py` | **New**: Phase 2 contracts |
 | Removed | `src/api/pmkisan_eligibility.py`, `src/rules/pmkisan/` |
 | Tests | Updated for the new format, plus new tests for the shared path and contracts |
+
+---
+
+## Common mistakes when building this yourself
+
+| Mistake | What goes wrong | The fix used here |
+|---|---|---|
+| Treating an unknown fact as "no" (`None` → `False`) | People are rejected for facts they were never asked | Keep `None`; the engine marks the rule unresolved |
+| Storing `age` next to `date_of_birth` | The two can disagree; which is true? | Calculate age from the dates (`@property`) |
+| Writing rules as Python `if` statements | Every new scheme needs a developer and a code change | Rules are JSON data; one engine reads them all |
+| Letting a bad rule file load | A wrong verdict later, with no error | Validate every file at startup; refuse to start |
+| Checking only the first failed rule | Evidence is incomplete | Collect every failed rule |
+| Asking for missing facts after a rule has failed | Pointless questions; the answer cannot change | A failure wins; empty the missing list |
+| Rejecting a widow who did not bring her BPL card | Unfair: she may still be eligible | `if_not_met: "need_more_information"` asks for proof |
+| Trusting the MCP reply without checking it | A broken reply could be shown as a verdict | `EligibilityResponse.model_validate`, else 502 |
+| Letting the UI read rule files directly | Two places to update; skips the safety checks | UI → API → graph → MCP → engine, one path |
+| Forgetting `extra="forbid"` | A typo like `is_widdow` is silently ignored, so the fact stays unknown | Forbid unknown fields everywhere |
+
+---
+
+## Known limits of Phase 1 (and what came next)
+
+- **The user still filled in a form** (PM-KISAN) or chose a made-up person
+  (widow pension). → Phase 2 added the question-by-question chat.
+- **The graph was a fixed line**, with no visible plan. → Phase 2 added the
+  supervisor and the plan checklist.
+- **One scheme at a time.** → Phase 3 checks every candidate scheme.
+- **Documents are not checked**; the draft and approval use preset data. →
+  Phase 4.
+- **No guardrails** (for example masking an Aadhaar number). → Phase 5.
+- **PM-KISAN uses the 2020 guidelines** and its rules are still waiting for
+  human approval; the current landholding cutoff and State/UT records are
+  not checked. Every PM-KISAN result says so.
 
 ---
 
