@@ -54,9 +54,13 @@ class Plan(ContractModel):
 
     @model_validator(mode="after")
     def validate_steps(self) -> "Plan":
+        """Require unique step IDs and a reason whenever the plan changes."""
+
         step_ids = [step.step_id for step in self.steps]
         if len(step_ids) != len(set(step_ids)):
             raise ValueError("Plan step IDs must be unique")
+        # Version 1 is the first plan. Any later version is a replan, and the
+        # user must be able to see why it changed.
         if self.version > 1 and not self.replan_reason:
             raise ValueError("A replanned version must record replan_reason")
         return self
@@ -82,6 +86,8 @@ class Handoff(ContractModel):
 
     @model_validator(mode="after")
     def validate_route(self) -> "Handoff":
+        """Allow only supervisor-to-specialist or specialist-to-supervisor."""
+
         # Specialists only talk to the supervisor, never to each other.
         if "supervisor" not in (self.sender, self.recipient):
             raise ValueError("Handoffs must go to or from the supervisor")

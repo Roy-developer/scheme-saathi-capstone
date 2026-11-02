@@ -27,7 +27,9 @@ BoolFact = Literal[
     "nri_new_beneficiary",
 ]
 DateFact = Literal["date_of_birth", "application_date"]
+# Any fact a profile can store.
 FactName = Literal[BoolFact, DateFact]
+# Any fact a rule can check: yes/no facts plus the calculated "age".
 RuleFact = Literal[BoolFact, "age"]
 
 BOOL_FACTS: frozenset[str] = frozenset(get_args(BoolFact))
@@ -67,27 +69,43 @@ class HouseholdProfile(RulePackageModel):
 
     @model_validator(mode="after")
     def validate_dates(self) -> "HouseholdProfile":
+        """Reject impossible dates once both dates are known.
+
+        Runs automatically after Pydantic fills the fields.
+        """
+
+        # With one date missing we cannot compare them, so allow it.
         if self.date_of_birth is None or self.application_date is None:
             return self
+        # Nobody can apply before they are born.
         if self.date_of_birth > self.application_date:
             raise ValueError("date_of_birth cannot be after application_date")
+        # Catch typos such as a birth year of 1806 instead of 1986.
         if calculate_age_on(self.date_of_birth, self.application_date) > 125:
             raise ValueError("age on application_date cannot exceed 125")
         return self
 
     @property
     def age(self) -> int | None:
-        """Return completed age on the application date, if both are known."""
+        """Return completed age on the application date, if both are known.
+
+        Age is calculated, never stored, so it cannot disagree with the dates.
+        """
 
         if self.date_of_birth is None or self.application_date is None:
             return None
         return calculate_age_on(self.date_of_birth, self.application_date)
 
     def fact_value(self, fact: str) -> bool | int | None:
-        """Return a raw or derived fact by name; ``None`` means unknown."""
+        """Return a raw or derived fact by name; ``None`` means unknown.
+
+        The engine calls this for every rule, so "age" and normal fields
+        can be read the same way.
+        """
 
         if fact == "age":
             return self.age
+        # getattr reads a field by its name, e.g. getattr(p, "is_widow").
         return getattr(self, fact)
 
 
@@ -129,12 +147,15 @@ class Rule(RulePackageModel):
         """Reject combinations the deterministic evaluator cannot support."""
 
         if self.field == "age":
+            # Age needs a minimum or maximum with a realistic whole number.
+            # type(...) is int rejects True/False, which Python treats as 1/0.
             valid = (
                 self.operator in {"gte", "lte"}
                 and type(self.value) is int
                 and 0 <= self.value <= 125
             )
         else:
+            # Yes/no facts can only be compared with eq true or eq false.
             valid = self.operator == "eq" and isinstance(self.value, bool)
         if not valid:
             raise ValueError(
@@ -144,7 +165,11 @@ class Rule(RulePackageModel):
 
     @property
     def input_facts(self) -> tuple[str, ...]:
-        """Return the raw profile facts this rule reads."""
+        """Return the raw profile facts this rule reads.
+
+        "age" returns ("date_of_birth", "application_date");
+        any other field returns just itself, e.g. ("is_widow",).
+        """
 
         return DERIVED_FACT_INPUTS.get(self.field, (self.field,))
 
@@ -188,12 +213,15 @@ class RulePackage(RulePackageModel):
     def validate_rule_set(self) -> "RulePackage":
         """Require unique rules whose facts are declared and consistent."""
 
+        # Two rules with the same ID would make evidence ambiguous.
         rule_ids = [rule.rule_id for rule in self.rules]
         if len(rule_ids) != len(set(rule_ids)):
             raise ValueError("Policy rule IDs must be unique")
         if len(self.required_facts) != len(set(self.required_facts)):
             raise ValueError("required_facts must be unique")
 
+        # Every fact a rule reads must be listed in required_facts, because
+        # intake uses that list to know what to ask.
         undeclared = sorted(
             {
                 fact
@@ -207,9 +235,11 @@ class RulePackage(RulePackageModel):
                 f"Rules use facts missing from required_facts: {undeclared}"
             )
 
+        # Age rules must say which date age is measured on.
         age_rules = [rule for rule in self.rules if rule.field == "age"]
         if age_rules and self.age_as_of is None:
             raise ValueError("Age rules require age_as_of")
+        # A minimum above the maximum (e.g. 80 to 40) would reject everyone.
         minimums = [rule.value for rule in age_rules if rule.operator == "gte"]
         maximums = [rule.value for rule in age_rules if rule.operator == "lte"]
         if minimums and maximums and max(minimums) > min(maximums):

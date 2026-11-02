@@ -481,11 +481,17 @@ if st.session_state.forget_error:
 if st.session_state.pop("show_forgotten", False):
     st.success(text["forgotten"])
 
+# Streamlit reruns this whole file on every click. st.session_state keeps
+# values between reruns, and st.stop() ends drawing so only one screen shows:
+#   journey_started + PM-KISAN -> PM-KISAN form, then stop
+#   not journey_started        -> search screen, then stop
+#   journey_started + other    -> widow-pension screen further below
 if st.session_state.journey_started:
     st.caption(
         f'{text["finder_choose"]}: {st.session_state.journey_scheme_id}'
     )
     if st.button(text["finder_back"]):
+        # Forget the chosen scheme and conversation, then redraw the search.
         st.session_state.journey_started = False
         st.session_state.journey_scheme_id = None
         st.session_state.conversation_id = None
@@ -494,6 +500,7 @@ if st.session_state.journey_started:
     elif st.session_state.journey_scheme_id == "PM-KISAN-IN":
         st.subheader(text["pmkisan_title"])
         st.warning(text["pmkisan_notice"])
+        # (profile field name, translation key for the question text)
         answer_labels = (
             ("landholding_family_in_state_records", "pmkisan_land"),
             ("institutional_landholder", "pmkisan_institution"),
@@ -510,6 +517,7 @@ if st.session_state.journey_started:
             ),
             ("nri_new_beneficiary", "pmkisan_nri"),
         )
+        # st.form groups the questions so nothing is sent until Submit.
         with st.form("pmkisan_eligibility_form"):
             answers = {}
             choices = [
@@ -523,6 +531,9 @@ if st.session_state.journey_started:
                     options=choices,
                     key=f"pmkisan_{field_name}",
                 )
+                # Turn the chosen label into the value HouseholdProfile
+                # expects. "Unknown" becomes None, so the engine asks for
+                # it instead of treating it as "No".
                 answers[field_name] = {
                     text["pmkisan_unknown"]: None,
                     text["pmkisan_no"]: False,
@@ -533,10 +544,13 @@ if st.session_state.journey_started:
                 type="primary",
             )
         if submitted:
+            # Clear any old result before the new check.
             st.session_state.pmkisan_eligibility_result = None
             st.session_state.pmkisan_eligibility_error = None
             try:
                 # Same path as widow pension: journey graph -> MCP rule engine.
+                # Reuse the conversation ID so the backend continues the
+                # same conversation instead of starting a new one.
                 journey = run_journey(
                     JourneyRequest(
                         action="evaluate",
@@ -555,6 +569,8 @@ if st.session_state.journey_started:
                 st.session_state.journey_plan = journey.plan
                 st.session_state.journey_conversation = journey.conversation
                 if journey.eligibility_result is None:
+                    # The graph stopped early (e.g. invalid_input), so show
+                    # its message instead of a verdict.
                     st.session_state.pmkisan_eligibility_error = (
                         journey.message
                     )
@@ -563,6 +579,7 @@ if st.session_state.journey_started:
                         journey.eligibility_result.model_dump(mode="json")
                     )
             except JourneyApiError as error:
+                # API not running, or it returned an HTTP error.
                 st.session_state.pmkisan_eligibility_error = str(error)
 
         if st.session_state.pmkisan_eligibility_error:
@@ -571,8 +588,11 @@ if st.session_state.journey_started:
                 f'{st.session_state.pmkisan_eligibility_error}'
             )
 
+        # The result is read from session_state, so it stays on screen
+        # after later reruns too.
         result = st.session_state.pmkisan_eligibility_result
         if result:
+            # Colour by verdict: green eligible, red not, yellow need info.
             if result["result"] == "eligible":
                 st.success(text["eligible"])
             elif result["result"] == "not_eligible":
@@ -580,6 +600,7 @@ if st.session_state.journey_started:
             else:
                 st.warning(text["pmkisan_verification"])
             st.write(result["reason"])
+            # Optional parts only show when the package provides them.
             if result["notice"]:
                 st.warning(result["notice"])
             if result["missing_fields"]:
@@ -592,6 +613,7 @@ if st.session_state.journey_started:
                     f'{text["pmkisan_unresolved"]}: '
                     f'{", ".join(result["unresolved_checks"])}'
                 )
+            # One expandable box per deciding rule, with its source.
             for evidence in result["evidence"]:
                 with st.expander(evidence["rule_id"]):
                     st.write(evidence["source_text"])
@@ -603,6 +625,7 @@ if st.session_state.journey_started:
                         text["source"],
                         evidence["source_url"],
                     )
+        # Stop here so the widow-pension screen below is not drawn.
         st.stop()
 else:
     st.subheader(text["finder_title"])

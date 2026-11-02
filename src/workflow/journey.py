@@ -32,13 +32,18 @@ class JourneyRequest(BaseModel):
 
 
 class JourneyState(TypedDict, total=False):
-    """Typed state shared by the graph's agent and tool nodes."""
+    """Typed state shared by the graph's agent and tool nodes.
+
+    Each node returns a dict with only the keys it changes; LangGraph merges
+    that dict into this state. ``total=False`` means every key is optional.
+    """
 
     action: Literal["search", "evaluate"]
     conversation_id: str
     query: str
     normalized_query: str
     scheme_id: str
+    # Kept as plain JSON so the checkpointer can save it.
     profile: dict[str, Any]
     plan: str
     status: str
@@ -47,6 +52,8 @@ class JourneyState(TypedDict, total=False):
     passages: list[dict[str, Any]]
     eligibility_result: dict[str, Any] | None
     validation_errors: list[str]
+    # Annotated with "add": new messages are appended to the saved history
+    # instead of replacing it.
     conversation: Annotated[list[dict[str, str]], add]
 
 
@@ -77,6 +84,8 @@ async def _search_with_mcp(
     client: Client,
     query: str,
 ) -> list[SchemePassage]:
+    """Default search tool: ask the MCP server for the top 5 passages."""
+
     return await search_scheme_passages(client, query, limit=5)
 
 
@@ -85,6 +94,8 @@ async def _evaluate_with_mcp(
     scheme_id: str,
     profile: HouseholdProfile,
 ) -> EligibilityResponse:
+    """Default eligibility tool: ask the MCP server's rule engine."""
+
     return await evaluate_eligibility(client, scheme_id, profile)
 
 
@@ -101,9 +112,23 @@ def build_journey_graph(
     query_rewriter: Callable[[str], Awaitable[str]] = rewrite_scheme_query,
     checkpointer: BaseCheckpointSaver | None = None,
 ) -> Any:
-    """Build and compile the three-agent journey with a checkpointer."""
+    """Build and compile the three-agent journey with a checkpointer.
+
+    Args:
+        client: Connected MCP client used by the tool nodes.
+        rule_packages: Loaded rule packages; intake uses them to know which
+            schemes can be checked and which facts each one needs.
+        search_tool, eligibility_tool, query_rewriter: Replaceable so tests
+            can pass fakes instead of calling MCP or a paid LLM.
+        checkpointer: Saves state after each node, keyed by conversation ID.
+    """
+
+    # The functions below are graph nodes. Each receives the current state
+    # and returns only the keys it wants to change.
 
     async def orchestrator_agent(state: JourneyState) -> dict[str, Any]:
+        """Write a short plan for this request (a real supervisor in Phase 2)."""
+
         if state["action"] == "search":
             plan = "Understand the request, then find source-cited schemes."
         else:
@@ -117,6 +142,14 @@ def build_journey_graph(
         }
 
     async def intake_agent(state: JourneyState) -> dict[str, Any]:
+        """Check the request is complete and valid before any tool runs.
+
+        Search: rewrite the question for retrieval.
+        Evaluate: check scheme, rule package and profile in order, and stop
+        at the first problem with a clear status and message.
+        """
+
+        # ---- Search path ----
         if state["action"] == "search":
             query = state.get("query", "").strip()
             if not query:
@@ -129,6 +162,7 @@ def build_journey_graph(
                     "eligibility_result": None,
                     "conversation": [{"role": "assistant", "content": message}],
                 }
+            # The LLM rewrites the user's words into a better search query.
             normalized_query = await query_rewriter(query)
             return {
                 "query": normalized_query,
@@ -138,6 +172,8 @@ def build_journey_graph(
                 "eligibility_result": None,
             }
 
+        # ---- Evaluate path ----
+        # Check 1: a scheme must be chosen.
         scheme_id = state.get("scheme_id", "").strip()
         if not scheme_id:
             message = "Choose a scheme before checking eligibility."
@@ -148,6 +184,8 @@ def build_journey_graph(
                 "eligibility_result": None,
                 "conversation": [{"role": "assistant", "content": message}],
             }
+        # Check 2: the scheme must have a reviewed rule package. Without one
+        # we only show information and never guess eligibility.
         if scheme_id not in rule_packages:
             message = (
                 "This scheme is information-only in the current pilot. "
@@ -162,6 +200,8 @@ def build_journey_graph(
                 "conversation": [{"role": "assistant", "content": message}],
             }
 
+        # Check 3: some profile must be sent. If not, tell the caller which
+        # facts this scheme needs, read from its rule package.
         profile_data = state.get("profile")
         if profile_data is None:
             message = "Provide the required synthetic profile facts to continue."
@@ -173,9 +213,13 @@ def build_journey_graph(
                 "conversation": [{"role": "assistant", "content": message}],
             }
 
+        # Check 4: the profile must match HouseholdProfile (right types,
+        # sensible dates, no unknown fields). Empty facts are allowed.
         try:
             profile = HouseholdProfile.model_validate(profile_data)
         except ValidationError as error:
+            # Collect the name of each bad field, e.g. "is_widow".
+            # item["loc"] is the path to the error; [0] is the field name.
             missing_fields = sorted(
                 {
                     str(item["loc"][0])
@@ -194,6 +238,8 @@ def build_journey_graph(
                 "eligibility_result": None,
             }
 
+        # All checks passed: save the cleaned profile and hand over to the
+        # eligibility agent (see route_after_intake).
         return {
             "scheme_id": scheme_id,
             "profile": profile.model_dump(mode="json"),
@@ -209,7 +255,12 @@ def build_journey_graph(
         }
 
     async def eligibility_agent(state: JourneyState) -> dict[str, Any]:
+        """Ask the MCP rule tool for a verdict and store it in the state."""
+
+        # Rebuild the typed profile from the saved JSON.
         profile = HouseholdProfile.model_validate(state["profile"])
+        # The rule engine runs in the MCP server; this node never reads
+        # rule files itself (least privilege).
         result = await eligibility_tool(
             client,
             state["scheme_id"],
@@ -225,6 +276,8 @@ def build_journey_graph(
         }
 
     async def scheme_search_tool(state: JourneyState) -> dict[str, Any]:
+        """Find cited scheme passages for the rewritten query."""
+
         passages = await search_tool(client, state["query"])
         message = (
             f"Found {len(passages)} relevant cited passage(s)."
@@ -242,10 +295,14 @@ def build_journey_graph(
         }
 
     def route_after_intake(state: JourneyState) -> str:
+        """Go to the eligibility agent only if intake approved the request."""
+
         if state.get("status") != "ready_for_eligibility":
             return END
         return "eligibility_agent"
 
+    # Wire the nodes together:
+    # START -> orchestrator -> intake -> (search tool | eligibility | END)
     graph = StateGraph(JourneyState)
     graph.add_node("orchestrator_agent", orchestrator_agent)
     graph.add_node("intake_agent", intake_agent)
@@ -253,6 +310,7 @@ def build_journey_graph(
     graph.add_node("scheme_search_tool", scheme_search_tool)
     graph.add_edge(START, "orchestrator_agent")
     graph.add_edge("orchestrator_agent", "intake_agent")
+    # A conditional edge looks at the state and picks the next node.
     graph.add_conditional_edges(
         "intake_agent",
         lambda state: (
@@ -269,6 +327,8 @@ def build_journey_graph(
     )
     graph.add_edge("scheme_search_tool", END)
     graph.add_edge("eligibility_agent", END)
+    # compile() turns the wiring into a runnable graph; the checkpointer
+    # saves state after every node.
     return graph.compile(checkpointer=checkpointer)
 
 
@@ -278,6 +338,7 @@ async def run_journey(
 ) -> JourneyResponse:
     """Run one graph step, resuming conversation state by its session ID."""
 
+    # Start state for this turn: only the values sent in this request.
     initial_state: JourneyState = {
         "action": request.action,
         "conversation_id": str(request.conversation_id),
@@ -293,6 +354,8 @@ async def run_journey(
     if request.profile is not None:
         initial_state["profile"] = request.profile
 
+    # thread_id tells the checkpointer which saved conversation to load and
+    # continue. The same conversation_id resumes the same conversation.
     result = await graph.ainvoke(
         initial_state,
         config={
@@ -301,6 +364,7 @@ async def run_journey(
             }
         },
     )
+    # Convert the raw graph state into the typed API response.
     return JourneyResponse(
         conversation_id=request.conversation_id,
         plan=result.get("plan", ""),
