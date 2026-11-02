@@ -30,10 +30,11 @@ question at a time, and stop as soon as they know the answer.
 | What the user sees of the plan | One line of text | A checklist with ✅ ⏳ ⬜ icons |
 | Page refresh | Everything lost | The chat continues from the same question |
 
-**What did not change:** the rule engine still decides every verdict. No
-language model (LLM) is used in Phase 2 at all. Questions are fixed text and
-answers are read by plain code. This keeps the cost at zero and the
-behaviour the same every time.
+**What did not change:** the rule engine still decides every verdict. The
+new interview uses **no language model (LLM)**: questions are fixed text and
+answers are read by plain code. This keeps the interview free and the
+behaviour the same every time. (Scheme search, from earlier work, still uses
+an LLM to reword the search query; that is not part of the interview.)
 
 ---
 
@@ -952,5 +953,5 @@ open http://127.0.0.1:8501.
 6. **Pausing is saving.** `interrupt()` works because the checkpointer saved
    the state. Between messages, nothing runs.
 7. **Reset what belongs to one request; keep what is history.**
-8. **The AI never decides eligibility.** In Phase 2 there is no AI in the
-   loop at all.
+8. **The AI never decides eligibility.** The Phase 2 interview has no AI
+   in it at all; only search rewording uses an LLM.
