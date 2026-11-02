@@ -8,6 +8,7 @@ from src.api import scheme_search as scheme_search_module
 from src.api.scheme_search import (
     HybridSchemeRetriever,
     OpenRouterEmbeddings,
+    OpenRouterReranker,
     decompose_query,
     load_passages,
     reciprocal_rank_fusion,
@@ -70,6 +71,72 @@ def test_embeddings_do_not_fall_back_to_chat_key(monkeypatch):
 
     with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY_FREE"):
         OpenRouterEmbeddings()
+
+
+def test_openrouter_reranker_returns_scores_in_document_order(monkeypatch):
+    requests = []
+
+    def fake_urlopen(request, timeout):
+        requests.append(request)
+        return BytesIO(
+            json.dumps(
+                {
+                    "results": [
+                        {"index": 1, "relevance_score": 0.9},
+                        {"index": 0, "relevance_score": 0.1},
+                    ]
+                }
+            ).encode()
+        )
+
+    monkeypatch.setattr(
+        scheme_search_module.urllib.request,
+        "urlopen",
+        fake_urlopen,
+    )
+    passages = load_passages(PASSAGE_FILE)[:2]
+    reranker = OpenRouterReranker(api_key="rerank-test-key")
+
+    scores = reranker("widow pension", passages)
+
+    assert scores == [0.1, 0.9]
+    assert requests[0].full_url == scheme_search_module.OPENROUTER_RERANK_URL
+    assert requests[0].get_header("Authorization") == "Bearer rerank-test-key"
+    payload = json.loads(requests[0].data)
+    assert payload["model"] == "cohere/rerank-v3.5"
+    assert payload["query"] == "widow pension"
+    assert payload["top_n"] == 2
+    assert len(payload["documents"]) == 2
+
+
+def test_openrouter_reranker_rejects_incomplete_response(monkeypatch):
+    def fake_urlopen(request, timeout):
+        return BytesIO(
+            json.dumps(
+                {"results": [{"index": 0, "relevance_score": 0.9}]}
+            ).encode()
+        )
+
+    monkeypatch.setattr(
+        scheme_search_module.urllib.request,
+        "urlopen",
+        fake_urlopen,
+    )
+    passages = load_passages(PASSAGE_FILE)[:2]
+
+    with pytest.raises(RuntimeError, match="invalid reranking response"):
+        OpenRouterReranker(api_key="rerank-test-key")(
+            "widow pension",
+            passages,
+        )
+
+
+def test_openrouter_reranker_requires_embedding_key(monkeypatch):
+    monkeypatch.delenv("OPENROUTER_API_KEY_FREE", raising=False)
+    monkeypatch.delenv("OPEN_ROUTER_FREE", raising=False)
+
+    with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY_FREE"):
+        OpenRouterReranker()("widow pension", load_passages(PASSAGE_FILE)[:1])
 
 
 def test_reviewed_passage_can_be_found_and_is_marked_reviewed():

@@ -59,6 +59,8 @@ class PassageCorpus(BaseModel):
 
 EMBEDDING_MODEL = os.getenv("OPENROUTER_EMBEDDING_MODEL", "voyageai/voyage-4")
 OPENROUTER_EMBEDDINGS_URL = "https://openrouter.ai/api/v1/embeddings"
+OPENROUTER_RERANK_URL = "https://openrouter.ai/api/v1/rerank"
+OPENROUTER_RERANKER_MODEL = "cohere/rerank-v3.5"
 RERANKER_MODEL = "BAAI/bge-reranker-v2-m3-int8"
 VECTOR_COLLECTION = "scheme_passages"
 RETRIEVAL_DEPTH = 20
@@ -69,6 +71,89 @@ _QUERY_STOPWORDS = {
     "how", "i", "in", "is", "me", "of", "on", "or", "the", "to",
     "what", "when", "where", "which", "who", "with",
 }
+
+
+class OpenRouterReranker:
+    """Rerank passages through OpenRouter without loading a local model."""
+
+    def __init__(self, api_key: str | None = None) -> None:
+        self._api_key = (
+            api_key
+            or os.getenv("OPENROUTER_API_KEY_FREE")
+            or os.getenv("OPEN_ROUTER_FREE")
+        )
+
+    def __call__(
+        self,
+        query: str,
+        passages: Sequence["SchemePassage"],
+    ) -> list[float]:
+        api_key = (
+            self._api_key
+            or os.getenv("OPENROUTER_API_KEY_FREE")
+            or os.getenv("OPEN_ROUTER_FREE")
+        )
+        if not api_key:
+            raise RuntimeError(
+                "OPENROUTER_API_KEY_FREE is required for hosted reranking."
+            )
+
+        documents = [
+            HybridSchemeRetriever.document_text(passage)
+            for passage in passages
+        ]
+        payload = json.dumps(
+            {
+                "model": OPENROUTER_RERANKER_MODEL,
+                "query": query,
+                "documents": documents,
+                "top_n": len(documents),
+            }
+        ).encode("utf-8")
+        request = urllib.request.Request(
+            OPENROUTER_RERANK_URL,
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=60) as response:
+                body = json.loads(response.read())
+        except urllib.error.HTTPError as error:
+            raise RuntimeError(
+                f"OpenRouter reranking request failed with HTTP {error.code}."
+            ) from error
+        except urllib.error.URLError as error:
+            raise RuntimeError("OpenRouter reranking request failed.") from error
+        except (json.JSONDecodeError, TypeError) as error:
+            raise RuntimeError(
+                "OpenRouter returned an invalid reranking response."
+            ) from error
+
+        try:
+            results = body["results"]
+            scores: list[float | None] = [None] * len(documents)
+            for result in results:
+                index = result["index"]
+                score = float(result["relevance_score"])
+                if (
+                    not isinstance(index, int)
+                    or isinstance(index, bool)
+                    or not 0 <= index < len(documents)
+                    or scores[index] is not None
+                ):
+                    raise ValueError("Invalid reranking result index.")
+                scores[index] = score
+            if any(score is None for score in scores):
+                raise ValueError("Reranking response omitted documents.")
+            return [score for score in scores if score is not None]
+        except (KeyError, TypeError, ValueError) as error:
+            raise RuntimeError(
+                "OpenRouter returned an invalid reranking response."
+            ) from error
 
 
 class OpenRouterEmbeddings:

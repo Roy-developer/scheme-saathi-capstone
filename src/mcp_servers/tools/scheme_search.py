@@ -8,6 +8,7 @@ from mcp.server.mcpserver.exceptions import ToolError
 from src.config import PROJECT_ROOT
 from src.api.scheme_search import (
     HybridSchemeRetriever,
+    OpenRouterReranker,
     SchemePassage,
     load_passages,
 )
@@ -18,10 +19,13 @@ def register_tools(mcp: MCPServer) -> None:
 
     passage_file = PROJECT_ROOT / "data" / "schemes" / "passages.json"
     passages = load_passages(passage_file)
+    rerank_mode = os.getenv("SCHEME_SAATHI_RERANKER", "").casefold()
     retriever = HybridSchemeRetriever(
         passages,
+        rerank=OpenRouterReranker() if rerank_mode == "openrouter" else None,
         use_cross_encoder=(
-            os.getenv("SCHEME_SAATHI_DISABLE_CROSS_ENCODER") != "1"
+            rerank_mode != "openrouter"
+            and os.getenv("SCHEME_SAATHI_DISABLE_CROSS_ENCODER") != "1"
         ),
     )
 

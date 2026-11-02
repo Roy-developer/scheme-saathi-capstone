@@ -79,13 +79,17 @@ workbook. This remains a technical pilot, not the complete 40–60-scheme
 corpus, and retrieval does not determine eligibility.
 
 The current pilot uses the OpenRouter `voyageai/voyage-4` multilingual
-embedding model and the multilingual BGE reranker v2 M3 INT8 model. Copy
+embedding model. The deployed API uses OpenRouter's hosted
+`cohere/rerank-v3.5` model for reranking, while local retrieval evaluation can
+use the multilingual BGE reranker v2 M3 INT8 model. Copy
 `.env.example` to `.env`; configure `OPENROUTER_API_KEY` for intake query
 rewrites and `OPENROUTER_API_KEY_FREE` for embeddings (`OPEN_ROUTER_FREE` is
 also accepted as an embedding-key alias). `.env` is ignored by Git and loaded
 by `src.config`; the MCP child process receives only the embedding credential.
+Hosted reranking uses that same embedding credential and incurs OpenRouter
+usage charges.
 The first search embeds the public passage corpus through OpenRouter, and the
-reranker model is downloaded if it is not cached.
+local BGE reranker model is downloaded if it is not cached.
 The Qdrant index is rebuilt in memory when the MCP server starts; persistent
 vector storage remains future work.
 Search queries are also sent to OpenRouter for embedding.
