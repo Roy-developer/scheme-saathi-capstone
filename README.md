@@ -154,10 +154,13 @@ python -m uvicorn src.api.app:app --reload --port 8000
 python -m streamlit run src/ui/app.py
 ```
 
-The deployment image starts both processes together with
-`python -m src.run_services`; the UI calls its local API at `127.0.0.1:8000`.
-Set both OpenRouter credentials in the container environment using the
-deployment platform's secret mechanism. Never bake `.env` into the image.
+The same deployment image runs in two existing Azure Container Apps with
+startup command overrides: `python src/run_services.py api` for FastAPI and
+`python src/run_services.py ui` for Streamlit. The frontend receives
+`SCHEME_SAATHI_API_URL` pointing to the backend app's HTTPS endpoint; the
+services do not communicate through `localhost`. Configure OpenRouter
+credentials only as backend Container App secrets. Never bake `.env` into the
+image.
 
 The API health check is at `http://127.0.0.1:8000/health`; interactive API
 documentation is at `http://127.0.0.1:8000/docs`. Run the test suite with

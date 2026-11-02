@@ -17,9 +17,4 @@ RUN pip install --no-cache-dir .
 
 EXPOSE 8000 8501
 
-# Container Apps uses this local probe to decide whether a new revision can
-# receive traffic; it does not replace the workflow's public ingress check.
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-  CMD python -c "import urllib.request; [urllib.request.urlopen(url, timeout=3) for url in ('http://127.0.0.1:8000/health', 'http://127.0.0.1:8501/_stcore/health')]"
-
 CMD ["python", "-m", "src.run_services"]

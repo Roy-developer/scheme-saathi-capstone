@@ -83,6 +83,7 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         args=["-m", "src.mcp_servers.saathi_mcp_server"],
         env={
             "SCHEME_SAATHI_DISABLE_DOTENV": "1",
+            "OPENBLAS_NUM_THREADS": "1",
             **{
                 name: value
                 for name in (

@@ -1,38 +1,56 @@
-"""Run the FastAPI backend and Streamlit frontend in one container."""
+"""Start the API, UI, or both for local development."""
 
+import argparse
 import signal
 import subprocess
 import sys
 import time
 
 
-def main() -> int:
-    api = subprocess.Popen(
-        [
-            sys.executable,
-            "-m",
-            "uvicorn",
-            "src.api.app:app",
-            "--host",
-            "127.0.0.1",
-            "--port",
-            "8000",
-        ]
+def service_commands(service: str) -> tuple[list[str], ...]:
+    api = [
+        sys.executable,
+        "-m",
+        "uvicorn",
+        "src.api.app:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+    ]
+    ui = [
+        sys.executable,
+        "-m",
+        "streamlit",
+        "run",
+        "src/ui/app.py",
+        "--server.address",
+        "0.0.0.0",
+        "--server.port",
+        "8501",
+    ]
+    if service == "api":
+        return (api,)
+    if service == "ui":
+        return (ui,)
+    if service == "all":
+        return (api, ui)
+    raise ValueError(f"Unknown service: {service}")
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "service",
+        choices=("all", "api", "ui"),
+        nargs="?",
+        default="all",
     )
-    ui = subprocess.Popen(
-        [
-            sys.executable,
-            "-m",
-            "streamlit",
-            "run",
-            "src/ui/app.py",
-            "--server.address",
-            "0.0.0.0",
-            "--server.port",
-            "8501",
-        ]
+    args = parser.parse_args(argv)
+    children = tuple(
+        subprocess.Popen(command)
+        for command in service_commands(args.service)
     )
-    children = (api, ui)
 
     def stop_children(_signal_number: int, _frame: object) -> None:
         for child in children:

@@ -91,6 +91,7 @@ try {
     # needs to confirm configuration, not expose account identifiers.
     $requiredVariables = @(
         "AZURE_ACR_NAME",
+        "AZURE_API_APP",
         "AZURE_CLIENT_ID",
         "AZURE_CONTAINER_APP",
         "AZURE_CONTAINER_ENVIRONMENT",
