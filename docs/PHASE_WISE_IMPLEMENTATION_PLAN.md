@@ -28,7 +28,7 @@ Rules for every phase:
 | Phase | Backend | What you see in the UI | Status |
 |---|---|---|---|
 | 1. Base | Shared typed models; one rule engine for both schemes; PM-KISAN through MCP and the graph | Same screens; PM-KISAN uses the same path as widow pension | Built; awaiting UI test |
-| 2. Supervisor and intake | Supervisor makes a plan; intake asks one question at a time | Chat box instead of fixture form; plan panel | Not started |
+| 2. Supervisor and intake | Supervisor makes a plan; intake asks one question at a time | Chat box instead of fixture form; plan panel | Built; awaiting UI test |
 | 3. Multi-scheme and replan | Eligibility checks every candidate; plan changes when a result contradicts it | Verdict list for all schemes; replan trace | Not started |
 | 4. Documents and approval | Document checker; application agent pauses with `interrupt()` | Document checklist; approve, edit or reject the exact draft | Not started |
 | 5. Guardrails and evaluation | Input/output checks; refer can't-tell cases to a human; planned vs fixed question order | Warnings and referral notice | Not started |
@@ -74,7 +74,7 @@ Done when: all items pass and no scheme bypasses the graph.
 
 ## Phase 2 — Supervisor and intake
 
-**Goal:** the orchestrator plans and delegates; intake asks questions instead
+**Goal:** the supervisor plans and delegates; intake asks questions instead
 of receiving a full fixture profile.
 
 Backend:
@@ -105,6 +105,27 @@ UI test checklist:
 - [ ] Refresh the page; the conversation continues from the same point.
 
 Done when: no fixture profile is needed to reach a verdict.
+
+What was built (no LLM calls yet, to keep cost at zero):
+
+- `src/workflow/supervisor.py`: builds the plan and moves it forward when a
+  specialist reports back.
+- `src/workflow/question_picker.py`: picks the next missing fact by walking
+  the rule package in order (the first rule that still needs a fact wins).
+- `src/workflow/questions.py`: fixed English question text and plain-code
+  answer reading (yes / no / don't know and day-first dates). The LLM will
+  phrase questions and read free text in a later step.
+- `src/workflow/journey.py`: supervisor ? intake ? `ask_user` (`interrupt()`)
+  ? intake ? ? eligibility ? supervisor. `resume_journey` continues a paused
+  conversation; `get_journey` reloads it.
+- API: `POST /api/v1/journey` with `action="interview"`,
+  `POST /api/v1/journey/{id}/messages` (409 when nothing is waiting) and
+  `GET /api/v1/journey/{id}` (404 when nothing is saved).
+- UI: chat with a plan checklist for PM-KISAN; widow pension offers the
+  chat or a preset example person (still needed for the draft until
+  Phase 4); the URL keeps the conversation ID so a refresh restores it.
+- Known limits: questions and plan goals are English only; the widow chat
+  does not prepare a draft.
 
 ---
 

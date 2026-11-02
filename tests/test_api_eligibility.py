@@ -416,3 +416,59 @@ def test_forget_journey_deletes_checkpoint_thread(client: TestClient) -> None:
     )
 
     assert response.status_code == 204
+
+
+def test_interview_over_http_asks_questions_then_returns_verdict(
+    client: TestClient,
+) -> None:
+    """Phase 2: the real graph and MCP rule tool, one answer at a time."""
+
+    started = client.post(
+        "/api/v1/journey",
+        json={
+            "action": "interview",
+            "scheme_id": "IGNWPS-MH",
+            "profile": {"application_date": "2026-10-30"},
+        },
+    )
+    assert started.status_code == 200
+    body = started.json()
+    assert body["status"] == "awaiting_answer"
+    assert body["pending_fact"] == "is_widow"
+    conversation_id = body["conversation_id"]
+
+    for answer in ["yes", "30 October 1976", "yes"]:
+        reply = client.post(
+            f"/api/v1/journey/{conversation_id}/messages",
+            json={"message": answer},
+        )
+        assert reply.status_code == 200
+    assert reply.json()["status"] == "eligible"
+
+    saved = client.get(f"/api/v1/journey/{conversation_id}")
+    assert saved.status_code == 200
+    assert saved.json()["status"] == "eligible"
+
+    # The interview is over, so another reply is refused.
+    late = client.post(
+        f"/api/v1/journey/{conversation_id}/messages",
+        json={"message": "yes"},
+    )
+    assert late.status_code == 409
+
+
+def test_journey_message_rejects_empty_reply(client: TestClient) -> None:
+    response = client.post(
+        "/api/v1/journey/0e8fa6c3-46a1-44db-b4f3-4f2c9d981af1/messages",
+        json={"message": ""},
+    )
+
+    assert response.status_code == 422
+
+
+def test_unknown_journey_returns_not_found(client: TestClient) -> None:
+    response = client.get(
+        "/api/v1/journey/0e8fa6c3-46a1-44db-b4f3-4f2c9d981af2"
+    )
+
+    assert response.status_code == 404

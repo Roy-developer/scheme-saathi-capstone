@@ -26,9 +26,13 @@ from src.workflow.eligibility import (
 from src.workflow.errors import MCPToolError
 from src.workflow.intake import IntakeAgentError
 from src.workflow.journey import (
+    JourneyMessage,
+    JourneyNotWaitingError,
     JourneyRequest,
     JourneyResponse,
     build_journey_graph,
+    get_journey,
+    resume_journey,
     run_journey,
 )
 from src.workflow.scheme_search import search_scheme_passages
@@ -223,6 +227,59 @@ async def journey(
             status_code=502,
             detail="The intake agent is unavailable.",
         ) from error
+
+
+@app.post(
+    "/api/v1/journey/{conversation_id}/messages",
+    response_model=JourneyResponse,
+)
+async def journey_message(
+    conversation_id: UUID,
+    journey_message: JourneyMessage,
+    request: Request,
+) -> JourneyResponse:
+    """Answer the question a paused interview is waiting on.
+
+    Returns the next question, or the verdict once intake is done.
+    409 means the conversation is not waiting for an answer.
+    """
+
+    try:
+        return await resume_journey(
+            request.app.state.journey_graph,
+            conversation_id,
+            journey_message.message,
+        )
+    except JourneyNotWaitingError as error:
+        raise HTTPException(
+            status_code=409,
+            detail="This conversation is not waiting for an answer.",
+        ) from error
+    except MCPToolError as error:
+        logger.exception("A journey MCP tool failed")
+        raise HTTPException(
+            status_code=502,
+            detail="A journey tool is unavailable.",
+        ) from error
+
+
+@app.get(
+    "/api/v1/journey/{conversation_id}",
+    response_model=JourneyResponse,
+)
+async def journey_state(
+    conversation_id: UUID,
+    request: Request,
+) -> JourneyResponse:
+    """Return a saved conversation, e.g. to continue after a page refresh."""
+
+    response = await get_journey(
+        request.app.state.journey_graph,
+        conversation_id,
+    )
+    if response is None:
+        raise HTTPException(status_code=404, detail="Conversation not found.")
+    return response
 
 
 @app.delete("/api/v1/journey/{conversation_id}", status_code=204)

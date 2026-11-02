@@ -98,8 +98,10 @@ vector storage remains future work.
 
 PM-KISAN follows the same scheme-selection journey: select the scheme in
 search results, choose **Continue to the synthetic eligibility demo**, then
-answer the household questions. The UI sends those answers to
-`POST /api/v1/journey`, so PM-KISAN runs through the same LangGraph intake,
+choose **Start questions**. Saathi asks one question at a time through
+`POST /api/v1/journey` (`action="interview"`) and
+`POST /api/v1/journey/{conversation_id}/messages`, so PM-KISAN runs through
+the same LangGraph supervisor, intake,
 MCP `evaluate_eligibility` tool and rule engine as widow pension. Both schemes
 use one rule package format in `src/rules/packages/` (required facts, rules,
 source text and reason messages); `POST /api/v1/schemes/{scheme_id}/evaluate`
@@ -112,11 +114,17 @@ Search queries are also sent to OpenRouter for embedding.
 
 ### First LangGraph user journey
 
-The UI calls `POST /api/v1/journey`; it does not call MCP directly. A fixed
-LangGraph route runs the orchestrator node, then intake. Intake uses the
-standard OpenRouter key only to normalize the user's query for search; the
-search tool returns cited passages. For the supported IGNWPS-MH mock scheme,
-the UI then supplies a synthetic profile and the eligibility agent calls the
+The UI calls `POST /api/v1/journey`; it does not call MCP directly. A
+LangGraph supervisor builds a visible plan and hands each step to a
+specialist (intake, search or eligibility), which reports back. Intake uses
+the standard OpenRouter key only to normalize the user's query for search;
+the search tool returns cited passages. For an eligibility check, intake
+asks only the questions the rule package still needs, one at a time: the
+graph pauses with `interrupt()` and continues when the user replies. Answers
+are read by plain code (yes / no / don't know, or a date), not by a model.
+`GET /api/v1/journey/{conversation_id}` reloads a saved conversation after a
+page refresh. Widow pension can still use a preset synthetic profile, which
+is needed for the draft and approval demo. The eligibility agent calls the
 deterministic rule-engine MCP tool. PM-KISAN uses its separately typed,
 versioned mock rule package after the same scheme-selection and Continue
 steps; it does not use or alter the widow-pension rule package. No model

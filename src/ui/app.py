@@ -1,4 +1,15 @@
-"""Render the fixture-backed Scheme Saathi Streamlit demonstration."""
+"""Render the Scheme Saathi Streamlit demonstration.
+
+Screens (Streamlit redraws this whole file on every click):
+
+1. Search: find a scheme by typing a need.
+2. PM-KISAN: a chat where Saathi asks one question at a time (Phase 2).
+3. Widow pension: the same chat, or a preset example person whose draft
+   application can be approved.
+
+The screen never decides eligibility. It calls the journey API, which runs
+the LangGraph supervisor and the deterministic rule engine.
+"""
 
 import os
 from uuid import UUID, uuid4
@@ -9,10 +20,12 @@ from src.ui.approval import approval_matches, draft_fingerprint
 from src.ui.api_client import (
     JourneyApiError,
     forget_journey,
+    get_journey_state,
     run_journey,
+    send_journey_message,
 )
 from src.ui.data_provider import FixtureDataProvider
-from src.workflow.journey import JourneyRequest
+from src.workflow.journey import JourneyRequest, JourneyResponse
 
 
 COPY = {
@@ -89,23 +102,20 @@ COPY = {
         "finder_review": "Review status",
         "pmkisan_title": "Synthetic PM-KISAN household",
         "pmkisan_notice": "Use fictional household facts only. This mock check follows the official guidelines revised in 2020. It does not check the current landholding cutoff or government records, and it is not an official decision.",
-        "pmkisan_land": "Does the farmer family have cultivable land in State/UT records?",
-        "pmkisan_institution": "Is the land held by an institution?",
-        "pmkisan_office": "Does a family member fall under a listed public-office exclusion?",
-        "pmkisan_employee": "Does a family member fall under the specified government-employee exclusion, outside the stated grade exceptions?",
-        "pmkisan_pension": "Does a family member receive a qualifying monthly pension of Rs. 10,000 or more?",
-        "pmkisan_tax": "Did a family member pay income tax in the last assessment year?",
-        "pmkisan_professional": "Is a family member a listed registered professional who is practicing?",
-        "pmkisan_nri": "Is this a new beneficiary whose farmer family is NRI?",
-        "pmkisan_unknown": "Unknown / Not sure",
-        "pmkisan_no": "No",
-        "pmkisan_yes": "Yes",
-        "pmkisan_submit": "Check eligibility",
-        "pmkisan_missing": "Answers still unknown",
         "pmkisan_unresolved": "Not checked in this mock",
         "pmkisan_potential": "Does not meet the 2020 mock criteria",
-        "pmkisan_verification": "Check the answers and try again",
         "pmkisan_error": "Could not run PM-KISAN screen",
+        "plan_title": "Saathi's plan",
+        "interview_title": "Answer a few questions",
+        "interview_notice": "Saathi asks one question at a time and only what the rules need. Use made-up answers only; do not type real names, Aadhaar or bank numbers.",
+        "interview_start": "Start questions",
+        "interview_restart": "Start again",
+        "interview_reply": "Type your answer (yes / no / don't know, or a date like 12 March 1981)",
+        "interview_error": "Could not continue the conversation",
+        "widow_mode": "How do you want to check?",
+        "mode_chat": "Answer questions",
+        "mode_example": "Use an example person",
+        "restored": "Your earlier conversation was restored.",
         "footer": "These are development fixtures, not held-out evaluation cases. No language model determines the verdict.",
     },
     "hi": {
@@ -181,23 +191,20 @@ COPY = {
         "finder_review": "समीक्षा स्थिति",
         "pmkisan_title": "कृत्रिम PM-KISAN परिवार",
         "pmkisan_notice": "केवल काल्पनिक परिवार की जानकारी दें। यह मॉक जाँच 2020 में संशोधित सरकारी दिशानिर्देशों पर आधारित है। इसमें वर्तमान भूमि-कटऑफ या सरकारी रिकॉर्ड की जाँच नहीं होती, और यह सरकारी निर्णय नहीं है।",
-        "pmkisan_land": "क्या किसान परिवार की खेती योग्य भूमि राज्य/केंद्रशासित प्रदेश के रिकॉर्ड में है?",
-        "pmkisan_institution": "क्या भूमि किसी संस्था के नाम पर है?",
-        "pmkisan_office": "क्या परिवार का कोई सदस्य सूचीबद्ध सार्वजनिक पद की अपवर्जन श्रेणी में आता है?",
-        "pmkisan_employee": "क्या परिवार का कोई सदस्य निर्दिष्ट सरकारी-कर्मचारी अपवर्जन में आता है, बताई गई श्रेणी-छूट को छोड़कर?",
-        "pmkisan_pension": "क्या परिवार के किसी सदस्य को प्रति माह 10,000 रुपये या अधिक की संबंधित पेंशन मिलती है?",
-        "pmkisan_tax": "क्या परिवार के किसी सदस्य ने पिछले आकलन वर्ष में आयकर दिया?",
-        "pmkisan_professional": "क्या परिवार का कोई सदस्य सूचीबद्ध पंजीकृत पेशेवर है और उस पेशे में काम करता है?",
-        "pmkisan_nri": "क्या यह नया लाभार्थी है और किसान परिवार NRI है?",
-        "pmkisan_unknown": "अज्ञात / निश्चित नहीं",
-        "pmkisan_no": "नहीं",
-        "pmkisan_yes": "हाँ",
-        "pmkisan_submit": "पात्रता जाँचें",
-        "pmkisan_missing": "अज्ञात उत्तर",
         "pmkisan_unresolved": "इस मॉक में जाँच नहीं हुई",
         "pmkisan_potential": "2020 के मॉक मानदंड पूरे नहीं हुए",
-        "pmkisan_verification": "उत्तर जाँचकर फिर प्रयास करें",
         "pmkisan_error": "PM-KISAN जाँच नहीं हो सकी",
+        "plan_title": "???? ?? ?????",
+        "interview_title": "??? ?????? ?? ???? ???",
+        "interview_notice": "???? ?? ??? ??? ?? ???? ????? ??, ?? ???? ??? ?? ?????? ?? ??? ?????? ??? ???? ???????? ????? ???; ???? ???, ???? ?? ???? ???? ? ??????",
+        "interview_start": "???? ???? ????",
+        "interview_restart": "??? ?? ???? ????",
+        "interview_reply": "???? ????? ????? (yes / no / don't know, ?? 12 March 1981 ???? ?????)",
+        "interview_error": "?????? ???? ???? ?? ???",
+        "widow_mode": "?? ???? ?????? ????? ????",
+        "mode_chat": "?????? ?? ???? ???",
+        "mode_example": "?????? ??????? ?? ????? ????",
+        "restored": "???? ????? ?????? ???? ??? ???",
         "footer": "ये विकास फ़िक्स्चर हैं, सुरक्षित मूल्यांकन मामले नहीं। कोई भाषा मॉडल परिणाम तय नहीं करता।",
     },
     "mr": {
@@ -273,23 +280,20 @@ COPY = {
         "finder_review": "पुनरावलोकन स्थिती",
         "pmkisan_title": "कृत्रिम PM-KISAN कुटुंब",
         "pmkisan_notice": "फक्त काल्पनिक कुटुंबाची माहिती द्या. ही मॉक तपासणी 2020 मध्ये सुधारित अधिकृत मार्गदर्शक तत्त्वांवर आधारित आहे. यात सध्याची जमीन-मर्यादा किंवा सरकारी नोंदी तपासल्या जात नाहीत; हा सरकारी निर्णय नाही.",
-        "pmkisan_land": "शेतकरी कुटुंबाची लागवडीयोग्य जमीन राज्य/केंद्रशासित प्रदेशाच्या नोंदीत आहे का?",
-        "pmkisan_institution": "जमीन एखाद्या संस्थेच्या नावावर आहे का?",
-        "pmkisan_office": "कुटुंबातील सदस्य सूचीबद्ध सार्वजनिक-पद अपात्रता श्रेणीत येतो का?",
-        "pmkisan_employee": "कुटुंबातील सदस्य निर्दिष्ट सरकारी-कर्मचारी अपात्रतेत येतो का, नमूद श्रेणी-सवलती वगळून?",
-        "pmkisan_pension": "कुटुंबातील सदस्याला दरमहा 10,000 रुपये किंवा अधिक संबंधित पेन्शन मिळते का?",
-        "pmkisan_tax": "कुटुंबातील सदस्याने मागील निर्धारण वर्षात आयकर भरला का?",
-        "pmkisan_professional": "कुटुंबातील सदस्य सूचीबद्ध नोंदणीकृत व्यावसायिक असून त्या व्यवसायात कार्यरत आहे का?",
-        "pmkisan_nri": "हा नवीन लाभार्थी असून शेतकरी कुटुंब NRI आहे का?",
-        "pmkisan_unknown": "अज्ञात / खात्री नाही",
-        "pmkisan_no": "नाही",
-        "pmkisan_yes": "होय",
-        "pmkisan_submit": "पात्रता तपासा",
-        "pmkisan_missing": "अज्ञात उत्तरे",
         "pmkisan_unresolved": "या मॉकमध्ये तपासले नाही",
         "pmkisan_potential": "2020 च्या मॉक निकषांची पूर्तता होत नाही",
-        "pmkisan_verification": "उत्तरे तपासून पुन्हा प्रयत्न करा",
         "pmkisan_error": "PM-KISAN तपासणी करता आली नाही",
+        "plan_title": "?????? ?????",
+        "interview_title": "???? ?????????? ?????? ????",
+        "interview_notice": "???? ??? ???? ??? ?????? ???????, ??? ?????????? ?????? ??????. ???? ???????? ?????? ????; ??? ???, ???? ????? ??? ??????? ???? ???.",
+        "interview_start": "?????? ???? ???",
+        "interview_restart": "?????? ???? ???",
+        "interview_reply": "????? ????? ???? (yes / no / don't know, ????? 12 March 1981 ????? ?????)",
+        "interview_error": "?????? ???? ???? ????? ??? ????",
+        "widow_mode": "???????? ??? ???????? ????",
+        "mode_chat": "?????????? ?????? ????",
+        "mode_example": "?????? ??????? ?????",
+        "restored": "????? ????? ?????? ??? ????.",
         "footer": "ही विकास फिक्स्चर आहेत, सुरक्षित मूल्यमापन प्रकरणे नाहीत. कोणतेही भाषा मॉडेल निकाल ठरवत नाही.",
     },
 }
@@ -327,8 +331,6 @@ WORKFLOW_STATE_KEYS = {
     "draft_scenario_id",
     "draft_submitted",
     "rejected_draft",
-    "pmkisan_eligibility_result",
-    "pmkisan_eligibility_error",
     "selected_result",
     "journey_started",
     "journey_scheme_id",
@@ -339,13 +341,19 @@ WORKFLOW_STATE_KEYS = {
     "scheme_search_error",
     "scheme_search_results",
     "selected_search_scheme",
-    "pmkisan_eligibility_result",
-    "pmkisan_eligibility_error",
+    # Phase 2 chat state (see save_journey below).
+    "interview_scheme_id",
+    "interview_result",
+    "interview_message",
+    "interview_error",
+    "journey_plan_detail",
+    "journey_question",
 }
 DEMO_INPUT_KEYS = {
     "demo_consent",
     "demo_scenario",
     "scheme_query",
+    "widow_mode",
 }
 
 
@@ -377,6 +385,225 @@ def clear_application_state() -> None:
     st.session_state.selected_result = None
     st.session_state.api_result = None
     st.session_state.api_error = None
+
+
+def clear_interview_state() -> None:
+    """Forget the chat on screen (the API keeps it until "forget")."""
+
+    st.session_state.interview_scheme_id = None
+    st.session_state.interview_result = None
+    st.session_state.interview_message = None
+    st.session_state.interview_error = None
+    st.session_state.journey_plan_detail = None
+    st.session_state.journey_question = None
+    st.session_state.journey_status = None
+
+
+# One icon per PlanStep.status, so the plan reads like a checklist.
+PLAN_STEP_ICONS = {
+    "pending": "?",
+    "in_progress": "?",
+    "done": "?",
+    "skipped": "?",
+    "failed": "?",
+}
+
+
+def save_journey(journey: JourneyResponse) -> None:
+    """Copy one API reply into session_state.
+
+    Streamlit forgets local variables on every rerun, so everything the chat
+    needs to redraw itself is stored here: the plan, the history, the open
+    question and, at the end, the verdict.
+    """
+
+    st.session_state.conversation_id = str(journey.conversation_id)
+    st.session_state.journey_plan = journey.plan
+    st.session_state.journey_plan_detail = (
+        journey.plan_detail.model_dump(mode="json")
+        if journey.plan_detail is not None
+        else None
+    )
+    st.session_state.journey_status = journey.status
+    st.session_state.journey_question = journey.question
+    st.session_state.journey_conversation = journey.conversation
+    st.session_state.interview_message = journey.message
+    st.session_state.interview_result = (
+        journey.eligibility_result.model_dump(mode="json")
+        if journey.eligibility_result is not None
+        else None
+    )
+
+
+def remember_in_url(scheme_id: str) -> None:
+    """Put the conversation in the address bar so a refresh can restore it.
+
+    Only the random conversation ID and the scheme ID go in the URL, never
+    any answers.
+    """
+
+    st.query_params["conversation"] = st.session_state.conversation_id
+    st.query_params["scheme"] = scheme_id
+
+
+def render_plan(plan_detail: dict | None, text: dict[str, str]) -> None:
+    """Draw the supervisor's plan as a checklist with status icons.
+
+    Example while Saathi waits for an answer::
+
+        ? Learn about you
+        ? Check the rules for IGNWPS-MH
+    """
+
+    if not plan_detail:
+        return
+    with st.container(border=True):
+        st.markdown(f'**{text["plan_title"]}**')
+        for step in plan_detail["steps"]:
+            icon = PLAN_STEP_ICONS.get(step["status"], "?")
+            st.markdown(f'{icon} {step["goal"]}')
+        if plan_detail.get("replan_reason"):
+            st.caption(plan_detail["replan_reason"])
+
+
+def render_verdict(
+    result: dict,
+    scheme_id: str,
+    text: dict[str, str],
+) -> None:
+    """Show a rule-engine verdict with its reason and official sources."""
+
+    # Green for eligible, red for not eligible, yellow for "need more".
+    if result["result"] == "eligible":
+        st.success(f'? {text["eligible"]}')
+    elif result["result"] == "not_eligible":
+        # PM-KISAN wording reminds the user this is the 2020 mock check.
+        st.error(
+            "? "
+            + text[
+                "pmkisan_potential"
+                if scheme_id == "PM-KISAN-IN"
+                else "not_eligible"
+            ]
+        )
+    else:
+        st.warning(f'?? {text["cant_tell"]}')
+    st.write(result["reason"])
+    # Optional parts only show when the package provides them.
+    if result.get("notice"):
+        st.warning(result["notice"])
+    if result["missing_fields"]:
+        st.caption(
+            f'{text["missing"]}: {", ".join(result["missing_fields"])}'
+        )
+        st.button(text["human"], disabled=True)
+    if result.get("unresolved_checks"):
+        st.caption(
+            f'{text["pmkisan_unresolved"]}: '
+            f'{", ".join(result["unresolved_checks"])}'
+        )
+    # One expandable box per deciding rule, with its official source.
+    for evidence in result["evidence"]:
+        with st.expander(evidence["rule_id"]):
+            st.write(evidence["source_text"])
+            st.caption(
+                evidence.get("source_location")
+                or evidence["source_clause_id"]
+            )
+            st.link_button(text["source"], evidence["source_url"])
+
+
+def start_interview(scheme_id: str) -> None:
+    """Ask the API to start a question-by-question check for one scheme."""
+
+    st.session_state.interview_error = None
+    try:
+        # The same conversation ID is reused, so "forget" deletes all of it.
+        journey = run_journey(
+            JourneyRequest(
+                action="interview",
+                conversation_id=(
+                    UUID(st.session_state.conversation_id)
+                    if st.session_state.conversation_id
+                    else uuid4()
+                ),
+                scheme_id=scheme_id,
+            )
+        )
+    except JourneyApiError as error:
+        st.session_state.interview_error = str(error)
+    else:
+        save_journey(journey)
+        st.session_state.interview_scheme_id = scheme_id
+        remember_in_url(scheme_id)
+
+
+def render_interview(
+    scheme_id: str,
+    text: dict[str, str],
+    *,
+    can_start: bool = True,
+) -> None:
+    """Draw the chat: plan, messages, an answer box, then the verdict.
+
+    Flow across reruns:
+
+    1. Not started: show a "Start questions" button.
+    2. Waiting (status ``awaiting_answer``): show the history and a chat box.
+       Each typed answer is sent to the API, which replies with the next
+       question or the verdict.
+    3. Finished: show the verdict and a "Start again" button.
+
+    Args:
+        scheme_id: The scheme to check.
+        text: Screen text in the chosen language.
+        can_start: False disables the start button (e.g. before consent).
+    """
+
+    st.subheader(text["interview_title"])
+    st.info(text["interview_notice"])
+    if st.session_state.interview_error:
+        st.error(
+            f'{text["interview_error"]}: {st.session_state.interview_error}'
+        )
+
+    if st.session_state.interview_scheme_id != scheme_id:
+        if st.button(
+            text["interview_start"], type="primary", disabled=not can_start
+        ):
+            start_interview(scheme_id)
+            st.rerun()
+        return
+
+    render_plan(st.session_state.journey_plan_detail, text)
+    for turn in st.session_state.journey_conversation:
+        with st.chat_message(turn["role"]):
+            st.write(turn["content"])
+
+    if st.session_state.journey_status == "awaiting_answer":
+        reply = st.chat_input(text["interview_reply"])
+        if reply:
+            st.session_state.interview_error = None
+            try:
+                journey = send_journey_message(
+                    st.session_state.conversation_id, reply
+                )
+            except JourneyApiError as error:
+                st.session_state.interview_error = str(error)
+            else:
+                save_journey(journey)
+            st.rerun()
+        return
+
+    result = st.session_state.interview_result
+    if result:
+        render_verdict(result, scheme_id, text)
+    elif st.session_state.interview_message:
+        # No verdict, e.g. the scheme has no reviewed rules.
+        st.warning(st.session_state.interview_message)
+    if st.button(text["interview_restart"]):
+        start_interview(scheme_id)
+        st.rerun()
 
 
 st.set_page_config(
@@ -423,8 +650,12 @@ st.session_state.setdefault("draft_submitted", False)
 st.session_state.setdefault("rejected_draft", False)
 st.session_state.setdefault("scheme_search_results", None)
 st.session_state.setdefault("scheme_search_error", None)
-st.session_state.setdefault("pmkisan_eligibility_result", None)
-st.session_state.setdefault("pmkisan_eligibility_error", None)
+st.session_state.setdefault("interview_scheme_id", None)
+st.session_state.setdefault("interview_result", None)
+st.session_state.setdefault("interview_message", None)
+st.session_state.setdefault("interview_error", None)
+st.session_state.setdefault("journey_plan_detail", None)
+st.session_state.setdefault("journey_question", None)
 st.session_state.setdefault("journey_started", False)
 st.session_state.setdefault("journey_scheme_id", None)
 st.session_state.setdefault("conversation_id", None)
@@ -439,6 +670,34 @@ locale = st.selectbox(
     format_func=lambda value: COPY[value]["name"],
 )
 text = COPY[locale]
+
+# After a browser refresh, session_state is empty but the address bar still
+# has ?conversation=<id>&scheme=<id> (see remember_in_url). Ask the API for
+# the saved conversation once, so the chat continues where it stopped.
+saved_conversation = st.query_params.get("conversation")
+saved_scheme = st.query_params.get("scheme")
+if (
+    saved_conversation
+    and st.session_state.conversation_id is None
+    and not st.session_state.get("restore_tried")
+):
+    st.session_state.restore_tried = True
+    saved = None
+    if saved_scheme in (fixtures.policy.scheme_id, "PM-KISAN-IN"):
+        try:
+            UUID(saved_conversation)  # ignore a hand-edited, broken ID
+            saved = get_journey_state(saved_conversation)
+        except (ValueError, JourneyApiError):
+            saved = None
+    if saved is None:
+        # Nothing to restore (forgotten, expired or invalid): clean the URL.
+        st.query_params.clear()
+    else:
+        save_journey(saved)
+        st.session_state.journey_started = True
+        st.session_state.journey_scheme_id = saved_scheme
+        st.session_state.interview_scheme_id = saved_scheme
+        st.session_state.show_restored = True
 
 st.markdown(
     f'<div class="demo-banner">{text["banner"]}</div>',
@@ -472,6 +731,7 @@ with st.sidebar:
             st.session_state.forget_error = str(error)
         else:
             clear_workflow_state(include_inputs=True)
+            st.query_params.clear()
             st.session_state.show_forgotten = True
             st.session_state.forget_error = None
             st.rerun()
@@ -480,6 +740,8 @@ if st.session_state.forget_error:
     st.error(f'{text["forget_error"]}: {st.session_state.forget_error}')
 if st.session_state.pop("show_forgotten", False):
     st.success(text["forgotten"])
+if st.session_state.pop("show_restored", False):
+    st.info(text["restored"])
 
 # Streamlit reruns this whole file on every click. st.session_state keeps
 # values between reruns, and st.stop() ends drawing so only one screen shows:
@@ -496,135 +758,15 @@ if st.session_state.journey_started:
         st.session_state.journey_scheme_id = None
         st.session_state.conversation_id = None
         clear_application_state()
+        clear_interview_state()
+        st.query_params.clear()
         st.rerun()
     elif st.session_state.journey_scheme_id == "PM-KISAN-IN":
         st.subheader(text["pmkisan_title"])
         st.warning(text["pmkisan_notice"])
-        # (profile field name, translation key for the question text)
-        answer_labels = (
-            ("landholding_family_in_state_records", "pmkisan_land"),
-            ("institutional_landholder", "pmkisan_institution"),
-            ("listed_public_office_member", "pmkisan_office"),
-            ("excluded_government_employee_member", "pmkisan_employee"),
-            (
-                "pension_at_least_10000_excluding_stated_grades",
-                "pmkisan_pension",
-            ),
-            ("income_tax_paid_last_assessment_year", "pmkisan_tax"),
-            (
-                "registered_practicing_professional_member",
-                "pmkisan_professional",
-            ),
-            ("nri_new_beneficiary", "pmkisan_nri"),
-        )
-        # st.form groups the questions so nothing is sent until Submit.
-        with st.form("pmkisan_eligibility_form"):
-            answers = {}
-            choices = [
-                text["pmkisan_unknown"],
-                text["pmkisan_no"],
-                text["pmkisan_yes"],
-            ]
-            for field_name, label_key in answer_labels:
-                answer = st.selectbox(
-                    text[label_key],
-                    options=choices,
-                    key=f"pmkisan_{field_name}",
-                )
-                # Turn the chosen label into the value HouseholdProfile
-                # expects. "Unknown" becomes None, so the engine asks for
-                # it instead of treating it as "No".
-                answers[field_name] = {
-                    text["pmkisan_unknown"]: None,
-                    text["pmkisan_no"]: False,
-                    text["pmkisan_yes"]: True,
-                }[answer]
-            submitted = st.form_submit_button(
-                text["pmkisan_submit"],
-                type="primary",
-            )
-        if submitted:
-            # Clear any old result before the new check.
-            st.session_state.pmkisan_eligibility_result = None
-            st.session_state.pmkisan_eligibility_error = None
-            try:
-                # Same path as widow pension: journey graph -> MCP rule engine.
-                # Reuse the conversation ID so the backend continues the
-                # same conversation instead of starting a new one.
-                journey = run_journey(
-                    JourneyRequest(
-                        action="evaluate",
-                        conversation_id=(
-                            UUID(st.session_state.conversation_id)
-                            if st.session_state.conversation_id
-                            else uuid4()
-                        ),
-                        scheme_id="PM-KISAN-IN",
-                        profile=answers,
-                    )
-                )
-                st.session_state.conversation_id = str(
-                    journey.conversation_id
-                )
-                st.session_state.journey_plan = journey.plan
-                st.session_state.journey_conversation = journey.conversation
-                if journey.eligibility_result is None:
-                    # The graph stopped early (e.g. invalid_input), so show
-                    # its message instead of a verdict.
-                    st.session_state.pmkisan_eligibility_error = (
-                        journey.message
-                    )
-                else:
-                    st.session_state.pmkisan_eligibility_result = (
-                        journey.eligibility_result.model_dump(mode="json")
-                    )
-            except JourneyApiError as error:
-                # API not running, or it returned an HTTP error.
-                st.session_state.pmkisan_eligibility_error = str(error)
-
-        if st.session_state.pmkisan_eligibility_error:
-            st.error(
-                f'{text["pmkisan_error"]}: '
-                f'{st.session_state.pmkisan_eligibility_error}'
-            )
-
-        # The result is read from session_state, so it stays on screen
-        # after later reruns too.
-        result = st.session_state.pmkisan_eligibility_result
-        if result:
-            # Colour by verdict: green eligible, red not, yellow need info.
-            if result["result"] == "eligible":
-                st.success(text["eligible"])
-            elif result["result"] == "not_eligible":
-                st.error(text["pmkisan_potential"])
-            else:
-                st.warning(text["pmkisan_verification"])
-            st.write(result["reason"])
-            # Optional parts only show when the package provides them.
-            if result["notice"]:
-                st.warning(result["notice"])
-            if result["missing_fields"]:
-                st.caption(
-                    f'{text["pmkisan_missing"]}: '
-                    f'{", ".join(result["missing_fields"])}'
-                )
-            if result["unresolved_checks"]:
-                st.caption(
-                    f'{text["pmkisan_unresolved"]}: '
-                    f'{", ".join(result["unresolved_checks"])}'
-                )
-            # One expandable box per deciding rule, with its source.
-            for evidence in result["evidence"]:
-                with st.expander(evidence["rule_id"]):
-                    st.write(evidence["source_text"])
-                    st.caption(
-                        evidence["source_location"]
-                        or evidence["source_clause_id"]
-                    )
-                    st.link_button(
-                        text["source"],
-                        evidence["source_url"],
-                    )
+        # Phase 2: Saathi asks only the questions the rules still need,
+        # one at a time, instead of showing a form with every question.
+        render_interview("PM-KISAN-IN", text)
         # Stop here so the widow-pension screen below is not drawn.
         st.stop()
 else:
@@ -634,8 +776,7 @@ else:
     if st.button(text["finder_submit"]):
         st.session_state.scheme_search_results = None
         st.session_state.scheme_search_error = None
-        st.session_state.pmkisan_eligibility_result = None
-        st.session_state.pmkisan_eligibility_error = None
+        clear_interview_state()
         st.session_state.pop("selected_search_scheme", None)
         if not query.strip():
             st.session_state.scheme_search_error = text["finder_empty"]
@@ -735,6 +876,21 @@ else:
 st.subheader(text["consent_title"])
 st.info(text["consent_text"])
 consent = st.checkbox(text["consent"], key="demo_consent")
+
+# "chat" asks questions (Phase 2). "example" keeps the preset people, which
+# are still needed to show the approvable draft until Phase 4.
+widow_mode = st.radio(
+    text["widow_mode"],
+    options=["chat", "example"],
+    format_func=lambda value: text[f"mode_{value}"],
+    horizontal=True,
+    key="widow_mode",
+)
+if widow_mode == "chat":
+    render_interview(fixtures.policy.scheme_id, text, can_start=consent)
+    st.divider()
+    st.caption(text["footer"])
+    st.stop()
 
 visible_scenarios = provider.visible_scenarios()
 scenario_id = st.selectbox(
