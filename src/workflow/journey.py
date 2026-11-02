@@ -77,7 +77,7 @@ async def _search_with_mcp(
     client: Client,
     query: str,
 ) -> list[SchemePassage]:
-    return await search_scheme_passages(client, query, limit=10)
+    return await search_scheme_passages(client, query, limit=5)
 
 
 async def _evaluate_with_mcp(
@@ -232,7 +232,7 @@ def build_journey_graph(
     async def scheme_search_tool(state: JourneyState) -> dict[str, Any]:
         passages = await search_tool(client, state["query"])
         message = (
-            f"Found {len(passages)} cited passage(s)."
+            f"Found {len(passages)} relevant cited passage(s)."
             if passages
             else "No matching passages were found. Try different wording."
         )

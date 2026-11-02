@@ -7,6 +7,7 @@ from mcp.server.mcpserver.exceptions import ToolError
 
 from src.config import PROJECT_ROOT
 from src.api.scheme_search import (
+    HOSTED_RERANK_MIN_SCORE,
     HybridSchemeRetriever,
     OpenRouterReranker,
     SchemePassage,
@@ -45,6 +46,11 @@ def register_tools(mcp: MCPServer) -> None:
                     jurisdiction=jurisdiction,
                     language=language,
                     limit=limit,
+                    min_score=(
+                        HOSTED_RERANK_MIN_SCORE
+                        if rerank_mode == "openrouter"
+                        else None
+                    ),
                 )
             )
         except ValueError as error:

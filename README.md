@@ -87,7 +87,10 @@ rewrites and `OPENROUTER_API_KEY_FREE` for embeddings (`OPEN_ROUTER_FREE` is
 also accepted as an embedding-key alias). `.env` is ignored by Git and loaded
 by `src.config`; the MCP child process receives only the embedding credential.
 Hosted reranking uses that same embedding credential and incurs OpenRouter
-usage charges.
+usage charges. The journey search returns at most 5 passages and drops any
+with a Cohere rerank score below 0.3 (`HOSTED_RERANK_MIN_SCORE`), a value
+chosen from the 43-query development set (keeps 94% of relevant passages,
+drops about 90% of the rest); revisit it if the reranker or corpus changes.
 The first search embeds the public passage corpus through OpenRouter, and the
 local BGE reranker model is downloaded if it is not cached.
 The Qdrant index is rebuilt in memory when the MCP server starts; persistent

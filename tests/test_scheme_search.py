@@ -299,6 +299,28 @@ def test_cross_encoder_reranker_can_change_fused_order():
     assert results[0].passage_id == "IGNWPS-MH-APPLICATION-01"
 
 
+def test_min_score_drops_weakly_reranked_passages():
+    passages = load_passages(PASSAGE_FILE)
+    ids = [passage.passage_id for passage in passages]
+    retriever = HybridSchemeRetriever(
+        passages,
+        vector_search=lambda query, candidates, limit: ids[:limit],
+        rerank=lambda query, candidates: [
+            0.9 if passage.passage_id == "IGNWPS-MH-APPLICATION-01"
+            else 0.29 if passage.passage_id == "IGNWPS-MH-BENEFIT-01"
+            else 0.1
+            for passage in candidates
+        ],
+    )
+
+    results = retriever.search("where do I apply", limit=5, min_score=0.3)
+
+    assert [passage.passage_id for passage in results] == [
+        "IGNWPS-MH-APPLICATION-01"
+    ]
+    assert retriever.search("where do I apply", limit=5, min_score=0.95) == ()
+
+
 def test_search_can_skip_cross_encoder_and_keep_fused_order(monkeypatch):
     passages = load_passages(PASSAGE_FILE)
     fused_ids = [passage.passage_id for passage in reversed(passages)]
