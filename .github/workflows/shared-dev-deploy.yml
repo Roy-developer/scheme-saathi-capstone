@@ -1,6 +1,5 @@
-# This workflow lets any trusted repository member deploy a pushed branch to
-# the one shared development Container App. It intentionally validates the
-# selected commit before Azure receives any change.
+# This workflow deploys one validated image to the existing shared frontend
+# and backend Container Apps.
 name: Shared development deploy
 run-name: "Shared dev: ${{ inputs.ref }}"
 
@@ -19,8 +18,8 @@ on:
 permissions:
   contents: read
 
-# Every branch targets the same app and URL. Queue deployments instead of
-# allowing two members to update that shared app at the same time.
+# Every branch targets the same two apps. Queue deployments instead of
+# allowing two members to update them at the same time.
 concurrency:
   group: scheme-saathi-shared-dev
   cancel-in-progress: false
@@ -88,6 +87,7 @@ jobs:
       AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
       AZURE_RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}
       AZURE_CONTAINER_APP: ${{ vars.AZURE_CONTAINER_APP }}
+      AZURE_API_APP: ${{ vars.AZURE_API_APP }}
       AZURE_CONTAINER_ENVIRONMENT: ${{ vars.AZURE_CONTAINER_ENVIRONMENT }}
       AZURE_ACR_NAME: ${{ vars.AZURE_ACR_NAME }}
       AZURE_LOCATION: ${{ vars.AZURE_LOCATION }}
@@ -112,6 +112,7 @@ jobs:
             AZURE_SUBSCRIPTION_ID
             AZURE_RESOURCE_GROUP
             AZURE_CONTAINER_APP
+            AZURE_API_APP
             AZURE_CONTAINER_ENVIRONMENT
             AZURE_ACR_NAME
             AZURE_LOCATION
@@ -124,6 +125,10 @@ jobs:
               exit 1
             fi
           done
+          if [[ "$AZURE_CONTAINER_APP" = "$AZURE_API_APP" ]]; then
+            echo "::error::Frontend and backend must be separate existing apps"
+            exit 1
+          fi
           test "$(git rev-parse HEAD)" = "$TARGET_SHA"
 
       # azure/login exchanges GitHub's short-lived OIDC token for Azure access.
@@ -138,23 +143,44 @@ jobs:
       # Confirm that the configured names point to the existing Scheme Saathi
       # resources. This workflow must never create resources in another group.
       - name: Verify existing Azure targets
+        id: targets
         shell: bash
         run: |
           set -euo pipefail
-          az containerapp env show \
-            --name "$AZURE_CONTAINER_ENVIRONMENT" \
-            --resource-group "$AZURE_RESOURCE_GROUP" \
-            --output none
-          actual_location="$(
-            az containerapp show \
-              --name "$AZURE_CONTAINER_APP" \
+          environment_id="$(
+            az containerapp env show \
+              --name "$AZURE_CONTAINER_ENVIRONMENT" \
               --resource-group "$AZURE_RESOURCE_GROUP" \
-              --query location \
-              --output tsv |
-            tr -d ' ' |
-            tr '[:upper:]' '[:lower:]'
+              --query id \
+              --output tsv
           )"
-          test "$actual_location" = "$AZURE_LOCATION"
+          for app_name in "$AZURE_API_APP" "$AZURE_CONTAINER_APP"; do
+            app_json="$(
+              az containerapp show \
+                --name "$app_name" \
+                --resource-group "$AZURE_RESOURCE_GROUP" \
+                --output json
+            )"
+            actual_location="$(jq -r '.location' <<< "$app_json" | tr '[:upper:]' '[:lower:]')"
+            actual_environment="$(jq -r '.properties.managedEnvironmentId' <<< "$app_json")"
+            if [[ "$actual_location" != "$AZURE_LOCATION" ]]; then
+              echo "::error::$app_name is not in the configured Azure location"
+              exit 1
+            fi
+            if [[ "$actual_environment" != "$environment_id" ]]; then
+              echo "::error::$app_name is not in the configured Container Apps environment"
+              exit 1
+            fi
+          done
+          api_fqdn="$(
+            az containerapp show \
+              --name "$AZURE_API_APP" \
+              --resource-group "$AZURE_RESOURCE_GROUP" \
+              --query properties.configuration.ingress.fqdn \
+              --output tsv
+          )"
+          test -n "$api_fqdn"
+          echo "api_fqdn=$api_fqdn" >> "$GITHUB_OUTPUT"
 
       # ACR builds the tested checkout and tags it with the commit SHA. Logs are
       # disabled because the run is polled explicitly and this avoids Windows
@@ -165,11 +191,11 @@ jobs:
         run: |
           set -euo pipefail
           image_tag="git-${TARGET_SHA:0:12}"
-          image="${AZURE_ACR_NAME}.azurecr.io/${AZURE_CONTAINER_APP}:${image_tag}"
+          image="${AZURE_ACR_NAME}.azurecr.io/scheme-saathi:${image_tag}"
           build_run_id="$(
             az acr build \
               --registry "$AZURE_ACR_NAME" \
-              --image "${AZURE_CONTAINER_APP}:${image_tag}" \
+              --image "scheme-saathi:${image_tag}" \
               --no-logs \
               --query runId \
               --output tsv \
@@ -207,18 +233,18 @@ jobs:
           echo "image_tag=$image_tag" >> "$GITHUB_OUTPUT"
           echo "build_run_id=$build_run_id" >> "$GITHUB_OUTPUT"
 
-      # Updating the image creates an Azure Container Apps revision. Single
-      # revision mode keeps the previous healthy revision serving traffic until
-      # the new revision is ready. Zero minimum replicas allows idle shutdown;
-      # one maximum replica avoids competing Streamlit in-memory sessions.
-      - name: Deploy built image
+      # Use the same image in both existing apps, selecting one service per
+      # app with a startup command override.
+      - name: Deploy backend image
         shell: bash
         run: |
           set -euo pipefail
           az containerapp update \
-            --name "$AZURE_CONTAINER_APP" \
+            --name "$AZURE_API_APP" \
             --resource-group "$AZURE_RESOURCE_GROUP" \
             --image "${{ steps.build.outputs.image }}" \
+            --command python src/run_services.py \
+            --args api \
             --min-replicas 0 \
             --max-replicas 1 \
             --set-env-vars \
@@ -226,56 +252,144 @@ jobs:
               "DEPLOYED_REF=$TARGET_REF" \
             --output none
 
-      # Wait until the newly created revision, rather than an older healthy one,
-      # is Azure's latest ready revision. Then call Streamlit through the public
-      # ingress used by testers, allowing retries for a scale-from-zero startup.
-      - name: Verify deployed revision
-        id: verify
+      - name: Deploy frontend image
         shell: bash
+        env:
+          API_FQDN: ${{ steps.targets.outputs.api_fqdn }}
         run: |
           set -euo pipefail
-          for attempt in {1..20}; do
+          az containerapp update \
+            --name "$AZURE_CONTAINER_APP" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --image "${{ steps.build.outputs.image }}" \
+            --command python src/run_services.py \
+            --args ui \
+            --min-replicas 0 \
+            --max-replicas 1 \
+            --set-env-vars \
+              "APP_VERSION=${{ steps.build.outputs.image_tag }}" \
+              "DEPLOYED_REF=$TARGET_REF" \
+              "SCHEME_SAATHI_API_URL=https://${API_FQDN}" \
+            --output none
+
+      - name: Verify deployed services
+        id: verify
+        shell: bash
+        env:
+          EXPECTED_API_URL: https://${{ steps.targets.outputs.api_fqdn }}
+          EXPECTED_IMAGE: ${{ steps.build.outputs.image }}
+        run: |
+          set -euo pipefail
+          verify_container() {
+            local app_name="$1"
+            local expected_command="$2"
+            local expected_args="$3"
+            local app_json image command args
             app_json="$(
               az containerapp show \
-                --name "$AZURE_CONTAINER_APP" \
+                --name "$app_name" \
                 --resource-group "$AZURE_RESOURCE_GROUP" \
                 --output json
             )"
-            latest="$(jq -r '.properties.latestRevisionName' <<< "$app_json")"
-            ready="$(jq -r '.properties.latestReadyRevisionName' <<< "$app_json")"
-            running="$(jq -r '.properties.runningStatus' <<< "$app_json")"
-            fqdn="$(jq -r '.properties.configuration.ingress.fqdn' <<< "$app_json")"
-            if [[ "$latest" = "$ready" && "$running" = "Running" ]]; then
-              break
+            image="$(jq -r '.properties.template.containers[0].image' <<< "$app_json")"
+            command="$(jq -r '(.properties.template.containers[0].command // []) | join(" ")' <<< "$app_json")"
+            args="$(jq -r '(.properties.template.containers[0].args // []) | join(" ")' <<< "$app_json")"
+            if [[ "$image" != "$EXPECTED_IMAGE" ]]; then
+              echo "::error::$app_name is not running the shared image"
+              return 1
             fi
-            if [[ "$attempt" -eq 20 ]]; then
-              echo "::error::The new revision did not become ready in time"
+            if [[ "$command" != "$expected_command" || "$args" != "$expected_args" ]]; then
+              echo "::error::$app_name has an unexpected startup command override"
+              return 1
+            fi
+          }
+
+          verify_container "$AZURE_API_APP" "python src/run_services.py" "api"
+          verify_container "$AZURE_CONTAINER_APP" "python src/run_services.py" "ui"
+
+          wait_for_app() {
+            local app_name="$1"
+            local expected_port="$2"
+            local latest ready running fqdn app_json target_port
+            for attempt in {1..20}; do
+              app_json="$(
+                az containerapp show \
+                  --name "$app_name" \
+                  --resource-group "$AZURE_RESOURCE_GROUP" \
+                  --output json
+              )"
+              latest="$(jq -r '.properties.latestRevisionName' <<< "$app_json")"
+              ready="$(jq -r '.properties.latestReadyRevisionName' <<< "$app_json")"
+              running="$(jq -r '.properties.runningStatus' <<< "$app_json")"
+              fqdn="$(jq -r '.properties.configuration.ingress.fqdn' <<< "$app_json")"
+              target_port="$(jq -r '.properties.configuration.ingress.targetPort' <<< "$app_json")"
+              if [[ "$latest" = "$ready" && "$running" = "Running" ]]; then
+                if [[ "$target_port" != "$expected_port" ]]; then
+                  echo "::error::$app_name ingress does not target port $expected_port"
+                  return 1
+                fi
+                printf '%s\t%s\n' "$ready" "$fqdn"
+                return 0
+              fi
+              if [[ "$attempt" -eq 20 ]]; then
+                echo "::error::$app_name did not become ready in time"
+                return 1
+              fi
+              sleep 15
+            done
+          }
+
+          api_result="$(wait_for_app "$AZURE_API_APP" 8000)"
+          api_revision="${api_result%%$'\t'*}"
+          api_fqdn="${api_result#*$'\t'}"
+          ui_result="$(wait_for_app "$AZURE_CONTAINER_APP" 8501)"
+          ui_revision="${ui_result%%$'\t'*}"
+          ui_fqdn="${ui_result#*$'\t'}"
+
+          for check in \
+            "https://${api_fqdn}/health" \
+            "https://${ui_fqdn}/_stcore/health"; do
+            healthy=false
+            for attempt in {1..12}; do
+              if curl --fail --silent --show-error --max-time 30 "$check" > /dev/null; then
+                healthy=true
+                break
+              fi
+              sleep 10
+            done
+            if [[ "$healthy" != true ]]; then
+              echo "::error::Health check failed for ${check%%/*}"
               exit 1
             fi
-            sleep 15
           done
 
-          url="https://${fqdn}"
-          healthy=false
-          for attempt in {1..12}; do
-            if curl \
-              --fail \
-              --silent \
-              --show-error \
-              --max-time 30 \
-              "${url}/_stcore/health" > /dev/null; then
-              healthy=true
-              break
-            fi
-            sleep 10
-          done
-          if [[ "$healthy" != true ]]; then
-            echo "::error::The public health check failed"
+          configured_api_url="$(
+            az containerapp show \
+              --name "$AZURE_CONTAINER_APP" \
+              --resource-group "$AZURE_RESOURCE_GROUP" \
+              --query "properties.template.containers[0].env[?name=='SCHEME_SAATHI_API_URL'].value | [0]" \
+              --output tsv
+          )"
+          if [[ "$configured_api_url" != "$EXPECTED_API_URL" ]]; then
+            echo "::error::Frontend API URL does not match the backend app"
             exit 1
           fi
 
-          echo "revision=$ready" >> "$GITHUB_OUTPUT"
-          echo "url=$url" >> "$GITHUB_OUTPUT"
+          journey_response="$(
+            curl --fail --silent --show-error --max-time 60 \
+              "https://${api_fqdn}/api/v1/journey" \
+              -H 'Content-Type: application/json' \
+              -d '{"action":"evaluate","scheme_id":"IGNWPS-MH","profile":{"date_of_birth":"1986-10-30","application_date":"2026-10-30","is_widow":true,"bpl_card_shown":true}}'
+          )"
+          if [[ "$(jq -r '.status' <<< "$journey_response")" != "eligible" ]]; then
+            echo "::error::Backend journey smoke test returned an unexpected result"
+            exit 1
+          fi
+
+          echo "api_revision=$api_revision" >> "$GITHUB_OUTPUT"
+          echo "api_url=https://${api_fqdn}" >> "$GITHUB_OUTPUT"
+          echo "ui_revision=$ui_revision" >> "$GITHUB_OUTPUT"
+          echo "ui_url=https://${ui_fqdn}" >> "$GITHUB_OUTPUT"
 
       # Put the useful result in the GitHub Actions summary instead of making
       # team members search through build logs.
@@ -287,8 +401,10 @@ jobs:
             echo
             echo "- Ref: \`$TARGET_REF\`"
             echo "- Commit: \`$TARGET_SHA\`"
-            echo "- Revision: \`${{ steps.verify.outputs.revision }}\`"
-            echo "- URL: ${{ steps.verify.outputs.url }}"
+            echo "- Backend revision: \`${{ steps.verify.outputs.api_revision }}\`"
+            echo "- Backend URL: ${{ steps.verify.outputs.api_url }}"
+            echo "- Frontend revision: \`${{ steps.verify.outputs.ui_revision }}\`"
+            echo "- Frontend URL: ${{ steps.verify.outputs.ui_url }}"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Log out of Azure

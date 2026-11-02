@@ -82,7 +82,7 @@ try {
 
     # Always execute the reviewed workflow definition from main. The selected
     # member branch supplies application code, not deployment permissions.
-    gh workflow view $Workflow --repo $repo *> $null
+    gh workflow view $Workflow --repo $repo --ref main --yaml *> $null
     if ($LASTEXITCODE -ne 0) {
         throw "$Workflow must be merged into main before shared deployment."
     }
@@ -91,6 +91,7 @@ try {
     # needs to confirm configuration, not expose account identifiers.
     $requiredVariables = @(
         "AZURE_ACR_NAME",
+        "AZURE_API_APP",
         "AZURE_CLIENT_ID",
         "AZURE_CONTAINER_APP",
         "AZURE_CONTAINER_ENVIRONMENT",
