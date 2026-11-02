@@ -1,5 +1,7 @@
 """Register scheme-passage search on the shared MCP server."""
 
+import os
+
 from mcp.server import MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
 
@@ -16,7 +18,12 @@ def register_tools(mcp: MCPServer) -> None:
 
     passage_file = PROJECT_ROOT / "data" / "schemes" / "passages.json"
     passages = load_passages(passage_file)
-    retriever = HybridSchemeRetriever(passages)
+    retriever = HybridSchemeRetriever(
+        passages,
+        use_cross_encoder=(
+            os.getenv("SCHEME_SAATHI_DISABLE_CROSS_ENCODER") != "1"
+        ),
+    )
 
     @mcp.tool()
     def search_schemes(

@@ -230,3 +230,35 @@ def test_cross_encoder_reranker_can_change_fused_order():
     results = retriever.search("where do I apply")
 
     assert results[0].passage_id == "IGNWPS-MH-APPLICATION-01"
+
+
+def test_search_can_skip_cross_encoder_and_keep_fused_order(monkeypatch):
+    passages = load_passages(PASSAGE_FILE)
+    fused_ids = [passage.passage_id for passage in reversed(passages)]
+    vector_search = lambda query, candidates, limit: fused_ids[:limit]
+
+    def unexpected_cross_encoder(*args, **kwargs):
+        raise AssertionError("cross-encoder should not load in constrained mode")
+
+    monkeypatch.setattr(
+        scheme_search_module,
+        "TextCrossEncoder",
+        unexpected_cross_encoder,
+    )
+    retriever = HybridSchemeRetriever(
+        passages,
+        vector_search=vector_search,
+        use_cross_encoder=False,
+    )
+    expected_retriever = HybridSchemeRetriever(
+        passages,
+        vector_search=vector_search,
+        rerank=lambda query, candidates: [
+            -index for index in range(len(candidates))
+        ],
+    )
+
+    results = retriever.search("where do I apply")
+    expected = expected_retriever.search("where do I apply")
+
+    assert results == expected

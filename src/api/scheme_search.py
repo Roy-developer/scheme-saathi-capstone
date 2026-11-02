@@ -163,6 +163,7 @@ class HybridSchemeRetriever:
         rerank: Callable[[str, Sequence[SchemePassage]], Sequence[float]]
         | None = None,
         embeddings: OpenRouterEmbeddings | None = None,
+        use_cross_encoder: bool = True,
     ) -> None:
         self.passages = tuple(passages)
         if not self.passages:
@@ -178,6 +179,7 @@ class HybridSchemeRetriever:
         self._vector_search_override = vector_search
         self._rerank_override = rerank
         self._embeddings = embeddings
+        self._use_cross_encoder = use_cross_encoder
         self._qdrant: QdrantClient | None = None
         self._reranker: TextCrossEncoder | None = None
 
@@ -221,6 +223,9 @@ class HybridSchemeRetriever:
         ]
         if not fused_passages:
             return ()
+
+        if self._rerank_override is None and not self._use_cross_encoder:
+            return tuple(fused_passages[:limit])
 
         scores = self._rerank(query, fused_passages)
         if len(scores) != len(fused_passages):
