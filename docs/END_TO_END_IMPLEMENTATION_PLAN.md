@@ -41,7 +41,8 @@ bypasses the graph entirely and must be migrated (Phase 3).
   deterministic eligibility and hybrid scheme search.
 - Hybrid retrieval: BM25 + multilingual Qdrant vectors (OpenRouter
   `voyageai/voyage-4`), query decomposition, RRF, hosted Cohere rerank with a
-  0.3 cutoff, top 5 passages; 43-query development evaluation set.
+  0.3 cutoff (the best passage is kept at 0.2 or above if none reach 0.3),
+  top 5 passages; 43-query development evaluation set.
 - Reviewed, versioned rule package for IGNWPS-MH; a separately typed,
   synthetic-only PM-KISAN package based on guidelines revised 2020-03-29
   (current landholding cutoff and State/UT records unverified).

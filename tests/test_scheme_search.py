@@ -321,6 +321,38 @@ def test_min_score_drops_weakly_reranked_passages():
     assert retriever.search("where do I apply", limit=5, min_score=0.95) == ()
 
 
+def test_fallback_keeps_only_the_best_passage_when_none_pass_min_score():
+    passages = load_passages(PASSAGE_FILE)
+    ids = [passage.passage_id for passage in passages]
+    retriever = HybridSchemeRetriever(
+        passages,
+        vector_search=lambda query, candidates, limit: ids[:limit],
+        rerank=lambda query, candidates: [
+            0.24 if passage.passage_id == "PM-KISAN-IN-BENEFIT-01"
+            else 0.21 if passage.passage_id == "PM-KISAN-IN-ELIGIBILITY-LAND-01"
+            else 0.05
+            for passage in candidates
+        ],
+    )
+
+    results = retriever.search(
+        "small farmer money support",
+        limit=5,
+        min_score=0.3,
+        fallback_min_score=0.2,
+    )
+    assert [passage.passage_id for passage in results] == [
+        "PM-KISAN-IN-BENEFIT-01"
+    ]
+    # A best match below the fallback floor still returns nothing.
+    assert retriever.search(
+        "small farmer money support",
+        limit=5,
+        min_score=0.3,
+        fallback_min_score=0.25,
+    ) == ()
+
+
 def test_search_can_skip_cross_encoder_and_keep_fused_order(monkeypatch):
     passages = load_passages(PASSAGE_FILE)
     fused_ids = [passage.passage_id for passage in reversed(passages)]

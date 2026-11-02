@@ -67,6 +67,11 @@ RETRIEVAL_DEPTH = 20
 # Chosen from the 43-query dev set: keeps 94% of relevant passages and
 # drops ~90% of the rest. Specific to Cohere rerank scores.
 HOSTED_RERANK_MIN_SCORE = 0.3
+# If nothing reaches 0.3, the single best passage is still kept when it
+# scores at least this. Plain questions such as "small farmer with 1 acre,
+# any money support?" score ~0.24 for the right PM-KISAN passage, while
+# off-topic questions scored at most 0.145 (PMAY housing) in a live check.
+HOSTED_RERANK_FALLBACK_MIN_SCORE = 0.2
 RRF_K = 60
 
 _QUERY_STOPWORDS = {
@@ -279,11 +284,15 @@ class HybridSchemeRetriever:
         language: str | None = None,
         limit: int = 10,
         min_score: float | None = None,
+        fallback_min_score: float | None = None,
     ) -> tuple[SchemePassage, ...]:
         """Expand the query, retrieve with both methods, fuse, then rerank.
 
         ``min_score`` drops passages whose rerank score is lower; it has no
-        effect when reranking is disabled.
+        effect when reranking is disabled. If that leaves nothing, the single
+        best passage is still returned when it scores at least
+        ``fallback_min_score``, so a plainly worded but relevant question
+        is not answered with "no results".
         """
 
         if not tokenize(query):
@@ -327,11 +336,16 @@ class HybridSchemeRetriever:
             enumerate(zip(scores, fused_passages)),
             key=lambda item: (-float(item[1][0]), item[0]),
         )
-        return tuple(
+        kept = tuple(
             passage
             for _, (score, passage) in reranked
             if min_score is None or float(score) >= min_score
         )[:limit]
+        if not kept and fallback_min_score is not None:
+            best_score, best_passage = reranked[0][1]
+            if float(best_score) >= fallback_min_score:
+                return (best_passage,)
+        return kept
 
     def _bm25_search(
         self,

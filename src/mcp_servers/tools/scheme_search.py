@@ -7,6 +7,7 @@ from mcp.server.mcpserver.exceptions import ToolError
 
 from src.config import PROJECT_ROOT
 from src.api.scheme_search import (
+    HOSTED_RERANK_FALLBACK_MIN_SCORE,
     HOSTED_RERANK_MIN_SCORE,
     HybridSchemeRetriever,
     OpenRouterReranker,
@@ -48,6 +49,11 @@ def register_tools(mcp: MCPServer) -> None:
                     limit=limit,
                     min_score=(
                         HOSTED_RERANK_MIN_SCORE
+                        if rerank_mode == "openrouter"
+                        else None
+                    ),
+                    fallback_min_score=(
+                        HOSTED_RERANK_FALLBACK_MIN_SCORE
                         if rerank_mode == "openrouter"
                         else None
                     ),
