@@ -8,10 +8,6 @@ from urllib.request import Request, urlopen
 
 from pydantic import ValidationError
 
-from src.api.pmkisan_eligibility import (
-    PMKisanEligibilityRequest,
-    PMKisanEligibilityResponse,
-)
 from src.workflow.journey import JourneyRequest, JourneyResponse
 
 
@@ -49,43 +45,6 @@ def run_journey(journey: JourneyRequest) -> JourneyResponse:
     except (json.JSONDecodeError, ValidationError) as error:
         raise JourneyApiError(
             "The journey API returned an invalid response."
-        ) from error
-
-
-def run_pmkisan_eligibility(
-    eligibility_request: PMKisanEligibilityRequest,
-) -> PMKisanEligibilityResponse:
-    """Run the PM-KISAN mock eligibility flow through the backend API."""
-
-    base_url = os.getenv("SCHEME_SAATHI_API_URL", "http://127.0.0.1:8000")
-    request = Request(
-        f"{base_url.rstrip('/')}/api/v1/schemes/PM-KISAN-IN/evaluate",
-        data=eligibility_request.model_dump_json().encode("utf-8"),
-        headers={
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-        },
-        method="POST",
-    )
-    try:
-        with urlopen(request, timeout=30) as response:
-            response_body = response.read()
-    except HTTPError as error:
-        raise JourneyApiError(
-            f"The PM-KISAN eligibility API returned HTTP {error.code}."
-        ) from error
-    except (URLError, TimeoutError) as error:
-        raise JourneyApiError(
-            "Could not reach the PM-KISAN eligibility API."
-        ) from error
-
-    try:
-        return PMKisanEligibilityResponse.model_validate(
-            json.loads(response_body)
-        )
-    except (json.JSONDecodeError, ValidationError) as error:
-        raise JourneyApiError(
-            "The PM-KISAN eligibility API returned an invalid response."
         ) from error
 
 

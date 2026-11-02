@@ -27,7 +27,7 @@ Rules for every phase:
 
 | Phase | Backend | What you see in the UI | Status |
 |---|---|---|---|
-| 1. Base | Shared typed models; one rule engine for both schemes; PM-KISAN through MCP and the graph | Same screens; PM-KISAN uses the same path as widow pension | Not started |
+| 1. Base | Shared typed models; one rule engine for both schemes; PM-KISAN through MCP and the graph | Same screens; PM-KISAN uses the same path as widow pension | Built; awaiting UI test |
 | 2. Supervisor and intake | Supervisor makes a plan; intake asks one question at a time | Chat box instead of fixture form; plan panel | Not started |
 | 3. Multi-scheme and replan | Eligibility checks every candidate; plan changes when a result contradicts it | Verdict list for all schemes; replan trace | Not started |
 | 4. Documents and approval | Document checker; application agent pauses with `interrupt()` | Document checklist; approve, edit or reject the exact draft | Not started |
@@ -40,14 +40,17 @@ Rules for every phase:
 
 **Goal:** one shared foundation, so both schemes follow the same path.
 
+Code walkthrough: [PHASE1_CODE_WALKTHROUGH.md](PHASE1_CODE_WALKTHROUGH.md).
+
 Backend:
 
 - Add the shared typed models: `Plan`, `PlanStep`, `HouseholdProfile`,
   `CandidateVerdict`, `Handoff`.
 - Make one rule package schema that fits both widow pension and PM-KISAN. Each
   package lists its `required_facts`.
-- Move PM-KISAN into the common rule engine. Remove the direct
-  `/PM-KISAN-IN/evaluate` shortcut.
+- Move PM-KISAN into the common rule engine. Remove the PM-KISAN-only
+  evaluator and route; the generic `/{scheme_id}/evaluate` route now serves
+  every scheme through MCP.
 - Send PM-KISAN through the MCP `rule-engine` tool and the LangGraph journey,
   the same as widow pension.
 

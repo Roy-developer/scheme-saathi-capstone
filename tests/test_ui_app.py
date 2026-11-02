@@ -7,7 +7,6 @@ from uuid import uuid4
 from streamlit.testing.v1 import AppTest
 
 from src.api.eligibility import EligibilityResponse, RuleEvidence
-from src.api.pmkisan_eligibility import PMKisanEligibilityResponse
 from src.api.scheme_search import load_passages
 from src.workflow.journey import JourneyResponse
 
@@ -125,18 +124,30 @@ def test_pmkisan_search_uses_the_standard_continue_then_eligibility_flow() -> No
         message="Found one relevant cited passage.",
         passages=[passage],
     )
-    eligibility = PMKisanEligibilityResponse(
+    eligibility = EligibilityResponse(
+        scheme_id="PM-KISAN-IN",
         result="eligible",
         reason="Answers meet the 2020 mock criteria.",
+        deciding_rule_ids=[],
+        evidence=[],
+        notice="Mock result using the 2020 guidelines.",
     )
 
-    with (
-        patch("src.ui.api_client.run_journey", return_value=journey),
-        patch(
-            "src.ui.api_client.run_pmkisan_eligibility",
-            return_value=eligibility,
-        ) as run_eligibility,
-    ):
+    def fake_journey(request):
+        if request.action == "search":
+            return journey
+        return JourneyResponse(
+            conversation_id=request.conversation_id,
+            plan="Check the selected scheme.",
+            status=eligibility.result,
+            message=eligibility.reason,
+            eligibility_result=eligibility,
+        )
+
+    with patch(
+        "src.ui.api_client.run_journey",
+        side_effect=fake_journey,
+    ) as run_graph:
         app = AppTest.from_file(app_path).run()
         app.text_input[0].set_value("PM-KISAN farmer support")
         next(
@@ -173,7 +184,9 @@ def test_pmkisan_search_uses_the_standard_continue_then_eligibility_flow() -> No
             button for button in app.button if button.label == "Check eligibility"
         ).click().run()
         assert not app.exception
-        assert run_eligibility.called
+        evaluate_request = run_graph.call_args_list[-1].args[0]
+        assert evaluate_request.action == "evaluate"
+        assert evaluate_request.scheme_id == "PM-KISAN-IN"
         assert any(
             "Appears eligible" in element.value
             for element in app.success

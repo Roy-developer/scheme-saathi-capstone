@@ -237,6 +237,27 @@ def test_pmkisan_evaluation_keeps_unknown_facts_visible(
     assert len(body["missing_fields"]) == 8
 
 
+def test_pmkisan_journey_uses_graph_and_mcp_rule_engine(
+    client: TestClient,
+) -> None:
+    response = client.post(
+        "/api/v1/journey",
+        json={
+            "action": "evaluate",
+            "conversation_id": "5b0f3c11-6a8e-4c1e-9d2f-2f1a7e6b9c01",
+            "scheme_id": "PM-KISAN-IN",
+            "profile": {"landholding_family_in_state_records": True},
+        },
+    )
+
+    body = response.json()
+    assert response.status_code == 200
+    assert body["status"] == "need_more_information"
+    assert body["eligibility_result"]["scheme_id"] == "PM-KISAN-IN"
+    assert len(body["eligibility_result"]["missing_fields"]) == 7
+    assert "2020" in body["eligibility_result"]["notice"]
+
+
 def test_search_endpoint_calls_adapter_with_filters_and_limit(
     client: TestClient,
     monkeypatch: pytest.MonkeyPatch,

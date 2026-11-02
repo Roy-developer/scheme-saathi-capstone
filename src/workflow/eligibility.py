@@ -6,14 +6,15 @@ from mcp import Client
 from pydantic import ValidationError
 
 # These models define the facts sent to the tool and the response expected.
-from src.api.eligibility import EligibilityRequest, EligibilityResponse
+from src.api.eligibility import EligibilityResponse
+from src.rules.models import HouseholdProfile
 from src.workflow.errors import MCPToolError
 
 
 async def evaluate_eligibility(
     client: Client,
     scheme_id: str,
-    profile: EligibilityRequest,
+    profile: HouseholdProfile,
 ) -> EligibilityResponse:
     """Call the MCP tool and validate its structured result."""
     # Ask the connected server for the named tool using JSON-compatible inputs.

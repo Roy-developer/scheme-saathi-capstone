@@ -15,17 +15,10 @@ from mcp import Client, StdioServerParameters
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
 from src.config import PROJECT_ROOT
-from src.api.eligibility import (
-    EligibilityRequest,
-    EligibilityResponse,
-)
+from src.api.eligibility import EligibilityResponse
 from src.api.scheme_search import SchemePassage
-from src.api.pmkisan_eligibility import (
-    PMKisanEligibilityRequest,
-    PMKisanEligibilityResponse,
-    evaluate_pmkisan_eligibility,
-)
 from src.rules.data_provider import RulePackageProvider
+from src.rules.models import HouseholdProfile
 # This adapter calls the MCP tool and translates failures for the API layer.
 from src.workflow.eligibility import (
     evaluate_eligibility,
@@ -143,27 +136,15 @@ def health() -> dict[str, str]:
 
 
 @app.post(
-    "/api/v1/schemes/PM-KISAN-IN/evaluate",
-    response_model=PMKisanEligibilityResponse,
-)
-def evaluate_pmkisan(
-    eligibility_request: PMKisanEligibilityRequest,
-) -> PMKisanEligibilityResponse:
-    """Run the versioned PM-KISAN mock rules through the shared evaluate flow."""
-
-    return evaluate_pmkisan_eligibility(eligibility_request)
-
-
-@app.post(
     "/api/v1/schemes/{scheme_id}/evaluate",
     response_model=EligibilityResponse,
 )
 async def evaluate(
     scheme_id: str,
-    eligibility_request: EligibilityRequest,
+    eligibility_request: HouseholdProfile,
     http_request: Request,
 ) -> EligibilityResponse:
-    """Evaluate a scheme by calling the MCP rule-engine tool."""
+    """Evaluate any loaded scheme by calling the MCP rule-engine tool."""
 
     # Reject unknown scheme IDs before spending a tool call.
     if scheme_id not in http_request.app.state.rule_packages:

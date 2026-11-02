@@ -98,8 +98,12 @@ vector storage remains future work.
 
 PM-KISAN follows the same scheme-selection journey: select the scheme in
 search results, choose **Continue to the synthetic eligibility demo**, then
-answer the household questions. `POST /api/v1/schemes/PM-KISAN-IN/evaluate`
-evaluates the separate, versioned mock rule package against the operational
+answer the household questions. The UI sends those answers to
+`POST /api/v1/journey`, so PM-KISAN runs through the same LangGraph intake,
+MCP `evaluate_eligibility` tool and rule engine as widow pension. Both schemes
+use one rule package format in `src/rules/packages/` (required facts, rules,
+source text and reason messages); `POST /api/v1/schemes/{scheme_id}/evaluate`
+also works for either scheme. The PM-KISAN package encodes the operational
 guidelines revised 2020-03-29 and returns `eligible`, `not_eligible`, or
 `need_more_information`. Every result is explicitly limited to that dated
 mock baseline; the current landholding cutoff and State/UT records are not

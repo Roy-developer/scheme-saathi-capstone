@@ -102,7 +102,8 @@ def test_information_only_scheme_never_calls_eligibility_tool():
             graph,
             JourneyRequest(
                 action="evaluate",
-                scheme_id="PM-KISAN-IN",
+                # Any scheme without a rule package is information-only.
+                scheme_id="PMAY-G-IN",
                 profile={
                     "date_of_birth": "1986-10-30",
                     "application_date": "2026-10-30",

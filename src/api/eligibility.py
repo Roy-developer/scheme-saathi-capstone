@@ -1,35 +1,11 @@
-"""Deterministic evaluation for the reviewed synthetic mock scheme."""
+"""Deterministic eligibility engine shared by every synthetic mock scheme."""
 
-from datetime import date
 from typing import Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field
 
-from src.rules.models import RulePackage
-from src.ui.models import StrictModel, calculate_age_on
-
-
-class EligibilityRequest(StrictModel):
-    """Synthetic facts required to evaluate one mock application."""
-
-    date_of_birth: date
-    application_date: date
-    is_widow: bool
-    bpl_card_shown: bool | None = None
-
-    @model_validator(mode="after")
-    def validate_dates(self) -> "EligibilityRequest":
-        if self.date_of_birth > self.application_date:
-            raise ValueError("date_of_birth cannot be after application_date")
-        if calculate_age_on(self.date_of_birth, self.application_date) > 125:
-            raise ValueError("age on application_date cannot exceed 125")
-        return self
-
-    @property
-    def age(self) -> int:
-        """Return completed age on the application date."""
-
-        return calculate_age_on(self.date_of_birth, self.application_date)
+from src.rules.models import HouseholdProfile, Rule, RulePackage
+from src.ui.models import StrictModel
 
 
 class RuleEvidence(StrictModel):
@@ -39,6 +15,7 @@ class RuleEvidence(StrictModel):
     source_clause_id: str
     source_url: str
     source_text: str
+    source_location: str | None = None
 
 
 class EligibilityResponse(StrictModel):
@@ -47,88 +24,95 @@ class EligibilityResponse(StrictModel):
     scheme_id: str
     result: Literal["eligible", "not_eligible", "need_more_information"]
     reason: str
-    age_on_application_date: int
+    age_on_application_date: int | None = None
     missing_fields: list[str] = Field(default_factory=list)
     deciding_rule_ids: list[str]
     evidence: list[RuleEvidence]
+    notice: str | None = None
+    unresolved_checks: list[str] = Field(default_factory=list)
+
+
+def _rule_is_met(rule: Rule, value: bool | int) -> bool:
+    if rule.operator == "eq":
+        return value == rule.value
+    if rule.operator == "gte":
+        return value >= rule.value
+    return value <= rule.value
 
 
 def evaluate_mock_eligibility(
-    request: EligibilityRequest,
+    profile: HouseholdProfile,
     package: RulePackage,
 ) -> EligibilityResponse:
-    """Evaluate a preloaded rule package without an LLM or external submission."""
+    """Evaluate every rule in a package without an LLM.
 
-    rules = package.rules
-    evidence_by_rule = {
-        rule.rule_id: RuleEvidence(
-            rule_id=rule.rule_id,
-            source_clause_id=rule.source_clause_id,
-            source_url=str(package.source.source_url),
-            source_text=package.source.official_eligibility_text,
-        )
-        for rule in rules
-    }
+    Verdict order: any failed rule gives ``not_eligible``; otherwise any
+    unknown fact (or a rule marked ``need_more_information``) gives
+    ``need_more_information``; otherwise ``eligible``.
+    """
 
-    failed_rules: list[str] = []
+    failed_rules: list[Rule] = []
+    unresolved_rules: list[Rule] = []
     missing_fields: list[str] = []
-    deciding_rule_ids: list[str] = []
 
-    for rule in rules:
-        if rule.field == "is_widow":
-            if rule.operator != "eq" or not isinstance(rule.value, bool):
-                raise ValueError(f"Unsupported widow rule: {rule.rule_id}")
-            if request.is_widow != rule.value:
-                failed_rules.append(rule.rule_id)
-        elif rule.field == "age":
-            if not isinstance(rule.value, int) or isinstance(rule.value, bool):
-                raise ValueError(f"Unsupported age rule: {rule.rule_id}")
-            if rule.operator == "gte":
-                failed = request.age < rule.value
-            elif rule.operator == "lte":
-                failed = request.age > rule.value
+    def add_missing(labels: list[str]) -> None:
+        for label in labels:
+            if label not in missing_fields:
+                missing_fields.append(label)
+
+    for rule in package.rules:
+        value = profile.fact_value(rule.field)
+        if value is None:
+            unresolved_rules.append(rule)
+            add_missing(
+                [rule.missing_field_label]
+                if rule.missing_field_label
+                else [
+                    fact
+                    for fact in rule.input_facts
+                    if profile.fact_value(fact) is None
+                ]
+            )
+        elif not _rule_is_met(rule, value):
+            if rule.if_not_met == "not_eligible":
+                failed_rules.append(rule)
             else:
-                raise ValueError(f"Unsupported age operator: {rule.rule_id}")
-            if failed:
-                failed_rules.append(rule.rule_id)
-        elif rule.field == "bpl_status":
-            if (
-                rule.operator != "eq"
-                or rule.value != "confirmed"
-                or package.bpl_confirmation
-                != "government_bpl_card_shown"
-            ):
-                raise ValueError(f"Unsupported BPL rule: {rule.rule_id}")
-            if request.bpl_card_shown is not True:
-                missing_fields.append("government_bpl_card")
-                deciding_rule_ids.append(rule.rule_id)
-        else:
-            raise ValueError(f"Unsupported rule field: {rule.field}")
+                unresolved_rules.append(rule)
+                add_missing([rule.missing_field_label or rule.field])
 
     if failed_rules:
         result: Literal[
             "eligible", "not_eligible", "need_more_information"
         ] = "not_eligible"
-        reason = "One or more required mock scheme conditions are not met."
-        deciding_rule_ids = failed_rules
+        deciding_rules = failed_rules
         missing_fields = []
-    elif missing_fields:
+    elif unresolved_rules:
         result = "need_more_information"
-        reason = "Show a government BPL card to confirm BPL status for this mock."
+        deciding_rules = unresolved_rules
     else:
         result = "eligible"
-        reason = (
-            "All reviewed mock conditions are met, including the age "
-            "range on the application date and a government BPL card shown."
-        )
-        deciding_rule_ids = [rule.rule_id for rule in rules]
+        deciding_rules = list(package.rules)
 
     return EligibilityResponse(
         scheme_id=package.scheme_id,
         result=result,
-        reason=reason,
-        age_on_application_date=request.age,
+        reason=getattr(package.reasons, result),
+        age_on_application_date=profile.age,
         missing_fields=missing_fields,
-        deciding_rule_ids=deciding_rule_ids,
-        evidence=[evidence_by_rule[rule_id] for rule_id in deciding_rule_ids],
+        deciding_rule_ids=[rule.rule_id for rule in deciding_rules],
+        evidence=[
+            RuleEvidence(
+                rule_id=rule.rule_id,
+                source_clause_id=rule.source_clause_id,
+                source_url=str(package.source.source_url),
+                source_text=(
+                    rule.source_text
+                    or package.source.official_eligibility_text
+                ),
+                source_location=rule.source_location,
+            )
+            for rule in deciding_rules
+        ],
+        notice=package.notice,
+        unresolved_checks=list(package.unresolved_checks),
     )

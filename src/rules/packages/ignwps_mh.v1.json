@@ -15,7 +15,18 @@
   "age_as_of": "application_date",
   "age_boundaries_inclusive": true,
   "bpl_confirmation": "government_bpl_card_shown",
+  "required_facts": [
+    "date_of_birth",
+    "application_date",
+    "is_widow",
+    "bpl_card_shown"
+  ],
   "documents_status": "not_verified",
+  "reasons": {
+    "eligible": "All reviewed mock conditions are met, including the age range on the application date and a government BPL card shown.",
+    "not_eligible": "One or more required mock scheme conditions are not met.",
+    "need_more_information": "Show a government BPL card to confirm BPL status for this mock."
+  },
   "rules": [
     {
       "rule_id": "IGNWPS-MH-WIDOW-01",
@@ -40,10 +51,12 @@
     },
     {
       "rule_id": "IGNWPS-MH-BPL-01",
-      "field": "bpl_status",
+      "field": "bpl_card_shown",
       "operator": "eq",
-      "value": "confirmed",
-      "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01"
+      "value": true,
+      "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01",
+      "if_not_met": "need_more_information",
+      "missing_field_label": "government_bpl_card"
     }
   ]
 }

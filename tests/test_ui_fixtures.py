@@ -127,10 +127,11 @@ def test_rule_package_records_mock_approval_source_and_interpretations(
 @pytest.mark.parametrize(
     ("field", "operator", "value"),
     [
-        ("age", "gte", "confirmed"),
+        ("age", "gte", 200),
         ("age", "gte", True),
+        ("age", "eq", 40),
         ("is_widow", "gte", True),
-        ("bpl_status", "eq", "unknown"),
+        ("bpl_card_shown", "eq", 1),
     ],
 )
 def test_rule_rejects_unsupported_combinations(
@@ -162,17 +163,16 @@ def test_rule_package_rejects_duplicate_rule_ids(
         RulePackage.model_validate(payload)
 
 
-def test_rule_package_rejects_incomplete_or_inconsistent_age_bounds(
+def test_rule_package_rejects_undeclared_facts_or_inconsistent_age_bounds(
     provider: FixtureDataProvider,
 ) -> None:
-    """The mock policy requires both ordered age limits."""
+    """Rules may only read declared facts, and age limits must be ordered."""
 
     payload = provider.rule_package.model_dump(mode="json")
-    payload["rules"] = [
-        rule for rule in payload["rules"]
-        if rule["rule_id"] != "IGNWPS-MH-AGE-MAX-01"
+    payload["required_facts"] = [
+        fact for fact in payload["required_facts"] if fact != "is_widow"
     ]
-    with pytest.raises(ValidationError):
+    with pytest.raises(ValidationError, match="missing from required_facts"):
         RulePackage.model_validate(payload)
 
     payload = provider.rule_package.model_dump(mode="json")
@@ -216,6 +216,16 @@ def test_rule_package_provider_rejects_duplicate_scheme_packages(
 
     with pytest.raises(ValueError, match="Duplicate rule package"):
         RulePackageProvider(tmp_path)
+
+
+def test_one_registry_loads_every_scheme_package() -> None:
+    """Widow pension and PM-KISAN share one schema and one registry."""
+
+    packages = RulePackageProvider().packages
+
+    assert {"IGNWPS-MH", "PM-KISAN-IN"} <= set(packages)
+    assert len(packages["PM-KISAN-IN"].required_facts) == 8
+    assert packages["PM-KISAN-IN"].notice
 
 def test_eligible_demo_has_matching_application_draft(
     provider: FixtureDataProvider,

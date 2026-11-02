@@ -31,7 +31,7 @@
   },
   "runtime_safety": {
     "assessment_endpoint_enabled": true,
-    "endpoint": "POST /api/v1/schemes/PM-KISAN-IN/evaluate",
+    "endpoint": "POST /api/v1/journey (scheme_id PM-KISAN-IN); runtime package src/rules/packages/pmkisan_in.v1.json",
     "may_return_eligible": true,
     "reason": "The eligible result means only that supplied synthetic answers meet the listed 2020 mock criteria. Every result states that the current landholding cutoff and State/UT records are not verified; it is not an official decision."
   },

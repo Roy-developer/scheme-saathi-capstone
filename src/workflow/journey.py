@@ -10,9 +10,9 @@ from langgraph.checkpoint.base import BaseCheckpointSaver
 from mcp import Client
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
-from src.api.eligibility import EligibilityRequest, EligibilityResponse
+from src.api.eligibility import EligibilityResponse
 from src.api.scheme_search import SchemePassage
-from src.rules.models import RulePackage
+from src.rules.models import HouseholdProfile, RulePackage
 from src.workflow.eligibility import evaluate_eligibility
 from src.workflow.errors import MCPToolError
 from src.workflow.intake import rewrite_scheme_query
@@ -83,7 +83,7 @@ async def _search_with_mcp(
 async def _evaluate_with_mcp(
     client: Client,
     scheme_id: str,
-    profile: EligibilityRequest,
+    profile: HouseholdProfile,
 ) -> EligibilityResponse:
     return await evaluate_eligibility(client, scheme_id, profile)
 
@@ -96,7 +96,7 @@ def build_journey_graph(
         [Client, str], Awaitable[list[SchemePassage]]
     ] = _search_with_mcp,
     eligibility_tool: Callable[
-        [Client, str, EligibilityRequest], Awaitable[EligibilityResponse]
+        [Client, str, HouseholdProfile], Awaitable[EligibilityResponse]
     ] = _evaluate_with_mcp,
     query_rewriter: Callable[[str], Awaitable[str]] = rewrite_scheme_query,
     checkpointer: BaseCheckpointSaver | None = None,
@@ -168,18 +168,13 @@ def build_journey_graph(
             return {
                 "status": "need_information",
                 "message": message,
-                "missing_fields": [
-                    "date_of_birth",
-                    "application_date",
-                    "is_widow",
-                    "bpl_card_shown",
-                ],
+                "missing_fields": list(rule_packages[scheme_id].required_facts),
                 "eligibility_result": None,
                 "conversation": [{"role": "assistant", "content": message}],
             }
 
         try:
-            profile = EligibilityRequest.model_validate(profile_data)
+            profile = HouseholdProfile.model_validate(profile_data)
         except ValidationError as error:
             missing_fields = sorted(
                 {
@@ -214,7 +209,7 @@ def build_journey_graph(
         }
 
     async def eligibility_agent(state: JourneyState) -> dict[str, Any]:
-        profile = EligibilityRequest.model_validate(state["profile"])
+        profile = HouseholdProfile.model_validate(state["profile"])
         result = await eligibility_tool(
             client,
             state["scheme_id"],

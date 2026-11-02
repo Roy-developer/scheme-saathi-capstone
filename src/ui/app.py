@@ -10,10 +10,8 @@ from src.ui.api_client import (
     JourneyApiError,
     forget_journey,
     run_journey,
-    run_pmkisan_eligibility,
 )
 from src.ui.data_provider import FixtureDataProvider
-from src.api.pmkisan_eligibility import PMKisanEligibilityRequest
 from src.workflow.journey import JourneyRequest
 
 
@@ -538,12 +536,32 @@ if st.session_state.journey_started:
             st.session_state.pmkisan_eligibility_result = None
             st.session_state.pmkisan_eligibility_error = None
             try:
-                response = run_pmkisan_eligibility(
-                    PMKisanEligibilityRequest(**answers)
+                # Same path as widow pension: journey graph -> MCP rule engine.
+                journey = run_journey(
+                    JourneyRequest(
+                        action="evaluate",
+                        conversation_id=(
+                            UUID(st.session_state.conversation_id)
+                            if st.session_state.conversation_id
+                            else uuid4()
+                        ),
+                        scheme_id="PM-KISAN-IN",
+                        profile=answers,
+                    )
                 )
-                st.session_state.pmkisan_eligibility_result = (
-                    response.model_dump(mode="json")
+                st.session_state.conversation_id = str(
+                    journey.conversation_id
                 )
+                st.session_state.journey_plan = journey.plan
+                st.session_state.journey_conversation = journey.conversation
+                if journey.eligibility_result is None:
+                    st.session_state.pmkisan_eligibility_error = (
+                        journey.message
+                    )
+                else:
+                    st.session_state.pmkisan_eligibility_result = (
+                        journey.eligibility_result.model_dump(mode="json")
+                    )
             except JourneyApiError as error:
                 st.session_state.pmkisan_eligibility_error = str(error)
 
@@ -562,20 +580,25 @@ if st.session_state.journey_started:
             else:
                 st.warning(text["pmkisan_verification"])
             st.write(result["reason"])
-            st.warning(result["notice"])
+            if result["notice"]:
+                st.warning(result["notice"])
             if result["missing_fields"]:
                 st.caption(
                     f'{text["pmkisan_missing"]}: '
                     f'{", ".join(result["missing_fields"])}'
                 )
-            st.caption(
-                f'{text["pmkisan_unresolved"]}: '
-                f'{", ".join(result["unresolved_checks"])}'
-            )
+            if result["unresolved_checks"]:
+                st.caption(
+                    f'{text["pmkisan_unresolved"]}: '
+                    f'{", ".join(result["unresolved_checks"])}'
+                )
             for evidence in result["evidence"]:
                 with st.expander(evidence["rule_id"]):
                     st.write(evidence["source_text"])
-                    st.caption(evidence["source_location"])
+                    st.caption(
+                        evidence["source_location"]
+                        or evidence["source_clause_id"]
+                    )
                     st.link_button(
                         text["source"],
                         evidence["source_url"],
