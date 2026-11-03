@@ -108,7 +108,8 @@ Done when: no fixture profile is needed to reach a verdict.
 
 Code walkthrough for new developers: [PHASE2_CODE_WALKTHROUGH.md](PHASE2_CODE_WALKTHROUGH.md).
 
-What was built (no LLM calls yet, to keep cost at zero):
+What was built (no new LLM calls in the interview; search already uses an
+LLM to rewrite queries):
 
 - `src/workflow/supervisor.py`: builds the plan and moves it forward when a
   specialist reports back.
@@ -117,8 +118,8 @@ What was built (no LLM calls yet, to keep cost at zero):
 - `src/workflow/questions.py`: fixed English question text and plain-code
   answer reading (yes / no / don't know and day-first dates). The LLM will
   phrase questions and read free text in a later step.
-- `src/workflow/journey.py`: supervisor ? intake ? `ask_user` (`interrupt()`)
-  ? intake ? ? eligibility ? supervisor. `resume_journey` continues a paused
+- `src/workflow/journey.py`: supervisor → intake → `ask_user` (`interrupt()`)
+  → intake → … → eligibility → supervisor. `resume_journey` continues a paused
   conversation; `get_journey` reloads it.
 - API: `POST /api/v1/journey` with `action="interview"`,
   `POST /api/v1/journey/{id}/messages` (409 when nothing is waiting) and
@@ -136,13 +137,48 @@ What was built (no LLM calls yet, to keep cost at zero):
 **Goal:** check every candidate scheme and change the plan when results
 disagree with it.
 
+### In simple words
+
+Today the user picks **one** scheme and gets **one** answer. In Phase 3 the
+user describes themselves once, and one chat checks **every matching
+scheme**.
+
+Example: Kamla, a 52-year-old widow whose family owns farmland.
+
+1. **Search** finds widow pension and PM-KISAN.
+2. **Plan:** learn about you → check widow pension → check PM-KISAN.
+3. **Questions are asked once.** An answer is shared by every scheme that
+   needs it.
+4. **Replan:** Kamla confirms that a member of the farmer family covered by
+   the rule paid income tax. PM-KISAN is ruled out,
+   so the supervisor marks it ❌, writes why, and stops asking PM-KISAN
+   questions.
+5. **Results table:** if Kamla also confirms the required BPL card, widow
+   pension ✅ eligible; PM-KISAN ❌ not eligible (income tax). These are
+   synthetic mock results, not government decisions.
+
+### Decisions (agreed 2026-11-03)
+
+| Question | Decision |
+|---|---|
+| Should intake use an LLM to read free-text answers? | **Yes.** E.g. "My husband died last year" can suggest widow = yes. First try today's plain-code reader; use the LLM only when it cannot read an answer. Validate the proposed value and ask for confirmation when interpretation is uncertain. Valid data types do not prove the LLM understood correctly. If it fails, ask for a clear yes/no/date answer. |
+| How should the supervisor replan? | **Rules decide; the LLM only writes the reason** in plain English from the recorded event. It must not add facts or change the meaning. Keep the fixed code-written reason available and use it if the LLM fails or its explanation cannot be checked. The LLM never changes the plan or a verdict. |
+| Should search write a short LLM answer from the passages? | **Not in Phase 3.** Plan it separately. Citation IDs and number checks alone do not prove that a sentence is supported; that design needs further work. |
+
 Backend:
 
 - Eligibility analyst evaluates every candidate scheme from filtered search,
-  not just the selected one.
-- Replan triggers (for example: a scheme fails, a new fact opens a new
-  scheme, a tool fails). Each replan is recorded in a trace.
-- Self-correction loop with retry limits.
+  not just the selected one. One verdict per scheme.
+- One shared profile: each fact is asked once and reused by every scheme.
+  The question picker skips schemes that are already decided.
+- Replan rules (code, not LLM):
+  - a scheme is ruled out → mark it ❌ and stop its questions;
+  - a new fact opens a scheme (for example farmland) → add a step;
+  - a tool fails → retry a limited number of times, then mark the step
+    failed and say so. Never invent a verdict.
+- Each replan is recorded in a trace: what changed, which rule or event
+  caused it, and the reason text.
+- LLM answer reader in intake, with the plain-code reader as the safety net.
 
 UI:
 
@@ -156,8 +192,25 @@ UI test checklist:
       trace explains why.
 - [ ] Shared questions (for example, date of birth) are asked only once.
 - [ ] A tool failure is shown clearly; no fake verdict is shown.
+- [ ] Answer "My husband died last year" to the widow question; it is
+      understood as yes.
+- [ ] Answer something unclear (for example "maybe"); the question is asked
+      again, as today.
 
 Done when: replans are visible in the UI and match the trace in the API.
+
+### Build order
+
+1. **Several schemes:** keep the candidate list and one result per scheme.
+   Schemes without rule packages remain information-only.
+2. **Shared interview:** reuse confirmed facts and stop questions for decided
+   schemes. Keep "don't know" separate from "no".
+3. **Rule-based replanning:** record the old plan, new plan and triggering
+   event. Preserve a ruled-out scheme's result rather than deleting it.
+4. **LLM assistance:** add the free-text reader and reason writer, with
+   bounded calls and plain-code fallbacks.
+5. **Screen and checks:** show all results and the replan history. Test with
+   fakes first, then a small real-LLM flow before marking Phase 3 built.
 
 ---
 
