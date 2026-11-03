@@ -6,7 +6,7 @@ import pytest
 
 from src.rules.data_provider import RulePackageProvider
 from src.rules.models import HouseholdProfile
-from src.workflow.question_picker import pick_next_fact
+from src.workflow.question_picker import pick_next_fact, pick_shared_fact
 
 APPLICATION_DATE = date(2026, 10, 30)
 packages = RulePackageProvider()
@@ -74,3 +74,15 @@ def test_pmkisan_stops_after_income_tax_fails():
 
 def test_pmkisan_asks_land_first():
     assert pick_next_fact(HouseholdProfile(), PMKISAN) == "landholding_family_in_state_records"
+
+
+def test_shared_picker_counts_each_fact_once_per_scheme():
+    # The widow package has two age rules. Neither should double-count DOB.
+    second = WIDOW.model_copy(update={
+        "scheme_id": "OTHER-WIDOW",
+        "rules": (WIDOW.rules[-1],),
+    })
+    assert pick_shared_fact(widow_profile(), [WIDOW, second]) == "bpl_card_shown"
+    assert pick_shared_fact(
+        widow_profile(), [WIDOW, second], frozenset({"bpl_card_shown"})
+    ) == "is_widow"

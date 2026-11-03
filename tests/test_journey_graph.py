@@ -10,13 +10,17 @@ from src.api.eligibility import EligibilityResponse, evaluate_mock_eligibility
 from src.api.scheme_search import load_passages
 from src.rules.data_provider import RulePackageProvider
 from src.workflow.journey import (
+    JourneyCorrection,
     JourneyNotWaitingError,
     JourneyRequest,
     build_journey_graph,
+    correct_journey_answer,
     get_journey,
     resume_journey,
     run_journey,
 )
+from src.workflow.intake import AnswerInterpretation, IntakeAgentError
+from src.workflow import journey as journey_module
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,7 +28,11 @@ PACKAGES = RulePackageProvider().packages
 PASSAGES = load_passages(ROOT / "data" / "schemes" / "passages.json")
 
 
-def build_graph(*, eligibility_tool=None):
+async def uncertain_answer_interpreter(_fact, _question, _reply):
+    return AnswerInterpretation(kind="uncertain", confidence=0.0)
+
+
+def build_graph(*, eligibility_tool=None, answer_interpreter=None):
     async def search_tool(_client, query):
         assert query == "widow pension"
         return [PASSAGES[0]]
@@ -51,6 +59,7 @@ def build_graph(*, eligibility_tool=None):
         search_tool=search_tool,
         eligibility_tool=fake_eligibility,
         query_rewriter=identity_rewriter,
+        answer_interpreter=answer_interpreter or uncertain_answer_interpreter,
         checkpointer=MemorySaver(),
     )
 
@@ -66,6 +75,7 @@ def test_search_flow_routes_through_intake_and_returns_citations():
 
     assert result.status == "search_results"
     assert result.plan
+    assert "Showing up to 20 passages" in result.message
     assert result.passages[0].passage_id == PASSAGES[0].passage_id
     assert any(turn["role"] == "user" for turn in result.conversation)
 
@@ -91,6 +101,275 @@ def test_eligibility_flow_uses_rule_tool_and_returns_its_verdict():
     assert result.status == "eligible"
     assert result.eligibility_result is not None
     assert result.eligibility_result.reason == "Deterministic test result."
+    assert result.candidate_scheme_ids == ["IGNWPS-MH"]
+    assert result.candidate_verdicts["IGNWPS-MH"].result == "eligible"
+    assert result.eligibility_results["IGNWPS-MH"] == result.eligibility_result
+
+
+def test_candidate_schemes_are_unique_and_new_search_clears_old_results():
+    widow = next(p for p in PASSAGES if p.scheme_id == "IGNWPS-MH")
+    farmer = next(p for p in PASSAGES if p.scheme_id == "PM-KISAN-IN")
+
+    async def search_tool(_client, _query):
+        return [widow, farmer, widow]
+
+    async def identity(query):
+        return query
+
+    async def engine(_client, scheme_id, profile):
+        return evaluate_mock_eligibility(profile, PACKAGES[scheme_id])
+
+    graph = build_journey_graph(
+        None, PACKAGES, search_tool=search_tool,
+        query_rewriter=identity, eligibility_tool=engine,
+        checkpointer=MemorySaver(),
+    )
+
+    async def scenario():
+        first = await run_journey(
+            graph, JourneyRequest(
+                action="evaluate", scheme_id="IGNWPS-MH",
+                profile={"is_widow": False},
+            ),
+        )
+        assert first.candidate_verdicts["IGNWPS-MH"].result == "not_eligible"
+        assert first.eligibility_results["IGNWPS-MH"].deciding_rule_ids
+        result = await run_journey(
+            graph, JourneyRequest(
+                action="search", query="support",
+                conversation_id=first.conversation_id,
+            ),
+        )
+        assert result.candidate_scheme_ids == ["IGNWPS-MH", "PM-KISAN-IN"]
+        assert "across 2 schemes" in result.message
+        assert len(result.passages) == 3  # Group schemes, not their evidence.
+        assert result.candidate_verdicts == {}
+        assert result.eligibility_results == {}
+        restored = await get_journey(graph, result.conversation_id)
+        assert restored.candidate_scheme_ids == result.candidate_scheme_ids
+        assert restored.candidate_verdicts == {}
+
+    asyncio.run(scenario())
+
+
+def test_shared_interview_continues_after_one_scheme_is_ruled_out():
+    calls = []
+
+    async def engine(_client, scheme_id, profile):
+        calls.append(scheme_id)
+        return evaluate_mock_eligibility(profile, PACKAGES[scheme_id])
+
+    graph = build_journey_graph(
+        None, PACKAGES, eligibility_tool=engine,
+        checkpointer=MemorySaver(), today=lambda: date(2026, 10, 30),
+    )
+
+    async def scenario():
+        result = await run_journey(
+            graph, JourneyRequest(
+                action="interview",
+                candidate_scheme_ids=["IGNWPS-MH", "PM-KISAN-IN", "PMAY-G-IN", "IGNWPS-MH"],
+                profile={"income_tax_paid_last_assessment_year": True},
+            ),
+        )
+        asked = []
+        for answer in ("yes", "30/10/1976", "yes"):
+            asked.append(result.pending_fact)
+            result = await resume_journey(graph, result.conversation_id, answer)
+        assert asked == ["is_widow", "date_of_birth", "bpl_card_shown"]
+        assert result.status == "completed"
+        assert result.eligibility_result is None  # No misleading single verdict.
+        assert result.candidate_verdicts["IGNWPS-MH"].result == "eligible"
+        assert result.candidate_verdicts["PM-KISAN-IN"].result == "not_eligible"
+        assert result.candidate_verdicts["PMAY-G-IN"].result == "information_only"
+        assert calls == ["IGNWPS-MH", "PM-KISAN-IN"]
+        assert result.eligibility_results["PM-KISAN-IN"].deciding_rule_ids == [
+            "PMKISAN-INCOME-TAX-01"
+        ]
+        assert all(step.status == "done" for step in result.plan_detail.steps)
+        assert [
+            (change.from_version, change.to_version, change.scheme_id)
+            for change in result.plan_change_history
+        ] == [
+            (1, 2, "IGNWPS-MH"),
+            (2, 3, "PM-KISAN-IN"),
+            (3, 4, "PMAY-G-IN"),
+        ]
+        assert "PMKISAN-INCOME-TAX-01" in result.plan_change_history[1].reason
+        assert result.plan_detail.replan_reason == result.plan_change_history[-1].reason
+        restored = await get_journey(graph, result.conversation_id)
+        assert restored.eligibility_results == result.eligibility_results
+        assert restored.plan_change_history == result.plan_change_history
+
+    asyncio.run(scenario())
+
+
+def test_shared_interview_unknown_answers_terminate_and_keep_each_missing_list():
+    async def engine(_client, scheme_id, profile):
+        return evaluate_mock_eligibility(profile, PACKAGES[scheme_id])
+
+    graph = build_journey_graph(
+        None, PACKAGES, eligibility_tool=engine, checkpointer=MemorySaver(),
+    )
+
+    async def scenario():
+        result = await run_journey(
+            graph, JourneyRequest(
+                action="interview",
+                candidate_scheme_ids=["IGNWPS-MH", "PM-KISAN-IN"],
+            ),
+        )
+        asked = []
+        while result.status == "awaiting_answer":
+            assert result.pending_fact not in asked
+            asked.append(result.pending_fact)
+            assert len(asked) <= 11
+            result = await resume_journey(
+                graph, result.conversation_id, "I don't know"
+            )
+        assert result.status == "completed"
+        assert len(result.eligibility_results) == 2
+        assert all(v.result == "need_more_information"
+                   for v in result.candidate_verdicts.values())
+        assert "government_bpl_card" in result.candidate_verdicts["IGNWPS-MH"].missing_fields
+
+    asyncio.run(scenario())
+
+
+def test_tool_retry_and_final_failure_are_recorded_without_fake_verdict():
+    attempts = 0
+
+    async def failing_engine(_client, _scheme_id, _profile):
+        nonlocal attempts
+        attempts += 1
+        from src.workflow.errors import MCPToolError
+        raise MCPToolError("private tool detail")
+
+    graph = build_journey_graph(
+        None, PACKAGES, eligibility_tool=failing_engine,
+        checkpointer=MemorySaver(),
+    )
+
+    async def scenario():
+        result = await run_journey(
+            graph, JourneyRequest(
+                action="evaluate",
+                candidate_scheme_ids=["IGNWPS-MH", "PM-KISAN-IN"],
+                profile={
+                    "is_widow": True,
+                    "date_of_birth": "1976-10-30",
+                    "application_date": "2026-10-30",
+                    "bpl_card_shown": True,
+                    "landholding_family_in_state_records": True,
+                },
+            ),
+        )
+        assert result.status == "completed"
+        assert attempts == 4  # One retry for each candidate.
+        assert result.candidate_verdicts["IGNWPS-MH"].result == "tool_error"
+        assert result.eligibility_results == {}
+        assert [
+            (event.event_type, event.scheme_id, event.attempt)
+            for event in result.journey_history
+        ] == [
+            ("tool_retry", "IGNWPS-MH", 1),
+            ("tool_failed", "IGNWPS-MH", 2),
+            ("tool_retry", "PM-KISAN-IN", 1),
+            ("tool_failed", "PM-KISAN-IN", 2),
+        ]
+        assert all("private tool detail" not in event.reason
+                   for event in result.journey_history)
+        assert "no eligibility decision" in result.message.lower()
+
+    asyncio.run(scenario())
+
+
+def test_correcting_answer_rechecks_schemes_and_records_no_answer_value():
+    async def engine(_client, scheme_id, profile):
+        return evaluate_mock_eligibility(profile, PACKAGES[scheme_id])
+
+    graph = build_journey_graph(
+        None, PACKAGES, eligibility_tool=engine, checkpointer=MemorySaver(),
+    )
+
+    async def scenario():
+        result = await run_journey(
+            graph, JourneyRequest(
+                action="evaluate",
+                candidate_scheme_ids=["IGNWPS-MH", "PM-KISAN-IN"],
+                profile={
+                    "is_widow": True,
+                    "date_of_birth": "1976-10-30",
+                    "application_date": "2026-10-30",
+                    "bpl_card_shown": True,
+                    "landholding_family_in_state_records": True,
+                    "institutional_landholder": False,
+                    "listed_public_office_member": False,
+                    "excluded_government_employee_member": False,
+                    "pension_at_least_10000_excluding_stated_grades": False,
+                    "income_tax_paid_last_assessment_year": False,
+                    "registered_practicing_professional_member": False,
+                    "nri_new_beneficiary": False,
+                },
+            ),
+        )
+        assert result.candidate_verdicts["IGNWPS-MH"].result == "eligible"
+        corrected = await correct_journey_answer(
+            graph,
+            result.conversation_id,
+            JourneyCorrection(fact_name="is_widow", answer="no"),
+        )
+        assert corrected.candidate_verdicts["IGNWPS-MH"].result == "not_eligible"
+        assert corrected.candidate_verdicts["PM-KISAN-IN"].result == "eligible"
+        event = corrected.journey_history[-1]
+        assert event.event_type == "answer_corrected"
+        assert event.fact_name == "is_widow"
+        assert "no" not in event.reason.lower()
+        assert corrected.plan_detail.version > result.plan_detail.version
+        assert corrected.plan_change_history[-2].from_version == result.plan_detail.version + 1
+        restored = await get_journey(graph, result.conversation_id)
+        assert restored.candidate_verdicts == corrected.candidate_verdicts
+        assert restored.journey_history == corrected.journey_history
+
+    asyncio.run(scenario())
+
+
+def test_search_retry_and_failure_are_recorded():
+    calls = 0
+
+    async def failing_search(_client, _query):
+        nonlocal calls
+        calls += 1
+        from src.workflow.errors import MCPToolError
+        raise MCPToolError("private search detail")
+
+    async def identity(query):
+        return query
+
+    graph = build_journey_graph(
+        None, PACKAGES, search_tool=failing_search,
+        query_rewriter=identity, checkpointer=MemorySaver(),
+    )
+    result = asyncio.run(run_journey(
+        graph, JourneyRequest(action="search", query="farmer support")
+    ))
+    assert result.status == "tool_error"
+    assert calls == 2
+    assert [event.event_type for event in result.journey_history] == [
+        "tool_retry", "tool_failed"
+    ]
+
+
+@pytest.mark.parametrize("payload", [
+    {"action": "search", "candidate_scheme_ids": ["IGNWPS-MH"]},
+    {"action": "interview", "scheme_id": "IGNWPS-MH",
+     "candidate_scheme_ids": ["PM-KISAN-IN"]},
+    {"action": "interview", "candidate_scheme_ids": [" "]},
+    {"action": "interview", "candidate_scheme_ids": [f"scheme-{i}" for i in range(21)]},
+])
+def test_invalid_candidate_requests_are_rejected(payload):
+    with pytest.raises(ValueError):
+        JourneyRequest(**payload)
 
 
 def test_information_only_scheme_never_calls_eligibility_tool():
@@ -121,6 +400,8 @@ def test_information_only_scheme_never_calls_eligibility_tool():
 
     assert result.status == "information_only"
     assert result.eligibility_result is None
+    assert result.candidate_verdicts["PMAY-G-IN"].result == "information_only"
+    assert result.eligibility_results == {}
     assert called is False
 
 
@@ -241,6 +522,152 @@ def test_unclear_answer_repeats_the_question_with_a_hint():
 
     assert responses[1].pending_fact == "is_widow"
     assert "Please answer" in responses[1].question
+
+
+def test_free_text_interpretation_requires_confirmation_before_saving():
+    calls = []
+
+    async def interpreter(fact, _question, reply):
+        calls.append((fact, reply))
+        if fact == "is_widow":
+            return AnswerInterpretation(
+                kind="value", value=True, confidence=0.96
+            )
+        return AnswerInterpretation(kind="uncertain", confidence=0.2)
+
+    graph = build_journey_graph(
+        None,
+        PACKAGES,
+        eligibility_tool=lambda *_: None,
+        answer_interpreter=interpreter,
+        checkpointer=MemorySaver(),
+        today=lambda: date(2026, 10, 30),
+    )
+
+    async def scenario():
+        result = await run_journey(
+            graph,
+            JourneyRequest(action="interview", scheme_id="IGNWPS-MH"),
+        )
+        result = await resume_journey(
+            graph, result.conversation_id, "My husband passed away last year."
+        )
+        assert result.status == "awaiting_answer"
+        assert "I understood your answer as \"yes\"" in result.question
+        assert "is_widow" not in result.known_fact_names
+
+        result = await resume_journey(graph, result.conversation_id, "yes")
+        assert result.pending_fact == "date_of_birth"
+        assert "is_widow" in result.known_fact_names
+        assert calls == [("is_widow", "My husband passed away last year.")]
+
+    asyncio.run(scenario())
+
+
+def test_declined_interpretation_reasks_for_a_direct_answer():
+    async def interpreter(_fact, _question, _reply):
+        return AnswerInterpretation(kind="value", value=True, confidence=0.99)
+
+    async def engine(_client, scheme_id, profile):
+        return evaluate_mock_eligibility(profile, PACKAGES[scheme_id])
+
+    graph = build_journey_graph(
+        None,
+        PACKAGES,
+        eligibility_tool=engine,
+        answer_interpreter=interpreter,
+        checkpointer=MemorySaver(),
+        today=lambda: date(2026, 10, 30),
+    )
+
+    async def scenario():
+        result = await run_journey(
+            graph,
+            JourneyRequest(action="interview", scheme_id="IGNWPS-MH"),
+        )
+        result = await resume_journey(graph, result.conversation_id, "maybe")
+        assert "I understood your answer" in result.question
+
+        result = await resume_journey(graph, result.conversation_id, "maybe")
+        assert 'Please confirm with "yes" or "no"' in result.question
+
+        result = await resume_journey(graph, result.conversation_id, "no")
+        assert "Please answer directly" in result.question
+        assert "Please answer" in result.question
+        assert "is_widow" not in result.known_fact_names
+
+        result = await resume_journey(graph, result.conversation_id, "no")
+        assert result.status == "not_eligible"
+        assert result.known_fact_names == ["application_date", "is_widow"]
+
+    asyncio.run(scenario())
+
+
+def test_default_search_requests_the_visible_passage_limit(monkeypatch):
+    observed = {}
+
+    async def fake_search(_client, _query, *, limit):
+        observed["limit"] = limit
+        return []
+
+    monkeypatch.setattr(journey_module, "search_scheme_passages", fake_search)
+
+    result = asyncio.run(journey_module._search_with_mcp(None, "widow pension"))
+
+    assert result == []
+    assert observed["limit"] == 20
+
+
+def test_answer_reader_failure_uses_plain_code_question(monkeypatch):
+    async def unavailable(_fact, _question, _reply):
+        raise IntakeAgentError("reader unavailable")
+
+    graph = build_journey_graph(
+        None,
+        PACKAGES,
+        answer_interpreter=unavailable,
+        checkpointer=MemorySaver(),
+        today=lambda: date(2026, 10, 30),
+    )
+
+    async def scenario():
+        result = await run_journey(
+            graph,
+            JourneyRequest(action="interview", scheme_id="IGNWPS-MH"),
+        )
+        result = await resume_journey(graph, result.conversation_id, "maybe")
+        assert result.status == "awaiting_answer"
+        assert result.pending_fact == "is_widow"
+        assert "Please answer" in result.question
+        assert "I understood your answer" not in result.question
+
+    asyncio.run(scenario())
+
+
+def test_clear_free_text_unknown_skips_the_fact_without_inventing_a_value():
+    async def interpreter(_fact, _question, _reply):
+        return AnswerInterpretation(kind="unknown", confidence=0.99)
+
+    graph = build_journey_graph(
+        None,
+        PACKAGES,
+        answer_interpreter=interpreter,
+        checkpointer=MemorySaver(),
+        today=lambda: date(2026, 10, 30),
+    )
+
+    async def scenario():
+        result = await run_journey(
+            graph,
+            JourneyRequest(action="interview", scheme_id="IGNWPS-MH"),
+        )
+        result = await resume_journey(
+            graph, result.conversation_id, "I can't remember."
+        )
+        assert result.pending_fact == "date_of_birth"
+        assert "is_widow" not in result.known_fact_names
+
+    asyncio.run(scenario())
 
 
 def test_impossible_date_is_rejected_and_asked_again():

@@ -899,8 +899,9 @@ cd C:\Users\Admin\OneDrive\Documents\Saathi\scheme-saathi-capstone
 ..\venv\Scripts\python.exe -m pytest -q
 ```
 
-Expected: **152 passed** (151 at the end of Phase 2, plus the search
-fallback test above).
+At the end of Phase 2 and the search-fallback update, the suite had
+**152 tests**. After Phase 3's shared-interview foundation, it had
+**162 tests**; the current full suite has **177 tests**.
 
 | Test file | What it proves |
 |---|---|
@@ -1022,9 +1023,9 @@ open http://127.0.0.1:8501.
 ## Known limits (planned for later phases)
 
 - Questions and plan steps are **English only**.
-- Answers must be yes / no / don't know or a date; free text like "my husband
-  died last year" is not understood yet (an LLM reader comes later, with
-  this code as the safety net).
+- At the end of Phase 2, free-text replies were not understood. Phase 3 adds
+  optional LLM reading for those replies, with this plain-code parser as the
+  fallback and a user confirmation before saving a proposed value.
 - One scheme per chat. Checking several schemes and changing the plan when a
   result rules one out is **Phase 3**.
 - The widow chat does not prepare a draft; document checks and the approval

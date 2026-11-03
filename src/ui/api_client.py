@@ -20,7 +20,12 @@ from urllib.request import Request, urlopen
 
 from pydantic import ValidationError
 
-from src.workflow.journey import JourneyMessage, JourneyRequest, JourneyResponse
+from src.workflow.journey import (
+    JourneyCorrection,
+    JourneyMessage,
+    JourneyRequest,
+    JourneyResponse,
+)
 
 
 class JourneyApiError(Exception):
@@ -118,6 +123,29 @@ def send_journey_message(conversation_id: str, message: str) -> JourneyResponse:
         ) from error
     request = Request(
         _journey_url(f"{_conversation_path(conversation_id)}/messages"),
+        data=body.model_dump_json().encode("utf-8"),
+        headers={
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    return _send(request, timeout=60)
+
+
+def correct_journey_answer(
+    conversation_id: str,
+    fact_name: str,
+    answer: str,
+) -> JourneyResponse:
+    """Correct a saved answer and ask the API to recheck every candidate."""
+
+    try:
+        body = JourneyCorrection(fact_name=fact_name, answer=answer)
+    except ValidationError as error:
+        raise JourneyApiError("Choose a known fact and enter a valid answer.") from error
+    request = Request(
+        _journey_url(f"{_conversation_path(conversation_id)}/corrections"),
         data=body.model_dump_json().encode("utf-8"),
         headers={
             "Accept": "application/json",

@@ -127,6 +127,7 @@ class OpenRouterReranker:
             },
             method="POST",
         )
+        request.add_header("Authorization", f"Bearer {api_key}")
         try:
             with urllib.request.urlopen(request, timeout=60) as response:
                 body = json.loads(response.read())
@@ -198,6 +199,7 @@ class OpenRouterEmbeddings:
             },
             method="POST",
         )
+        request.add_header("Authorization", f"Bearer {self._api_key}")
         try:
             with urllib.request.urlopen(request, timeout=60) as response:
                 body = json.loads(response.read())

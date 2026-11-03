@@ -26,7 +26,9 @@ VerdictResult = Literal[
     "not_eligible",
     "need_more_information",
     "information_only",
+    "tool_error",
 ]
+HistoryEventType = Literal["tool_retry", "tool_failed", "answer_corrected"]
 
 
 class ContractModel(BaseModel):
@@ -75,6 +77,46 @@ class CandidateVerdict(ContractModel):
     deciding_rule_ids: list[str] = Field(default_factory=list)
 
 
+class PlanChange(ContractModel):
+    """One code-recorded plan update after a candidate scheme is checked."""
+
+    from_version: int = Field(ge=1)
+    to_version: int = Field(ge=2)
+    scheme_id: str
+    result: VerdictResult
+    deciding_rule_ids: list[str] = Field(default_factory=list)
+    reason: str
+
+    @model_validator(mode="after")
+    def validate_version_step(self) -> "PlanChange":
+        """A history entry must describe exactly one plan version change."""
+
+        if self.to_version != self.from_version + 1:
+            raise ValueError("A plan change must advance exactly one version")
+        return self
+
+
+class JourneyHistoryEvent(ContractModel):
+    """A safe audit note for a retry, tool failure, or answer correction."""
+
+    event_type: HistoryEventType
+    scheme_id: str | None = None
+    fact_name: str | None = None
+    attempt: int | None = Field(default=None, ge=1)
+    plan_version: int | None = Field(default=None, ge=1)
+    reason: str
+
+    @model_validator(mode="after")
+    def validate_event(self) -> "JourneyHistoryEvent":
+        """Require the fields that make each event understandable."""
+
+        if self.event_type == "answer_corrected" and not self.fact_name:
+            raise ValueError("Answer corrections need a fact name")
+        if self.event_type in {"tool_retry", "tool_failed"} and self.attempt is None:
+            raise ValueError("Tool history events need an attempt number")
+        return self
+
+
 class Handoff(ContractModel):
     """A typed message from the supervisor to a specialist, or back."""
 
@@ -100,6 +142,8 @@ __all__ = [
     "CandidateVerdict",
     "Handoff",
     "HouseholdProfile",
+    "JourneyHistoryEvent",
     "Plan",
+    "PlanChange",
     "PlanStep",
 ]

@@ -21,11 +21,13 @@ from src.ui.api_client import (
     JourneyApiError,
     forget_journey,
     get_journey_state,
+    correct_journey_answer,
     run_journey,
     send_journey_message,
 )
 from src.ui.data_provider import FixtureDataProvider
 from src.workflow.journey import JourneyRequest, JourneyResponse
+from src.workflow.questions import question_for
 
 
 COPY = {
@@ -96,6 +98,18 @@ COPY = {
         "finder_empty": "No matching passages were found. Try different wording.",
         "finder_choose": "Choose a scheme to explore",
         "finder_continue": "Continue to the synthetic eligibility demo",
+        "finder_continue_all": "Check all found schemes",
+        "multi_interview_title": "Check the matching schemes",
+        "multi_interview_results": "Results by scheme",
+        "plan_change_history": "Why the plan changed",
+        "correction_title": "Correct an earlier answer",
+        "correction_fact": "Which answer do you want to correct?",
+        "correction_answer": "Your corrected answer",
+        "correction_submit": "Save correction and recheck",
+        "history_retry": "Retry",
+        "history_failed": "Tool failed",
+        "history_corrected": "Answer corrected",
+        "scheme_tool_error": "We could not check this scheme. No eligibility decision was made.",
         "finder_back": "Choose another scheme",
         "finder_info_only": "This scheme currently has source passages for information only. A reviewed deterministic eligibility rule package is not available, so no eligibility decision will be shown.",
         "finder_citation": "Source citation",
@@ -110,7 +124,7 @@ COPY = {
         "interview_notice": "Saathi asks one question at a time and only what the rules need. Use made-up answers only; do not type real names, Aadhaar or bank numbers.",
         "interview_start": "Start questions",
         "interview_restart": "Start again",
-        "interview_reply": "Type your answer (yes / no / don't know, or a date like 12 March 1981)",
+        "interview_reply": "Type your answer (yes / no / don't know, a date like 12 March 1981, or your own words)",
         "interview_error": "Could not continue the conversation",
         "widow_mode": "How do you want to check?",
         "mode_chat": "Answer questions",
@@ -185,6 +199,18 @@ COPY = {
         "finder_empty": "मिलते-जुलते अंश नहीं मिले। प्रश्न को दूसरे शब्दों में लिखें।",
         "finder_choose": "देखने के लिए योजना चुनें",
         "finder_continue": "कृत्रिम पात्रता प्रदर्शन जारी रखें",
+        "finder_continue_all": "मिली हुई सभी योजनाओं की जाँच करें",
+        "multi_interview_title": "मिलती-जुलती योजनाएँ जाँचें",
+        "multi_interview_results": "योजना के अनुसार परिणाम",
+        "plan_change_history": "योजना क्यों बदली",
+        "correction_title": "पहले दिए उत्तर को सुधारें",
+        "correction_fact": "आप कौन-सा उत्तर सुधारना चाहते हैं?",
+        "correction_answer": "आपका सुधारा हुआ उत्तर",
+        "correction_submit": "सुधार सेव करें और फिर जाँचें",
+        "history_retry": "फिर कोशिश",
+        "history_failed": "टूल विफल",
+        "history_corrected": "उत्तर सुधारा गया",
+        "scheme_tool_error": "हम इस योजना की जाँच नहीं कर सके। पात्रता का निर्णय नहीं दिया गया।",
         "finder_back": "दूसरी योजना चुनें",
         "finder_info_only": "इस योजना के स्रोत अंश अभी केवल जानकारी के लिए उपलब्ध हैं। समीक्षा किया हुआ नियतात्मक पात्रता नियम-पैकेज उपलब्ध नहीं है, इसलिए पात्रता का निर्णय नहीं दिखाया जाएगा।",
         "finder_citation": "स्रोत उद्धरण",
@@ -274,6 +300,18 @@ COPY = {
         "finder_empty": "जुळणारे उतारे सापडले नाहीत. प्रश्न वेगळ्या शब्दांत विचारा.",
         "finder_choose": "पाहण्यासाठी योजना निवडा",
         "finder_continue": "कृत्रिम पात्रता प्रात्यक्षिक सुरू ठेवा",
+        "finder_continue_all": "आढळलेल्या सर्व योजनांची तपासणी करा",
+        "multi_interview_title": "जुळणाऱ्या योजना तपासा",
+        "multi_interview_results": "योजनेनुसार निकाल",
+        "plan_change_history": "योजना का बदलली",
+        "correction_title": "आधीचे उत्तर दुरुस्त करा",
+        "correction_fact": "कोणते उत्तर दुरुस्त करायचे आहे?",
+        "correction_answer": "तुमचे दुरुस्त उत्तर",
+        "correction_submit": "दुरुस्ती जतन करून पुन्हा तपासा",
+        "history_retry": "पुन्हा प्रयत्न",
+        "history_failed": "टूल अयशस्वी",
+        "history_corrected": "उत्तर दुरुस्त केले",
+        "scheme_tool_error": "या योजनेची तपासणी करता आली नाही. पात्रतेचा निर्णय दिलेला नाही.",
         "finder_back": "दुसरी योजना निवडा",
         "finder_info_only": "या योजनेचे स्रोत उतारे सध्या फक्त माहितीसाठी उपलब्ध आहेत. पुनरावलोकन केलेले निर्धारक पात्रता नियम-पॅकेज उपलब्ध नसल्यामुळे पात्रतेचा निर्णय दाखवला जाणार नाही.",
         "finder_citation": "स्रोत उद्धरण",
@@ -340,6 +378,7 @@ WORKFLOW_STATE_KEYS = {
     "journey_conversation",
     "scheme_search_error",
     "scheme_search_results",
+    "scheme_search_message",
     "selected_search_scheme",
     # Phase 2 chat state (see save_journey below).
     "interview_scheme_id",
@@ -348,6 +387,14 @@ WORKFLOW_STATE_KEYS = {
     "interview_error",
     "journey_plan_detail",
     "journey_question",
+    "candidate_scheme_ids",
+    "candidate_verdicts",
+    "eligibility_results",
+    "multi_scheme_mode",
+    "plan_change_history",
+    "correction_error",
+    "journey_history",
+    "known_fact_names",
 }
 DEMO_INPUT_KEYS = {
     "demo_consent",
@@ -397,6 +444,14 @@ def clear_interview_state() -> None:
     st.session_state.journey_plan_detail = None
     st.session_state.journey_question = None
     st.session_state.journey_status = None
+    st.session_state.candidate_scheme_ids = []
+    st.session_state.candidate_verdicts = {}
+    st.session_state.eligibility_results = {}
+    st.session_state.multi_scheme_mode = False
+    st.session_state.plan_change_history = []
+    st.session_state.correction_error = None
+    st.session_state.journey_history = []
+    st.session_state.known_fact_names = []
 
 
 # One icon per PlanStep.status, so the plan reads like a checklist.
@@ -433,9 +488,26 @@ def save_journey(journey: JourneyResponse) -> None:
         if journey.eligibility_result is not None
         else None
     )
+    st.session_state.candidate_scheme_ids = journey.candidate_scheme_ids
+    st.session_state.candidate_verdicts = {
+        scheme_id: verdict.model_dump(mode="json")
+        for scheme_id, verdict in journey.candidate_verdicts.items()
+    }
+    st.session_state.eligibility_results = {
+        scheme_id: result.model_dump(mode="json")
+        for scheme_id, result in journey.eligibility_results.items()
+    }
+    st.session_state.plan_change_history = [
+        change.model_dump(mode="json")
+        for change in journey.plan_change_history
+    ]
+    st.session_state.journey_history = [
+        event.model_dump(mode="json") for event in journey.journey_history
+    ]
+    st.session_state.known_fact_names = journey.known_fact_names
 
 
-def remember_in_url(scheme_id: str) -> None:
+def remember_in_url(scheme_id: str, candidate_ids: list[str] | None = None) -> None:
     """Put the conversation in the address bar so a refresh can restore it.
 
     Only the random conversation ID and the scheme ID go in the URL, never
@@ -443,7 +515,114 @@ def remember_in_url(scheme_id: str) -> None:
     """
 
     st.query_params["conversation"] = st.session_state.conversation_id
-    st.query_params["scheme"] = scheme_id
+    if candidate_ids:
+        st.query_params.pop("scheme", None)
+        st.query_params["schemes"] = ",".join(candidate_ids)
+    else:
+        st.query_params.pop("schemes", None)
+        st.query_params["scheme"] = scheme_id
+
+
+def start_candidate_interview(candidate_ids: list[str]) -> None:
+    """Start one shared interview for the schemes found by search."""
+
+    st.session_state.interview_error = None
+    try:
+        journey = run_journey(
+            JourneyRequest(
+                action="interview",
+                conversation_id=(
+                    UUID(st.session_state.conversation_id)
+                    if st.session_state.conversation_id
+                    else uuid4()
+                ),
+                candidate_scheme_ids=candidate_ids,
+            )
+        )
+    except JourneyApiError as error:
+        st.session_state.interview_error = str(error)
+        return
+    save_journey(journey)
+    st.session_state.journey_started = True
+    st.session_state.journey_scheme_id = ",".join(candidate_ids)
+    st.session_state.multi_scheme_mode = True
+    st.session_state.interview_scheme_id = st.session_state.journey_scheme_id
+    remember_in_url(st.session_state.journey_scheme_id, candidate_ids)
+
+
+def render_candidate_interview(text: dict[str, str]) -> None:
+    """Show one shared chat and then a separate result for each scheme."""
+
+    st.subheader(text["multi_interview_title"])
+    if st.session_state.interview_error:
+        st.error(st.session_state.interview_error)
+    render_plan(st.session_state.journey_plan_detail, text)
+    if st.session_state.plan_change_history:
+        st.markdown(f'**{text["plan_change_history"]}**')
+        for change in st.session_state.plan_change_history:
+            st.caption(
+                f'Plan {change["from_version"]} → '
+                f'Plan {change["to_version"]}: {change["reason"]}'
+            )
+    for event in st.session_state.journey_history:
+        title = text[{
+            "tool_retry": "history_retry",
+            "tool_failed": "history_failed",
+            "answer_corrected": "history_corrected",
+        }[event["event_type"]]]
+        st.caption(f'{title}: {event["reason"]}')
+    for turn in st.session_state.journey_conversation:
+        with st.chat_message(turn["role"]):
+            st.write(turn["content"])
+
+    if st.session_state.journey_status == "awaiting_answer":
+        reply = st.chat_input(text["interview_reply"])
+        if reply:
+            st.session_state.interview_error = None
+            try:
+                journey = send_journey_message(
+                    st.session_state.conversation_id, reply
+                )
+            except JourneyApiError as error:
+                st.session_state.interview_error = str(error)
+            else:
+                save_journey(journey)
+            st.rerun()
+        return
+
+    if st.session_state.candidate_verdicts:
+        st.subheader(text["multi_interview_results"])
+        for scheme_id, verdict in st.session_state.candidate_verdicts.items():
+            with st.expander(scheme_id, expanded=True):
+                result = st.session_state.eligibility_results.get(scheme_id)
+                if result:
+                    render_verdict(result, scheme_id, text)
+                elif verdict["result"] == "tool_error":
+                    st.error(text["scheme_tool_error"])
+                else:
+                    st.info(text["finder_info_only"])
+    if st.session_state.known_fact_names:
+        st.markdown(f'**{text["correction_title"]}**')
+        fact_name = st.selectbox(
+            text["correction_fact"],
+            options=st.session_state.known_fact_names,
+            format_func=question_for,
+            key="correction_fact_name",
+        )
+        answer = st.text_input(text["correction_answer"], key="correction_answer_value")
+        if st.button(text["correction_submit"]):
+            try:
+                journey = correct_journey_answer(
+                    st.session_state.conversation_id, fact_name, answer
+                )
+            except JourneyApiError as error:
+                st.session_state.correction_error = str(error)
+            else:
+                save_journey(journey)
+                st.session_state.correction_error = None
+            st.rerun()
+        if st.session_state.correction_error:
+            st.error(st.session_state.correction_error)
 
 
 def render_plan(plan_detail: dict | None, text: dict[str, str]) -> None:
@@ -649,6 +828,7 @@ st.session_state.setdefault("draft_edit_mode", False)
 st.session_state.setdefault("draft_submitted", False)
 st.session_state.setdefault("rejected_draft", False)
 st.session_state.setdefault("scheme_search_results", None)
+st.session_state.setdefault("scheme_search_message", "")
 st.session_state.setdefault("scheme_search_error", None)
 st.session_state.setdefault("interview_scheme_id", None)
 st.session_state.setdefault("interview_result", None)
@@ -656,6 +836,14 @@ st.session_state.setdefault("interview_message", None)
 st.session_state.setdefault("interview_error", None)
 st.session_state.setdefault("journey_plan_detail", None)
 st.session_state.setdefault("journey_question", None)
+st.session_state.setdefault("candidate_scheme_ids", [])
+st.session_state.setdefault("candidate_verdicts", {})
+st.session_state.setdefault("eligibility_results", {})
+st.session_state.setdefault("multi_scheme_mode", False)
+st.session_state.setdefault("plan_change_history", [])
+st.session_state.setdefault("correction_error", None)
+st.session_state.setdefault("journey_history", [])
+st.session_state.setdefault("known_fact_names", [])
 st.session_state.setdefault("journey_started", False)
 st.session_state.setdefault("journey_scheme_id", None)
 st.session_state.setdefault("conversation_id", None)
@@ -676,6 +864,7 @@ text = COPY[locale]
 # the saved conversation once, so the chat continues where it stopped.
 saved_conversation = st.query_params.get("conversation")
 saved_scheme = st.query_params.get("scheme")
+saved_schemes = st.query_params.get("schemes")
 if (
     saved_conversation
     and st.session_state.conversation_id is None
@@ -683,7 +872,13 @@ if (
 ):
     st.session_state.restore_tried = True
     saved = None
-    if saved_scheme in (fixtures.policy.scheme_id, "PM-KISAN-IN"):
+    candidate_ids = (
+        [item for item in saved_schemes.split(",") if item]
+        if saved_schemes else []
+    )
+    if candidate_ids and len(candidate_ids) <= 20 or saved_scheme in (
+        fixtures.policy.scheme_id, "PM-KISAN-IN"
+    ):
         try:
             UUID(saved_conversation)  # ignore a hand-edited, broken ID
             saved = get_journey_state(saved_conversation)
@@ -695,8 +890,11 @@ if (
     else:
         save_journey(saved)
         st.session_state.journey_started = True
-        st.session_state.journey_scheme_id = saved_scheme
-        st.session_state.interview_scheme_id = saved_scheme
+        st.session_state.journey_scheme_id = (
+            ",".join(candidate_ids) if candidate_ids else saved_scheme
+        )
+        st.session_state.interview_scheme_id = st.session_state.journey_scheme_id
+        st.session_state.multi_scheme_mode = bool(candidate_ids)
         st.session_state.show_restored = True
 
 st.markdown(
@@ -761,6 +959,9 @@ if st.session_state.journey_started:
         clear_interview_state()
         st.query_params.clear()
         st.rerun()
+    elif st.session_state.multi_scheme_mode:
+        render_candidate_interview(text)
+        st.stop()
     elif st.session_state.journey_scheme_id == "PM-KISAN-IN":
         st.subheader(text["pmkisan_title"])
         st.warning(text["pmkisan_notice"])
@@ -775,6 +976,7 @@ else:
     query = st.text_input(text["finder_query"], key="scheme_query")
     if st.button(text["finder_submit"]):
         st.session_state.scheme_search_results = None
+        st.session_state.scheme_search_message = ""
         st.session_state.scheme_search_error = None
         clear_interview_state()
         st.session_state.pop("selected_search_scheme", None)
@@ -797,6 +999,13 @@ else:
                     passage.model_dump(mode="json")
                     for passage in journey.passages
                 ]
+                st.session_state.scheme_search_message = journey.message
+                st.session_state.journey_history = [
+                    event.model_dump(mode="json")
+                    for event in journey.journey_history
+                ]
+                if journey.status == "tool_error":
+                    st.session_state.scheme_search_error = journey.message
                 st.session_state.conversation_id = str(
                     journey.conversation_id
                 )
@@ -813,6 +1022,15 @@ else:
 
     search_results = st.session_state.scheme_search_results
     if search_results is not None:
+        if st.session_state.scheme_search_message:
+            st.caption(st.session_state.scheme_search_message)
+        for event in st.session_state.journey_history:
+            title = text[{
+                "tool_retry": "history_retry",
+                "tool_failed": "history_failed",
+                "answer_corrected": "history_corrected",
+            }[event["event_type"]]]
+            st.caption(f'{title}: {event["reason"]}')
         if st.session_state.journey_plan:
             st.caption(st.session_state.journey_plan)
         if st.session_state.journey_conversation:
@@ -870,6 +1088,11 @@ else:
                     st.rerun()
             else:
                 st.info(text["finder_info_only"])
+            candidate_ids = list(scheme_names)
+            if st.button(text["finder_continue_all"], type="primary"):
+                clear_application_state()
+                start_candidate_interview(candidate_ids)
+                st.rerun()
 
     st.stop()
 

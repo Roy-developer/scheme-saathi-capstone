@@ -16,7 +16,7 @@ SUCCESS_STATUSES: dict[str, frozenset[str]] = {
     "intake": frozenset({"ready_for_eligibility", "searching"}),
     "search": frozenset({"search_results"}),
     "eligibility": frozenset(
-        {"eligible", "not_eligible", "need_more_information"}
+        {"eligible", "not_eligible", "need_more_information", "information_only"}
     ),
 }
 
@@ -24,6 +24,7 @@ SUCCESS_STATUSES: dict[str, frozenset[str]] = {
 def build_initial_plan(
     action: Literal["search", "evaluate", "interview"],
     scheme_id: str | None = None,
+    candidate_scheme_ids: list[str] | None = None,
 ) -> Plan:
     """Create the first plan for a request, with the first step started.
 
@@ -66,6 +67,16 @@ def build_initial_plan(
                 scheme_id=scheme_id,
             ),
         ]
+    if action != "search" and candidate_scheme_ids:
+        steps = steps[:1] + [
+            PlanStep(
+                step_id=f"eligibility:{candidate}",
+                specialist="eligibility",
+                goal=f"Check the rules for {candidate}",
+                scheme_id=candidate,
+            )
+            for candidate in candidate_scheme_ids
+        ]
     # The supervisor starts the first step straight away.
     steps[0].status = "in_progress"
     return Plan(steps=steps)
@@ -98,9 +109,15 @@ def advance_plan(
     )
 
     if status not in SUCCESS_STATUSES.get(specialist, frozenset()):
-        # The step could not finish (e.g. bad input or an information-only
-        # scheme). Mark it failed and skip the rest: nothing else can run.
+        # A failed candidate must not prevent independent candidates from
+        # being checked. Other failures stop the dependent plan as before.
         current.status = "failed"
+        if specialist == "eligibility" and status == "tool_error":
+            for step in plan.steps:
+                if step.status == "pending":
+                    step.status = "in_progress"
+                    return plan, step
+            return plan, None
         for step in plan.steps:
             if step.status == "pending":
                 step.status = "skipped"

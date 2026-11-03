@@ -168,3 +168,15 @@ def parse_answer(fact: str, reply: str) -> ParsedAnswer:
     if parsed_date is None:
         return ParsedAnswer(kind="invalid", error=DATE_HINT)
     return ParsedAnswer(kind="value", value=parsed_date)
+
+
+def parse_interpreted_answer(fact: str, value: bool | str) -> ParsedAnswer:
+    """Validate an LLM proposal against the expected type for a profile fact."""
+
+    if fact in BOOL_FACTS:
+        if not isinstance(value, bool):
+            return ParsedAnswer(kind="invalid", error=YES_NO_HINT)
+        return ParsedAnswer(kind="value", value=value)
+    if not isinstance(value, str):
+        return ParsedAnswer(kind="invalid", error=DATE_HINT)
+    return parse_answer(fact, value)

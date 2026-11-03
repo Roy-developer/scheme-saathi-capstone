@@ -61,7 +61,7 @@ def test_openrouter_embeddings_prefers_free_api_key(monkeypatch):
     vectors = OpenRouterEmbeddings().embed(["test passage"])
 
     assert vectors == [[0.1, 0.2]]
-    assert requests[0].get_header("Authorization") == "Bearer free-key"
+    assert requests[0].get_header("Authorization") == 'Bearer free-key'
 
 
 def test_embeddings_do_not_fall_back_to_chat_key(monkeypatch):
@@ -101,7 +101,7 @@ def test_openrouter_reranker_returns_scores_in_document_order(monkeypatch):
 
     assert scores == [0.1, 0.9]
     assert requests[0].full_url == scheme_search_module.OPENROUTER_RERANK_URL
-    assert requests[0].get_header("Authorization") == "Bearer rerank-test-key"
+    assert requests[0].get_header("Authorization") == 'Bearer rerank-test-key'
     payload = json.loads(requests[0].data)
     assert payload["model"] == "cohere/rerank-v3.5"
     assert payload["query"] == "widow pension"

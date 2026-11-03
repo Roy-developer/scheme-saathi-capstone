@@ -9,6 +9,7 @@ from scripts.evaluate_scheme_retrieval import (
     evaluate_retrieval,
     load_evaluation_set,
 )
+from src.api.scheme_search import load_passages
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -47,6 +48,16 @@ def test_development_dataset_has_multilingual_and_cross_scheme_queries():
         query.query_id.startswith("CROSS-")
         for query in evaluation_set.queries
     ) == 3
+    passage_schemes = {
+        passage.passage_id: passage.scheme_id
+        for passage in load_passages(CORPUS_PATH)
+    }
+    for query in evaluation_set.queries:
+        if query.query_id.startswith("CROSS-"):
+            assert len({
+                passage_schemes[passage_id]
+                for passage_id in query.relevant_passage_ids
+            }) > 1
 
 
 def test_evaluator_reports_passage_recall_and_scheme_hit_rate():

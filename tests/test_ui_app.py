@@ -9,7 +9,13 @@ from streamlit.testing.v1 import AppTest
 from src.api.eligibility import EligibilityResponse, RuleEvidence
 from src.api.scheme_search import load_passages
 from src.workflow.journey import JourneyResponse
-from src.workflow.state import Plan, PlanStep
+from src.workflow.state import (
+    CandidateVerdict,
+    JourneyHistoryEvent,
+    Plan,
+    PlanChange,
+    PlanStep,
+)
 
 
 def test_evaluating_result_without_prepared_draft_does_not_raise() -> None:
@@ -125,6 +131,21 @@ def _pmkisan_passage():
     )
 
 
+def _widow_passage():
+    """Return one widow-pension search passage from the real passage file."""
+
+    return next(
+        passage
+        for passage in load_passages(
+            Path(__file__).resolve().parents[1]
+            / "data"
+            / "schemes"
+            / "passages.json"
+        )
+        if passage.scheme_id == "IGNWPS-MH"
+    )
+
+
 def _plan(intake_status: str, eligibility_status: str) -> Plan:
     """A two-step supervisor plan with the given step statuses."""
 
@@ -168,7 +189,11 @@ def test_pmkisan_continue_opens_chat_that_asks_then_shows_verdict() -> None:
                 conversation_id=conversation_id,
                 plan="Search for a source-cited scheme.",
                 status="search_results",
-                message="Found one relevant cited passage.",
+                message=(
+                    "Found one relevant cited passage across 1 scheme. "
+                    "Showing up to 20 passages; search may not find every "
+                    "relevant scheme."
+                ),
                 passages=[_pmkisan_passage()],
             )
         assert request.action == "interview"
@@ -209,6 +234,10 @@ def test_pmkisan_continue_opens_chat_that_asks_then_shows_verdict() -> None:
         next(
             button for button in app.button if button.label == "Search schemes"
         ).click().run()
+        assert any(
+            "Showing up to 20 passages" in element.value
+            for element in app.caption
+        )
         # Search alone never shows the PM-KISAN check.
         assert not any(
             "current landholding cutoff" in element.value
@@ -251,6 +280,150 @@ def test_pmkisan_continue_opens_chat_that_asks_then_shows_verdict() -> None:
         )
         # Once finished, there is no answer box.
         assert not app.chat_input
+
+
+def test_check_all_found_schemes_starts_one_shared_chat() -> None:
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    conversation_id = uuid4()
+    question = "Are you a widow?"
+
+    def fake_journey(request):
+        if request.action == "search":
+            return JourneyResponse(
+                conversation_id=conversation_id,
+                plan="Search for schemes.",
+                status="search_results",
+                message="Found passages.",
+                passages=[_pmkisan_passage(), _widow_passage()],
+            )
+        assert request.candidate_scheme_ids == ["PM-KISAN-IN", "IGNWPS-MH"]
+        return JourneyResponse(
+            conversation_id=conversation_id,
+            plan="Learn about you -> Check both schemes",
+            plan_detail=Plan(
+                steps=[
+                    PlanStep(
+                        step_id="intake", specialist="intake",
+                        goal="Learn about you", status="in_progress",
+                    ),
+                    PlanStep(
+                        step_id="eligibility:PM-KISAN-IN",
+                        specialist="eligibility", goal="Check PM-KISAN-IN",
+                        scheme_id="PM-KISAN-IN",
+                    ),
+                    PlanStep(
+                        step_id="eligibility:IGNWPS-MH",
+                        specialist="eligibility", goal="Check IGNWPS-MH",
+                        scheme_id="IGNWPS-MH",
+                    ),
+                ]
+            ),
+            status="awaiting_answer",
+            message=question,
+            question=question,
+            pending_fact="is_widow",
+            candidate_scheme_ids=["PM-KISAN-IN", "IGNWPS-MH"],
+            conversation=[{"role": "assistant", "content": question}],
+        )
+
+    def fake_message(_conversation_id, _message):
+        result = EligibilityResponse(
+            scheme_id="PM-KISAN-IN",
+            result="not_eligible",
+            reason="Income tax exclusion.",
+            deciding_rule_ids=["PMKISAN-INCOME-TAX-01"],
+            evidence=[],
+        )
+        return JourneyResponse(
+            conversation_id=conversation_id,
+            plan="Learn about you -> Check both schemes",
+            status="completed",
+            message="Checks finished.",
+            candidate_scheme_ids=["PM-KISAN-IN", "IGNWPS-MH"],
+            candidate_verdicts={
+                "PM-KISAN-IN": CandidateVerdict(
+                    scheme_id="PM-KISAN-IN",
+                    result="not_eligible",
+                    deciding_rule_ids=["PMKISAN-INCOME-TAX-01"],
+                ),
+            },
+            eligibility_results={"PM-KISAN-IN": result},
+            plan_change_history=[
+                PlanChange(
+                    from_version=1,
+                    to_version=2,
+                    scheme_id="PM-KISAN-IN",
+                    result="not_eligible",
+                    deciding_rule_ids=["PMKISAN-INCOME-TAX-01"],
+                    reason="PM-KISAN-IN was ruled out by the mock rules.",
+                )
+            ],
+            known_fact_names=["is_widow"],
+            journey_history=[
+                JourneyHistoryEvent(
+                    event_type="tool_retry",
+                    scheme_id="PM-KISAN-IN",
+                    attempt=1,
+                    reason="Eligibility check retry.",
+                )
+            ],
+        )
+
+    def fake_correction(conversation_id, fact_name, answer):
+        assert conversation_id == str(conversation_id_value)
+        assert fact_name == "is_widow"
+        assert answer == "no"
+        corrected = fake_message(conversation_id, answer)
+        return corrected.model_copy(update={
+            "journey_history": [
+                JourneyHistoryEvent(
+                    event_type="answer_corrected",
+                    fact_name=fact_name,
+                    reason="The user corrected is_widow; rechecking scheme rules.",
+                    plan_version=5,
+                )
+            ]
+        })
+
+    conversation_id_value = conversation_id
+    with patch("src.ui.api_client.run_journey", side_effect=fake_journey) as run_graph, patch(
+        "src.ui.api_client.send_journey_message", side_effect=fake_message
+    ), patch(
+        "src.ui.api_client.correct_journey_answer", side_effect=fake_correction
+    ) as correct_answer:
+        app = AppTest.from_file(app_path).run()
+        app.text_input[0].set_value("farmer widow support")
+        next(button for button in app.button if button.label == "Search schemes").click().run()
+        next(
+            button for button in app.button
+            if button.label == "Check all found schemes"
+        ).click().run()
+        assert not app.exception
+        request = run_graph.call_args_list[-1].args[0]
+        assert request.candidate_scheme_ids == ["PM-KISAN-IN", "IGNWPS-MH"]
+        assert app.query_params["schemes"] == "PM-KISAN-IN,IGNWPS-MH"
+        assert question in [message.value for message in app.markdown]
+        assert any("Check the matching schemes" in item.value for item in app.subheader)
+        app.chat_input[0].set_value("yes").run()
+        assert not app.exception
+        assert any(
+            "Why the plan changed" in item.value for item in app.markdown
+        )
+        assert any(
+            "PM-KISAN-IN was ruled out by the mock rules."
+            in item.value for item in app.caption
+        )
+        assert any("Retry:" in item.value for item in app.caption)
+        assert app.selectbox[-1].label == "Which answer do you want to correct?"
+        app.text_input[-1].set_value("no")
+        next(
+            button for button in app.button
+            if button.label == "Save correction and recheck"
+        ).click().run()
+        correct_answer.assert_called_once_with(
+            str(conversation_id), "is_widow", "no"
+        )
+        assert not app.exception
 
 
 def test_refresh_restores_saved_conversation_from_url() -> None:

@@ -27,10 +27,12 @@ from src.workflow.errors import MCPToolError
 from src.workflow.intake import IntakeAgentError
 from src.workflow.journey import (
     JourneyMessage,
+    JourneyCorrection,
     JourneyNotWaitingError,
     JourneyRequest,
     JourneyResponse,
     build_journey_graph,
+    correct_journey_answer,
     get_journey,
     resume_journey,
     run_journey,
@@ -257,6 +259,36 @@ async def journey_message(
         ) from error
     except MCPToolError as error:
         logger.exception("A journey MCP tool failed")
+        raise HTTPException(
+            status_code=502,
+            detail="A journey tool is unavailable.",
+        ) from error
+
+
+@app.post(
+    "/api/v1/journey/{conversation_id}/corrections",
+    response_model=JourneyResponse,
+)
+async def journey_correction(
+    conversation_id: UUID,
+    correction: JourneyCorrection,
+    request: Request,
+) -> JourneyResponse:
+    """Correct a known answer and rerun the candidate scheme checks."""
+
+    try:
+        return await correct_journey_answer(
+            request.app.state.journey_graph, conversation_id, correction
+        )
+    except JourneyNotWaitingError as error:
+        raise HTTPException(
+            status_code=409,
+            detail="This conversation has no multi-scheme answers to correct.",
+        ) from error
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    except MCPToolError as error:
+        logger.exception("A journey tool failed while applying a correction")
         raise HTTPException(
             status_code=502,
             detail="A journey tool is unavailable.",

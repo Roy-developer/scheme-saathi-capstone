@@ -5,7 +5,11 @@ from datetime import date
 import pytest
 
 from src.rules.models import HouseholdProfile
-from src.workflow.questions import QUESTIONS, parse_answer
+from src.workflow.questions import (
+    QUESTIONS,
+    parse_answer,
+    parse_interpreted_answer,
+)
 
 
 def test_every_profile_fact_has_a_question():
@@ -60,3 +64,12 @@ def test_bad_dates_ask_again(reply):
 
 def test_dont_know_works_for_dates():
     assert parse_answer("date_of_birth", "skip").kind == "unknown"
+
+
+def test_interpreted_answers_must_match_the_fact_type():
+    assert parse_interpreted_answer("is_widow", True).value is True
+    assert parse_interpreted_answer("is_widow", "yes").kind == "invalid"
+    assert parse_interpreted_answer(
+        "date_of_birth", "1981-03-12"
+    ).value == date(1981, 3, 12)
+    assert parse_interpreted_answer("date_of_birth", True).kind == "invalid"

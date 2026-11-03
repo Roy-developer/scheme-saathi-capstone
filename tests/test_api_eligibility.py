@@ -50,6 +50,75 @@ def test_startup_logs_loaded_package_details(caplog: pytest.LogCaptureFixture) -
     assert "Connected to the local Saathi MCP server" in caplog.text
 
 
+def test_multi_candidate_evaluate_returns_distinct_verdicts(client):
+    response = client.post("/api/v1/journey", json={
+        "action": "evaluate",
+        "candidate_scheme_ids": ["IGNWPS-MH", "PM-KISAN-IN", "UNREVIEWED"],
+        "profile": {"is_widow": False, "income_tax_paid_last_assessment_year": True},
+    })
+    assert response.status_code == 200
+    result = response.json()
+    assert result["status"] == "completed"
+    assert result["eligibility_result"] is None
+    assert result["candidate_verdicts"]["UNREVIEWED"]["result"] == "information_only"
+    assert result["eligibility_results"]["IGNWPS-MH"]["result"] == "not_eligible"
+    assert result["eligibility_results"]["PM-KISAN-IN"]["result"] == "not_eligible"
+
+
+def test_correction_endpoint_rechecks_and_records_the_fact_not_its_value(client):
+    profile = {
+        "is_widow": True,
+        "date_of_birth": "1976-10-30",
+        "application_date": "2026-10-30",
+        "bpl_card_shown": True,
+        "landholding_family_in_state_records": True,
+        "institutional_landholder": False,
+        "listed_public_office_member": False,
+        "excluded_government_employee_member": False,
+        "pension_at_least_10000_excluding_stated_grades": False,
+        "income_tax_paid_last_assessment_year": False,
+        "registered_practicing_professional_member": False,
+        "nri_new_beneficiary": False,
+    }
+    started = client.post("/api/v1/journey", json={
+        "action": "evaluate",
+        "candidate_scheme_ids": ["IGNWPS-MH", "PM-KISAN-IN"],
+        "profile": profile,
+    })
+    assert started.status_code == 200
+    conversation_id = started.json()["conversation_id"]
+    response = client.post(
+        f"/api/v1/journey/{conversation_id}/corrections",
+        json={"fact_name": "is_widow", "answer": "no"},
+    )
+    assert response.status_code == 200
+    result = response.json()
+    assert result["eligibility_results"]["IGNWPS-MH"]["result"] == "not_eligible"
+    event = result["journey_history"][-1]
+    assert event["event_type"] == "answer_corrected"
+    assert event["fact_name"] == "is_widow"
+    assert "no" not in event["reason"].lower()
+
+
+def test_correction_endpoint_rejects_unanswered_or_invalid_facts(client):
+    started = client.post("/api/v1/journey", json={
+        "action": "evaluate",
+        "candidate_scheme_ids": ["IGNWPS-MH"],
+        "profile": {"is_widow": True},
+    })
+    conversation_id = started.json()["conversation_id"]
+    missing = client.post(
+        f"/api/v1/journey/{conversation_id}/corrections",
+        json={"fact_name": "bpl_card_shown", "answer": "yes"},
+    )
+    invalid = client.post(
+        f"/api/v1/journey/{conversation_id}/corrections",
+        json={"fact_name": "is_widow", "answer": "perhaps"},
+    )
+    assert missing.status_code == 422
+    assert invalid.status_code == 422
+
+
 def test_health_endpoint(client: TestClient) -> None:
     # A running API has already connected to MCP through the fixture above.
     response = client.get("/health")

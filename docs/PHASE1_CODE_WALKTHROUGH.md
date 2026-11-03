@@ -754,8 +754,8 @@ cd C:\Users\Admin\OneDrive\Documents\Saathi\scheme-saathi-capstone
 ```
 
 Expected: **99 passed** at the end of Phase 1 (commit `990a1b9`).
-Today the suite has **152 tests**, because Phase 2 and a later search
-fix added their own.
+The suite currently has **177 tests**; Phase 2 and later search/Phase 3 work
+added tests after the 99-test Phase 1 baseline.
 
 | Test file | What it proves |
 |---|---|

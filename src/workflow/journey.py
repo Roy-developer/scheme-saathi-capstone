@@ -19,6 +19,7 @@ Phase 2 shape (a manager with helpers):
 
 from collections.abc import Awaitable, Callable, Mapping
 from datetime import date
+import logging
 from operator import add
 from typing import Annotated, Any, Literal, TypedDict
 from uuid import UUID, uuid4
@@ -27,22 +28,44 @@ from langgraph.checkpoint.base import BaseCheckpointSaver
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
 from mcp import Client
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from src.api.eligibility import EligibilityResponse
 from src.api.scheme_search import SchemePassage
-from src.rules.models import HouseholdProfile, RulePackage
+from src.rules.models import FactName, HouseholdProfile, RulePackage
 from src.workflow.eligibility import evaluate_eligibility
-from src.workflow.intake import rewrite_scheme_query
-from src.workflow.question_picker import pick_next_fact
-from src.workflow.questions import parse_answer, question_for
+from src.workflow.errors import MCPToolError
+from src.workflow.intake import (
+    AnswerInterpretation,
+    IntakeAgentError,
+    interpret_free_text_answer,
+    rewrite_scheme_query,
+)
+from src.workflow.question_picker import pick_next_fact, pick_shared_fact
+from src.workflow.questions import (
+    parse_answer,
+    parse_interpreted_answer,
+    question_for,
+)
 from src.workflow.scheme_search import search_scheme_passages
-from src.workflow.state import Handoff, Plan, SpecialistName
+from src.workflow.state import (
+    CandidateVerdict,
+    Handoff,
+    JourneyHistoryEvent,
+    Plan,
+    PlanChange,
+    SpecialistName,
+)
 from src.workflow.supervisor import (
     advance_plan,
     build_initial_plan,
     plan_summary,
 )
+
+logger = logging.getLogger(__name__)
+ANSWER_INTERPRETATION_CONFIDENCE = 0.85
+MAX_CANDIDATE_SCHEMES = 20
+SEARCH_PASSAGE_LIMIT = MAX_CANDIDATE_SCHEMES
 
 
 class JourneyRequest(BaseModel):
@@ -62,6 +85,36 @@ class JourneyRequest(BaseModel):
     query: str | None = None
     scheme_id: str | None = None
     profile: dict[str, Any] | None = None
+    # A visible request limit; do not silently discard excess candidates.
+    candidate_scheme_ids: list[str] = Field(
+        default_factory=list,
+        max_length=MAX_CANDIDATE_SCHEMES,
+    )
+
+    @model_validator(mode="after")
+    def validate_candidates(self) -> "JourneyRequest":
+        """Keep the old single-scheme API unambiguous and reject blank IDs."""
+
+        if self.candidate_scheme_ids:
+            if self.action == "search" or self.scheme_id is not None:
+                raise ValueError(
+                    "Use candidate_scheme_ids for evaluate/interview without scheme_id"
+                )
+            if any(not candidate.strip() for candidate in self.candidate_scheme_ids):
+                raise ValueError("Candidate scheme IDs cannot be blank")
+            self.candidate_scheme_ids = list(dict.fromkeys(
+                candidate.strip() for candidate in self.candidate_scheme_ids
+            ))
+        return self
+
+
+class JourneyCorrection(BaseModel):
+    """A corrected answer for a fact already saved in a multi-scheme chat."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    fact_name: FactName
+    answer: str = Field(min_length=1, max_length=500)
 
 
 class JourneyMessage(BaseModel):
@@ -101,6 +154,14 @@ class JourneyState(TypedDict, total=False):
     missing_fields: list[str]
     passages: list[dict[str, Any]]
     eligibility_result: dict[str, Any] | None
+    candidate_scheme_ids: list[str]
+    multi_scheme: bool
+    plan_version_start: int
+    plan_restart_reason: str
+    candidate_verdicts: dict[str, dict[str, Any]]
+    eligibility_results: dict[str, dict[str, Any]]
+    plan_change_history: Annotated[list[dict[str, Any]], add]
+    journey_history: Annotated[list[dict[str, Any]], add]
     validation_errors: list[str]
     # Interview fields:
     # pending_fact   - the profile field the current question is about.
@@ -111,6 +172,9 @@ class JourneyState(TypedDict, total=False):
     question: str | None
     pending_answer: str | None
     skipped_facts: list[str]
+    pending_confirmation: bool
+    pending_interpreted_value: bool | str | None
+    llm_attempted_facts: list[str]
     # Annotated with "add": new items are appended to the saved history
     # instead of replacing it.
     handoffs: Annotated[list[dict[str, Any]], add]
@@ -134,6 +198,8 @@ class JourneyResponse(BaseModel):
         "need_more_information",
         "invalid_input",
         "awaiting_answer",
+        "completed",
+        "tool_error",
     ]
     message: str
     # Set only while status is "awaiting_answer".
@@ -142,6 +208,14 @@ class JourneyResponse(BaseModel):
     missing_fields: list[str] = Field(default_factory=list)
     passages: list[SchemePassage] = Field(default_factory=list)
     eligibility_result: EligibilityResponse | None = None
+    # Additive fields: older clients can still use eligibility_result.
+    # Full results keep evidence; summaries also represent information-only schemes.
+    candidate_scheme_ids: list[str] = Field(default_factory=list)
+    candidate_verdicts: dict[str, CandidateVerdict] = Field(default_factory=dict)
+    eligibility_results: dict[str, EligibilityResponse] = Field(default_factory=dict)
+    plan_change_history: list[PlanChange] = Field(default_factory=list)
+    journey_history: list[JourneyHistoryEvent] = Field(default_factory=list)
+    known_fact_names: list[FactName] = Field(default_factory=list)
     conversation: list[dict[str, str]] = Field(default_factory=list)
 
 
@@ -149,9 +223,11 @@ async def _search_with_mcp(
     client: Client,
     query: str,
 ) -> list[SchemePassage]:
-    """Default search tool: ask the MCP server for the top 5 passages."""
+    """Default search tool: ask for up to 20 passages for candidate discovery."""
 
-    return await search_scheme_passages(client, query, limit=5)
+    return await search_scheme_passages(
+        client, query, limit=SEARCH_PASSAGE_LIMIT
+    )
 
 
 async def _evaluate_with_mcp(
@@ -193,6 +269,9 @@ def build_journey_graph(
         [Client, str, HouseholdProfile], Awaitable[EligibilityResponse]
     ] = _evaluate_with_mcp,
     query_rewriter: Callable[[str], Awaitable[str]] = rewrite_scheme_query,
+    answer_interpreter: Callable[
+        [str, str, str], Awaitable[AnswerInterpretation]
+    ] = interpret_free_text_answer,
     checkpointer: BaseCheckpointSaver | None = None,
     today: Callable[[], date] = date.today,
 ) -> Any:
@@ -202,8 +281,9 @@ def build_journey_graph(
         client: Connected MCP client used by the tool nodes.
         rule_packages: Loaded rule packages; intake uses them to know which
             schemes can be checked and which facts each one needs.
-        search_tool, eligibility_tool, query_rewriter: Replaceable so tests
-            can pass fakes instead of calling MCP or a paid LLM.
+        search_tool, eligibility_tool, query_rewriter, answer_interpreter:
+            Replaceable so tests can pass fakes instead of calling MCP or a
+            paid LLM.
         checkpointer: Saves state after each node, keyed by conversation ID.
             Required for interviews, because pausing needs saved state.
         today: Gives the default application date for interviews. Tests
@@ -223,7 +303,20 @@ def build_journey_graph(
         """
 
         if not state.get("plan_detail"):
-            plan = build_initial_plan(state["action"], state.get("scheme_id"))
+            plan = build_initial_plan(
+                state["action"], state.get("scheme_id"),
+                state.get("candidate_scheme_ids") if state.get("multi_scheme") else None,
+            )
+            version_start = state.get("plan_version_start", 1)
+            if version_start > 1:
+                reason = state.get(
+                    "plan_restart_reason", "The plan restarted."
+                )
+                plan = Plan(
+                    version=version_start,
+                    steps=plan.steps,
+                    replan_reason=reason,
+                )
             first = plan.steps[0]
             summary = plan_summary(plan)
             handoff = Handoff(
@@ -242,15 +335,90 @@ def build_journey_graph(
 
         # A specialist just finished: read its report.
         report = state["handoffs"][-1]
+        previous_plan = Plan.model_validate(state["plan_detail"])
         plan, next_step = advance_plan(
-            Plan.model_validate(state["plan_detail"]),
+            previous_plan,
             report["sender"],
             report["payload"]["status"],
         )
         update: dict[str, Any] = {"plan_detail": plan.model_dump(mode="json")}
+        if state.get("multi_scheme") and report["sender"] == "eligibility":
+            scheme_id = state["scheme_id"]
+            verdict_data = state.get("candidate_verdicts", {}).get(scheme_id)
+            if verdict_data is None:
+                raise ValueError(
+                    f"Eligibility step for {scheme_id} reported without a verdict"
+                )
+            verdict = CandidateVerdict.model_validate(verdict_data)
+            if verdict.result == "not_eligible":
+                reason = (
+                    f"{scheme_id} was ruled out by the mock rules"
+                    + (
+                        f" ({', '.join(verdict.deciding_rule_ids)})"
+                        if verdict.deciding_rule_ids else ""
+                    )
+                    + ". Its result is saved; continuing with the next candidate."
+                )
+            elif verdict.result == "eligible":
+                reason = (
+                    f"{scheme_id} meets the current mock rules. Its result is "
+                    "saved; continuing with the next candidate."
+                )
+            elif verdict.result == "information_only":
+                reason = (
+                    f"{scheme_id} has no reviewed rule package. No eligibility "
+                    "decision was made; continuing with the next candidate."
+                )
+            elif verdict.result == "tool_error":
+                reason = (
+                    f"{scheme_id} could not be checked after two attempts. "
+                    "No eligibility decision was made; continuing with the "
+                    "next candidate."
+                )
+            else:
+                reason = (
+                    f"{scheme_id} still needs information"
+                    + (
+                        f" ({', '.join(verdict.missing_fields)})"
+                        if verdict.missing_fields else ""
+                    )
+                    + ". Its result is saved; continuing with the next candidate."
+                )
+            changed_plan = Plan(
+                version=previous_plan.version + 1,
+                steps=plan.steps,
+                replan_reason=reason,
+            )
+            change = PlanChange(
+                from_version=previous_plan.version,
+                to_version=changed_plan.version,
+                scheme_id=scheme_id,
+                result=verdict.result,
+                deciding_rule_ids=verdict.deciding_rule_ids,
+                reason=reason,
+            )
+            plan = changed_plan
+            update["plan_detail"] = plan.model_dump(mode="json")
+            update["plan_change_history"] = [change.model_dump(mode="json")]
         if next_step is None:
             # Plan finished or stopped early; END keeps the last status.
             update["next_agent"] = END
+            if state.get("multi_scheme") and report["sender"] == "eligibility":
+                update["status"] = "completed"
+                update["message"] = "Candidate checks finished. Review each scheme's result."
+                if any(
+                    verdict["result"] == "tool_error"
+                    for verdict in state.get("candidate_verdicts", {}).values()
+                ):
+                    update["message"] = (
+                        "Candidate checks finished. Some tools failed; no "
+                        "eligibility decision was made for those schemes."
+                    )
+                update["eligibility_result"] = None
+                update["missing_fields"] = list(dict.fromkeys(
+                    fact for verdict in state.get("candidate_verdicts", {}).values()
+                    for fact in verdict["missing_fields"]
+                ))
             return update
 
         handoff = Handoff(
@@ -260,6 +428,8 @@ def build_journey_graph(
             payload={"scheme_id": next_step.scheme_id},
         )
         update["next_agent"] = next_step.specialist
+        if next_step.scheme_id is not None:
+            update["scheme_id"] = next_step.scheme_id
         update["handoffs"] = [handoff.model_dump(mode="json")]
         return update
 
@@ -304,7 +474,14 @@ def build_journey_graph(
         interview = state["action"] == "interview"
 
         # Check 1: a scheme must be chosen.
+        candidates = state.get("candidate_scheme_ids", [])
+        multi = state.get("multi_scheme", False)
         scheme_id = (state.get("scheme_id") or "").strip()
+        if multi:
+            scheme_id = next(
+                (candidate for candidate in candidates if candidate in rule_packages),
+                candidates[0],
+            )
         if not scheme_id:
             message = "Choose a scheme before checking eligibility."
             return {
@@ -319,7 +496,7 @@ def build_journey_graph(
             }
         # Check 2: the scheme must have a reviewed rule package. Without one
         # we only show information and never guess eligibility.
-        if scheme_id not in rule_packages:
+        if scheme_id not in rule_packages and not multi:
             message = (
                 "This scheme is information-only in the current pilot. "
                 "A reviewed deterministic eligibility rule package is not "
@@ -330,12 +507,22 @@ def build_journey_graph(
                 "message": message,
                 "missing_fields": [],
                 "eligibility_result": None,
+                "candidate_verdicts": {
+                    scheme_id: CandidateVerdict(
+                        scheme_id=scheme_id, result="information_only"
+                    ).model_dump(mode="json")
+                },
                 "conversation": [{"role": "assistant", "content": message}],
                 "handoffs": _report_to_supervisor(
                     "intake", "information_only"
                 ),
             }
-        package = rule_packages[scheme_id]
+        packages = (
+            [rule_packages[candidate] for candidate in candidates
+             if candidate in rule_packages]
+            if multi else [rule_packages[scheme_id]]
+        )
+        package = packages[0] if packages else None
 
         # Check 3: "evaluate" needs a profile up front. If none was sent,
         # list the facts this scheme needs, read from its rule package.
@@ -346,7 +533,9 @@ def build_journey_graph(
             return {
                 "status": "need_information",
                 "message": message,
-                "missing_fields": list(package.required_facts),
+                "missing_fields": list(dict.fromkeys(
+                    fact for candidate in packages for fact in candidate.required_facts
+                )),
                 "eligibility_result": None,
                 "conversation": [{"role": "assistant", "content": message}],
                 "handoffs": _report_to_supervisor(
@@ -387,38 +576,183 @@ def build_journey_graph(
         conversation: list[dict[str, str]] = []
         if interview:
             skipped = set(state.get("skipped_facts") or [])
+            attempted_facts = set(state.get("llm_attempted_facts") or [])
             pending_fact = state.get("pending_fact")
             reply = state.get("pending_answer")
 
             # A reply has arrived for the last question: apply it.
             if pending_fact and reply is not None:
-                parsed = parse_answer(pending_fact, reply)
                 problem: str | None = None
-                if parsed.kind == "unknown":
-                    # Remember it so the picker never asks it again.
-                    skipped.add(pending_fact)
-                elif parsed.kind == "invalid":
-                    problem = parsed.error
+                if state.get("pending_confirmation"):
+                    confirmation = parse_answer("is_widow", reply)
+                    accepted = (
+                        confirmation.kind == "value"
+                        and confirmation.value is True
+                    )
+                    declined = (
+                        confirmation.kind == "value"
+                        and confirmation.value is False
+                    )
+                    if accepted:
+                        proposed_value = state.get("pending_interpreted_value")
+                        if not isinstance(proposed_value, (bool, str)):
+                            raise ValueError(
+                                "A confirmation prompt has no proposed answer"
+                            )
+                        parsed = parse_interpreted_answer(
+                            pending_fact, proposed_value
+                        )
+                        value = parsed.value
+                        if parsed.kind != "value":
+                            problem = parsed.error
+                        else:
+                            try:
+                                profile = HouseholdProfile.model_validate(
+                                    {
+                                        **profile.model_dump(mode="json"),
+                                        pending_fact: value,
+                                    }
+                                )
+                            except ValidationError as error:
+                                reason = (
+                                    error.errors()[0]["msg"]
+                                    .removeprefix("Value error, ")
+                                    .replace("_", " ")
+                                )
+                                problem = f"That answer does not fit: {reason}."
+                    elif declined:
+                        question = (
+                            "Okay. Please answer directly: "
+                            f"{question_for(pending_fact)} "
+                            f"{parse_answer(pending_fact, '').error or ''}"
+                        ).strip()
+                        return {
+                            "status": "awaiting_answer",
+                            "message": question,
+                            "question": question,
+                            "pending_answer": None,
+                            "pending_confirmation": False,
+                            "pending_interpreted_value": None,
+                            "pending_fact": pending_fact,
+                            "llm_attempted_facts": sorted(attempted_facts),
+                            "conversation": [
+                                {"role": "assistant", "content": question}
+                            ],
+                        }
+                    else:
+                        question = (
+                            'Please confirm with "yes" or "no". '
+                            "Is my interpretation correct?"
+                        )
+                        return {
+                            "status": "awaiting_answer",
+                            "message": question,
+                            "question": question,
+                            "pending_answer": None,
+                            "pending_confirmation": True,
+                            "pending_interpreted_value": state.get(
+                                "pending_interpreted_value"
+                            ),
+                            "pending_fact": pending_fact,
+                            "llm_attempted_facts": sorted(attempted_facts),
+                            "conversation": [
+                                {"role": "assistant", "content": question}
+                            ],
+                        }
                 else:
-                    try:
-                        # Re-validate the whole profile, so cross-field
-                        # checks run (e.g. birth date after application).
-                        profile = HouseholdProfile.model_validate(
-                            {
-                                **profile.model_dump(mode="json"),
-                                pending_fact: parsed.value,
-                            }
-                        )
-                    except ValidationError as error:
-                        # e.g. "Value error, date_of_birth cannot be after
-                        # application_date" -> "date of birth cannot be
-                        # after application date".
-                        reason = (
-                            error.errors()[0]["msg"]
-                            .removeprefix("Value error, ")
-                            .replace("_", " ")
-                        )
-                        problem = f"That answer does not fit: {reason}."
+                    parsed = parse_answer(pending_fact, reply)
+                    if parsed.kind == "unknown":
+                        skipped.add(pending_fact)
+                    elif parsed.kind == "invalid":
+                        if pending_fact not in attempted_facts:
+                            attempted_facts.add(pending_fact)
+                            try:
+                                interpretation = await answer_interpreter(
+                                    pending_fact,
+                                    question_for(pending_fact),
+                                    reply,
+                                )
+                            except IntakeAgentError as error:
+                                logger.warning(
+                                    "Free-text answer reading unavailable: %s",
+                                    error,
+                                )
+                                interpretation = None
+                            if (
+                                interpretation is not None
+                                and interpretation.kind == "unknown"
+                                and interpretation.confidence
+                                >= ANSWER_INTERPRETATION_CONFIDENCE
+                            ):
+                                skipped.add(pending_fact)
+                            if (
+                                interpretation is not None
+                                and interpretation.kind == "value"
+                                and interpretation.confidence
+                                >= ANSWER_INTERPRETATION_CONFIDENCE
+                                and interpretation.value is not None
+                            ):
+                                proposed = interpretation.value
+                                candidate = parse_interpreted_answer(
+                                    pending_fact, proposed
+                                )
+                                if candidate.kind == "value":
+                                    value = candidate.value
+                                    try:
+                                        HouseholdProfile.model_validate(
+                                            {
+                                                **profile.model_dump(mode="json"),
+                                                pending_fact: value,
+                                            }
+                                        )
+                                    except ValidationError:
+                                        pass
+                                    else:
+                                        display_value = (
+                                            value.isoformat()
+                                            if hasattr(value, "isoformat")
+                                            else "yes" if value is True
+                                            else "no" if value is False
+                                            else str(value)
+                                        )
+                                        question = (
+                                            f'I understood your answer as "{display_value}". '
+                                            'Is that correct? Please answer yes or no.'
+                                        )
+                                        return {
+                                            "status": "awaiting_answer",
+                                            "message": question,
+                                            "question": question,
+                                            "pending_fact": pending_fact,
+                                            "pending_answer": None,
+                                            "pending_confirmation": True,
+                                            "pending_interpreted_value": (
+                                                value.isoformat()
+                                                if hasattr(value, "isoformat")
+                                                else value
+                                            ),
+                                            "llm_attempted_facts": sorted(attempted_facts),
+                                            "conversation": [
+                                                {"role": "assistant", "content": question}
+                                            ],
+                                        }
+                        if pending_fact not in skipped:
+                            problem = parsed.error
+                    else:
+                        try:
+                            profile = HouseholdProfile.model_validate(
+                                {
+                                    **profile.model_dump(mode="json"),
+                                    pending_fact: parsed.value,
+                                }
+                            )
+                        except ValidationError as error:
+                            reason = (
+                                error.errors()[0]["msg"]
+                                .removeprefix("Value error, ")
+                                .replace("_", " ")
+                            )
+                            problem = f"That answer does not fit: {reason}."
                 if problem:
                     # Ask the same question again, with a hint.
                     question = f"{problem} {question_for(pending_fact)}"
@@ -427,12 +761,19 @@ def build_journey_graph(
                         "message": question,
                         "question": question,
                         "pending_answer": None,
+                        "pending_confirmation": False,
+                        "pending_interpreted_value": None,
+                        "pending_fact": pending_fact,
+                        "llm_attempted_facts": sorted(attempted_facts),
                         "conversation": [
                             {"role": "assistant", "content": question}
                         ],
                     }
 
-            next_fact = pick_next_fact(profile, package, frozenset(skipped))
+            next_fact = (
+                pick_shared_fact(profile, packages, frozenset(skipped))
+                if multi else pick_next_fact(profile, package, frozenset(skipped))
+            )
             if next_fact is not None:
                 question = question_for(next_fact)
                 return {
@@ -444,6 +785,11 @@ def build_journey_graph(
                     "question": question,
                     "pending_fact": next_fact,
                     "pending_answer": None,
+                    "pending_confirmation": False,
+                    "pending_interpreted_value": None,
+                    "llm_attempted_facts": sorted(
+                        attempted_facts
+                    ),
                     "missing_fields": [],
                     "eligibility_result": None,
                     "conversation": [
@@ -456,6 +802,9 @@ def build_journey_graph(
                 "pending_fact": None,
                 "question": None,
                 "pending_answer": None,
+                "pending_confirmation": False,
+                "pending_interpreted_value": None,
+                "llm_attempted_facts": sorted(attempted_facts),
             }
         else:
             state_extra = {}
@@ -501,40 +850,144 @@ def build_journey_graph(
     async def eligibility_agent(state: JourneyState) -> dict[str, Any]:
         """Ask the MCP rule tool for a verdict and store it in the state."""
 
+        scheme_id = state["scheme_id"]
+        if state.get("multi_scheme") and scheme_id not in rule_packages:
+            verdict = CandidateVerdict(scheme_id=scheme_id, result="information_only")
+            return {
+                "status": "information_only",
+                "eligibility_result": None,
+                "candidate_verdicts": {
+                    **state.get("candidate_verdicts", {}),
+                    scheme_id: verdict.model_dump(mode="json"),
+                },
+                "handoffs": _report_to_supervisor("eligibility", "information_only"),
+            }
         # Rebuild the typed profile from the saved JSON.
         profile = HouseholdProfile.model_validate(state["profile"])
         # The rule engine runs in the MCP server; this node never reads
         # rule files itself (least privilege).
-        result = await eligibility_tool(
-            client,
-            state["scheme_id"],
-            profile,
-        )
+        history: list[dict[str, Any]] = []
+        result = None
+        for attempt in (1, 2):
+            try:
+                result = await eligibility_tool(client, scheme_id, profile)
+                break
+            except MCPToolError:
+                if attempt == 1:
+                    history.append(JourneyHistoryEvent(
+                        event_type="tool_retry",
+                        scheme_id=scheme_id,
+                        attempt=attempt,
+                        reason=f"Eligibility check for {scheme_id} failed. Retrying once.",
+                    ).model_dump(mode="json"))
+                else:
+                    history.append(JourneyHistoryEvent(
+                        event_type="tool_failed",
+                        scheme_id=scheme_id,
+                        attempt=attempt,
+                        reason=(
+                            f"Eligibility check for {scheme_id} failed twice. "
+                            "No decision was made."
+                        ),
+                    ).model_dump(mode="json"))
+        if result is None:
+            verdict = CandidateVerdict(scheme_id=scheme_id, result="tool_error")
+            return {
+                "status": "tool_error",
+                "message": f"Could not check {scheme_id}. No eligibility decision was made.",
+                "eligibility_result": None,
+                "candidate_verdicts": {
+                    **state.get("candidate_verdicts", {}),
+                    scheme_id: verdict.model_dump(mode="json"),
+                },
+                "journey_history": history,
+                "handoffs": _report_to_supervisor("eligibility", "tool_error"),
+            }
         message = result.reason
+        verdict = CandidateVerdict(
+            scheme_id=result.scheme_id,
+            result=result.result,
+            missing_fields=result.missing_fields,
+            deciding_rule_ids=result.deciding_rule_ids,
+        )
         return {
             "status": result.result,
             "message": message,
             "missing_fields": result.missing_fields,
             "eligibility_result": result.model_dump(mode="json"),
+            "candidate_verdicts": {
+                **state.get("candidate_verdicts", {}),
+                result.scheme_id: verdict.model_dump(mode="json"),
+            },
+            "eligibility_results": {
+                **state.get("eligibility_results", {}),
+                result.scheme_id: result.model_dump(mode="json"),
+            },
             "conversation": [{"role": "assistant", "content": message}],
             "handoffs": _report_to_supervisor("eligibility", result.result),
+            "journey_history": history,
         }
 
     async def scheme_search_tool(state: JourneyState) -> dict[str, Any]:
         """Find cited scheme passages for the rewritten query."""
 
-        passages = await search_tool(client, state["query"])
-        message = (
-            f"Found {len(passages)} relevant cited passage(s)."
-            if passages
-            else "No matching passages were found. Try different wording."
+        history: list[dict[str, Any]] = []
+        passages = None
+        for attempt in (1, 2):
+            try:
+                passages = await search_tool(client, state["query"])
+                break
+            except MCPToolError:
+                if attempt == 1:
+                    history.append(JourneyHistoryEvent(
+                        event_type="tool_retry",
+                        scheme_id=None,
+                        attempt=attempt,
+                        reason="Scheme search failed. Retrying once.",
+                    ).model_dump(mode="json"))
+                else:
+                    history.append(JourneyHistoryEvent(
+                        event_type="tool_failed",
+                        scheme_id=None,
+                        attempt=attempt,
+                        reason="Scheme search failed twice. No search results are available.",
+                    ).model_dump(mode="json"))
+        if passages is None:
+            message = "Scheme search is unavailable. Please try again later."
+            return {
+                "status": "tool_error",
+                "message": message,
+                "passages": [],
+                "candidate_scheme_ids": [],
+                "journey_history": history,
+                "conversation": [{"role": "assistant", "content": message}],
+                "handoffs": _report_to_supervisor("search", "tool_error"),
+            }
+        candidate_scheme_ids = list(
+            dict.fromkeys(passage.scheme_id for passage in passages)
         )
+        if passages:
+            passage_label = "passage" if len(passages) == 1 else "passages"
+            scheme_label = (
+                "scheme" if len(candidate_scheme_ids) == 1 else "schemes"
+            )
+            message = (
+                f"Found {len(passages)} relevant cited {passage_label} across "
+                f"{len(candidate_scheme_ids)} {scheme_label}. Showing up to "
+                f"{SEARCH_PASSAGE_LIMIT} passages; search may not find every "
+                "relevant scheme."
+            )
+        else:
+            message = "No matching passages were found. Try different wording."
         return {
             "status": "search_results",
             "message": message,
             "passages": [
                 passage.model_dump(mode="json") for passage in passages
             ],
+            # Preserve retrieval order while grouping passages by scheme.
+            "candidate_scheme_ids": candidate_scheme_ids,
+            "journey_history": history,
             "missing_fields": [],
             "conversation": [{"role": "assistant", "content": message}],
             "handoffs": _report_to_supervisor("search", "search_results"),
@@ -586,7 +1039,11 @@ def _thread_config(conversation_id: UUID) -> dict[str, Any]:
 
     # thread_id tells the checkpointer which saved conversation to load and
     # continue. The same conversation_id resumes the same conversation.
-    return {"configurable": {"thread_id": str(conversation_id)}}
+    # Up to 20 explicit candidates need more than the default 25 node visits.
+    return {
+        "configurable": {"thread_id": str(conversation_id)},
+        "recursion_limit": 100,
+    }
 
 
 def _to_response(
@@ -619,6 +1076,21 @@ def _to_response(
             if values.get("eligibility_result") is not None
             else None
         ),
+        candidate_scheme_ids=values.get("candidate_scheme_ids", []),
+        candidate_verdicts=values.get("candidate_verdicts", {}),
+        eligibility_results=values.get("eligibility_results", {}),
+        known_fact_names=[
+            name for name, value in (values.get("profile") or {}).items()
+            if value is not None and name in HouseholdProfile.model_fields
+        ],
+        plan_change_history=[
+            PlanChange.model_validate(change)
+            for change in values.get("plan_change_history", [])
+        ],
+        journey_history=[
+            JourneyHistoryEvent.model_validate(event)
+            for event in values.get("journey_history", [])
+        ],
         conversation=values.get("conversation", []),
     )
 
@@ -641,15 +1113,29 @@ async def run_journey(
         "action": request.action,
         "conversation_id": str(request.conversation_id),
         "scheme_id": request.scheme_id or "",
+        "multi_scheme": bool(request.candidate_scheme_ids),
         "profile": request.profile,
         "plan_detail": None,
         "status": "",
         "message": "",
         "missing_fields": [],
         "eligibility_result": None,
+        "candidate_scheme_ids": (
+            request.candidate_scheme_ids or
+            ([request.scheme_id] if request.scheme_id else [])
+        ),
+        "candidate_verdicts": {},
+        "eligibility_results": {},
+        "plan_change_history": [],
+        "journey_history": [],
+        "plan_version_start": 1,
+        "passages": [],
         "pending_fact": None,
         "question": None,
         "pending_answer": None,
+        "pending_confirmation": False,
+        "pending_interpreted_value": None,
+        "llm_attempted_facts": [],
         "skipped_facts": [],
         "conversation": [],
     }
@@ -685,6 +1171,85 @@ async def resume_journey(
         raise JourneyNotWaitingError(str(conversation_id))
 
     result = await graph.ainvoke(Command(resume=message), config=config)
+    return _to_response(conversation_id, result)
+
+
+async def correct_journey_answer(
+    graph: Any,
+    conversation_id: UUID,
+    correction: JourneyCorrection,
+) -> JourneyResponse:
+    """Replace one known answer and rerun every candidate check.
+
+    The correction record stores the fact name only, not its old or new value.
+    """
+
+    config = _thread_config(conversation_id)
+    snapshot = await graph.aget_state(config)
+    values = snapshot.values
+    if not values or not values.get("multi_scheme"):
+        raise JourneyNotWaitingError(str(conversation_id))
+
+    profile = HouseholdProfile.model_validate(values.get("profile") or {})
+    if getattr(profile, correction.fact_name) is None:
+        raise ValueError("Only a previously answered fact can be corrected")
+
+    parsed = parse_answer(correction.fact_name, correction.answer)
+    if parsed.kind != "value":
+        raise ValueError(
+            parsed.error or "A correction must be a clear yes, no, or date"
+        )
+    updated_profile = HouseholdProfile.model_validate({
+        **profile.model_dump(mode="json"),
+        correction.fact_name: parsed.value,
+    })
+    next_version = Plan.model_validate(values["plan_detail"]).version + 1
+    reason = (
+        f"The user corrected {correction.fact_name}; rechecking affected "
+        "scheme rules."
+    )
+    event = JourneyHistoryEvent(
+        event_type="answer_corrected",
+        fact_name=correction.fact_name,
+        plan_version=next_version,
+        reason=reason,
+    )
+    initial_state: JourneyState = {
+        "action": "interview",
+        "conversation_id": str(conversation_id),
+        "scheme_id": "",
+        "multi_scheme": True,
+        "candidate_scheme_ids": list(values["candidate_scheme_ids"]),
+        "profile": updated_profile.model_dump(mode="json"),
+        "plan_detail": None,
+        "plan_version_start": next_version,
+        "plan_restart_reason": reason,
+        "status": "",
+        "message": "",
+        "missing_fields": [],
+        "passages": values.get("passages", []),
+        "eligibility_result": None,
+        "candidate_verdicts": {},
+        "eligibility_results": {},
+        "skipped_facts": sorted(
+            set(values.get("skipped_facts", [])) - {correction.fact_name}
+        ),
+        "llm_attempted_facts": list(
+            values.get("llm_attempted_facts", [])
+        ),
+        "pending_fact": None,
+        "question": None,
+        "pending_answer": None,
+        "pending_confirmation": False,
+        "pending_interpreted_value": None,
+        "llm_attempted_facts": [],
+        "conversation": [{
+            "role": "assistant",
+            "content": f"Answer corrected for {correction.fact_name}. Rechecking schemes.",
+        }],
+        "journey_history": [event.model_dump(mode="json")],
+    }
+    result = await graph.ainvoke(initial_state, config=config)
     return _to_response(conversation_id, result)
 
 

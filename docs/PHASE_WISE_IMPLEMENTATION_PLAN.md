@@ -29,7 +29,7 @@ Rules for every phase:
 |---|---|---|---|
 | 1. Base | Shared typed models; one rule engine for both schemes; PM-KISAN through MCP and the graph | Same screens; PM-KISAN uses the same path as widow pension | Built; awaiting UI test |
 | 2. Supervisor and intake | Supervisor makes a plan; intake asks one question at a time | Chat box instead of fixture form; plan panel | Built; awaiting UI test |
-| 3. Multi-scheme and replan | Eligibility checks every candidate; plan changes when a result contradicts it | Verdict list for all schemes; replan trace | Not started |
+| 3. Multi-scheme and replan | Eligibility checks every candidate; plan changes when a result contradicts it | Verdict list for all schemes; replan trace | Built and end-to-end smoke-tested for the two-scheme pilot; broader-catalogue retrieval evaluation needs more reviewed data |
 | 4. Documents and approval | Document checker; application agent pauses with `interrupt()` | Document checklist; approve, edit or reject the exact draft | Not started |
 | 5. Guardrails and evaluation | Input/output checks; refer can't-tell cases to a human; planned vs fixed question order | Warnings and referral notice | Not started |
 | 6. Polish and demo | Resume after crash; Citizen/CSC mode; docs | Resume a session; CSC mode works | Not started |
@@ -134,6 +134,18 @@ LLM to rewrite queries):
 
 ## Phase 3 — Multi-scheme and replan
 
+Implementation walkthrough:
+[PHASE3_CODE_WALKTHROUGH.md](PHASE3_CODE_WALKTHROUGH.md).
+Candidate storage, shared interview, search-screen entry point and
+code-written history for completed candidate checks, bounded retries,
+tool-failure history, answer correction, and confirmed free-text answer
+reading are implemented. Search requests up to 20 passages and clearly
+warns that it may miss schemes; the API rejects candidate lists over 20.
+The live-model multi-scheme flow and the available 43-query development set
+were exercised. Retrieval was measured as a BM25-only diagnostic because
+the free embedding key is not configured; broader-catalogue evaluation
+requires additional reviewed scheme sources and validated query labels.
+
 **Goal:** check every candidate scheme and change the plan when results
 disagree with it.
 
@@ -157,33 +169,54 @@ Example: Kamla, a 52-year-old widow whose family owns farmland.
    pension ✅ eligible; PM-KISAN ❌ not eligible (income tax). These are
    synthetic mock results, not government decisions.
 
-### Decisions (agreed 2026-11-03)
+### Decisions (updated after the design critique, 2026-11-03)
 
 | Question | Decision |
 |---|---|
-| Should intake use an LLM to read free-text answers? | **Yes.** E.g. "My husband died last year" can suggest widow = yes. First try today's plain-code reader; use the LLM only when it cannot read an answer. Validate the proposed value and ask for confirmation when interpretation is uncertain. Valid data types do not prove the LLM understood correctly. If it fails, ask for a clear yes/no/date answer. |
-| How should the supervisor replan? | **Rules decide; the LLM only writes the reason** in plain English from the recorded event. It must not add facts or change the meaning. Keep the fixed code-written reason available and use it if the LLM fails or its explanation cannot be checked. The LLM never changes the plan or a verdict. |
+| Should intake use an LLM to read free-text answers? | **Yes.** E.g. "My husband died last year" can suggest widow = yes. First try today's plain-code reader; use the LLM only when it cannot read an answer. Validate the proposed value and ask for confirmation before saving it. Valid data types do not prove the LLM understood correctly. If it fails, ask for a clear yes/no/date answer. |
+| How should the supervisor replan? | **Code decides and writes the reason.** No LLM planner or reason writer in Phase 3. Consider checked LLM plan suggestions later if real user scenarios show a need. |
 | Should search write a short LLM answer from the passages? | **Not in Phase 3.** Plan it separately. Citation IDs and number checks alone do not prove that a sentence is supported; that design needs further work. |
 
 Backend:
 
 - Eligibility analyst evaluates every candidate scheme from filtered search,
   not just the selected one. One verdict per scheme.
+- Build candidates from distinct scheme IDs, not individual passages.
+  Check retrieval with questions that match several schemes: the existing
+  one-passage fallback does not establish multi-scheme coverage. Do not claim
+  to check every scheme in the catalogue or every potentially matching scheme.
 - One shared profile: each fact is asked once and reused by every scheme.
-  The question picker skips schemes that are already decided.
+  Reuse only facts with the same meaning and scope: personal income and
+  family income are different facts. The question picker skips schemes that
+  are already decided and favours facts useful to several undecided schemes,
+  with stable rule order to break ties.
 - Replan rules (code, not LLM):
   - a scheme is ruled out → mark it ❌ and stop its questions;
   - a new fact opens a scheme (for example farmland) → add a step;
   - a tool fails → retry a limited number of times, then mark the step
     failed and say so. Never invent a verdict.
 - Each replan is recorded in a trace: what changed, which rule or event
-  caused it, and the reason text.
-- LLM answer reader in intake, with the plain-code reader as the safety net.
+  caused it, and a code-written reason.
+- LLM answer reader in intake, called only when plain-code reading fails.
+  Validate the fact type and full profile, then ask the person to confirm
+  before saving a proposed value. Allow one model attempt per fact and fall
+  back to a clear plain-code question on uncertainty or tool failure.
+- Let users correct confirmed facts. Invalidate affected results, recheck
+  those schemes and reopen necessary questions; do not keep stale verdicts.
+- A new fact may trigger another search, but does not itself prove a scheme
+  applies. Deduplicate retrieved candidates and keep schemes without rule
+  packages information-only.
+- Bound candidate processing to 20 IDs and retries to one; each of the
+  profile facts can trigger at most one LLM interpretation per conversation.
+  Search shows up to 20 passages and says that it may miss relevant schemes.
+  Never silently truncate a candidate list or claim catalogue-wide coverage.
 
 UI:
 
 - Verdict list for all candidate schemes.
 - Replan trace showing what changed and why.
+- Show information-only schemes separately, a way to correct answers, and
+  any unprocessed candidates or tool errors.
 
 UI test checklist:
 
@@ -196,8 +229,15 @@ UI test checklist:
       understood as yes.
 - [ ] Answer something unclear (for example "maybe"); the question is asked
       again, as today.
+- [ ] Correct a fact that ruled a scheme out; its result is recomputed.
+- [ ] Personal and family facts with different meanings are not merged.
+- [ ] An LLM failure falls back to a clear question, without inventing a fact.
+- [ ] Test several candidates, duplicate passages, information-only schemes
+      and any processing limit, not only the two current rule packages.
 
-Done when: replans are visible in the UI and match the trace in the API.
+Done when: all processed candidates have a result or explicit error,
+corrections update affected results, replans are visible in the UI and match
+the API trace, and a small real-LLM flow confirms the intake works.
 
 ### Build order
 
@@ -207,10 +247,13 @@ Done when: replans are visible in the UI and match the trace in the API.
    schemes. Keep "don't know" separate from "no".
 3. **Rule-based replanning:** record the old plan, new plan and triggering
    event. Preserve a ruled-out scheme's result rather than deleting it.
-4. **LLM assistance:** add the free-text reader and reason writer, with
-   bounded calls and plain-code fallbacks.
+4. **LLM assistance:** add only the free-text answer reader, with bounded
+   calls, clarification when uncertain, and plain-code fallbacks.
 5. **Screen and checks:** show all results and the replan history. Test with
    fakes first, then a small real-LLM flow before marking Phase 3 built.
+
+Outside Phase 3: an LLM planner, generated search summaries, document
+checking and application submission. These remain separate work.
 
 ---
 
