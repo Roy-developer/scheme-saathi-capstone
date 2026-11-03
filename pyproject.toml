@@ -15,8 +15,9 @@ requires-python = ">=3.11"
 dependencies = [
   "aiosqlite>=0.20,<1",
   "fastapi>=0.115,<1",
+  "pydantic>=2.8,<3",
   "streamlit>=1.40,<2",
-  "uvicorn[standard]>=0.30,<1",
+  "uvicorn[standard]>=0.32,<1",
   # Install the MCP SDK at runtime because the API and MCP server both use it.
   "mcp>=2,<3",
   "langgraph>=0.2,<1",
@@ -28,9 +29,13 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+  "httpx>=0.28,<1",
   "openpyxl>=3.1,<4",
-  "pytest>=8",
+  "pytest>=8.3,<9",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [tool.setuptools.packages.find]
 where = ["."]

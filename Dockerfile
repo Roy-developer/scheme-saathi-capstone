@@ -17,4 +17,7 @@ RUN pip install --no-cache-dir .
 
 EXPOSE 8000 8501
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3)"
+
 CMD ["python", "-m", "src.run_services"]

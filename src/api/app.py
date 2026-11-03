@@ -141,6 +141,19 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@app.get("/api/v1/info", tags=["service"])
+def service_info() -> dict[str, str | bool]:
+    """Return non-sensitive build metadata for shared-deployment diagnostics."""
+
+    return {
+        "name": "scheme-saathi-api",
+        "api_version": app.version,
+        "app_version": os.getenv("APP_VERSION", "development"),
+        "deployed_ref": os.getenv("DEPLOYED_REF", "local"),
+        "synthetic_only": True,
+    }
+
+
 @app.post(
     "/api/v1/schemes/{scheme_id}/evaluate",
     response_model=EligibilityResponse,

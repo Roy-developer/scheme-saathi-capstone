@@ -198,3 +198,6 @@ image.
 The API health check is at `http://127.0.0.1:8000/health`; interactive API
 documentation is at `http://127.0.0.1:8000/docs`. Run the test suite with
 `python -m pytest -q`.
+
+`GET /api/v1/info` returns safe service/version metadata for deployment
+diagnostics alongside the search, eligibility, and journey endpoints.
