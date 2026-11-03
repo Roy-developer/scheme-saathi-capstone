@@ -32,6 +32,10 @@ class JourneyApiError(Exception):
     """Report a safe, user-actionable journey failure."""
 
 
+class ApplicationApiError(Exception):
+    """Report a safe failure while using synthetic document/draft routes."""
+
+
 def _journey_url(path: str = "") -> str:
     """Build a journey API address from the configured base URL.
 
@@ -197,3 +201,119 @@ def forget_journey(conversation_id: str) -> None:
         raise JourneyApiError(
             "Could not clear the saved journey. The API may be unavailable."
         ) from error
+
+
+def _application_request(
+    conversation_id: str,
+    path: str,
+    *,
+    method: str = "GET",
+    body: dict | None = None,
+) -> dict:
+    """Send an application request and expose only a safe API message."""
+
+    data = None if body is None else json.dumps(body).encode("utf-8")
+    request = Request(
+        _journey_url(f"{_conversation_path(conversation_id)}{path}"),
+        data=data,
+        headers={
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        method=method,
+    )
+    try:
+        with urlopen(request, timeout=30) as response:
+            result = json.loads(response.read())
+    except HTTPError as error:
+        try:
+            detail = json.loads(error.read()).get("detail")
+        except (json.JSONDecodeError, AttributeError):
+            detail = None
+        message = (
+            detail if isinstance(detail, str)
+            else f"The application API returned HTTP {error.code}."
+        )
+        raise ApplicationApiError(message) from error
+    except (URLError, TimeoutError) as error:
+        raise ApplicationApiError(
+            "Could not reach the application API. Start the API and try again."
+        ) from error
+    except json.JSONDecodeError as error:
+        raise ApplicationApiError(
+            "The application API returned invalid data."
+        ) from error
+    if not isinstance(result, dict):
+        raise ApplicationApiError("The application API returned invalid data.")
+    return result
+
+
+def assess_documents(
+    conversation_id: str,
+    scheme_id: str,
+    documents: dict[str, str] | None = None,
+) -> dict:
+    return _application_request(
+        conversation_id,
+        "/documents",
+        method="POST",
+        body={"scheme_id": scheme_id, "documents": documents or {}},
+    )
+
+
+def list_application_drafts(conversation_id: str) -> list[dict]:
+    result = _application_request(conversation_id, "/drafts")
+    drafts = result.get("drafts")
+    if not isinstance(drafts, list) or not all(isinstance(item, dict) for item in drafts):
+        raise ApplicationApiError("The application API returned invalid draft data.")
+    return drafts
+
+
+def create_application_draft(
+    conversation_id: str,
+    scheme_id: str,
+    documents: dict[str, str],
+) -> dict:
+    return _application_request(
+        conversation_id,
+        "/drafts",
+        method="POST",
+        body={
+            "scheme_id": scheme_id,
+            "documents": documents,
+        },
+    )
+
+
+def edit_application_draft(
+    conversation_id: str,
+    draft: dict,
+) -> dict:
+    payload = draft["draft"]
+    return _application_request(
+        conversation_id,
+        f"/drafts/{quote(str(draft['draft_id']), safe='')}",
+        method="PUT",
+        body={
+            "revision": draft["revision"],
+            "applicant_reference": payload["applicant_reference"],
+            "district": payload["district"],
+        },
+    )
+
+
+def decide_application_draft(
+    conversation_id: str,
+    draft: dict,
+    action: str,
+) -> dict:
+    return _application_request(
+        conversation_id,
+        f"/drafts/{quote(str(draft['draft_id']), safe='')}/approval",
+        method="POST",
+        body={
+            "action": action,
+            "revision": draft["revision"],
+            "fingerprint": draft["fingerprint"],
+        },
+    )

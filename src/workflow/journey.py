@@ -1,12 +1,14 @@
-"""LangGraph flow for discovery and synthetic eligibility journeys.
+"""LangGraph flow for discovery, eligibility and synthetic applications.
 
-Phase 2 shape (a manager with helpers):
+Supervisor shape (a manager with helpers):
 
     START -> supervisor --+--> intake_agent --(question?)--> ask_user
                 ^         |         |                          |
                 |         |         +----(done)--> supervisor  +--> intake_agent
                 |         +--> eligibility_agent --> supervisor
                 |         +--> scheme_search_tool --> supervisor
+                |         +--> document_agent --> supervisor
+                |         +--> application_agent --> supervisor
                 +-- every specialist reports back here; supervisor ends the run
 
 - The supervisor writes a visible ``Plan``, hands each step to one specialist
@@ -15,6 +17,9 @@ Phase 2 shape (a manager with helpers):
   the graph with ``interrupt()``; the user's reply resumes it from the saved
   checkpoint (see ``resume_journey``).
 - Eligibility is always decided by the deterministic rule engine through MCP.
+- Application actions preserve the saved profile and verdicts. The application
+  agent alone writes to the portal and manages a separate, per-revision approval
+  interrupt so other eligible schemes can still be checked while review waits.
 """
 
 from collections.abc import Awaitable, Callable, Mapping
@@ -31,9 +36,15 @@ from mcp import Client
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from src.api.eligibility import EligibilityResponse
+from src.api.applications import call_application_tool
 from src.api.scheme_search import SchemePassage
 from src.rules.models import FactName, HouseholdProfile, RulePackage
 from src.workflow.eligibility import evaluate_eligibility
+from src.workflow.application_gate import (
+    build_application_gate,
+    pause_for_application_approval,
+    resume_application_approval,
+)
 from src.workflow.errors import MCPToolError
 from src.workflow.intake import (
     AnswerInterpretation,
@@ -49,6 +60,8 @@ from src.workflow.questions import (
 )
 from src.workflow.scheme_search import search_scheme_passages
 from src.workflow.state import (
+    ApplicationOperation,
+    ApplicationTask,
     CandidateVerdict,
     Handoff,
     JourneyHistoryEvent,
@@ -58,6 +71,7 @@ from src.workflow.state import (
 )
 from src.workflow.supervisor import (
     advance_plan,
+    build_application_plan,
     build_initial_plan,
     plan_summary,
 )
@@ -130,6 +144,15 @@ class JourneyNotWaitingError(Exception):
     """A reply was sent, but the journey is not waiting for an answer."""
 
 
+class ApplicationTaskError(Exception):
+    """A specialist could not safely complete a requested application action."""
+
+    def __init__(self, status_code: int, detail: str):
+        super().__init__(detail)
+        self.status_code = status_code
+        self.detail = detail
+
+
 class JourneyState(TypedDict, total=False):
     """Typed state shared by the graph's supervisor and specialist nodes.
 
@@ -179,6 +202,10 @@ class JourneyState(TypedDict, total=False):
     # instead of replacing it.
     handoffs: Annotated[list[dict[str, Any]], add]
     conversation: Annotated[list[dict[str, str]], add]
+    application_task: dict[str, Any] | None
+    application_task_result: dict[str, Any] | None
+    application_task_error: dict[str, Any] | None
+    document_assessments: dict[str, dict[str, Any]]
 
 
 class JourneyResponse(BaseModel):
@@ -217,6 +244,7 @@ class JourneyResponse(BaseModel):
     journey_history: list[JourneyHistoryEvent] = Field(default_factory=list)
     known_fact_names: list[FactName] = Field(default_factory=list)
     conversation: list[dict[str, str]] = Field(default_factory=list)
+    document_assessments: dict[str, dict[str, Any]] = Field(default_factory=dict)
 
 
 async def _search_with_mcp(
@@ -274,6 +302,9 @@ def build_journey_graph(
     ] = interpret_free_text_answer,
     checkpointer: BaseCheckpointSaver | None = None,
     today: Callable[[], date] = date.today,
+    application_tool: Callable[
+        [Client, str, dict[str, Any]], Awaitable[dict[str, Any]]
+    ] = call_application_tool,
 ) -> Any:
     """Build and compile the supervisor journey with a checkpointer.
 
@@ -281,7 +312,8 @@ def build_journey_graph(
         client: Connected MCP client used by the tool nodes.
         rule_packages: Loaded rule packages; intake uses them to know which
             schemes can be checked and which facts each one needs.
-        search_tool, eligibility_tool, query_rewriter, answer_interpreter:
+        search_tool, eligibility_tool, query_rewriter, answer_interpreter,
+        application_tool:
             Replaceable so tests can pass fakes instead of calling MCP or a
             paid LLM.
         checkpointer: Saves state after each node, keyed by conversation ID.
@@ -289,6 +321,10 @@ def build_journey_graph(
         today: Gives the default application date for interviews. Tests
             pass a fixed date so results do not change from day to day.
     """
+
+    application_gate = (
+        build_application_gate(checkpointer) if checkpointer is not None else None
+    )
 
     # The functions below are graph nodes. Each receives the current state
     # and returns only the keys it wants to change.
@@ -303,10 +339,17 @@ def build_journey_graph(
         """
 
         if not state.get("plan_detail"):
-            plan = build_initial_plan(
-                state["action"], state.get("scheme_id"),
-                state.get("candidate_scheme_ids") if state.get("multi_scheme") else None,
-            )
+            task_data = state.get("application_task")
+            if task_data:
+                task = ApplicationTask.model_validate(task_data)
+                plan = build_application_plan(
+                    task.operation, task.arguments.get("scheme_id")
+                )
+            else:
+                plan = build_initial_plan(
+                    state["action"], state.get("scheme_id"),
+                    state.get("candidate_scheme_ids") if state.get("multi_scheme") else None,
+                )
             version_start = state.get("plan_version_start", 1)
             if version_start > 1:
                 reason = state.get(
@@ -323,7 +366,10 @@ def build_journey_graph(
                 sender="supervisor",
                 recipient=first.specialist,
                 step_id=first.step_id,
-                payload={"action": state["action"]},
+                payload=(
+                    {"operation": task_data["operation"]}
+                    if task_data else {"action": state["action"]}
+                ),
             )
             return {
                 "plan": summary,
@@ -403,6 +449,19 @@ def build_journey_graph(
         if next_step is None:
             # Plan finished or stopped early; END keeps the last status.
             update["next_agent"] = END
+            if state.get("application_task"):
+                task = ApplicationTask.model_validate(state["application_task"])
+                if (
+                    task.operation in {"create_draft", "approve", "submit"}
+                    and report["sender"] == "documents"
+                    and report["payload"]["status"] != "checklist_complete"
+                    and not state.get("application_task_error")
+                ):
+                    update["application_task_error"] = {
+                        "status_code": 409,
+                        "detail": "Complete every synthetic demo document item before continuing.",
+                    }
+                update["application_task"] = None
             if state.get("multi_scheme") and report["sender"] == "eligibility":
                 update["status"] = "completed"
                 update["message"] = "Candidate checks finished. Review each scheme's result."
@@ -432,6 +491,166 @@ def build_journey_graph(
             update["scheme_id"] = next_step.scheme_id
         update["handoffs"] = [handoff.model_dump(mode="json")]
         return update
+
+    def task_failure(
+        specialist: SpecialistName, detail: str, status_code: int = 409
+    ) -> dict[str, Any]:
+        return {
+            "application_task_error": {"status_code": status_code, "detail": detail},
+            "handoffs": _report_to_supervisor(
+                specialist, "tool_error" if status_code == 502 else "blocked"
+            ),
+        }
+
+    async def document_agent(state: JourneyState) -> dict[str, Any]:
+        """Only inspect reported metadata; this specialist has no portal writes."""
+
+        task = ApplicationTask.model_validate(state["application_task"])
+        arguments = task.arguments
+        scheme_id = arguments["scheme_id"]
+        verdict = state.get("candidate_verdicts", {}).get(scheme_id, {})
+        if verdict.get("result") != "eligible" or scheme_id not in rule_packages:
+            return task_failure("documents", "This scheme has no current eligible result.")
+        try:
+            assessment = await application_tool(
+                client, "check_documents",
+                {"scheme_id": scheme_id, "documents": arguments.get("documents", {})},
+            )
+        except MCPToolError:
+            return task_failure("documents", "The document checklist is unavailable.", 502)
+        return {
+            "application_task_result": assessment,
+            "document_assessments": {
+                **state.get("document_assessments", {}),
+                scheme_id: assessment,
+            },
+            "handoffs": _report_to_supervisor("documents", assessment["status"]),
+        }
+
+    async def application_agent(state: JourneyState) -> dict[str, Any]:
+        """Own portal mutations and the checkpointed exact-draft approval pause."""
+
+        task = ApplicationTask.model_validate(state["application_task"])
+        arguments = {
+            **task.arguments,
+            "action": task.operation,
+            "journey_id": state["conversation_id"],
+        }
+        if task.operation in {"create_draft", "edit_draft", "approve", "reject"}:
+            if application_gate is None:
+                return task_failure(
+                    "application", "Application approval requires checkpoint persistence."
+                )
+        try:
+            record = None
+            if task.operation in {"edit_draft", "approve", "reject", "submit"}:
+                record = await application_tool(
+                    client, "mock_portal",
+                    {
+                        "action": "get_draft",
+                        "journey_id": state["conversation_id"],
+                        "draft_id": arguments["draft_id"],
+                    },
+                )
+                if (
+                    record.get("not_found")
+                    or record["revision"] != arguments["revision"]
+                    or (
+                        task.operation != "edit_draft"
+                        and record["fingerprint"] != arguments["fingerprint"]
+                    )
+                ):
+                    return task_failure(
+                        "application", "The draft changed. Reload and review it."
+                    )
+                if task.operation == "submit" and not record["approved"]:
+                    return task_failure(
+                        "application", "Approve this exact draft before submitting it."
+                    )
+                if (
+                    task.operation == "approve"
+                    and (record["rejected"] or record["receipt_id"])
+                ) or (
+                    task.operation in {"edit_draft", "reject"} and record["receipt_id"]
+                ):
+                    return task_failure(
+                        "application", "This draft cannot be changed in its current state."
+                    )
+            if task.operation in {"create_draft", "edit_draft", "approve", "submit"}:
+                scheme_id = record["scheme_id"] if record else arguments["scheme_id"]
+                profile_data = state.get("profile")
+                verdict = state.get("candidate_verdicts", {}).get(scheme_id, {})
+                package = rule_packages.get(scheme_id)
+                if (
+                    not profile_data
+                    or package is None
+                    or verdict.get("result") != "eligible"
+                ):
+                    return task_failure(
+                        "application", "This scheme has no current eligible profile."
+                    )
+                profile = HouseholdProfile.model_validate(profile_data)
+                if record and (
+                    record["draft"]["profile"] != profile.model_dump(mode="json")
+                    or record["draft"]["rule_package_version"] != package.package_version
+                ):
+                    return task_failure(
+                        "application", "Answers or scheme rules changed. Create a new draft."
+                    )
+                if task.operation != "edit_draft":
+                    current_verdict = await eligibility_tool(client, scheme_id, profile)
+                    if current_verdict.result != "eligible":
+                        return task_failure(
+                            "application",
+                            "The current profile is no longer eligible under the mock rules.",
+                        )
+                if task.operation == "create_draft":
+                    arguments.update({
+                        "profile": profile.model_dump(mode="json"),
+                        "rule_package_version": package.package_version,
+                        "deciding_rule_ids": current_verdict.deciding_rule_ids,
+                    })
+                if task.operation in {"approve", "submit"}:
+                    saved_documents = {
+                        item["document_id"]: item["status"]
+                        for item in record["draft"]["documents"]
+                    }
+                    if (
+                        arguments.get("scheme_id") != scheme_id
+                        or arguments.get("documents") != saved_documents
+                    ):
+                        return task_failure(
+                            "application", "Recheck the documents from this exact draft."
+                        )
+            if task.operation in {"approve", "reject"}:
+                await resume_application_approval(
+                    application_gate, state["conversation_id"], record,
+                    {
+                        key: arguments[key]
+                        for key in ("action", "draft_id", "revision", "fingerprint")
+                    },
+                )
+            result = await application_tool(client, "mock_portal", arguments)
+            if task.operation in {"create_draft", "edit_draft"}:
+                await pause_for_application_approval(
+                    application_gate, state["conversation_id"], result
+                )
+        except MCPToolError:
+            return task_failure(
+                "application", "The mock application service is unavailable.", 502
+            )
+        statuses = {
+            "create_draft": "awaiting_approval",
+            "edit_draft": "awaiting_approval",
+            "approve": "approved",
+            "reject": "rejected",
+            "submit": "submitted",
+            "delete_journey": "deleted",
+        }
+        return {
+            "application_task_result": result,
+            "handoffs": _report_to_supervisor("application", statuses[task.operation]),
+        }
 
     async def intake_agent(state: JourneyState) -> dict[str, Any]:
         """Collect and check what the request needs before any tool runs.
@@ -1007,6 +1226,8 @@ def build_journey_graph(
     graph.add_node("ask_user", ask_user)
     graph.add_node("eligibility_agent", eligibility_agent)
     graph.add_node("scheme_search_tool", scheme_search_tool)
+    graph.add_node("document_agent", document_agent)
+    graph.add_node("application_agent", application_agent)
     graph.add_edge(START, "supervisor")
     # A conditional edge looks at the state and picks the next node. The
     # supervisor stores its choice in "next_agent".
@@ -1017,6 +1238,8 @@ def build_journey_graph(
             "intake": "intake_agent",
             "eligibility": "eligibility_agent",
             "search": "scheme_search_tool",
+            "documents": "document_agent",
+            "application": "application_agent",
             END: END,
         },
     )
@@ -1029,6 +1252,8 @@ def build_journey_graph(
     graph.add_edge("ask_user", "intake_agent")
     graph.add_edge("eligibility_agent", "supervisor")
     graph.add_edge("scheme_search_tool", "supervisor")
+    graph.add_edge("document_agent", "supervisor")
+    graph.add_edge("application_agent", "supervisor")
     # compile() turns the wiring into a runnable graph; the checkpointer
     # saves state after every node.
     return graph.compile(checkpointer=checkpointer)
@@ -1092,7 +1317,46 @@ def _to_response(
             for event in values.get("journey_history", [])
         ],
         conversation=values.get("conversation", []),
+        document_assessments=values.get("document_assessments", {}),
     )
+
+
+async def run_application_task(
+    graph: Any,
+    conversation_id: UUID,
+    operation: ApplicationOperation,
+    arguments: dict[str, Any],
+) -> dict[str, Any]:
+    """Continue through the supervisor without replacing saved eligibility facts."""
+
+    task = ApplicationTask(operation=operation, arguments=arguments)
+    config = _thread_config(conversation_id)
+    snapshot = await graph.aget_state(config)
+    if snapshot.interrupts and operation != "delete_journey":
+        raise ApplicationTaskError(409, "Finish the current interview first.")
+    if not snapshot.values and operation != "delete_journey":
+        raise ApplicationTaskError(404, "Conversation not found.")
+    previous_plan = snapshot.values.get("plan_detail")
+    version = Plan.model_validate(previous_plan).version + 1 if previous_plan else 1
+    result = await graph.ainvoke(
+        {
+            "conversation_id": str(conversation_id),
+            "application_task": task.model_dump(mode="json"),
+            "application_task_result": None,
+            "application_task_error": None,
+            "plan_detail": None,
+            "plan_version_start": version,
+            "plan_restart_reason": f"The user requested {operation}.",
+        },
+        config=config,
+    )
+    error = result.get("application_task_error")
+    if error:
+        raise ApplicationTaskError(error["status_code"], error["detail"])
+    return {
+        **result["application_task_result"],
+        "plan_detail": result["plan_detail"],
+    }
 
 
 async def run_journey(
@@ -1111,6 +1375,10 @@ async def run_journey(
     # Only "conversation" and "handoffs" keep growing as history.
     initial_state: JourneyState = {
         "action": request.action,
+        "application_task": None,
+        "application_task_result": None,
+        "application_task_error": None,
+        "document_assessments": {},
         "conversation_id": str(request.conversation_id),
         "scheme_id": request.scheme_id or "",
         "multi_scheme": bool(request.candidate_scheme_ids),
@@ -1216,6 +1484,10 @@ async def correct_journey_answer(
     )
     initial_state: JourneyState = {
         "action": "interview",
+        "application_task": None,
+        "application_task_result": None,
+        "application_task_error": None,
+        "document_assessments": {},
         "conversation_id": str(conversation_id),
         "scheme_id": "",
         "multi_scheme": True,

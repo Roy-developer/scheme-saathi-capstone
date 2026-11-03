@@ -16,11 +16,16 @@ from uuid import UUID, uuid4
 
 import streamlit as st
 
-from src.ui.approval import approval_matches, draft_fingerprint
 from src.ui.api_client import (
+    ApplicationApiError,
     JourneyApiError,
+    assess_documents,
+    create_application_draft,
+    decide_application_draft,
+    edit_application_draft,
     forget_journey,
     get_journey_state,
+    list_application_drafts,
     correct_journey_answer,
     run_journey,
     send_journey_message,
@@ -36,9 +41,9 @@ COPY = {
         "title": "Scheme Saathi",
         "subtitle": "Explore a cited welfare-scheme decision journey",
         "banner": "SYNTHETIC DEMONSTRATION — NOT A GOVERNMENT SERVICE",
-        "draft": "Mock rules reviewed; fixture implementation awaiting technical checks",
+        "draft": "Synthetic demonstration only. No real government application is submitted.",
         "consent_title": "Demonstration notice",
-        "consent_text": "This prototype uses preset synthetic households. It does not collect your personal information or submit an application.",
+        "consent_text": "Use made-up household facts only. Synthetic answers may be saved locally; no government application is submitted.",
         "consent": "I understand and want to view the demonstration.",
         "mode": "Demonstration perspective",
         "citizen": "Citizen",
@@ -70,7 +75,7 @@ COPY = {
         "official_clause": "Published eligibility text",
         "benefit": "Published benefit summary",
         "source": "Open official Maharashtra source",
-        "documents": "Required documents are not yet verified from the official source and are intentionally omitted.",
+        "documents": "The document checklist contains demo items only; they are not verified official requirements.",
         "prepare": "Prepare synthetic application draft",
         "application": "Synthetic application draft",
         "reference": "Applicant reference",
@@ -137,9 +142,9 @@ COPY = {
         "title": "स्कीम साथी",
         "subtitle": "उद्धृत कल्याण-योजना निर्णय यात्रा देखें",
         "banner": "कृत्रिम प्रदर्शन — यह सरकारी सेवा नहीं है",
-        "draft": "मॉक नियमों की समीक्षा हो चुकी है; फ़िक्स्चर की तकनीकी जाँच बाकी है",
+        "draft": "केवल कृत्रिम प्रदर्शन। कोई वास्तविक सरकारी आवेदन जमा नहीं किया जाता।",
         "consent_title": "प्रदर्शन सूचना",
-        "consent_text": "यह प्रोटोटाइप पूर्वनिर्धारित कृत्रिम परिवारों का उपयोग करता है। यह आपकी व्यक्तिगत जानकारी एकत्र नहीं करता और आवेदन जमा नहीं करता।",
+        "consent_text": "केवल काल्पनिक परिवार की जानकारी दें। कृत्रिम उत्तर स्थानीय रूप से सहेजे जा सकते हैं; कोई सरकारी आवेदन जमा नहीं किया जाता।",
         "consent": "मैं समझता/समझती हूँ और प्रदर्शन देखना चाहता/चाहती हूँ।",
         "mode": "प्रदर्शन दृष्टिकोण",
         "citizen": "नागरिक",
@@ -171,7 +176,7 @@ COPY = {
         "official_clause": "प्रकाशित पात्रता पाठ",
         "benefit": "प्रकाशित लाभ सारांश",
         "source": "महाराष्ट्र का आधिकारिक स्रोत खोलें",
-        "documents": "आवश्यक दस्तावेज़ अभी आधिकारिक स्रोत से सत्यापित नहीं हैं और जानबूझकर शामिल नहीं किए गए हैं।",
+        "documents": "दस्तावेज़ सूची में केवल प्रदर्शन की चीज़ें हैं; ये आधिकारिक रूप से सत्यापित आवश्यकताएँ नहीं हैं।",
         "prepare": "कृत्रिम आवेदन मसौदा तैयार करें",
         "application": "कृत्रिम आवेदन मसौदा",
         "reference": "आवेदक संदर्भ",
@@ -238,9 +243,9 @@ COPY = {
         "title": "स्कीम साथी",
         "subtitle": "उद्धृत कल्याण-योजना निर्णय प्रवास पाहा",
         "banner": "कृत्रिम प्रात्यक्षिक — ही सरकारी सेवा नाही",
-        "draft": "मॉक नियमांचे पुनरावलोकन झाले; फिक्स्चरची तांत्रिक तपासणी बाकी आहे",
+        "draft": "फक्त कृत्रिम प्रात्यक्षिक. कोणताही वास्तविक सरकारी अर्ज सादर होत नाही.",
         "consent_title": "प्रात्यक्षिक सूचना",
-        "consent_text": "हा नमुना पूर्वनिश्चित कृत्रिम कुटुंबे वापरतो. तो तुमची वैयक्तिक माहिती गोळा करत नाही किंवा अर्ज सादर करत नाही.",
+        "consent_text": "फक्त काल्पनिक कुटुंबाची माहिती द्या. कृत्रिम उत्तरे स्थानिकरीत्या जतन होऊ शकतात; सरकारी अर्ज सादर होत नाही.",
         "consent": "मला समजले आहे आणि मला प्रात्यक्षिक पाहायचे आहे.",
         "mode": "प्रात्यक्षिकाचा दृष्टिकोन",
         "citizen": "नागरिक",
@@ -272,7 +277,7 @@ COPY = {
         "official_clause": "प्रकाशित पात्रता मजकूर",
         "benefit": "प्रकाशित लाभ सारांश",
         "source": "महाराष्ट्राचा अधिकृत स्रोत उघडा",
-        "documents": "आवश्यक कागदपत्रे अद्याप अधिकृत स्रोतावरून सत्यापित केलेली नाहीत आणि जाणीवपूर्वक वगळली आहेत.",
+        "documents": "कागदपत्रांच्या यादीतील बाबी केवळ प्रात्यक्षिकासाठी आहेत; त्या अधिकृतरीत्या पडताळलेल्या नाहीत.",
         "prepare": "कृत्रिम अर्जाचा मसुदा तयार करा",
         "application": "कृत्रिम अर्जाचा मसुदा",
         "reference": "अर्जदार संदर्भ",
@@ -395,6 +400,9 @@ WORKFLOW_STATE_KEYS = {
     "correction_error",
     "journey_history",
     "known_fact_names",
+    "application_drafts",
+    "application_drafts_loaded_for",
+    "application_flow",
 }
 DEMO_INPUT_KEYS = {
     "demo_consent",
@@ -505,6 +513,10 @@ def save_journey(journey: JourneyResponse) -> None:
         event.model_dump(mode="json") for event in journey.journey_history
     ]
     st.session_state.known_fact_names = journey.known_fact_names
+    st.session_state.application_flow = {
+        scheme_id: {"assessment": assessment, "error": None, "edit_mode": False}
+        for scheme_id, assessment in journey.document_assessments.items()
+    }
 
 
 def remember_in_url(scheme_id: str, candidate_ids: list[str] | None = None) -> None:
@@ -601,6 +613,8 @@ def render_candidate_interview(text: dict[str, str]) -> None:
                     st.error(text["scheme_tool_error"])
                 else:
                     st.info(text["finder_info_only"])
+                if verdict["result"] == "eligible":
+                    render_application_flow(scheme_id, text)
     if st.session_state.known_fact_names:
         st.markdown(f'**{text["correction_title"]}**')
         fact_name = st.selectbox(
@@ -623,6 +637,211 @@ def render_candidate_interview(text: dict[str, str]) -> None:
             st.rerun()
         if st.session_state.correction_error:
             st.error(st.session_state.correction_error)
+
+
+def save_application_progress(result: dict) -> dict:
+    """Keep the visible supervisor plan in sync with application actions."""
+
+    if result.get("plan_detail"):
+        st.session_state.journey_plan_detail = result["plan_detail"]
+    return result
+
+
+def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
+    """Render the API-backed synthetic checklist and exact-draft approval flow."""
+
+    conversation_id = st.session_state.conversation_id
+    if not conversation_id:
+        return
+    loaded_for = st.session_state.get("application_drafts_loaded_for")
+    if loaded_for != conversation_id:
+        try:
+            drafts = list_application_drafts(conversation_id)
+        except ApplicationApiError as error:
+            st.error(f"Could not load application drafts: {error}")
+            return
+        st.session_state.application_drafts = {
+            draft["scheme_id"]: draft for draft in drafts
+        }
+        st.session_state.application_drafts_loaded_for = conversation_id
+    drafts = st.session_state.setdefault("application_drafts", {})
+    flow_state = st.session_state.setdefault("application_flow", {}).setdefault(
+        scheme_id, {"assessment": None, "error": None, "edit_mode": False}
+    )
+    with st.container(border=True):
+        st.markdown(f"**Synthetic application · {scheme_id}**")
+        st.caption(
+            "Demo checklist only. These are not verified official document "
+            "requirements; no files are uploaded or authenticated."
+        )
+        draft = drafts.get(scheme_id)
+        if draft is None:
+            if st.button("Load demo document checklist", key=f"docs-load-{scheme_id}"):
+                try:
+                    flow_state["assessment"] = save_application_progress(
+                        assess_documents(conversation_id, scheme_id)
+                    )
+                    flow_state["error"] = None
+                except ApplicationApiError as error:
+                    flow_state["error"] = str(error)
+                st.rerun()
+
+            assessment = flow_state.get("assessment")
+            if assessment:
+                if assessment["status"] == "requirements_unverified":
+                    st.warning(assessment["message"])
+                for item in assessment["requirements"]:
+                    st.selectbox(
+                        item["label"],
+                        options=["unknown", "available", "missing", "mismatch"],
+                        index=["unknown", "available", "missing", "mismatch"].index(
+                            item["status"]
+                        ),
+                        key=f"doc-{scheme_id}-{item['document_id']}",
+                    )
+                if assessment["requirements"] and st.button(
+                    "Update checklist",
+                    key=f"docs-update-{scheme_id}",
+                ):
+                    statuses = {
+                        item["document_id"]: st.session_state[
+                            f"doc-{scheme_id}-{item['document_id']}"
+                        ]
+                        for item in assessment["requirements"]
+                    }
+                    try:
+                        flow_state["assessment"] = save_application_progress(
+                            assess_documents(conversation_id, scheme_id, statuses)
+                        )
+                        flow_state["error"] = None
+                    except ApplicationApiError as error:
+                        flow_state["error"] = str(error)
+                    st.rerun()
+                if assessment["status"] == "checklist_complete" and st.button(
+                    "Prepare synthetic draft",
+                    type="primary",
+                    key=f"draft-create-{scheme_id}",
+                ):
+                    statuses = {
+                        item["document_id"]: st.session_state[
+                            f"doc-{scheme_id}-{item['document_id']}"
+                        ]
+                        for item in assessment["requirements"]
+                    }
+                    try:
+                        draft = save_application_progress(
+                            create_application_draft(conversation_id, scheme_id, statuses)
+                        )
+                    except ApplicationApiError as error:
+                        flow_state["error"] = str(error)
+                    else:
+                        drafts[scheme_id] = draft
+                        flow_state["error"] = None
+                    st.rerun()
+        else:
+            payload = draft["draft"]
+            if not draft["receipt_id"] and st.button(
+                "Start a new draft using current answers",
+                key=f"draft-new-{scheme_id}",
+            ):
+                drafts.pop(scheme_id, None)
+                flow_state["assessment"] = None
+                flow_state["error"] = None
+                flow_state["edit_mode"] = False
+                st.rerun()
+            st.write(
+                {
+                    "Applicant reference": payload["applicant_reference"],
+                    "District": payload["district"],
+                    "Scheme": draft["scheme_id"],
+                    "Revision": draft["revision"],
+                    "Profile": payload["profile"],
+                    "Documents": payload["documents"],
+                    "Declaration": payload["declaration"],
+                }
+            )
+            st.caption(f"Draft fingerprint: `{draft['fingerprint'][:16]}…`")
+            if draft["receipt_id"]:
+                st.success(
+                    f"Mock submission recorded. Receipt: {draft['receipt_id']}"
+                )
+            elif draft["rejected"] and not flow_state.get("edit_mode"):
+                st.error("This draft was rejected. It has not been submitted.")
+                if st.button(
+                    "Edit and reopen draft",
+                    key=f"draft-reopen-{scheme_id}",
+                ):
+                    flow_state["edit_mode"] = True
+                    st.rerun()
+            else:
+                if flow_state.get("edit_mode"):
+                    reference = st.text_input(
+                        "Synthetic applicant reference",
+                        value=payload["applicant_reference"],
+                        key=f"draft-ref-{scheme_id}-{draft['revision']}",
+                    )
+                    district = st.text_input(
+                        "Synthetic district",
+                        value=payload["district"],
+                        key=f"draft-district-{scheme_id}-{draft['revision']}",
+                    )
+                    if st.button("Save new draft revision", key=f"draft-save-{scheme_id}"):
+                        edited = dict(draft)
+                        edited["draft"] = {
+                            **payload,
+                            "applicant_reference": reference,
+                            "district": district,
+                        }
+                        try:
+                            drafts[scheme_id] = save_application_progress(
+                                edit_application_draft(conversation_id, edited)
+                            )
+                            flow_state["edit_mode"] = False
+                            flow_state["error"] = None
+                        except ApplicationApiError as error:
+                            flow_state["error"] = str(error)
+                        st.rerun()
+                else:
+                    if st.button("Edit draft", key=f"draft-edit-{scheme_id}"):
+                        flow_state["edit_mode"] = True
+                        st.rerun()
+                    if st.button(
+                        "Approve this exact draft",
+                        disabled=draft["approved"],
+                        key=f"draft-approve-{scheme_id}",
+                    ):
+                        try:
+                            drafts[scheme_id] = save_application_progress(
+                                decide_application_draft(conversation_id, draft, "approve")
+                            )
+                            flow_state["error"] = None
+                        except ApplicationApiError as error:
+                            flow_state["error"] = str(error)
+                        st.rerun()
+                    if st.button("Reject draft", key=f"draft-reject-{scheme_id}"):
+                        try:
+                            drafts[scheme_id] = save_application_progress(
+                                decide_application_draft(conversation_id, draft, "reject")
+                            )
+                            flow_state["error"] = None
+                        except ApplicationApiError as error:
+                            flow_state["error"] = str(error)
+                        st.rerun()
+                    if draft["approved"] and st.button(
+                        "Submit approved draft to mock portal",
+                        type="primary",
+                        key=f"draft-submit-{scheme_id}",
+                    ):
+                        try:
+                            drafts[scheme_id] = save_application_progress(
+                                decide_application_draft(conversation_id, draft, "submit")
+                            )
+                            flow_state["error"] = None
+                        except ApplicationApiError as error:
+                            flow_state["error"] = str(error)
+                        st.rerun()
+        if flow_state.get("error"):
+            st.error(flow_state["error"])
 
 
 def render_plan(plan_detail: dict | None, text: dict[str, str]) -> None:
@@ -777,6 +996,8 @@ def render_interview(
     result = st.session_state.interview_result
     if result:
         render_verdict(result, scheme_id, text)
+        if result["result"] == "eligible":
+            render_application_flow(scheme_id, text)
     elif st.session_state.interview_message:
         # No verdict, e.g. the scheme has no reviewed rules.
         st.warning(st.session_state.interview_message)
@@ -1186,7 +1407,6 @@ if st.session_state.api_error:
     st.error(f'{text["api_error"]}: {st.session_state.api_error}')
 
 if st.session_state.selected_result and st.session_state.api_result:
-    selected = provider.get_scenario(st.session_state.selected_result)
     verdict = st.session_state.api_result
     display_result = API_RESULT_TO_UI[verdict["result"]]
     icon, message_kind = RESULT_PRESENTATION[display_result]
@@ -1230,131 +1450,8 @@ if st.session_state.selected_result and st.session_state.api_result:
         text["source"],
         str(provider.rule_package.source.source_url),
     )
-    st.info(text["documents"])
-
-    if (
-        verdict["result"] == "eligible"
-        and selected.application_draft is not None
-    ):
-        draft_template = selected.application_draft
-        if st.button(text["prepare"]):
-            st.session_state.draft_scenario_id = selected.scenario_id
-            st.session_state.draft_reference = (
-                draft_template.applicant_reference
-            )
-            st.session_state.draft_district = draft_template.district
-            st.session_state.approved_fingerprint = None
-            st.session_state.draft_edit_mode = False
-            st.session_state.draft_submitted = False
-            st.session_state.rejected_draft = False
-            st.rerun()
-
-        if st.session_state.get("draft_scenario_id") == selected.scenario_id:
-            st.divider()
-            st.subheader(text["application"])
-
-            st.text_input(
-                text["reference"],
-                key="draft_reference",
-                disabled=not st.session_state.draft_edit_mode,
-            )
-            st.text_input(
-                text["district"],
-                key="draft_district",
-                disabled=not st.session_state.draft_edit_mode,
-            )
-            st.write(
-                {
-                    text["age"]: draft_template.age,
-                    text["date_of_birth"]: (
-                        draft_template.date_of_birth.isoformat()
-                    ),
-                    text["application_date"]: (
-                        draft_template.application_date.isoformat()
-                    ),
-                    text["widow"]: text["yes"],
-                    text["bpl"]: text[draft_template.bpl_status],
-                }
-            )
-            st.markdown(f'**{text["declaration"]}**')
-            st.write(localize(draft_template.declaration, locale))
-
-            current_draft = draft_template.model_copy(
-                update={
-                    "applicant_reference": st.session_state.draft_reference,
-                    "district": st.session_state.draft_district,
-                }
-            )
-            current_fingerprint = draft_fingerprint(current_draft)
-            st.caption(
-                f'{text["fingerprint"]}: '
-                f'`{current_fingerprint[:16]}…`'
-            )
-
-            if (
-                st.session_state.approved_fingerprint is not None
-                and not approval_matches(
-                    st.session_state.approved_fingerprint,
-                    current_draft,
-                )
-            ):
-                # Any edit invalidates approval before mock submission is offered.
-                st.session_state.approved_fingerprint = None
-                st.session_state.draft_submitted = False
-                st.warning(text["invalidated"])
-
-            actions = st.columns(3)
-            if not st.session_state.draft_edit_mode:
-                if actions[0].button(
-                    text["edit"], use_container_width=True
-                ):
-                    st.session_state.draft_edit_mode = True
-                    st.rerun()
-            elif actions[0].button(
-                text["save"], use_container_width=True
-            ):
-                st.session_state.draft_edit_mode = False
-                st.session_state.approved_fingerprint = None
-                st.session_state.draft_submitted = False
-                st.rerun()
-
-            if actions[1].button(
-                text["approve"],
-                use_container_width=True,
-                disabled=st.session_state.draft_edit_mode,
-            ):
-                st.session_state.approved_fingerprint = (
-                    current_fingerprint
-                )
-                st.session_state.rejected_draft = False
-                st.session_state.draft_submitted = False
-                st.rerun()
-
-            if actions[2].button(
-                text["reject"], use_container_width=True
-            ):
-                st.session_state.approved_fingerprint = None
-                st.session_state.rejected_draft = True
-                st.session_state.draft_submitted = False
-                st.rerun()
-
-            if st.session_state.rejected_draft:
-                st.error(text["rejected"])
-            elif approval_matches(
-                st.session_state.approved_fingerprint,
-                current_draft,
-            ):
-                st.success(text["approved"])
-                if st.button(
-                    text["submit"],
-                    type="primary",
-                    disabled=st.session_state.draft_submitted,
-                ):
-                    st.session_state.draft_submitted = True
-                    st.rerun()
-
-            if st.session_state.draft_submitted:
-                st.success(text["submitted"])
+    if verdict["result"] == "eligible":
+        render_application_flow(fixtures.policy.scheme_id, text)
 
 st.divider()
 st.caption(text["footer"])

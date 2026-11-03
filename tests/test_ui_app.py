@@ -472,3 +472,64 @@ def test_refresh_with_forgotten_conversation_cleans_url() -> None:
         assert any(
             button.label == "Search schemes" for button in app.button
         )
+
+
+def test_document_action_updates_supervisor_plan_and_restores_checklist() -> None:
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    conversation_id = uuid4()
+    assessment = {
+        "scheme_id": "IGNWPS-MH",
+        "status": "unknown_items",
+        "demo_only": True,
+        "requirements": [{
+            "document_id": "identity_proof",
+            "label": "Identity proof (synthetic demo item)",
+            "status": "unknown",
+        }],
+    }
+    document_plan = Plan(steps=[PlanStep(
+        step_id="documents", specialist="documents",
+        goal="Check the document checklist", status="done",
+    )]).model_dump(mode="json")
+    saved = JourneyResponse(
+        conversation_id=conversation_id,
+        plan="Check the scheme",
+        status="eligible",
+        message="Eligible under the mock rules.",
+        eligibility_result=EligibilityResponse(
+            scheme_id="IGNWPS-MH", result="eligible",
+            reason="Eligible under the mock rules.",
+            deciding_rule_ids=[], evidence=[],
+        ),
+        candidate_scheme_ids=["IGNWPS-MH"],
+        candidate_verdicts={"IGNWPS-MH": CandidateVerdict(
+            scheme_id="IGNWPS-MH", result="eligible"
+        )},
+        document_assessments={"IGNWPS-MH": assessment},
+    )
+
+    with patch(
+        "src.ui.api_client.get_journey_state", return_value=saved
+    ), patch(
+        "src.ui.api_client.list_application_drafts", return_value=[]
+    ), patch(
+        "src.ui.api_client.assess_documents",
+        return_value={**assessment, "plan_detail": document_plan},
+    ) as assess:
+        app = AppTest.from_file(app_path)
+        app.query_params["conversation"] = str(conversation_id)
+        app.query_params["scheme"] = "IGNWPS-MH"
+        app.run()
+        assert not app.exception
+        assert any(
+            item.label == "Identity proof (synthetic demo item)"
+            for item in app.selectbox
+        )
+        next(
+            button for button in app.button
+            if button.label == "Load demo document checklist"
+        ).click().run()
+        assert not app.exception
+        assess.assert_called_once_with(str(conversation_id), "IGNWPS-MH")
+        assert app.session_state.journey_plan_detail == document_plan
+        assert any("Check the document checklist" in item.value for item in app.markdown)

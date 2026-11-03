@@ -3,6 +3,8 @@
 from mcp.server import MCPServer
 
 from src.mcp_servers.tools.eligibility import register_tools as register_eligibility
+from src.mcp_servers.tools.applications import register_tools as register_applications
+from src.mcp_servers.tools.documents import register_tools as register_documents
 from src.mcp_servers.tools.scheme_search import register_tools as register_scheme_search
 
 
@@ -10,6 +12,8 @@ from src.mcp_servers.tools.scheme_search import register_tools as register_schem
 mcp = MCPServer("scheme-saathi")
 register_eligibility(mcp)
 register_scheme_search(mcp)
+register_documents(mcp)
+register_applications(mcp)
 
 
 if __name__ == "__main__":

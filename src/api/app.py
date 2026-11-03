@@ -16,6 +16,13 @@ from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
 from src.config import PROJECT_ROOT
 from src.api.eligibility import EligibilityResponse
+from src.api.applications import (
+    DocumentAssessmentRequest,
+    DraftApprovalRequest,
+    DraftCreateRequest,
+    DraftEditRequest,
+    call_application_tool,
+)
 from src.api.scheme_search import SchemePassage
 from src.rules.data_provider import RulePackageProvider
 from src.rules.models import HouseholdProfile
@@ -24,8 +31,12 @@ from src.workflow.eligibility import (
     evaluate_eligibility,
 )
 from src.workflow.errors import MCPToolError
+from src.workflow.application_gate import (
+    application_gate_thread_id,
+)
 from src.workflow.intake import IntakeAgentError
 from src.workflow.journey import (
+    ApplicationTaskError,
     JourneyMessage,
     JourneyCorrection,
     JourneyNotWaitingError,
@@ -36,11 +47,86 @@ from src.workflow.journey import (
     get_journey,
     resume_journey,
     run_journey,
+    run_application_task,
 )
+from src.workflow.state import ApplicationOperation
 from src.workflow.scheme_search import search_scheme_passages
 
 
 logger = logging.getLogger(__name__)
+
+
+async def _dispatch_application_task(
+    request: Request,
+    conversation_id: UUID,
+    operation: ApplicationOperation,
+    arguments: dict,
+) -> dict:
+    """Keep HTTP translation here; the supervisor owns specialist execution."""
+
+    try:
+        return await run_application_task(
+            request.app.state.journey_graph, conversation_id, operation, arguments
+        )
+    except ApplicationTaskError as error:
+        raise HTTPException(
+            status_code=error.status_code, detail=error.detail
+        ) from error
+
+
+async def _application_state(
+    request: Request,
+    conversation_id: UUID,
+    scheme_id: str,
+) -> tuple[dict, HouseholdProfile]:
+    """Require a saved, current eligible result and return its profile."""
+
+    snapshot = await request.app.state.journey_graph.aget_state(
+        {"configurable": {"thread_id": str(conversation_id)}}
+    )
+    values = snapshot.values
+    if not values:
+        raise HTTPException(status_code=404, detail="Conversation not found.")
+    verdict = values.get("candidate_verdicts", {}).get(scheme_id)
+    if verdict is None or verdict.get("result") != "eligible":
+        raise HTTPException(
+            status_code=409,
+            detail="This scheme has no current eligible result in this conversation.",
+        )
+    profile_data = values.get("profile")
+    if not profile_data:
+        raise HTTPException(
+            status_code=409,
+            detail="A completed profile is required for a mock application.",
+        )
+    try:
+        profile = HouseholdProfile.model_validate(profile_data)
+    except Exception as error:
+        logger.exception("Saved journey profile could not be validated")
+        raise HTTPException(status_code=409, detail="The saved profile is invalid.") from error
+    return values, profile
+
+
+async def _get_mock_draft(
+    request: Request,
+    conversation_id: UUID,
+    draft_id: str,
+) -> dict:
+    record = await call_application_tool(
+        request.app.state.mcp_client,
+        "mock_portal",
+        {
+            "action": "get_draft",
+            "journey_id": str(conversation_id),
+            "draft_id": draft_id,
+        },
+    )
+    if record.get("not_found"):
+        raise HTTPException(
+            status_code=404,
+            detail="Draft not found for this conversation.",
+        )
+    return record
 
 
 @asynccontextmanager
@@ -75,6 +161,11 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         )
     )
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
+    application_db_path = Path(os.getenv(
+        "SCHEME_SAATHI_APPLICATION_DB",
+        str(PROJECT_ROOT / "data" / "runtime" / "applications.sqlite3"),
+    ))
+    application_db_path.parent.mkdir(parents=True, exist_ok=True)
     checkpoint_connection = await aiosqlite.connect(checkpoint_path)
     checkpointer = AsyncSqliteSaver(checkpoint_connection)
     await checkpointer.setup()
@@ -88,6 +179,7 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         env={
             "SCHEME_SAATHI_DISABLE_DOTENV": "1",
             "SCHEME_SAATHI_RERANKER": "openrouter",
+            "SCHEME_SAATHI_APPLICATION_DB": str(application_db_path),
             "OPENBLAS_NUM_THREADS": "1",
             **{
                 name: value
@@ -327,6 +419,225 @@ async def journey_state(
     return response
 
 
+@app.post("/api/v1/journey/{conversation_id}/documents")
+async def assess_application_documents(
+    conversation_id: UUID,
+    assessment: DocumentAssessmentRequest,
+    request: Request,
+) -> dict:
+    """Check user-reported synthetic document metadata for an eligible scheme."""
+
+    await _application_state(request, conversation_id, assessment.scheme_id)
+    if assessment.scheme_id not in request.app.state.rule_packages:
+        raise HTTPException(status_code=409, detail="This scheme is information-only.")
+    try:
+        result = await _dispatch_application_task(
+            request, conversation_id, "check_documents",
+            {
+                "scheme_id": assessment.scheme_id,
+                "documents": assessment.documents,
+            },
+        )
+        return result
+    except MCPToolError as error:
+        logger.exception("Document checklist MCP tool failed")
+        raise HTTPException(
+            status_code=502,
+            detail="The document checklist is unavailable.",
+        ) from error
+
+
+@app.post("/api/v1/journey/{conversation_id}/drafts")
+async def create_application_draft(
+    conversation_id: UUID,
+    draft_request: DraftCreateRequest,
+    request: Request,
+) -> dict:
+    """Create a mock draft only after current eligibility and demo documents pass."""
+
+    await _application_state(
+        request, conversation_id, draft_request.scheme_id
+    )
+    package = request.app.state.rule_packages.get(draft_request.scheme_id)
+    if package is None:
+        raise HTTPException(status_code=409, detail="This scheme is information-only.")
+    try:
+        created = await _dispatch_application_task(
+            request, conversation_id, "create_draft",
+            {
+                "scheme_id": draft_request.scheme_id,
+                "documents": draft_request.documents,
+                "applicant_reference": draft_request.applicant_reference,
+                "district": draft_request.district,
+            },
+        )
+        return created
+    except HTTPException:
+        raise
+    except MCPToolError as error:
+        logger.exception("Mock application draft MCP tool failed")
+        raise HTTPException(
+            status_code=502,
+            detail="The mock application service is unavailable.",
+        ) from error
+
+
+@app.get("/api/v1/journey/{conversation_id}/drafts")
+async def list_application_drafts(
+    conversation_id: UUID,
+    request: Request,
+) -> dict:
+    """List saved mock drafts for a conversation after refresh."""
+
+    try:
+        return await call_application_tool(
+            request.app.state.mcp_client,
+            "mock_portal",
+            {
+                "action": "list_drafts",
+                "journey_id": str(conversation_id),
+            },
+        )
+    except MCPToolError as error:
+        logger.exception("Could not list mock application drafts")
+        raise HTTPException(
+            status_code=502,
+            detail="The mock application service is unavailable.",
+        ) from error
+
+
+@app.get("/api/v1/journey/{conversation_id}/drafts/{draft_id}")
+async def get_application_draft(
+    conversation_id: UUID,
+    draft_id: str,
+    request: Request,
+) -> dict:
+    """Load a persisted draft only within its owning conversation."""
+
+    try:
+        return await _get_mock_draft(request, conversation_id, draft_id)
+    except MCPToolError as error:
+        raise HTTPException(
+            status_code=502,
+            detail="The mock application service is unavailable.",
+        ) from error
+
+
+@app.put("/api/v1/journey/{conversation_id}/drafts/{draft_id}")
+async def edit_application_draft(
+    conversation_id: UUID,
+    draft_id: str,
+    edit: DraftEditRequest,
+    request: Request,
+) -> dict:
+    """Save an allowlisted edit as a new revision and clear any old approval."""
+
+    try:
+        record = await _get_mock_draft(request, conversation_id, draft_id)
+        if edit.revision != record["revision"]:
+            raise HTTPException(status_code=409, detail="The draft revision is stale.")
+        _, profile = await _application_state(
+            request, conversation_id, record["scheme_id"]
+        )
+        package = request.app.state.rule_packages.get(record["scheme_id"])
+        if (
+            package is None
+            or record["draft"].get("profile") != profile.model_dump(mode="json")
+            or record["draft"].get("rule_package_version") != package.package_version
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail="Answers or scheme rules changed. Create a new draft.",
+            )
+        edited = await _dispatch_application_task(
+            request, conversation_id, "edit_draft",
+            {
+                "draft_id": draft_id,
+                "revision": edit.revision,
+                "applicant_reference": edit.applicant_reference,
+                "district": edit.district,
+            },
+        )
+        return edited
+    except HTTPException:
+        raise
+    except MCPToolError as error:
+        raise HTTPException(
+            status_code=409,
+            detail="The draft could not be edited; reload it and try again.",
+        ) from error
+
+
+@app.post("/api/v1/journey/{conversation_id}/drafts/{draft_id}/approval")
+async def update_application_approval(
+    conversation_id: UUID,
+    draft_id: str,
+    decision: DraftApprovalRequest,
+    request: Request,
+) -> dict:
+    """Approve, reject or submit only the exact current synthetic draft."""
+
+    try:
+        record = await _get_mock_draft(request, conversation_id, draft_id)
+        if (
+            decision.revision != record["revision"]
+            or decision.fingerprint != record["fingerprint"]
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail="The draft changed. Reload and review it before continuing.",
+            )
+        if decision.action == "submit" and not record["approved"]:
+            raise HTTPException(
+                status_code=409,
+                detail="Approve this exact draft before submitting it.",
+            )
+        if decision.action == "approve" and (
+            record["rejected"] or record["receipt_id"]
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail="This draft cannot be approved in its current state.",
+            )
+        if decision.action != "reject":
+            _, profile = await _application_state(
+                request, conversation_id, record["scheme_id"]
+            )
+            draft = record["draft"]
+            package = request.app.state.rule_packages.get(record["scheme_id"])
+            if package is None or draft.get("rule_package_version") != package.package_version:
+                raise HTTPException(
+                    status_code=409,
+                    detail="Scheme rules changed. Create and review a new draft.",
+                )
+            if draft.get("profile") != profile.model_dump(mode="json"):
+                raise HTTPException(
+                    status_code=409,
+                    detail="Your answers changed. Recheck eligibility and create a new draft.",
+                )
+        return await _dispatch_application_task(
+            request, conversation_id, decision.action,
+            {
+                "draft_id": draft_id,
+                "revision": decision.revision,
+                "fingerprint": decision.fingerprint,
+                "scheme_id": record["scheme_id"],
+                "documents": {
+                    item["document_id"]: item["status"]
+                    for item in record["draft"].get("documents", [])
+                },
+            },
+        )
+    except HTTPException:
+        raise
+    except MCPToolError as error:
+        logger.exception("Mock application approval MCP tool failed")
+        raise HTTPException(
+            status_code=502,
+            detail="The mock application service is unavailable.",
+        ) from error
+
+
 @app.delete("/api/v1/journey/{conversation_id}", status_code=204)
 async def forget_journey(conversation_id: str, request: Request) -> None:
     """Delete the synthetic conversation's persisted graph checkpoints."""
@@ -337,5 +648,28 @@ async def forget_journey(conversation_id: str, request: Request) -> None:
         raise HTTPException(
             status_code=422,
             detail="conversation_id must be a UUID.",
+        ) from error
+    try:
+        drafts = await call_application_tool(
+            request.app.state.mcp_client,
+            "mock_portal",
+            {"action": "list_drafts", "journey_id": conversation_id},
+        )
+        await _dispatch_application_task(
+            request, UUID(conversation_id), "delete_journey", {},
+        )
+        for draft in drafts.get("drafts", []):
+            for revision in range(1, draft["revision"] + 1):
+                thread_id = application_gate_thread_id(
+                    conversation_id, draft["draft_id"], revision
+                )
+                await request.app.state.journey_checkpointer.adelete_thread(
+                    thread_id
+                )
+    except MCPToolError as error:
+        logger.exception("Could not clear mock application data")
+        raise HTTPException(
+            status_code=502,
+            detail="The mock application service could not clear this session.",
         ) from error
     await request.app.state.journey_checkpointer.adelete_thread(conversation_id)

@@ -27,12 +27,43 @@ Rules for every phase:
 
 | Phase | Backend | What you see in the UI | Status |
 |---|---|---|---|
-| 1. Base | Shared typed models; one rule engine for both schemes; PM-KISAN through MCP and the graph | Same screens; PM-KISAN uses the same path as widow pension | Built; awaiting UI test |
-| 2. Supervisor and intake | Supervisor makes a plan; intake asks one question at a time | Chat box instead of fixture form; plan panel | Built; awaiting UI test |
-| 3. Multi-scheme and replan | Eligibility checks every candidate; plan changes when a result contradicts it | Verdict list for all schemes; replan trace | Built and end-to-end smoke-tested for the two-scheme pilot; broader-catalogue retrieval evaluation needs more reviewed data |
-| 4. Documents and approval | Document checker; application agent pauses with `interrupt()` | Document checklist; approve, edit or reject the exact draft | Not started |
+| 1. Base | Shared typed models; one rule engine for both schemes; PM-KISAN through MCP and the graph | Same screens; PM-KISAN uses the same path as widow pension | Built; automated regression checks pass; manual UI gate pending |
+| 2. Supervisor and intake | Supervisor makes a plan; intake asks one question at a time | Chat box instead of fixture form; plan panel | Built; automated regression checks pass; manual UI gate pending |
+| 3. Multi-scheme and replan | Eligibility checks every candidate; plan changes when a result contradicts it | Verdict list for all schemes; replan trace | Built; pilot smoke test previously reported; not signed off while earlier gates remain open; broader retrieval evaluation pending |
+| 4. Documents and approval | Document checker; application agent pauses with `interrupt()` | Document checklist; approve, edit or reject the exact draft | Built locally, uncommitted; automated regression checks pass; manual UI gate and earlier sign-offs pending |
 | 5. Guardrails and evaluation | Input/output checks; refer can't-tell cases to a human; planned vs fixed question order | Warnings and referral notice | Not started |
 | 6. Polish and demo | Resume after crash; Citizen/CSC mode; docs | Resume a session; CSC mode works | Not started |
+
+### Gate reconciliation — 2026-11-03
+
+Later implementation started before Phase 1 and 2 UI sign-offs were recorded.
+This does not satisfy the phase-order rule above. Keep the existing work, but
+do not treat implementation or automated tests as manual acceptance. Pause new
+phase work until the earlier UI gates have been checked and signed off in order.
+
+Local compilation and the full offline suite passed on 2026-11-03:
+`python -m compileall -q src` and
+`python -B -m pytest -q -x -p no:cacheprovider --disable-warnings`
+(196 passed). These results cover the current local worktree, not a pushed
+commit. The GitHub validation script stopped because the worktree is dirty;
+no cloud validation or deployment was performed.
+
+The table below maps the Phase 1 and 2 checklist items to existing automated
+evidence. Streamlit AppTest uses mocked backend responses; graph/API tests
+exercise separate layers. Neither is a manual browser walkthrough of the
+running UI and API together. All nine manual checklist items remain pending.
+
+| Checklist item | Existing automated evidence | Manual check still needed |
+|---|---|---|
+| Phase 1: widow search and result | `tests/test_ui_app.py::test_evaluating_result_without_prepared_draft_does_not_raise` | Search, choose IGNWPS-MH and compare the displayed result with its synthetic baseline. |
+| Phase 1: PM-KISAN search and mock notice | `tests/test_ui_app.py::test_pmkisan_continue_opens_chat_that_asks_then_shows_verdict`; `tests/test_api_eligibility.py::test_pmkisan_journey_uses_graph_and_mcp_rule_engine` | Complete the running search/chat flow and inspect the mock/currentness notice. |
+| Phase 1: failed PM-KISAN rule | `tests/test_journey_graph.py::test_failed_rule_stops_the_questions_early`; `tests/test_api_eligibility.py::test_pmkisan_evaluation_flags_reported_2020_exclusion` | Confirm the UI shows `not_eligible` with the deciding rule ID. |
+| Phase 1: widow draft, approval and submission | `tests/test_api_applications.py::test_synthetic_application_requires_exact_approval` | Complete the checklist, review, approve and submit through the UI; confirm the mock receipt. |
+| Phase 2: one question at a time | `tests/test_journey_graph.py::test_interview_asks_one_question_at_a_time_until_eligible`; PM-KISAN AppTest above | Answer questions in the running UI for both schemes. |
+| Phase 2: plan updates | `tests/test_journey_graph.py::test_interview_plan_is_visible_while_waiting`; PM-KISAN AppTest above | Inspect the plan after each answer and when eligibility finishes. |
+| Phase 2: stop at a verdict with evidence | `tests/test_journey_graph.py::test_failed_rule_stops_the_questions_early`; `tests/test_api_eligibility.py::test_response_includes_official_source_citation` | Confirm questions stop and the UI displays rule IDs and evidence. |
+| Phase 2: unknown answers terminate | `tests/test_journey_graph.py::test_dont_know_is_not_asked_again_and_ends_with_missing_facts` | Answer "I don't know"; confirm no loop and visible missing facts. |
+| Phase 2: refresh resumes | `tests/test_ui_app.py::test_refresh_restores_saved_conversation_from_url`; `tests/test_journey_graph.py::test_saved_interview_can_be_reloaded_after_refresh` | Refresh the browser during an interview and continue from the same question. |
 
 ---
 
@@ -261,15 +292,19 @@ checking and application submission. These remain separate work.
 
 **Goal:** document checks and a real approval pause before submission.
 
+Code walkthrough: [PHASE4_CODE_WALKTHROUGH.md](PHASE4_CODE_WALKTHROUGH.md).
+
 Backend:
 
-- Document checker uses the MCP `doc-check` tool (synthetic metadata only). It
+- Document checker uses the MCP `check_documents` tool (synthetic metadata only). It
   reports missing items; it does not judge authenticity.
 - Application agent drafts the form. It is the only agent with write access to
   the mock portal.
 - The graph pauses with `interrupt()`. Approve, edit or reject is bound to the
   exact draft fingerprint.
-- New API: `POST /journey/{id}/approval`.
+- APIs under `/api/v1/journey/{id}`: `POST /documents`, `POST /drafts`,
+  `GET /drafts`, `GET /drafts/{draft_id}`, `PUT /drafts/{draft_id}`, and
+  `POST /drafts/{draft_id}/approval`.
 
 UI:
 
@@ -354,4 +389,5 @@ Record each phase sign-off here.
 
 | Phase | Date | Tested by | Result | Notes |
 |---|---|---|---|---|
-| | | | | |
+| 1–2 | 2026-11-03 | Copilot CLI (automated checks only) | Manual sign-off pending | Local compilation and 196 offline tests passed; checklist evidence mapped above. No manual browser acceptance recorded. |
+| 3–4 | 2026-11-03 | Copilot CLI (automated checks only) | Not signed off | Later implementation exists, but earlier gates remain open. Phase 4 is local and uncommitted; cloud validation is blocked by the dirty worktree. |

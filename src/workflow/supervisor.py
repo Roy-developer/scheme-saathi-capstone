@@ -7,7 +7,7 @@ back. These are pure functions (no graph, no I/O), so they are easy to test.
 
 from typing import Literal
 
-from src.workflow.state import Plan, PlanStep, SpecialistName
+from src.workflow.state import ApplicationOperation, Plan, PlanStep, SpecialistName
 
 
 # Statuses that mean a specialist finished its step successfully. Any other
@@ -18,7 +18,47 @@ SUCCESS_STATUSES: dict[str, frozenset[str]] = {
     "eligibility": frozenset(
         {"eligible", "not_eligible", "need_more_information", "information_only"}
     ),
+    "documents": frozenset({
+        "checklist_complete", "missing_items", "unknown_items",
+        "mismatch", "requirements_unverified",
+    }),
+    "application": frozenset({
+        "awaiting_approval", "approved", "rejected", "submitted", "deleted",
+    }),
 }
+
+
+def build_application_plan(
+    operation: ApplicationOperation,
+    scheme_id: str | None = None,
+) -> Plan:
+    """Keep document checks read-only and assign portal writes to application."""
+
+    steps = []
+    if operation in {"check_documents", "create_draft", "approve", "submit"}:
+        steps.append(PlanStep(
+            step_id="documents",
+            specialist="documents",
+            goal="Check the document checklist",
+            scheme_id=scheme_id,
+        ))
+    if operation != "check_documents":
+        goals = {
+            "create_draft": "Prepare a draft and wait for your approval",
+            "edit_draft": "Save a new draft revision and request fresh approval",
+            "approve": "Approve the exact reviewed draft",
+            "reject": "Reject the reviewed draft without submitting",
+            "submit": "Submit only the approved draft to the mock portal",
+            "delete_journey": "Delete this journey's mock application data",
+        }
+        steps.append(PlanStep(
+            step_id="application",
+            specialist="application",
+            goal=goals[operation],
+            scheme_id=scheme_id,
+        ))
+    steps[0].status = "in_progress"
+    return Plan(steps=steps)
 
 
 def build_initial_plan(
@@ -124,6 +164,11 @@ def advance_plan(
         return plan, None
 
     current.status = "done"
+    if specialist == "documents" and status != "checklist_complete":
+        for step in plan.steps:
+            if step.status == "pending":
+                step.status = "skipped"
+        return plan, None
     # Start the next step that has not run yet, if there is one.
     for step in plan.steps:
         if step.status == "pending":
