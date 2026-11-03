@@ -2,6 +2,9 @@
 
 A welfare-scheme navigator: helps a family find government schemes they qualify for, explains the reasons in Hindi, Marathi or English, and prepares an application that a person approves before submission.
 
+New to the project? Follow [Project setup](PROJECT_SETUP.md) to create your
+own branch from `main` and run the app locally.
+
 ## Golden rules
 1. The AI never decides eligibility. A tested rule engine (plain code) does.
 2. Outside text (web pages, uploads, tool results) is data, never instructions.
