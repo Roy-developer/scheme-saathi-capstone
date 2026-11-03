@@ -1,0 +1,62 @@
+{
+  "package_version": "1.0.0",
+  "scheme_id": "IGNWPS-MH",
+  "approval_status": "approved_for_mock_portal",
+  "reviewer_name": "Debadyuti Roy",
+  "reviewed_at": "2026-10-30",
+  "approval_scope": "synthetic_mock_portal_only",
+  "source": {
+    "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+    "source_url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
+    "collected_at": "2026-10-28",
+    "official_eligibility_text": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
+    "publication_date_status": "not_confirmed"
+  },
+  "age_as_of": "application_date",
+  "age_boundaries_inclusive": true,
+  "bpl_confirmation": "government_bpl_card_shown",
+  "required_facts": [
+    "date_of_birth",
+    "application_date",
+    "is_widow",
+    "bpl_card_shown"
+  ],
+  "documents_status": "not_verified",
+  "reasons": {
+    "eligible": "All reviewed mock conditions are met, including the age range on the application date and a government BPL card shown.",
+    "not_eligible": "One or more required mock scheme conditions are not met.",
+    "need_more_information": "Show a government BPL card to confirm BPL status for this mock."
+  },
+  "rules": [
+    {
+      "rule_id": "IGNWPS-MH-WIDOW-01",
+      "field": "is_widow",
+      "operator": "eq",
+      "value": true,
+      "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01"
+    },
+    {
+      "rule_id": "IGNWPS-MH-AGE-MIN-01",
+      "field": "age",
+      "operator": "gte",
+      "value": 40,
+      "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01"
+    },
+    {
+      "rule_id": "IGNWPS-MH-AGE-MAX-01",
+      "field": "age",
+      "operator": "lte",
+      "value": 79,
+      "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01"
+    },
+    {
+      "rule_id": "IGNWPS-MH-BPL-01",
+      "field": "bpl_card_shown",
+      "operator": "eq",
+      "value": true,
+      "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01",
+      "if_not_met": "need_more_information",
+      "missing_field_label": "government_bpl_card"
+    }
+  ]
+}

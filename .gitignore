@@ -5,5 +5,7 @@ __pycache__/
 .index/
 .cache/
 *.sqlite
+*.sqlite3
 *.db
+data/runtime/
 data/heldout/

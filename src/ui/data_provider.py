@@ -4,6 +4,8 @@ import json
 from importlib import resources
 from pathlib import Path
 
+from src.rules.data_provider import RulePackageProvider
+from src.rules.models import RulePackage
 from src.ui.models import DevelopmentScenario, FixtureSet
 
 
@@ -23,13 +25,33 @@ class FixtureDataProvider:
             fixture_text = fixture_path.read_text(encoding="utf-8")
 
         payload = json.loads(fixture_text)
+
         self._fixtures = FixtureSet.model_validate(payload)
+        self._rule_package = RulePackageProvider().get(
+            self._fixtures.policy.scheme_id
+        )
+        known_rules = {rule.rule_id for rule in self._rule_package.rules}
+        for scenario in self._fixtures.scenarios:
+            unknown_rules = (
+                set(scenario.expected_verdict.deciding_rule_ids) - known_rules
+            )
+            if unknown_rules:
+                raise ValueError(
+                    f"{scenario.scenario_id} references unknown rules: "
+                    f"{sorted(unknown_rules)}"
+                )
 
     @property
     def fixtures(self) -> FixtureSet:
         """Return the fully validated fixture set."""
 
         return self._fixtures
+
+    @property
+    def rule_package(self) -> RulePackage:
+        """Return the validated package matching the UI demonstration scheme."""
+
+        return self._rule_package
 
     def visible_scenarios(self) -> list[DevelopmentScenario]:
         """Return only scenarios intentionally exposed in the demonstration UI."""

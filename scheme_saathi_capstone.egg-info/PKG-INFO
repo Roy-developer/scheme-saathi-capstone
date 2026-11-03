@@ -1,0 +1,7 @@
+Metadata-Version: 2.4
+Name: scheme-saathi-capstone
+Version: 0.1.0
+Summary: Scheme Saathi capstone application
+Requires-Python: >=3.11
+Requires-Dist: streamlit<2,>=1.40
+Requires-Dist: mcp<3,>=2

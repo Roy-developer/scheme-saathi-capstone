@@ -1,4 +1,4 @@
-"""Verify the shared API exposes only its intended minimal contract."""
+"""Verify operational endpoints retained alongside the journey API."""
 
 from fastapi.testclient import TestClient
 
@@ -14,7 +14,7 @@ def test_health_endpoint() -> None:
     response = client.get("/health")
 
     assert response.status_code == 200
-    assert response.json() == {"status": "healthy"}
+    assert response.json() == {"status": "ok"}
 
 
 def test_service_info_is_safe_for_shared_development(

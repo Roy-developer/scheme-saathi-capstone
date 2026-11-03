@@ -1,1 +1,1 @@
-"""Scheme Saathi API package."""
+"""Backend API for Scheme Saathi."""

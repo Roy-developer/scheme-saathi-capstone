@@ -1,9 +1,12 @@
 """Verify fixture provenance, boundary cases, and approval safety behavior."""
 
 import pytest
+from pydantic import ValidationError
 
 from src.ui.approval import approval_matches, draft_fingerprint
 from src.ui.data_provider import FixtureDataProvider
+from src.rules.data_provider import RulePackageProvider
+from src.rules.models import Rule, RulePackage
 
 
 @pytest.fixture
@@ -27,8 +30,10 @@ def test_fixture_pack_is_draft_and_synthetic(
 ) -> None:
     """Fixture metadata prevents draft personas from being treated as real data."""
 
-    assert provider.fixtures.status == "draft_pending_role_review"
+    assert provider.fixtures.status == "draft_pending_technical_review"
     assert provider.fixtures.synthetic_personas is True
+    assert provider.rule_package.reviewer_name == "Debadyuti Roy"
+    assert provider.rule_package.approval_status == "approved_for_mock_portal"
     assert all(
         scenario.profile.synthetic
         for scenario in provider.fixtures.scenarios
@@ -43,8 +48,8 @@ def test_fixture_pack_is_draft_and_synthetic(
         ("not-eligible-age-39", "not_eligible"),
         ("not-eligible-age-80", "not_eligible"),
         ("not-eligible-not-widow", "not_eligible"),
-        ("not-eligible-not-bpl", "not_eligible"),
-        ("cant-tell-bpl-unknown", "cant_tell"),
+        ("eligible-bpl-card-shown", "eligible"),
+        ("cant-tell-bpl-card-not-shown", "cant_tell"),
     ],
 )
 def test_reviewed_draft_boundary_expectations(
@@ -64,17 +69,127 @@ def test_cant_tell_case_names_missing_information(
 ) -> None:
     """Indeterminate results state which fact must be collected."""
 
-    scenario = provider.get_scenario("cant-tell-bpl-unknown")
+    scenario = provider.get_scenario("cant-tell-bpl-card-not-shown")
 
-    assert scenario.expected_verdict.missing_fields == ["bpl_status"]
+    assert scenario.profile.bpl_status == "unknown"
+    assert scenario.expected_verdict.missing_fields == ["government_bpl_card"]
 
 
-def test_policy_source_is_official_and_dated(
+@pytest.mark.parametrize(
+    ("scenario_id", "expected_age"),
+    [
+        ("eligible-age-40", 40),
+        ("eligible-age-79", 79),
+        ("not-eligible-age-39", 39),
+        ("not-eligible-age-80", 80),
+    ],
+)
+def test_fixture_age_is_calculated_on_application_date(
+    provider: FixtureDataProvider,
+    scenario_id: str,
+    expected_age: int,
+) -> None:
+    """The scenario age comes from birth date and application date."""
+
+    profile = provider.get_scenario(scenario_id).profile
+
+    assert profile.age == expected_age
+    assert profile.date_of_birth < profile.application_date
+
+
+def test_no_bpl_card_is_unknown_not_a_verified_negative(
+    provider: FixtureDataProvider,
+) -> None:
+    """Missing mock evidence requests information instead of denying eligibility."""
+
+    scenario = provider.get_scenario("cant-tell-bpl-card-not-shown")
+
+    assert scenario.profile.bpl_card_shown is False
+    assert scenario.profile.bpl_status == "unknown"
+    assert scenario.expected_verdict.result == "cant_tell"
+
+
+def test_rule_package_records_mock_approval_source_and_interpretations(
+    provider: FixtureDataProvider,
+) -> None:
+    """Rules, their provenance and mock-only approval live together."""
+
+    package = provider.rule_package
+
+    assert package.package_version == "1.0.0"
+    assert package.age_as_of == "application_date"
+    assert package.age_boundaries_inclusive is True
+    assert package.bpl_confirmation == "government_bpl_card_shown"
+    assert package.source.source_url.host == "sjsa.maharashtra.gov.in"
+    assert package.approval_scope == "synthetic_mock_portal_only"
+
+
+@pytest.mark.parametrize(
+    ("field", "operator", "value"),
+    [
+        ("age", "gte", 200),
+        ("age", "gte", True),
+        ("age", "eq", 40),
+        ("is_widow", "gte", True),
+        ("bpl_card_shown", "eq", 1),
+    ],
+)
+def test_rule_rejects_unsupported_combinations(
+    field: str,
+    operator: str,
+    value: bool | int | str,
+) -> None:
+    """Rule fields cannot use incompatible operators or value types."""
+
+    with pytest.raises(ValidationError, match="Invalid operator or value"):
+        Rule(
+            rule_id="INVALID-RULE",
+            field=field,
+            operator=operator,
+            value=value,
+            source_clause_id="TEST-SOURCE",
+        )
+
+
+def test_rule_package_rejects_duplicate_rule_ids(
+    provider: FixtureDataProvider,
+) -> None:
+    """Duplicate identifiers cannot make evidence ambiguous."""
+
+    payload = provider.rule_package.model_dump(mode="json")
+    payload["rules"][1]["rule_id"] = payload["rules"][0]["rule_id"]
+
+    with pytest.raises(ValidationError, match="Policy rule IDs must be unique"):
+        RulePackage.model_validate(payload)
+
+
+def test_rule_package_rejects_undeclared_facts_or_inconsistent_age_bounds(
+    provider: FixtureDataProvider,
+) -> None:
+    """Rules may only read declared facts, and age limits must be ordered."""
+
+    payload = provider.rule_package.model_dump(mode="json")
+    payload["required_facts"] = [
+        fact for fact in payload["required_facts"] if fact != "is_widow"
+    ]
+    with pytest.raises(ValidationError, match="missing from required_facts"):
+        RulePackage.model_validate(payload)
+
+    payload = provider.rule_package.model_dump(mode="json")
+    minimum_rule = next(
+        rule for rule in payload["rules"] if rule["operator"] == "gte"
+    )
+    minimum_rule["value"] = 80
+    with pytest.raises(ValidationError, match="Minimum age cannot exceed"):
+        RulePackage.model_validate(payload)
+
+
+def test_rule_package_source_is_official_and_dated(
     provider: FixtureDataProvider,
 ) -> None:
     """Policy evidence retains its official host and collection metadata."""
 
-    source = provider.fixtures.policy.source
+    source = provider.rule_package.source
 
     assert source.source_url.host == "sjsa.maharashtra.gov.in"
     assert source.collected_at.isoformat() == "2026-10-28"
@@ -86,8 +201,31 @@ def test_document_requirements_are_not_invented(
 ) -> None:
     """Unverified document requirements remain explicitly absent."""
 
-    assert provider.fixtures.policy.documents_status == "not_verified"
+    assert provider.rule_package.documents_status == "not_verified"
 
+
+def test_rule_package_provider_rejects_duplicate_scheme_packages(
+    provider: FixtureDataProvider,
+    tmp_path,
+) -> None:
+    """One scheme ID must resolve to exactly one package in the registry."""
+
+    package_json = provider.rule_package.model_dump_json()
+    (tmp_path / "first.json").write_text(package_json, encoding="utf-8")
+    (tmp_path / "second.json").write_text(package_json, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Duplicate rule package"):
+        RulePackageProvider(tmp_path)
+
+
+def test_one_registry_loads_every_scheme_package() -> None:
+    """Widow pension and PM-KISAN share one schema and one registry."""
+
+    packages = RulePackageProvider().packages
+
+    assert {"IGNWPS-MH", "PM-KISAN-IN"} <= set(packages)
+    assert len(packages["PM-KISAN-IN"].required_facts) == 8
+    assert packages["PM-KISAN-IN"].notice
 
 def test_eligible_demo_has_matching_application_draft(
     provider: FixtureDataProvider,
@@ -99,7 +237,8 @@ def test_eligible_demo_has_matching_application_draft(
 
     assert draft is not None
     assert draft.scheme_id == provider.fixtures.policy.scheme_id
-    assert draft.age == scenario.profile.age
+    assert draft.date_of_birth == scenario.profile.date_of_birth
+    assert draft.application_date == scenario.profile.application_date
     assert draft.bpl_status == scenario.profile.bpl_status
 
 
