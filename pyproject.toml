@@ -25,8 +25,11 @@ dependencies = [
   "uvicorn[standard]>=0.32,<1",
   # Install the MCP SDK at runtime because the API and MCP server both use it.
   "mcp>=2,<3",
-  "langgraph>=0.2,<1",
-  "langgraph-checkpoint-sqlite>=2,<4",
+  # LangChain v1 agents and middleware require LangGraph 1.x.
+  "langgraph>=1.2,<2",
+  "langgraph-checkpoint-sqlite>=2,<5",
+  "langchain>=1.4,<2",
+  "langchain-openai>=1.7,<2",
   "python-dotenv>=1,<2",
   "qdrant-client[fastembed]>=1.14,<2",
   "rank-bm25>=0.2.2,<1",
