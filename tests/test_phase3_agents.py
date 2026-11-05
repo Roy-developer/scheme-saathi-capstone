@@ -9,6 +9,8 @@ import aiosqlite
 import pytest
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
+from langgraph.store.sqlite.aio import AsyncSqliteStore
+from langgraph.store.memory import InMemoryStore
 
 from src.api.eligibility import evaluate_mock_eligibility
 from src.api.scheme_search import SchemePassage
@@ -212,8 +214,9 @@ def test_used_up_allowance_shows_a_new_conversation_message():
 
     async def scenario():
         saver = MemorySaver()
+        store = InMemoryStore()
         conversation_id = uuid4()
-        ledger = ConversationBudget(saver)
+        ledger = ConversationBudget(store)
         await ledger.load(str(conversation_id))
         await ledger.reserve({
             "model_calls": MAX_CONVERSATION_MODEL_CALLS,
@@ -222,7 +225,7 @@ def test_used_up_allowance_shows_a_new_conversation_message():
         graph = build_journey_graph(
             None, PACKAGES, eligibility_tool=forbidden,
             model_provider=Model(), eligibility_model_provider=Model(),
-            checkpointer=saver,
+            checkpointer=saver, store=store,
         )
         return await run_journey(graph, JourneyRequest(
             action="evaluate", scheme_id="IGNWPS-MH", profile=PROFILE,
@@ -445,19 +448,19 @@ def test_failed_node_search_reservation_survives_sqlite_process_restart():
     async def scenario():
         conversation_id = uuid4()
         for _ in range(MAX_DISCOVERY_CALLS):
-            async with aiosqlite.connect(database) as connection:
+            async with aiosqlite.connect(database) as connection, AsyncSqliteStore.from_conn_string(str(database)) as store:
                 graph = build_journey_graph(
                     None, PACKAGES, search_tool=crashing_search,
-                    checkpointer=AsyncSqliteSaver(connection),
+                    checkpointer=AsyncSqliteSaver(connection), store=store,
                 )
                 with pytest.raises(RuntimeError, match="Simulated interruption"):
                     await run_journey(graph, JourneyRequest(
                         action="search", query="synthetic", conversation_id=conversation_id,
                     ))
-        async with aiosqlite.connect(database) as connection:
+        async with aiosqlite.connect(database) as connection, AsyncSqliteStore.from_conn_string(str(database)) as store:
             graph = build_journey_graph(
                 None, PACKAGES, search_tool=crashing_search,
-                checkpointer=AsyncSqliteSaver(connection),
+                checkpointer=AsyncSqliteSaver(connection), store=store,
             )
             result = await run_journey(graph, JourneyRequest(
                 action="search", query="synthetic", conversation_id=conversation_id,
@@ -573,16 +576,16 @@ def test_approval_revocation_and_fresh_exact_approval_survive_sqlite_restart(mon
         except (RuntimeError, ValueError) as error:
             raise MCPToolError("Synthetic portal rejected an unsafe transition") from error
 
-    def graph_for(connection):
+    def graph_for(connection, store):
         return build_journey_graph(
             None, PACKAGES, eligibility_tool=evaluate, application_tool=portal,
-            checkpointer=AsyncSqliteSaver(connection),
+            checkpointer=AsyncSqliteSaver(connection), store=store,
         )
 
     async def scenario():
         conversation_id = uuid4()
-        async with aiosqlite.connect(database) as connection:
-            graph = graph_for(connection)
+        async with aiosqlite.connect(database) as connection, AsyncSqliteStore.from_conn_string(str(database)) as store:
+            graph = graph_for(connection, store)
             await run_journey(graph, JourneyRequest(
                 action="evaluate", scheme_id="IGNWPS-MH", profile=PROFILE,
                 conversation_id=conversation_id,
@@ -592,15 +595,15 @@ def test_approval_revocation_and_fresh_exact_approval_survive_sqlite_restart(mon
                 "draft_id", "revision", "fingerprint",
             )}}
             await run_application_task(graph, conversation_id, "approve", identity)
-        async with aiosqlite.connect(database) as connection:
-            graph = graph_for(connection)
+        async with aiosqlite.connect(database) as connection, AsyncSqliteStore.from_conn_string(str(database)) as store:
+            graph = graph_for(connection, store)
             result = await correct_journey_answer(
                 graph, conversation_id, JourneyCorrection(fact_name="bpl_card_shown", answer="don't know"),
             )
             assert result.eligibility_result.result == "need_more_information"
             assert result.dependency_version == 1
-        async with aiosqlite.connect(database) as connection:
-            graph = graph_for(connection)
+        async with aiosqlite.connect(database) as connection, AsyncSqliteStore.from_conn_string(str(database)) as store:
+            graph = graph_for(connection, store)
             result = await correct_journey_answer(
                 graph, conversation_id, JourneyCorrection(fact_name="bpl_card_shown", answer="yes"),
             )
@@ -612,8 +615,8 @@ def test_approval_revocation_and_fresh_exact_approval_survive_sqlite_restart(mon
                 "draft_id", "revision", "fingerprint",
             )}}
             await run_application_task(graph, conversation_id, "approve", fresh_identity)
-        async with aiosqlite.connect(database) as connection:
-            graph = graph_for(connection)
+        async with aiosqlite.connect(database) as connection, AsyncSqliteStore.from_conn_string(str(database)) as store:
+            graph = graph_for(connection, store)
             receipt = await run_application_task(graph, conversation_id, "submit", fresh_identity)
             repeated = await run_application_task(graph, conversation_id, "submit", fresh_identity)
             assert receipt["receipt_id"] and receipt["receipt_id"] == repeated["receipt_id"]
@@ -649,17 +652,17 @@ def test_model_call_reservation_survives_node_crash_and_sqlite_restart():
         request = JourneyRequest(
             action="evaluate", scheme_id="IGNWPS-MH", profile=PROFILE,
         )
-        async with aiosqlite.connect(database) as connection:
+        async with aiosqlite.connect(database) as connection, AsyncSqliteStore.from_conn_string(str(database)) as store:
             graph = build_journey_graph(
                 None, PACKAGES, model_provider=Model(True), eligibility_tool=evaluate,
-                checkpointer=AsyncSqliteSaver(connection),
+                checkpointer=AsyncSqliteSaver(connection), store=store,
             )
             with pytest.raises(RuntimeError, match="Simulated interruption"):
                 await run_journey(graph, request)
-        async with aiosqlite.connect(database) as connection:
+        async with aiosqlite.connect(database) as connection, AsyncSqliteStore.from_conn_string(str(database)) as store:
             graph = build_journey_graph(
                 None, PACKAGES, model_provider=Model(False), eligibility_tool=evaluate,
-                checkpointer=AsyncSqliteSaver(connection),
+                checkpointer=AsyncSqliteSaver(connection), store=store,
             )
             result = await run_journey(graph, request)
             # 1 call reserved before the crash survived the restart; the

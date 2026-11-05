@@ -13,6 +13,7 @@ from fastapi import FastAPI, HTTPException, Query, Request
 # Client connects to the MCP server; parameters explain how to launch stdio.
 from mcp import Client, StdioServerParameters
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
+from langgraph.store.sqlite.aio import AsyncSqliteStore
 
 from src.config import (
     PORTAL_URL,
@@ -47,6 +48,7 @@ from src.workflow.application_gate import (
 )
 from src.llm_client import DEFAULT_CHAT_MODEL, openrouter_chat_model
 from src.workflow.intake import IntakeAgentError
+from src.workflow.conversation_budget import BUDGET_NAMESPACE
 from src.workflow.journey import (
     ApplicationTaskError,
     JourneyMessage,
@@ -311,6 +313,11 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
     checkpoint_connection = await aiosqlite.connect(checkpoint_path)
     checkpointer = AsyncSqliteSaver(checkpoint_connection)
     await checkpointer.setup()
+    # Same SQLite file, own autocommit connection (as AsyncSqliteStore's
+    # from_conn_string opens it): per-conversation data survives restarts.
+    store_connection = await aiosqlite.connect(checkpoint_path, isolation_level=None)
+    store = AsyncSqliteStore(store_connection)
+    await store.setup()
 
     server_modules = {
         "rule-engine": "src.mcp_servers.rule_engine_server",
@@ -377,6 +384,7 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
             application.state.mcp_client = mcp_client
             application.state.mcp_services = tuple(server_modules)
             application.state.journey_checkpointer = checkpointer
+            application.state.journey_store = store
             api_key, model_name = openrouter_chat_settings(DEFAULT_CHAT_MODEL)
             # No key: every agent uses its deterministic (no-AI) path.
             model_provider = (
@@ -388,6 +396,7 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
                 model_provider=model_provider,
                 eligibility_model_provider=model_provider,
                 checkpointer=checkpointer,
+                store=store,
                 fact_registry=rule_data.registry,
                 rule_bundles=rule_data.bundles,
             )
@@ -402,6 +411,7 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         if portal_process is not None:
             stop_portal_service(portal_process)
         await checkpoint_connection.close()
+        await store_connection.close()
 
 
 app = FastAPI(
@@ -1059,9 +1069,7 @@ async def forget_journey(conversation_id: str, request: Request) -> None:
                 await request.app.state.journey_checkpointer.adelete_thread(
                     thread_id
                 )
-        await request.app.state.journey_checkpointer.adelete_thread(
-            f"budget:{conversation_id}"
-        )
+        await request.app.state.journey_store.adelete(BUDGET_NAMESPACE, conversation_id)
     except MCPToolError as error:
         raise _tool_failure(
             "The mock application service could not clear this session.",

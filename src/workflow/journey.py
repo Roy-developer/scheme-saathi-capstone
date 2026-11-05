@@ -36,6 +36,8 @@ from typing import Annotated, Any, Literal, TypedDict
 from uuid import UUID, uuid4
 
 from langgraph.checkpoint.base import BaseCheckpointSaver
+from langgraph.store.base import BaseStore
+from langgraph.store.memory import InMemoryStore
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
 from mcp import Client
@@ -507,6 +509,7 @@ def build_journey_graph(
     model_provider: BaseChatModel | None = None,
     eligibility_model_provider: BaseChatModel | None = None,
     checkpointer: BaseCheckpointSaver | None = None,
+    store: BaseStore | None = None,
     today: Callable[[], date] = date.today,
     application_tool: Callable[
         [Client, str, dict[str, Any]], Awaitable[dict[str, Any]]
@@ -2258,7 +2261,8 @@ def build_journey_graph(
     graph.add_edge("application_agent", "supervisor")
     # compile() turns the wiring into a runnable graph; the checkpointer
     # saves state after every node.
-    compiled = graph.compile(checkpointer=checkpointer)
+    # The Store keeps per-conversation data (the budget) outside the checkpoints.
+    compiled = graph.compile(checkpointer=checkpointer, store=store or InMemoryStore())
     compiled.dependency_action = dependency_action
     compiled.verify_dependencies = verify_dependencies
     compiled.journey_locks = {}
@@ -2383,7 +2387,7 @@ def _serialize_journey(function: Callable[..., Awaitable[Any]]) -> Callable[...,
         )
         lock = graph.journey_locks.setdefault(str(conversation_id), asyncio.Lock())
         async with lock:
-            ledger = ConversationBudget(graph.checkpointer)
+            ledger = ConversationBudget(graph.store)
             await ledger.load(str(conversation_id))
             token = CURRENT_BUDGET.set(ledger)
             try:

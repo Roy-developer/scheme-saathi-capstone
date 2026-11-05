@@ -13,6 +13,7 @@ from uuid import uuid4
 import aiosqlite
 import pytest
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
+from langgraph.store.sqlite.aio import AsyncSqliteStore
 
 from src.api.eligibility import evaluate_mock_eligibility
 from src.mcp_servers.tools import applications, documents
@@ -593,18 +594,18 @@ def test_model_budget_allows_safe_document_recheck_draft_and_submission_after_re
             raise MCPToolError("Synthetic response lost after portal commit")
         return result
 
-    def graph_for(connection):
+    def graph_for(connection, store):
         return build_journey_graph(
             Client(), packages, model_provider=Model(), eligibility_tool=evaluate,
             eligibility_model_provider=Model(),
-            application_tool=portal, checkpointer=AsyncSqliteSaver(connection),
+            application_tool=portal, checkpointer=AsyncSqliteSaver(connection), store=store,
             today=lambda: date(2026, 1, 1),
         )
 
     async def scenario():
         conversation_id = uuid4()
-        async with aiosqlite.connect(checkpoint) as connection:
-            graph = graph_for(connection)
+        async with aiosqlite.connect(checkpoint) as connection, AsyncSqliteStore.from_conn_string(str(checkpoint)) as store:
+            graph = graph_for(connection, store)
             journey = await run_journey(graph, JourneyRequest(
                 action="interview", scheme_id="IGNWPS-MH",
                 profile={key: value for key, value in profile.items() if key != "is_widow"},
@@ -617,8 +618,8 @@ def test_model_budget_allows_safe_document_recheck_draft_and_submission_after_re
             assert journey.status == "eligible"
             first = await run_application_task(graph, conversation_id, "check_documents", report)
             assert first["status"] == "checklist_complete"
-        async with aiosqlite.connect(checkpoint) as connection:
-            graph = graph_for(connection)
+        async with aiosqlite.connect(checkpoint) as connection, AsyncSqliteStore.from_conn_string(str(checkpoint)) as store:
+            graph = graph_for(connection, store)
             rechecked = await run_application_task(
                 graph, conversation_id, "check_documents", report,
             )
@@ -644,7 +645,7 @@ def test_model_budget_allows_safe_document_recheck_draft_and_submission_after_re
             receipt = await run_application_task(graph, conversation_id, "submit", identity)
             retry = await run_application_task(graph, conversation_id, "submit", identity)
             assert receipt["receipt_id"] and retry["receipt_id"] == receipt["receipt_id"]
-            ledger = ConversationBudget(graph.checkpointer)
+            ledger = ConversationBudget(graph.store)
             await ledger.load(str(conversation_id))
             assert ledger.values["counters"]["model_calls"] == len(calls) == 8
             assert len(calls) == MAX_CONVERSATION_MODEL_CALLS

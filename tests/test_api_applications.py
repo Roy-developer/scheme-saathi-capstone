@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 from src.api.app import _mark_changed_document_reports, app
 from src.workflow.journey import JourneyResponse
 from src.workflow.application_gate import application_gate_thread_id
-from src.workflow.conversation_budget import ConversationBudget
+from src.workflow.conversation_budget import BUDGET_NAMESPACE, ConversationBudget
 
 
 def test_saved_document_report_is_marked_stale_against_current_snapshot() -> None:
@@ -347,8 +347,10 @@ def test_synthetic_application_requires_exact_approval(tmp_path, monkeypatch) ->
             json={"scheme_id": "IGNWPS-MH", "documents": documents},
         )
         assert retained_draft.status_code == 200
+        store = client.app.state.journey_store
+
         async def seed_budgets():
-            ledger = ConversationBudget(checkpointer)
+            ledger = ConversationBudget(store)
             for identity in (conversation_id, retained_id):
                 await ledger.load(str(identity))
                 await ledger.reserve({"model_calls": 3})
@@ -364,21 +366,17 @@ def test_synthetic_application_requires_exact_approval(tmp_path, monkeypatch) ->
         monkeypatch.setattr(checkpointer, "adelete_thread", record_deleted_thread)
         forgotten = client.delete(f"/api/v1/journey/{conversation_id}")
         assert forgotten.status_code == 204
-        assert f"budget:{conversation_id}" in deleted_threads
         assert all(
             application_gate_thread_id(
                 str(conversation_id), draft["draft_id"], revision,
             ) in deleted_threads
             for revision in (1, 2)
         )
-        assert f"budget:{retained_id}" not in deleted_threads
-        assert client.portal.call(checkpointer.aget_tuple, {
-            "configurable": {"thread_id": f"budget:{conversation_id}"},
-        }) is None
-        retained_budget = client.portal.call(checkpointer.aget_tuple, {
-            "configurable": {"thread_id": f"budget:{retained_id}"},
-        })
-        assert retained_budget.checkpoint["channel_values"]["counters"]["model_calls"] == 3
+        # The forgotten conversation's budget is deleted from the Store;
+        # another conversation's budget is untouched.
+        assert client.portal.call(store.aget, BUDGET_NAMESPACE, str(conversation_id)) is None
+        retained_budget = client.portal.call(store.aget, BUDGET_NAMESPACE, str(retained_id))
+        assert retained_budget.value["counters"]["model_calls"] == 3
         assert client.get(f"/api/v1/journey/{conversation_id}").status_code == 404
         assert client.get(f"/api/v1/journey/{conversation_id}/drafts").json() == {"drafts": []}
         assert client.get(f"/api/v1/journey/{retained_id}").status_code == 200

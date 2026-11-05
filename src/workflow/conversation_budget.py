@@ -1,14 +1,21 @@
-"""Reserve conversation work durably before any external model or search call."""
+"""Reserve conversation work durably before any external model or search call.
+
+The counters live in the LangGraph ``Store`` (namespace ``("budget",)``,
+key = conversation ID), separate from the conversation's checkpoints, so a
+reservation survives even when the node that made it crashes.
+"""
 
 from contextvars import ContextVar
 from typing import TypedDict
 
-from langgraph.checkpoint.base import BaseCheckpointSaver
-from langgraph.graph import END, START, StateGraph
+from langgraph.store.base import BaseStore
+
+
+BUDGET_NAMESPACE = ("budget",)
 
 
 class BudgetState(TypedDict, total=False):
-    """A separate checkpoint stream that cannot disturb interview interrupts."""
+    """The stored record for one conversation."""
 
     counters: dict[str, int]
     attempted_facts: list[str]
@@ -17,39 +24,34 @@ class BudgetState(TypedDict, total=False):
 class ConversationBudget:
     """Keep reservations independent of a specialist node's eventual success."""
 
-    def __init__(self, checkpointer: BaseCheckpointSaver | None) -> None:
-        builder = StateGraph(BudgetState)
-        builder.add_node("reserve", lambda _state: {})
-        builder.add_edge(START, "reserve")
-        builder.add_edge("reserve", END)
-        self.graph = builder.compile(checkpointer=checkpointer)
-        self.config: dict[str, object] = {}
+    def __init__(self, store: BaseStore) -> None:
+        self.store = store
+        self.conversation_id = ""
         self.values: BudgetState = {}
 
     async def load(self, conversation_id: str) -> None:
-        """Read the durable stream at the start of a serialized request."""
+        """Read the saved record at the start of a serialized request."""
 
-        self.config = {"configurable": {"thread_id": f"budget:{conversation_id}"}}
-        snapshot = await self.graph.aget_state(self.config)
-        self.values = dict(snapshot.values)
+        self.conversation_id = conversation_id
+        item = await self.store.aget(BUDGET_NAMESPACE, conversation_id)
+        self.values = dict(item.value) if item else {}
+
+    async def _save(self) -> None:
+        await self.store.aput(BUDGET_NAMESPACE, self.conversation_id, dict(self.values))
 
     async def reserve(self, counters: dict[str, int]) -> None:
         """Save before dispatch; persistence failure prevents the external call."""
 
         updated = {**self.values.get("counters", {}), **counters}
-        await self.graph.aupdate_state(
-            self.config, {"counters": updated}, as_node="reserve",
-        )
-        self.values["counters"] = updated
+        self.values = {**self.values, "counters": updated}
+        await self._save()
 
     async def reserve_fact(self, fact: str) -> None:
         """Record one interpretation attempt even if its parent node crashes."""
 
         facts = sorted(set(self.values.get("attempted_facts", [])) | {fact})
-        await self.graph.aupdate_state(
-            self.config, {"attempted_facts": facts}, as_node="reserve",
-        )
-        self.values["attempted_facts"] = facts
+        self.values = {**self.values, "attempted_facts": facts}
+        await self._save()
 
 
 CURRENT_BUDGET: ContextVar[ConversationBudget | None] = ContextVar(
