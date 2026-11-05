@@ -8,7 +8,7 @@ import time
 from typing import TypeVar
 
 from langchain.agents import create_agent
-from langchain.agents.middleware import ModelCallLimitMiddleware
+from langchain.agents.middleware import ModelCallLimitMiddleware, PIIMiddleware, RedactionRule
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
 from langchain_core.tools import BaseTool
@@ -40,10 +40,17 @@ from src.workflow.agent_config import (
 
 
 _CallResult = TypeVar("_CallResult")
-_EMAIL_PATTERN = re.compile(r"\b[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}\b")
-_AADHAAR_PATTERN = re.compile(r"(?<!\d)(?:\d[ -]?){11}\d(?!\d)")
-_PHONE_PATTERN = re.compile(r"(?<!\d)(?:\+?91[ -]?)?[6-9]\d{9}(?!\d)")
-_LONG_NUMBER_PATTERN = re.compile(r"(?<!\d)(?:\d[ -]?){8,17}\d(?!\d)")
+# Personal identifiers, masked in this order (an Aadhaar number must be
+# caught before the shorter phone and account patterns see part of it).
+# The same rules feed PIIMiddleware for agents and mask_sensitive_text for
+# everything else (traces, intake text, search queries).
+PII_RULES = (
+    RedactionRule("email"),
+    RedactionRule("aadhaar", detector=r"(?<!\d)(?:\d[ -]?){11}\d(?!\d)"),
+    RedactionRule("phone", detector=r"(?<!\d)(?:\+?91[ -]?)?[6-9]\d{9}(?!\d)"),
+    RedactionRule("account", detector=r"(?<!\d)(?:\d[ -]?){8,17}\d(?!\d)"),
+)
+_RESOLVED_PII_RULES = tuple(rule.resolve() for rule in PII_RULES)
 
 
 class AgentSchema(BaseModel):
@@ -187,6 +194,10 @@ async def run_agent(
         tools=tools,
         system_prompt=system_prompt,
         middleware=[
+            *(
+                PIIMiddleware(rule.pii_type, detector=rule.detector, strategy="redact")
+                for rule in PII_RULES
+            ),
             ModelCallLimitMiddleware(run_limit=max_steps, exit_behavior="end"),
             ScrubbedTraceMiddleware(agent, model.model_name, trace),
             DurableBudgetMiddleware(counters, estimate_extra=system_prompt + json.dumps(
@@ -194,7 +205,7 @@ async def run_agent(
             )),
         ],
     )
-    message = mask_sensitive_text(json.dumps(dict(context), ensure_ascii=False, default=str))
+    message = json.dumps(dict(context), ensure_ascii=False, default=str)
     try:
         await graph.ainvoke({"messages": [HumanMessage(content=message)]})
     except RunStopped as stop:
@@ -224,10 +235,9 @@ async def recover_authorized_action(
 def mask_sensitive_text(text: str) -> str:
     """Mask common identifiers before free text reaches a model or trace."""
 
-    masked = _EMAIL_PATTERN.sub("[masked-email]", text)
-    masked = _AADHAAR_PATTERN.sub("[masked-id]", masked)
-    masked = _PHONE_PATTERN.sub("[masked-phone]", masked)
-    return _LONG_NUMBER_PATTERN.sub("[masked-account]", masked)
+    for rule in _RESOLVED_PII_RULES:
+        text, _matches = rule.apply(text)
+    return text
 
 
 def copy_agent_budget(budget: Mapping[str, int] | None) -> dict[str, int]:

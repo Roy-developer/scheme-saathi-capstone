@@ -336,8 +336,8 @@ def test_react_intake_observes_allowed_tool_then_confirms_each_fact(caplog):
         ]
         assert len(client.calls) == 1
         assert "observation" in provider.messages[3][-1]["content"]
-        assert "[masked-email]" in provider.messages[2][0]["content"]
-        assert "[masked-id]" in provider.messages[2][0]["content"]
+        assert "[REDACTED_EMAIL]" in provider.messages[2][0]["content"]
+        assert "[REDACTED_AADHAAR]" in provider.messages[2][0]["content"]
         trace_text = json.dumps([
             event.model_dump(mode="json") for event in journey.agent_trace
         ])
@@ -491,7 +491,7 @@ def test_search_query_rewrite_uses_the_durable_model_budget():
         ),
     ))
 
-    assert rewritten_queries == ["Need support for [masked-email]"]
+    assert rewritten_queries == ["Need support for [REDACTED_EMAIL]"]
     assert journey.agent_budget["model_calls"] == 1
     assert journey.agent_budget["agent_steps"] == 1
     assert journey.agent_trace[0].action == "rewrite_scheme_query"
@@ -871,7 +871,7 @@ def test_model_budget_survives_correction_and_same_id_process_restart():
                 "interpret_free_text_answer"
             )
             assert interpreted_replies == [
-                "My husband passed away. [masked-phone]"
+                "My husband passed away. [REDACTED_PHONE]"
             ]
             assert "9876543210" not in json.dumps([
                 event.model_dump(mode="json")

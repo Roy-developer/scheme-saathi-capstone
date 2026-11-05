@@ -461,7 +461,7 @@ def test_decimal_answer_keeps_precision_through_journey_interrupt_and_checkpoint
             for item in (value if isinstance(value, list) else [value])
         ]
         assert all(
-            item["safe_text"] == "0.[masked-account]"
+            item["safe_text"] == "0.[REDACTED_ACCOUNT]"
             for item in resume_payloads
         )
         assert all(
@@ -479,7 +479,7 @@ def test_decimal_answer_keeps_precision_through_journey_interrupt_and_checkpoint
         assert answer not in json.dumps(
             snapshot.values["conversation"], ensure_ascii=False
         )
-        assert "[masked-account]" in json.dumps(
+        assert "[REDACTED_ACCOUNT]" in json.dumps(
             snapshot.values["conversation"], ensure_ascii=False
         )
 
