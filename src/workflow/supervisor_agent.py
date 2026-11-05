@@ -3,15 +3,16 @@
 from collections.abc import Mapping
 from typing import Literal
 
-from pydantic import Field
 from langchain_core.language_models import BaseChatModel
+from langchain_core.tools import tool
+from pydantic import Field
 
 from src.workflow.agent_runtime import (
-    AgentAction,
     AgentActionError,
     AgentSchema,
     copy_agent_budget,
-    run_react_loop,
+    observation,
+    run_agent,
 )
 from src.workflow.state import Plan
 
@@ -66,7 +67,7 @@ async def propose_supervisor_plan(
     locale: Literal["en", "hi", "mr"],
     budget: Mapping[str, int] | None,
 ) -> tuple[Plan, dict[str, int], list[dict[str, object]], str]:
-    """Run the planner proposal when configured, otherwise keep the C0 plan."""
+    """Let the model reorder the plan steps; code validates every proposal."""
 
     if provider is None:
         return plan, copy_agent_budget(budget), [], "deterministic"
@@ -74,56 +75,29 @@ async def propose_supervisor_plan(
     proposed_order: list[str] = []
     proposed_valid = False
 
-    async def propose(arguments: AgentSchema) -> AgentSchema:
+    @tool(args_schema=PlanProposalArguments)
+    async def propose_plan(step_ids: list[str]) -> str:
+        """Propose an ordering of exactly the supplied plan steps."""
         nonlocal proposed_order, proposed_valid
-        if not isinstance(arguments, PlanProposalArguments):
-            raise AgentActionError("Invalid plan proposal input.")
-        validated = validate_plan_order(plan, arguments.step_ids)
-        if validated is None:
-            proposed_order = []
-            proposed_valid = False
-            return PlanProposalObservation(accepted=False, step_ids=[])
-        proposed_order = validated
-        proposed_valid = True
-        return PlanProposalObservation(accepted=True, step_ids=validated)
+        validated = validate_plan_order(plan, step_ids)
+        proposed_order = validated or []
+        proposed_valid = validated is not None
+        return observation(PlanProposalObservation(accepted=proposed_valid, step_ids=proposed_order))
 
-    async def finish(arguments: AgentSchema) -> AgentSchema:
-        if not isinstance(arguments, FinishPlanArguments) or not proposed_valid:
+    @tool(args_schema=FinishPlanArguments, return_direct=True)
+    async def finish_plan(confirm: str) -> str:
+        """Finish after observing accepted plan validation."""
+        if not proposed_valid:
             raise AgentActionError("There is no validated plan to finish.")
-        return FinishPlanObservation(finished=True)
+        return observation(FinishPlanObservation(finished=True))
 
-    result = await run_react_loop(
-        "supervisor",
-        "supervisor",
-        locale,
+    result = await run_agent(
+        provider, "supervisor", locale,
         {"valid_step_ids": [step.step_id for step in plan.steps]},
-        [
-            AgentAction(
-                "propose_plan",
-                "Propose an ordering of exactly the supplied plan steps.",
-                "supervisor",
-                PlanProposalArguments,
-                PlanProposalObservation,
-                propose,
-            ),
-            AgentAction(
-                "finish_plan",
-                "Finish after observing accepted plan validation.",
-                "supervisor",
-                FinishPlanArguments,
-                FinishPlanObservation,
-                finish,
-                terminal=True,
-            ),
-        ],
-        provider,
-        budget,
-        max_steps=2,
+        [propose_plan, finish_plan], budget, max_steps=2,
     )
     if result.status == "completed" and proposed_valid:
         by_id = {step.step_id: step for step in plan.steps}
-        plan = plan.model_copy(update={
-            "steps": [by_id[step_id] for step_id in proposed_order]
-        })
+        plan = plan.model_copy(update={"steps": [by_id[step_id] for step_id in proposed_order]})
         return plan, result.budget, result.trace, "model_validated"
     return plan, result.budget, result.trace, "deterministic_fallback"

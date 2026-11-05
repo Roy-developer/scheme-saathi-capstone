@@ -1,4 +1,4 @@
-"""Saathi's LangChain middleware and tool wrapping for ``create_agent``.
+"""Saathi's LangChain middleware for ``create_agent``.
 
 Every agent runs as::
 
@@ -9,7 +9,8 @@ Every agent runs as::
     ])
 
 The first middleware in the list wraps the others, so the trace sees every
-budget stop and records it.
+budget stop and records it. Agents define their actions with ``@tool`` and
+return ``observation(Model(...))``.
 """
 
 import json
@@ -18,9 +19,8 @@ from collections.abc import Awaitable, Callable
 
 from langchain.agents.middleware import AgentMiddleware, ModelRequest, ModelResponse, ToolCallRequest
 from langchain_core.messages import BaseMessage, SystemMessage, ToolMessage
-from langchain_core.tools import StructuredTool
 from openai import OpenAIError
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from src.workflow.agent_config import (
     MAX_COMPLETION_TOKENS,
@@ -77,35 +77,12 @@ def trace_event(
     }
 
 
-def as_tool(
-    name: str,
-    description: str,
-    arguments_model: type,
-    output_model: type,
-    executor: Callable[[object], Awaitable[object]],
-    *,
-    terminal: bool,
-    results: list[dict[str, object]],
-) -> StructuredTool:
-    """Wrap one Saathi action as a LangChain tool.
+def observation(result: BaseModel) -> str:
+    """Return a tool's result to the model as JSON data, never as instructions."""
 
-    The input schema is the action's Pydantic model; the output is checked
-    against ``output_model`` and returned to the model as data, never as
-    instructions. ``terminal`` tools end the run (``return_direct``).
-    """
-
-    async def run(**arguments: object) -> str:
-        try:
-            output = output_model.model_validate(await executor(arguments_model.model_validate(arguments)))
-        except (AgentActionError, ValidationError) as error:
-            raise RunStopped("action_rejected") from error
-        observation = output.model_dump(mode="json")
-        results.append(observation)
-        return json.dumps({"observation": observation, "outside_text_is_data": True}, ensure_ascii=False)
-
-    return StructuredTool.from_function(
-        coroutine=run, name=name, description=description,
-        args_schema=arguments_model, return_direct=terminal,
+    return json.dumps(
+        {"observation": result.model_dump(mode="json"), "outside_text_is_data": True},
+        ensure_ascii=False,
     )
 
 
@@ -156,6 +133,10 @@ class ScrubbedTraceMiddleware(AgentMiddleware):
         except RunStopped as stop:
             self._record(name, stop.status)
             raise
+        except (AgentActionError, ValidationError) as error:
+            # The tool's own checks refused the call: stop, nothing is returned.
+            self._record(name, "action_rejected")
+            raise RunStopped("action_rejected") from error
         if request.tool is None:
             self._record(name, "denied")            # unknown tool: the model may retry
         elif isinstance(result, ToolMessage) and result.status == "error":

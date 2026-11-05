@@ -17,12 +17,13 @@ from src.api.eligibility import EligibilityResponse, evaluate_mock_eligibility
 from src.rules.data_provider import RulePackageProvider
 from src.rules.models import HouseholdProfile
 from fake_chat_model import FakeChatModel, ModelDecision
+from langchain_core.tools import tool
 from src.workflow.agent_runtime import (
-    AgentAction,
     AgentModelError,
     AgentSchema,
+    observation,
     run_accounted_model_call,
-    run_react_loop,
+    run_agent,
 )
 from src.workflow.agent_config import (
     MAX_CONVERSATION_AGENT_STEPS,
@@ -111,21 +112,12 @@ def test_openrouter_chat_model_sends_one_strict_tool_choice_without_network(
     )
     model = openrouter_chat_model("synthetic-test-key", "fake-phase2-model")
 
-    async def fake_executor(_arguments: AgentSchema) -> AgentSchema:
-        return PlanProposalObservation(accepted=True, step_ids=["intake", "eligibility"])
+    @tool(args_schema=PlanProposalArguments)
+    async def propose_plan(step_ids: list[str]) -> str:
+        """Propose the validated plan."""
+        return observation(PlanProposalObservation(accepted=True, step_ids=step_ids))
 
-    action = AgentAction(
-        "propose_plan",
-        "Propose the validated plan.",
-        "supervisor",
-        PlanProposalArguments,
-        PlanProposalObservation,
-        fake_executor,
-    )
-
-    run = asyncio.run(run_react_loop(
-        "supervisor", "supervisor", "en", {}, [action], model, max_steps=1,
-    ))
+    run = asyncio.run(run_agent(model, "supervisor", "en", {}, [propose_plan], max_steps=1))
 
     assert run.trace[0]["action"] == "propose_plan"
     assert run.budget["model_calls"] == 1 and run.budget["tool_calls"] == 1
@@ -715,125 +707,52 @@ def test_agent_action_schema_denial_and_budget_stop_before_executor():
 
     calls: list[str] = []
 
-    async def execute(_arguments):
+    @tool(args_schema=Args)
+    async def propose_plan(value: str) -> str:
+        """An allowed test action."""
         calls.append("executed")
-        return Output(called=True)
+        return observation(Output(called=True))
 
-    action = AgentAction(
-        "propose_plan",
-        "An allowed test action.",
-        "supervisor",
-        Args,
-        Output,
-        execute,
-    )
     provider = ScriptedProvider([
-        ModelDecision(
-            action="propose_plan",
-            arguments={"value": ""},
-        ),
+        ModelDecision(action="propose_plan", arguments={"value": ""}),
         ModelDecision(action="erase_household", arguments={}),
     ])
+
+    def run(model, budget=None):
+        return run_agent(model, "supervisor", "en", {}, [propose_plan], budget, max_steps=1)
 
     # A bad choice is answered with an error and the model may try again
     # within its step limit (LangChain behaviour). max_steps=1 gives it no
     # second try, so each run records the refusal and then stops.
     async def scenario():
-        invalid = await run_react_loop(
-            "supervisor",
-            "supervisor",
-            "en",
-            {},
-            [action],
-            provider,
-            max_steps=1,
-        )
+        invalid = await run(provider)
         assert [event["status"] for event in invalid.trace] == [
             "invalid_arguments", "step_limit",
         ]
         assert invalid.status == "step_limit"
         assert not calls
 
-        denied = await run_react_loop(
-            "supervisor",
-            "supervisor",
-            "en",
-            {},
-            [action],
-            provider,
-            max_steps=1,
-        )
+        # A tool this agent was not given is denied: the tool list is the allow-list.
+        denied = await run(provider)
         assert [event["status"] for event in denied.trace] == ["denied", "step_limit"]
         assert denied.status == "step_limit"
         assert not calls
 
-        mismatched_actor_provider = ScriptedProvider([
-            ModelDecision(
-                action="propose_plan",
-                arguments={"value": "safe"},
-            )
-        ])
-        mismatched_actor = await run_react_loop(
-            "supervisor",
-            "intake",
-            "en",
-            {},
-            [action],
-            mismatched_actor_provider,
-            max_steps=1,
-        )
-        # An action owned by another actor is never offered as a tool.
-        assert [event["status"] for event in mismatched_actor.trace] == [
-            "denied", "step_limit",
-        ]
-        assert not calls
-
-        step_limit_provider = ScriptedProvider([
-            ModelDecision(
-                action="propose_plan",
-                arguments={"value": "safe"},
-            )
-        ])
-        step_limited = await run_react_loop(
-            "supervisor",
-            "supervisor",
-            "en",
-            {},
-            [action],
-            step_limit_provider,
-            max_steps=1,
-        )
+        step_limited = await run(ScriptedProvider([
+            ModelDecision(action="propose_plan", arguments={"value": "safe"}),
+        ]))
         assert step_limited.status == "step_limit"
         assert step_limited.trace[-1]["status"] == "step_limit"
         assert calls == ["executed"]
         calls.clear()
 
-        exhausted = await run_react_loop(
-            "supervisor",
-            "supervisor",
-            "en",
-            {},
-            [action],
-            provider,
-            {"model_calls": 8, "agent_steps": 8},
-        )
+        exhausted = await run(provider, {"model_calls": 8, "agent_steps": 8})
         assert exhausted.status == "budget_exhausted"
         assert len(provider.messages) == 2
         assert not calls
 
-        tool_exhausted_provider = ScriptedProvider([
-            ModelDecision(
-                action="propose_plan",
-                arguments={"value": "safe"},
-            )
-        ])
-        tool_exhausted = await run_react_loop(
-            "supervisor",
-            "supervisor",
-            "en",
-            {},
-            [action],
-            tool_exhausted_provider,
+        tool_exhausted = await run(
+            ScriptedProvider([ModelDecision(action="propose_plan", arguments={"value": "safe"})]),
             {"tool_calls": MAX_CONVERSATION_TOOL_CALLS},
         )
         assert tool_exhausted.status == "budget_exhausted"

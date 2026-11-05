@@ -3,13 +3,13 @@
 from collections.abc import Awaitable, Callable, Mapping
 from typing import Literal
 
-from pydantic import Field, ValidationError
 from langchain_core.language_models import BaseChatModel
+from langchain_core.tools import tool
+from pydantic import Field, ValidationError
 
 from src.api.eligibility import EligibilityResponse
 from src.workflow.agent_runtime import (
-    AgentAction, AgentActionError, AgentSchema, 
-    recover_authorized_action, run_react_loop,
+    AgentActionError, AgentSchema, observation, recover_authorized_action, run_agent,
 )
 from src.workflow.errors import MCPToolError
 
@@ -62,85 +62,76 @@ async def run_eligibility_specialist(
     budget: Mapping[str, int],
     evaluate: Callable[[], Awaitable[EligibilityResponse]],
 ) -> tuple[EligibilityResponse | None, dict[str, int], list[dict[str, object]], str]:
-    """Run a real model tool loop, preserving C0 only when no model is configured."""
+    """Let the model observe the rule engine's verdict and hand it off.
 
+    The verdict always comes from the rule engine (``evaluate``); the model
+    only chooses which observed outcome to hand off. Without a model the
+    rule engine runs directly.
+    """
+
+    task_scheme_id = scheme_id
     observed: EligibilityResponse | None = None
     attempted = False
 
-    async def check(arguments: AgentSchema) -> AgentSchema:
+    async def run_rule_check() -> EligibilityResponse | None:
+        try:
+            response = EligibilityResponse.model_validate(await evaluate())
+        except (MCPToolError, ValidationError, TypeError):
+            return None
+        return response if response.scheme_id == task_scheme_id else None
+
+    @tool(args_schema=CheckCandidate)
+    async def check_candidate(scheme_id: str) -> str:
+        """Observe the code-bound rule-engine verdict."""
         nonlocal observed, attempted
-        if not isinstance(arguments, CheckCandidate) or arguments.scheme_id != scheme_id:
+        if scheme_id != task_scheme_id:
             raise AgentActionError("Candidate is outside the specialist scope.")
         if attempted:
             raise AgentActionError("Candidate has already been checked.")
         attempted = True
-        try:
-            observed = EligibilityResponse.model_validate(await evaluate())
-        except (MCPToolError, ValidationError, TypeError):
-            observed = None
-            return VerdictObservation(scheme_id=scheme_id, status="unavailable")
-        if observed.scheme_id != scheme_id:
-            observed = None
-            return VerdictObservation(scheme_id=scheme_id, status="unavailable")
-        return VerdictObservation(
+        observed = await run_rule_check()
+        if observed is None:
+            return observation(VerdictObservation(scheme_id=task_scheme_id, status="unavailable"))
+        return observation(VerdictObservation(
             scheme_id=observed.scheme_id, result=observed.result,
             missing_fields=observed.missing_fields,
             deciding_rule_ids=observed.deciding_rule_ids,
-        )
+        ))
 
-    async def handoff(arguments: AgentSchema) -> AgentSchema:
-        if not isinstance(arguments, HandoffVerdict) or observed is None:
+    @tool(args_schema=HandoffVerdict, return_direct=True)
+    async def handoff_verdict(confirm: str) -> str:
+        """Hand off only after observing the verdict."""
+        if observed is None:
             raise AgentActionError("Observe a rule-engine verdict before handoff.")
-        return FinishedHandoff()
+        return observation(FinishedHandoff())
 
-    async def clarify(arguments: AgentSchema) -> AgentSchema:
-        if (
-            not isinstance(arguments, ClarificationRequest)
-            or observed is None or not observed.missing_fields
-        ):
+    @tool(args_schema=ClarificationRequest, return_direct=True)
+    async def request_clarification(confirm: str) -> str:
+        """Hand off the engine's missing facts for clarification."""
+        if observed is None or not observed.missing_fields:
             raise AgentActionError("Only observed missing facts can be requested.")
-        return FinishedHandoff(outcome="clarification")
+        return observation(FinishedHandoff(outcome="clarification"))
 
-    async def check_without_model() -> dict[str, object]:
-        """Run the same code-bound rule check when no model step is possible."""
-
-        nonlocal observed
-        try:
-            response = EligibilityResponse.model_validate(await evaluate())
-        except (MCPToolError, ValidationError, TypeError):
-            return {}
-        if response.scheme_id == scheme_id:
-            observed = response
-        return {}
-
-    async def refer(arguments: AgentSchema) -> AgentSchema:
-        if not isinstance(arguments, ReferralRequest) or not attempted or observed is not None:
+    @tool(args_schema=ReferralRequest, return_direct=True)
+    async def refer_for_help(confirm: str) -> str:
+        """Refer safely after a rule-tool failure; no verdict."""
+        if not attempted or observed is not None:
             raise AgentActionError("Referral needs an observed rule-tool failure.")
-        return FinishedHandoff(outcome="referral")
+        return observation(FinishedHandoff(outcome="referral"))
 
     if provider is None:
-        try:
-            result = EligibilityResponse.model_validate(await evaluate())
-        except (MCPToolError, ValidationError, TypeError):
-            result = None
-        if result is not None and result.scheme_id != scheme_id:
-            result = None
-        return result, dict(budget), [], "deterministic"
-    run = await run_react_loop(
-        "eligibility", "eligibility", locale,
-        {"scheme_id": scheme_id},
-        [
-            AgentAction("check_candidate", "Observe the code-bound rule-engine verdict.",
-                        "eligibility", CheckCandidate, VerdictObservation, check),
-            AgentAction("handoff_verdict", "Hand off only after observing the verdict.",
-                        "eligibility", HandoffVerdict, FinishedHandoff, handoff, terminal=True),
-            AgentAction("request_clarification", "Hand off the engine's missing facts for clarification.",
-                        "eligibility", ClarificationRequest, FinishedHandoff, clarify, terminal=True),
-            AgentAction("refer_for_help", "Refer safely after a rule-tool failure; no verdict.",
-                        "eligibility", ReferralRequest, FinishedHandoff, refer, terminal=True),
-        ],
-        provider, budget, max_steps=3,
+        return await run_rule_check(), dict(budget), [], "deterministic"
+    run = await run_agent(
+        provider, "eligibility", locale, {"scheme_id": task_scheme_id},
+        [check_candidate, handoff_verdict, request_clarification, refer_for_help],
+        budget, max_steps=3,
     )
+
+    async def check_without_model() -> dict[str, object]:
+        nonlocal observed
+        observed = await run_rule_check()
+        return {}
+
     # The model could not be asked (allowance used up or unavailable). The
     # verdict always comes from the rule engine, so run that check once
     # without the model; it counts against the conversation's tool budget.

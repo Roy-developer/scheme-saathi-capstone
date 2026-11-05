@@ -20,10 +20,7 @@ from src.rules.data_provider import RulePackageProvider
 from src.workflow.agent_config import MAX_CONVERSATION_MODEL_CALLS
 from src.workflow.agent_config import MAX_CONVERSATION_TOOL_CALLS
 from fake_chat_model import FakeChatModel, ModelDecision
-from src.workflow.agent_runtime import (
-    AGENT_ACTION_ALLOWLIST,
-    AgentModelError,
-)
+from src.workflow.agent_runtime import AgentModelError
 from src.workflow.errors import MCPToolError
 from src.workflow.conversation_budget import ConversationBudget
 from src.workflow.journey import (
@@ -233,7 +230,6 @@ def test_application_specialist_observes_safe_result_for_each_allowed_action(
     assert budget["tool_calls"] == 2
     assert [item["status"] for item in trace] == ["observed", "completed"]
     assert mode == "model_assisted"
-    assert AGENT_ACTION_ALLOWLIST["application"].isdisjoint({"approve", "reject"})
 
 
 def test_application_specialist_denies_spoofed_approval_and_never_reports_tool_failure_as_success():

@@ -3,18 +3,18 @@
 from collections.abc import Mapping
 from typing import Literal
 
-from pydantic import Field, StrictBool, StrictStr
 from langchain_core.language_models import BaseChatModel
+from langchain_core.tools import tool
+from pydantic import Field, StrictBool, StrictStr
 
 from src.mcp_servers.service_routing import ToolActor
 from src.rules.models import FactName, HouseholdProfile
 from src.workflow.agent_runtime import (
-    AgentAction,
     AgentActionError,
-    AgentRunResult,
     AgentSchema,
     copy_agent_budget,
-    run_react_loop,
+    observation,
+    run_agent,
 )
 from src.workflow.questions import parse_interpreted_answer
 
@@ -82,19 +82,20 @@ async def propose_initial_profile_facts(
     if provider is None:
         return [], copy_agent_budget(budget), [], "deterministic"
 
+    task_scheme_id = scheme_id
     required_facts: set[str] = set()
     accepted_proposals: list[dict[str, object]] = []
     ignored_confirmed = 0
     invalid_count = 0
 
-    async def read_facts(arguments: AgentSchema) -> AgentSchema:
-        if not isinstance(arguments, ReadFactsArguments):
-            raise AgentActionError("Invalid fact lookup input.")
-        if arguments.scheme_id != scheme_id or actor != "intake":
+    @tool(args_schema=ReadFactsArguments)
+    async def read_required_facts(scheme_id: str) -> str:
+        """Read the scheme's required facts from the authorized rule service."""
+        if scheme_id != task_scheme_id or actor != "intake":
             raise AgentActionError("Fact lookup is outside the intake scope.")
         try:
             result = await getattr(client, "call_tool")(
-                "required_facts", {"scheme_id": scheme_id}
+                "required_facts", {"scheme_id": task_scheme_id}
             )
         except Exception as error:
             raise AgentActionError("Required facts are unavailable.") from error
@@ -108,16 +109,18 @@ async def propose_initial_profile_facts(
             raise AgentActionError("Required facts returned an invalid schema.")
         required_facts.update(content)
         required_facts.update(discovery_facts)
-        return ReadFactsObservation(
+        return observation(ReadFactsObservation(
             required_facts=list(dict.fromkeys([*content, *discovery_facts])),
-        )
+        ))
 
-    async def propose_facts(arguments: AgentSchema) -> AgentSchema:
+    @tool(args_schema=ProposeFactsArguments)
+    async def propose_profile_facts(facts: list[ProposedFact]) -> str:
+        """Propose only clearly stated required household facts."""
         nonlocal ignored_confirmed, invalid_count
-        if not isinstance(arguments, ProposeFactsArguments) or not required_facts:
+        if not required_facts:
             raise AgentActionError("Read allowed fact names before proposing facts.")
         profile_values = profile.model_dump(mode="python")
-        for proposal in arguments.facts:
+        for proposal in facts:
             if proposal.fact_name not in required_facts:
                 invalid_count += 1
                 continue
@@ -151,55 +154,25 @@ async def propose_initial_profile_facts(
             ProposedFact.model_validate(proposal)
             for proposal in accepted_proposals
         ]
-        return ProposeFactsObservation(
+        return observation(ProposeFactsObservation(
             accepted=validated,
             ignored_confirmed=ignored_confirmed,
             invalid_count=invalid_count,
-        )
+        ))
 
-    async def finish(arguments: AgentSchema) -> AgentSchema:
-        if not isinstance(arguments, FinishIntakeArguments):
-            raise AgentActionError("Invalid intake handoff.")
-        return FinishIntakeObservation(finished=True)
+    @tool(args_schema=FinishIntakeArguments, return_direct=True)
+    async def finish_intake(confirm: str) -> str:
+        """Finish after observing the fact proposals."""
+        return observation(FinishIntakeObservation(finished=True))
 
-    actions = [
-        AgentAction(
-            "read_required_facts",
-            "Read the scheme's required facts from the authorized rule service.",
-            "intake",
-            ReadFactsArguments,
-            ReadFactsObservation,
-            read_facts,
-        ),
-        AgentAction(
-            "propose_profile_facts",
-            "Propose only clearly stated required household facts.",
-            "intake",
-            ProposeFactsArguments,
-            ProposeFactsObservation,
-            propose_facts,
-        ),
-        AgentAction(
-            "finish_intake",
-            "Finish after observing the fact proposals.",
-            "intake",
-            FinishIntakeArguments,
-            FinishIntakeObservation,
-            finish,
-            terminal=True,
-        ),
-    ]
-    result: AgentRunResult = await run_react_loop(
-        "intake",
-        actor,
-        locale,
+    result = await run_agent(
+        provider, "intake", locale,
         {
-            "scheme_id": scheme_id,
+            "scheme_id": task_scheme_id,
             "required_fact_names": list(package_facts),
             "initial_description": description,
         },
-        actions,
-        provider,
+        [read_required_facts, propose_profile_facts, finish_intake],
         budget,
     )
     return (

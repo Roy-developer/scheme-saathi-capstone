@@ -3,16 +3,16 @@
 from collections.abc import Awaitable, Callable, Mapping
 from typing import Literal
 
-from pydantic import Field
 from langchain_core.language_models import BaseChatModel
+from langchain_core.tools import StructuredTool, tool
+from pydantic import Field
 
 from src.workflow.agent_runtime import (
-    AgentAction,
     AgentActionError,
-    AgentRunResult,
     AgentSchema,
+    observation,
     recover_authorized_action,
-    run_react_loop,
+    run_agent,
 )
 
 
@@ -55,17 +55,12 @@ async def run_application_specialist(
 ) -> tuple[dict[str, object] | None, dict[str, int], list[dict[str, object]], str]:
     """Run one authorized portal action and return only its safe observation."""
 
+    task_operation, task_draft_id = operation, draft_id
     selected: dict[str, object] | None = None
 
-    async def execute_action(arguments: AgentSchema) -> AgentSchema:
+    async def perform(operation: str, draft_id: str | None = None) -> str:
         nonlocal selected
-        if not isinstance(arguments, ApplicationActionArguments):
-            raise AgentActionError("Invalid application action.")
-        if (
-            arguments.operation != operation
-            or arguments.draft_id != draft_id
-            or selected is not None
-        ):
+        if operation != task_operation or draft_id != task_draft_id or selected is not None:
             raise AgentActionError("The action is outside the trusted application task.")
         selected = await execute()
         statuses = {
@@ -74,21 +69,19 @@ async def run_application_specialist(
             "submit": "submitted",
             "get_status": "status_read",
         }
-        return ApplicationActionObservation(
-            operation=operation,
-            status=statuses[operation],
-            revision=(
-                selected.get("revision")
-                if type(selected.get("revision")) is int
-                else revision
-            ),
+        return observation(ApplicationActionObservation(
+            operation=task_operation,
+            status=statuses[task_operation],
+            revision=selected.get("revision") if type(selected.get("revision")) is int else revision,
             receipt_recorded=bool(selected.get("receipt_id")),
-        )
+        ))
 
-    async def handoff(arguments: AgentSchema) -> AgentSchema:
-        if not isinstance(arguments, ApplicationHandoffArguments) or selected is None:
+    @tool(args_schema=ApplicationHandoffArguments, return_direct=True)
+    async def handoff_application(confirm: str) -> str:
+        """Finish after observing the code-owned portal result."""
+        if selected is None:
             raise AgentActionError("Observe the portal result before handoff.")
-        return ApplicationHandoffObservation()
+        return observation(ApplicationHandoffObservation())
 
     if provider is None:
         try:
@@ -96,7 +89,7 @@ async def run_application_specialist(
         except Exception:
             return None, dict(budget), [], "deterministic_fallback"
         return result, dict(budget), [], "deterministic"
-
+    # The portal action tool is named after the one operation this task allows.
     action_name = {
         "create_draft": "prepare_draft",
         "edit_draft": "edit_draft",
@@ -105,33 +98,16 @@ async def run_application_specialist(
     }.get(operation)
     if action_name is None:
         return None, dict(budget), [], "deterministic_fallback"
-    run: AgentRunResult = await run_react_loop(
-        "application",
-        "application",
-        locale,
+    portal_action = StructuredTool.from_function(
+        coroutine=perform,
+        name=action_name,
+        description="Perform only the backend-authorized synthetic portal action.",
+        args_schema=ApplicationActionArguments,
+    )
+    run = await run_agent(
+        provider, "application", locale,
         {"operation": operation, "draft_id": draft_id, "revision": revision},
-        [
-            AgentAction(
-                action_name,
-                "Perform only the backend-authorized synthetic portal action.",
-                "application",
-                ApplicationActionArguments,
-                ApplicationActionObservation,
-                execute_action,
-            ),
-            AgentAction(
-                "handoff_application",
-                "Finish after observing the code-owned portal result.",
-                "application",
-                ApplicationHandoffArguments,
-                ApplicationHandoffObservation,
-                handoff,
-                terminal=True,
-            ),
-        ],
-        provider,
-        budget,
-        max_steps=2,
+        [portal_action, handoff_application], budget, max_steps=2,
     )
     action_observed = selected is not None
     if not action_observed:
@@ -144,8 +120,7 @@ async def run_application_specialist(
         run.trace,
         (
             "model_assisted" if run.status == "completed"
-            else "action_completed_handoff_incomplete"
-            if action_observed
+            else "action_completed_handoff_incomplete" if action_observed
             else "deterministic_fallback"
         ),
     )

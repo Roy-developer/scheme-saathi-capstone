@@ -3,16 +3,16 @@
 from collections.abc import Awaitable, Callable, Mapping
 from typing import Literal
 
-from pydantic import Field
 from langchain_core.language_models import BaseChatModel
+from langchain_core.tools import tool
+from pydantic import Field
 
 from src.workflow.agent_runtime import (
-    AgentAction,
     AgentActionError,
-    AgentRunResult,
     AgentSchema,
+    observation,
     recover_authorized_action,
-    run_react_loop,
+    run_agent,
 )
 
 
@@ -69,16 +69,17 @@ async def run_document_specialist(
     budget: Mapping[str, int],
     inspect: Callable[[], Awaitable[dict[str, object]]],
 ) -> tuple[dict[str, object] | None, dict[str, int], list[dict[str, object]], str]:
-    """Run an observation-driven checklist and discrepancy handoff."""
+    """Let the model inspect the checklist report and choose the matching handoff."""
 
+    task_scheme_id = scheme_id
     assessment: dict[str, object] | None = None
     expected: tuple[str, str] | None = None
 
-    async def inspect_action(arguments: AgentSchema) -> AgentSchema:
+    @tool(args_schema=InspectDocumentsArguments)
+    async def inspect_document_metadata(scheme_id: str) -> str:
+        """Inspect the supplied demo metadata with the deterministic checker."""
         nonlocal assessment, expected
-        if not isinstance(arguments, InspectDocumentsArguments):
-            raise AgentActionError("Invalid document inspection request.")
-        if arguments.scheme_id != scheme_id or assessment is not None:
+        if scheme_id != task_scheme_id or assessment is not None:
             raise AgentActionError("Document inspection is outside this task.")
         assessment = await inspect()
         status = assessment.get("status")
@@ -89,26 +90,22 @@ async def run_document_specialist(
         codes = [
             item.get("code") for item in discrepancies if isinstance(item, dict)
         ] if isinstance(discrepancies, list) else []
-        return InspectDocumentsObservation(
+        return observation(InspectDocumentsObservation(
             status=status,
             discrepancy_codes=[
-                code for code in codes
-                if code in {"name_mismatch", "date_of_birth_mismatch"}
+                code for code in codes if code in {"name_mismatch", "date_of_birth_mismatch"}
             ],
-        )
+        ))
 
-    async def handoff(arguments: AgentSchema) -> AgentSchema:
-        if (
-            not isinstance(arguments, DocumentHandoffArguments)
-            or expected is None
-            or (arguments.outcome, _expected_document_outcome(
-                str((assessment or {}).get("status"))
-            )[1]) != expected
-        ):
+    @tool(args_schema=DocumentHandoffArguments, return_direct=True)
+    async def handoff_documents(outcome: str) -> str:
+        """Choose the next step that exactly matches the observed report."""
+        if expected is None or (
+            outcome,
+            _expected_document_outcome(str((assessment or {}).get("status")))[1],
+        ) != expected:
             raise AgentActionError("The handoff does not match the observed checklist.")
-        return DocumentHandoffObservation(
-            outcome=expected[0], guidance_code=expected[1],
-        )
+        return observation(DocumentHandoffObservation(outcome=expected[0], guidance_code=expected[1]))
 
     if provider is None:
         try:
@@ -116,34 +113,9 @@ async def run_document_specialist(
         except Exception:
             return None, dict(budget), [], "deterministic_fallback"
         return result, dict(budget), [], "deterministic"
-
-    run: AgentRunResult = await run_react_loop(
-        "documents",
-        "documents",
-        locale,
-        {"scheme_id": scheme_id},
-        [
-            AgentAction(
-                "inspect_document_metadata",
-                "Inspect the supplied demo metadata with the deterministic checker.",
-                "documents",
-                InspectDocumentsArguments,
-                InspectDocumentsObservation,
-                inspect_action,
-            ),
-            AgentAction(
-                "handoff_documents",
-                "Choose the next step that exactly matches the observed report.",
-                "documents",
-                DocumentHandoffArguments,
-                DocumentHandoffObservation,
-                handoff,
-                terminal=True,
-            ),
-        ],
-        provider,
-        budget,
-        max_steps=2,
+    run = await run_agent(
+        provider, "documents", locale, {"scheme_id": task_scheme_id},
+        [inspect_document_metadata, handoff_documents], budget, max_steps=2,
     )
     recovered = run.status in {"budget_exhausted", "model_unavailable"}
     if assessment is None:

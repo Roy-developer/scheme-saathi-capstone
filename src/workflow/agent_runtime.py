@@ -11,6 +11,7 @@ from langchain.agents import create_agent
 from langchain.agents.middleware import ModelCallLimitMiddleware
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
+from langchain_core.tools import BaseTool
 from pydantic import BaseModel, ConfigDict
 
 from src.llm_client import DEFAULT_CHAT_MODEL
@@ -20,7 +21,7 @@ from src.workflow.agent_middleware import (
     DurableBudgetMiddleware,
     RunStopped,
     ScrubbedTraceMiddleware,
-    as_tool,
+    observation,
     trace_event,
 )
 from src.workflow.conversation_budget import durable_counters, reserve_counters
@@ -39,24 +40,6 @@ from src.workflow.agent_config import (
 
 
 _CallResult = TypeVar("_CallResult")
-AGENT_ACTION_ALLOWLIST: dict[str, frozenset[str]] = {
-    "eligibility": frozenset({
-        "check_candidate", "handoff_verdict", "request_clarification", "refer_for_help",
-    }),
-    "supervisor": frozenset({"propose_plan", "finish_plan"}),
-    "intake": frozenset({
-        "read_required_facts",
-        "propose_profile_facts",
-        "finish_intake",
-    }),
-    "documents": frozenset({
-        "inspect_document_metadata", "handoff_documents",
-    }),
-    "application": frozenset({
-        "prepare_draft", "edit_draft", "submit_draft",
-        "read_application_status", "handoff_application",
-    }),
-}
 _EMAIL_PATTERN = re.compile(r"\b[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}\b")
 _AADHAAR_PATTERN = re.compile(r"(?<!\d)(?:\d[ -]?){11}\d(?!\d)")
 _PHONE_PATTERN = re.compile(r"(?<!\d)(?:\+?91[ -]?)?[6-9]\d{9}(?!\d)")
@@ -84,35 +67,11 @@ class AgentTraceEvent(AgentSchema):
     summary: str
 
 
-class AgentAction:
-    """A named, validated operation an agent may request."""
-
-    def __init__(
-        self,
-        name: str,
-        description: str,
-        actor: str,
-        arguments_model: type[AgentSchema],
-        output_model: type[AgentSchema],
-        executor: Callable[[AgentSchema], Awaitable[AgentSchema]],
-        *,
-        terminal: bool = False,
-    ) -> None:
-        self.name = name
-        self.description = description
-        self.actor = actor
-        self.arguments_model = arguments_model
-        self.output_model = output_model
-        self.executor = executor
-        self.terminal = terminal
-
-
 @dataclass
 class AgentRunResult:
     """Outcome and updated durable counters from one bounded ReAct turn."""
 
     status: str
-    action_results: list[dict[str, object]]
     budget: dict[str, int]
     trace: list[dict[str, object]]
 
@@ -198,69 +157,52 @@ async def run_accounted_model_call(
     )
 
 
-async def run_react_loop(
+async def run_agent(
+    model: BaseChatModel,
     agent: str,
-    actor: str,
     locale: str,
     context: Mapping[str, object],
-    actions: list[AgentAction],
-    provider: BaseChatModel,
+    tools: list[BaseTool],
     budget: Mapping[str, int] | None = None,
     *,
     max_steps: int = MAX_AGENT_STEPS_PER_TURN,
 ) -> AgentRunResult:
-    """Run one agent with LangChain ``create_agent`` and Saathi's middleware.
+    """Run one specialist as a LangChain agent with Saathi's middleware.
 
     Args:
+        model: The chat model (ChatOpenAI in production, a fake in tests).
         agent: Prompt identity, such as ``intake`` or ``supervisor``.
-        actor: Trusted code-owned action identity; never read from model data.
         locale: Supported prompt language.
         context: Minimal task data. Sensitive identifiers are masked first.
-        actions: Typed actions available to this agent.
-        provider: The chat model (ChatOpenAI in production, a fake in tests).
+        tools: The only actions this agent may take (its allow-list).
         budget: Conversation-level counters loaded from the checkpoint.
-        max_steps: A per-turn limit independent of the conversation ceiling.
+        max_steps: Model calls allowed in this run.
     """
 
     counters = _read_budget(budget)
     trace: list[dict[str, object]] = []
-    results: list[dict[str, object]] = []
-    # Only allow-listed actions owned by this agent are offered as tools.
-    allowed = [
-        action for action in actions
-        if action.actor == actor
-        and action.name in AGENT_ACTION_ALLOWLIST.get(agent, frozenset())
-    ]
-    tools = [
-        as_tool(
-            action.name, action.description, action.arguments_model,
-            action.output_model, action.executor,
-            terminal=action.terminal, results=results,
-        )
-        for action in allowed
-    ]
     system_prompt = prompt_for(agent, locale)  # type: ignore[arg-type]
     graph = create_agent(
-        provider,
+        model,
         tools=tools,
         system_prompt=system_prompt,
         middleware=[
             ModelCallLimitMiddleware(run_limit=max_steps, exit_behavior="end"),
-            ScrubbedTraceMiddleware(agent, provider.model_name, trace),
+            ScrubbedTraceMiddleware(agent, model.model_name, trace),
             DurableBudgetMiddleware(counters, estimate_extra=system_prompt + json.dumps(
-                [action.arguments_model.model_json_schema() for action in allowed]
+                [tool.args_schema.model_json_schema() for tool in tools]
             )),
         ],
     )
-    context = mask_sensitive_text(json.dumps(dict(context), ensure_ascii=False, default=str))
+    message = mask_sensitive_text(json.dumps(dict(context), ensure_ascii=False, default=str))
     try:
-        await graph.ainvoke({"messages": [HumanMessage(content=context)]})
+        await graph.ainvoke({"messages": [HumanMessage(content=message)]})
     except RunStopped as stop:
-        return AgentRunResult(stop.status, results, counters, trace)
+        return AgentRunResult(stop.status, counters, trace)
     if any(event["status"] == "completed" for event in trace):
-        return AgentRunResult("completed", results, counters, trace)
-    trace.append(trace_event(agent, None, "step_limit", provider.model_name, max_steps))
-    return AgentRunResult("step_limit", results, counters, trace)
+        return AgentRunResult("completed", counters, trace)
+    trace.append(trace_event(agent, None, "step_limit", model.model_name, max_steps))
+    return AgentRunResult("step_limit", counters, trace)
 
 
 async def recover_authorized_action(
