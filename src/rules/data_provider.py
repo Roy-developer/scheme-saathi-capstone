@@ -29,7 +29,7 @@ _LEGACY_PILOT_BINDINGS: dict[str, LegacyPilotBinding] = {
         "1.0.0",
         "d74284819f122d827a9913405dc69907d687868a93b298679c3a46f6840bea45",
         "1.0.0",
-        "02122ee9e617daf2528eb8d797705a16b3336a90622eac71e98ed2af91146982",
+        "babc9941a4018a459add5aabb97fdef98bbfd652f3ff456df67ec9f2e787c12a",
         ("age", "application_date", "bpl_card_shown", "date_of_birth", "is_widow"),
         (
             ("application_date", "application_date"),
@@ -44,7 +44,7 @@ _LEGACY_PILOT_BINDINGS: dict[str, LegacyPilotBinding] = {
         "1.0.0",
         "3e7b14c676a21a878ef5c11a0e2d2fd8e202ff50c40318299d9d644ab20cb4a7",
         "1.0.0",
-        "02122ee9e617daf2528eb8d797705a16b3336a90622eac71e98ed2af91146982",
+        "babc9941a4018a459add5aabb97fdef98bbfd652f3ff456df67ec9f2e787c12a",
         (
             "excluded_government_employee_member",
             "income_tax_paid_last_assessment_year",

@@ -1660,3 +1660,15 @@ def test_registry_and_legacy_intake_share_bounded_confirmed_fact_discovery(
         assert exhausted.candidate_verdicts["IGNWPS-MH"].result == "eligible"
 
     asyncio.run(scenario())
+
+
+def test_every_registry_question_is_readable_in_every_language():
+    """Broken encoding once saved Hindi and Marathi questions as "???"."""
+
+    registry = json.loads(
+        (Path(__file__).resolve().parents[1] / "src" / "rules" / "fact_registry.json")
+        .read_text(encoding="utf-8")
+    )
+    for fact in registry["definitions"]:
+        for locale, question in fact.get("questions", {}).items():
+            assert "??" not in question["text"], (fact["fact_id"], locale)
