@@ -134,7 +134,7 @@ paths use the same ones.
 | 3 | `src\workflow\discovery.py` | Hints, limits, de-duplication, status messages in three languages |
 | 4 | `src\workflow\question_picker.py` | Which missing fact helps most schemes (`pick_shared_fact`, `pick_shared_registered_fact`) |
 | 4b | `src\workflow\questions.py` | `registry_question_for`, `registered_question_details`, `parse_registered_answer` |
-| 5 | `src\workflow\agent_config.py`, `agent_runtime.py` | Limits and the typed-action loop (`run_react_loop`, line 335) |
+| 5 | `src\workflow\agent_config.py`, `agent_runtime.py` | Limits and the typed-action loop (`run_react_loop`, line 309) |
 | 6 | `src\workflow\eligibility_agent.py` | The eligibility specialist (`run_eligibility_specialist`, line 56) |
 | 7 | `src\workflow\conversation_budget.py` | Saved reservations |
 | 8 | `src\workflow\journey.py` | Nodes, correction, serialisation, portal approval storage |
@@ -150,7 +150,7 @@ paths use the same ones.
 at 1 January 2026, so her age is 40. Her household facts are supplied as
 confirmed answers: she is a widow, can show a BPL card, and the family is
 *not* on state landholding records; every exclusion question is "no". This
-mirrors the `PROFILE` used by `tests\test_phase3_agents.py` (line 25).
+mirrors the `PROFILE` used by `tests\test_phase3_agents.py` (line 31).
 
 The conversation starts with one candidate from an earlier search:
 `IGNWPS-MH` (widow pension). Two other IDs appear later:
@@ -234,7 +234,7 @@ that both need `exam_marks` (a person, percent) ask once. A scheme needing a
 income use different IDs and ask separately even if the English labels match
 (proved with the synthetic bundles in
 `test_data_only_multischeme_discovery_sharing_and_typed_correction_through_http`,
-`tests\test_fact_registry.py:1010`). Different compatibility means different
+`tests\test_fact_registry.py:1043`). Different compatibility means different
 ID; there is no fuzzy matching.
 
 ### 4B.4 Explicit legacy bridges
@@ -272,7 +272,7 @@ consumed, so one impossible birth date left the person with no question to
 answer. Now a failing check (a "complete validation") turns the reply into an
 `invalid` answer, which re-asks the same question with a localised hint and
 no saved change. It is retryable (`test_combined_date_answer_reasks_safely_and_invalid_correction_never_writes`,
-`tests\test_fact_registry.py:1439`).
+`tests\test_fact_registry.py:1475`).
 
 ### 4B.6 Pinning, and the review latch
 
@@ -298,7 +298,7 @@ reconfirmation in a new conversation are required"). Saved *answers* are kept,
 but never silently reused. Changing the files back (A to B to A) does **not**
 clear the latch
 (`test_dependency_changes_require_review_without_erasing_answers_or_restoring_a_to_b_to_a`,
-line 1135). The review itself is a human step; the code only refuses.
+line 1168). The review itself is a human step; the code only refuses.
 
 ### 4B.7 Correction in the registry world
 
@@ -313,7 +313,7 @@ bridge. A correction **always** revokes unsubmitted approvals, even when the
 verdict is still `eligible` and even for A to B to A, because the approval was
 for the exact form built from the old answers (section 11). The real-portal
 case is `test_typed_corrections_and_changed_definitions_revoke_real_pilot_approval_after_restart`
-(line 1235).
+(line 1268).
 
 ### 4B.8 Discovery is shared, and filters are not invented
 
@@ -332,7 +332,7 @@ searched. Now, in registry mode:
 - A candidate with no loaded package stays information only.
 
 `test_registry_and_legacy_intake_share_bounded_confirmed_fact_discovery`
-(`tests\test_fact_registry.py:1527`) checks this for the legacy, initial
+(`tests\test_fact_registry.py:1563`) checks this for the legacy, initial
 registry and newly discovered registry cases: supported hints only, no
 invented filters, an unrelated correction does not search again, a restart
 keeps the count, and search exhaustion is durable.
@@ -345,7 +345,7 @@ when the scheme is registered (a code comment says registry review metadata
 is not permission to disclose applicant-derived verdicts or missing-fact
 names to a model). The test
 `test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure`
-(line 705) uses a spy planner model and checks that a synthetic answer typed
+(line 738) uses a spy planner model and checks that a synthetic answer typed
 in the conversation never appears in what the model was shown. That is one
 tested instance of the rule, not a proof for every path. The privacy metadata
 in the registry is still **pending**, not approved. Legacy-only conversations
@@ -361,7 +361,7 @@ float), date, choice and text widgets, and an "I don't know" control. Strings
 and labels exist in English, Hindi and Marathi. Generic corrections show
 registry labels (from `fact_questions`). `api_client.py` is still the only
 caller; no raw server error is shown
-(`test_registry_question_metadata_flows_through_journey_http_api`, line 871).
+(`test_registry_question_metadata_flows_through_journey_http_api`, line 904).
 
 ### 4B.11 A synthetic mixed example
 
@@ -521,7 +521,7 @@ must confirm it before it is saved. Each fact gets **one** such model attempt
 for the whole conversation: it is recorded before the call and survives a
 restart (`test_interpretation_attempt_reserved_before_crash_is_not_repeated`,
 line 430). Replies are masked for identifiers before any model sees them
-(`mask_sensitive_text`, agent_runtime.py:490). The Phase 2 safeguards carry
+(`mask_sensitive_text`, agent_runtime.py:480). The Phase 2 safeguards carry
 over to registered facts unchanged: decimals stay exact (`Decimal`, never
 float), and replies are masked before being stored. Registered conversations
 make no model attempt at all.
@@ -592,10 +592,11 @@ Say Meera had an approved draft for `IGNWPS-MH`, then corrects an answer.
    4B.7). Bad input is a 422 from the API, and nothing has been written yet.
 2. `_begin_profile_change` (`journey.py`) writes a new profile version
    and a "blocked" flag to the graph's saved state **and**, in a `finally`
-   block, to the portal. In the portal (`_portal_action`,
-   repository.py:151) one transaction increments the version, sets blocked,
+   block, to the portal. In the portal (`_portal_action_transaction`,
+   repository.py:396, run by `_portal_action` under the checklist publication
+   lock) one transaction increments the version, sets blocked,
    and marks every **unsubmitted** draft of this conversation stale with its
-   approval cleared (repository.py:168–187).
+   approval cleared (`_revoke_unsubmitted_approvals`, repository.py:356).
 3. Re-run the interview with the new profile; this may search again (section
    6) and always rechecks all candidates, restoring only matched facts.
 4. `reconcile_profile` unblocks writes if the version matches.
@@ -604,11 +605,11 @@ While blocked, portal writes fail with "Profile reconciliation is required
 before writes", and the journey refuses application tasks the same way
 (`run_application_task`, `journey.py`). A stale draft can never be approved, edited, rejected
 or submitted again; the portal says "Dependencies changed. Create and
-approve a fresh draft" (repository.py:359), and nothing in `src` ever sets
+approve a fresh draft" (repository.py:807), and nothing in `src` ever sets
 `stale` back to zero.
 
 The key test is `test_approved_draft_correction_always_revokes_saved_approval`
-(tests\test_application_tools.py:425). For one-scheme and many-scheme
+(tests\test_application_tools.py:940). For one-scheme and many-scheme
 conversations it checks four cases:
 
 | Case | After the correction | Approval of the old draft |
@@ -632,12 +633,12 @@ differs (`profile_changed` in `run_journey`).
 Related safeguards: a rule-package change or a document-report change also
 marks that scheme's unsubmitted drafts stale, and version counters only move
 forward (`test_monotonic_rule_and_document_changes_never_revive_approval_and_keep_receipts`,
-tests\test_application_tools.py:564). If the checkpoint, the portal
+tests\test_application_tools.py:1079). If the checkpoint, the portal
 transition or the recheck fails, writes stay closed
-(`test_correction_persistence_failure_blocks_old_submission`, line 474).
+(`test_correction_persistence_failure_blocks_old_submission`, line 989).
 A submit that arrives during the correction waits for it, then fails
 (`test_concurrent_submission_cannot_slip_between_invalidation_and_checkpoint`,
-line 522). The wait works through a per-conversation lock
+line 1037). The wait works through a per-conversation lock
 (`_serialize_journey`, `journey.py`), which protects one API process; the
 tests do not prove behaviour across several worker processes.
 
@@ -683,21 +684,21 @@ constants above and the loop code, not from a dedicated test.
 
 ## 13. The screen: stale drafts and honest coverage
 
-The UI never runs the graph. `save_journey` (ui\app.py:525) copies the API
+The UI never runs the graph. `save_journey` (ui\app.py:661) copies the API
 reply into session state. If the dependency version changed, or a
 `correction_invalidated` notice arrived, it **clears the cached drafts** so
-the next load asks the portal again (ui\app.py:534–538). A stale draft shows a
-translated warning and no approve or submit buttons (ui\app.py:921). The notice
-renderer (`render_discovery_notices`, ui\app.py:678) shows each notice code,
+the next load asks the portal again (ui\app.py:669–674). A stale draft shows a
+translated warning and no approve or submit buttons (ui\app.py:1382). The notice
+renderer (`render_discovery_notices`, ui\app.py:850) shows each notice code,
 the added IDs from events, and the unprocessed IDs. Text comes from
 `discovery_message` in English, Hindi and Marathi. The budget expander
-(`render_agent_observability`, ui\app.py:595) shows counters against the
+(`render_agent_observability`, ui\app.py:737) shows counters against the
 limits, never prompts.
 
 `test_single_scheme_correction_reloads_stale_draft_and_removes_submit_controls`
-(tests\test_ui_app.py:586) checks the stale reload using Streamlit's
+(tests\test_ui_app.py:781) checks the stale reload using Streamlit's
 `AppTest` with mocked API calls and an English assertion;
-`test_discovery_coverage_and_referral_notices_are_localized` (line 630)
+`test_discovery_coverage_and_referral_notices_are_localized` (line 902)
 checks Hindi coverage notices. Neither is a real browser or a native-speaker
 review.
 
@@ -707,11 +708,11 @@ review.
   short translated notice, not a stack trace. API routes answer 502 "A journey
   tool is unavailable" for tool errors, 409 when a conversation is not
   waiting or has no confirmed answers, and 422 for invalid corrections
-  (`journey_correction`, src\api\app.py:425).
+  (`journey_correction`, src\api\app.py:674; tool errors go through `_tool_failure`).
 - **Draft actions:** before approving or submitting, the API compares the
   draft's saved profile and rule version with the current ones and answers
   409 ("Your answers changed...", "Scheme rules changed...")
-  (`update_application_approval`, app.py:620).
+  (`update_application_approval`, app.py:957).
   The portal then checks the exact revision and fingerprint, then approval,
   then submits.
 - **Receipts:** submitting an approved, current draft stores one receipt ID;
@@ -750,7 +751,7 @@ offline with fake models, fake search, and the local engine.
 | `test_model_call_reservation_survives_...` (535), `test_budget_checkpoint_failure_prevents_model_dispatch` (578) | Model reservations and the "save first" rule |
 
 Other files cover the portal transitions (`tests\test_application_tools.py`,
-lines 425, 474, 522, 564), the correction API
+lines 940, 989, 1037, 1079), the correction API
 (`tests\test_api_eligibility.py`, line 77, 112, 132), tool permissions
 (`tests\test_mcp_permissions.py`), and the UI (`tests\test_ui_app.py`).
 
@@ -763,28 +764,28 @@ rerun them; the table lists the ones that matter for Phase 3.
 |---|---|
 | `test_novel_pending_bundle_cannot_masquerade_as_legacy_compatibility` (571) | Only the exact pinned pilots can use the legacy label |
 | `test_explicit_development_loader_accepts_pending_synthetic_bundle` (592) | Synthetic bundle loads only on explicit request |
-| `test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure` (705) | Typed questions, resume, and a spy model not shown an answer |
-| `test_unknown_registry_fact_is_not_reasked_and_saved_definitions_fail_closed` (806) | Unknown stays declined; changed definition cannot reinterpret saved facts |
-| `test_registry_question_metadata_flows_through_journey_http_api` (871) | API sends widget metadata; validation errors; refresh |
-| `test_data_only_multischeme_discovery_sharing_and_typed_correction_through_http` (1010) | Injected search, shared question once, separate scope/period IDs, typed correction (not real retrieval) |
-| `test_dependency_changes_require_review_without_erasing_answers_or_restoring_a_to_b_to_a` (1135) | Content/review change latches; answers kept; A to B to A stays refused |
-| `test_typed_corrections_and_changed_definitions_revoke_real_pilot_approval_after_restart` (1235) | Real offline portal and reopened SQLite: approval revoked even when still eligible |
-| `test_development_bundle_with_legacy_bridge_still_asks_and_corrects_novel_fact` (1385) | Review bug 1 closed |
-| `test_combined_date_answer_reasks_safely_and_invalid_correction_never_writes` (1439) | Review bug 2 closed; invalid correction leaves facts, dependency and budget unchanged |
-| `test_registry_and_legacy_intake_share_bounded_confirmed_fact_discovery` (1527) | Review bug 3 closed; shared bounded discovery |
+| `test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure` (738) | Typed questions, resume, and a spy model not shown an answer |
+| `test_unknown_registry_fact_is_not_reasked_and_saved_definitions_fail_closed` (839) | Unknown stays declined; changed definition cannot reinterpret saved facts |
+| `test_registry_question_metadata_flows_through_journey_http_api` (904) | API sends widget metadata; validation errors; refresh |
+| `test_data_only_multischeme_discovery_sharing_and_typed_correction_through_http` (1043) | Injected search, shared question once, separate scope/period IDs, typed correction (not real retrieval) |
+| `test_dependency_changes_require_review_without_erasing_answers_or_restoring_a_to_b_to_a` (1168) | Content/review change latches; answers kept; A to B to A stays refused |
+| `test_typed_corrections_and_changed_definitions_revoke_real_pilot_approval_after_restart` (1268) | Real offline portal and reopened SQLite: approval revoked even when still eligible |
+| `test_development_bundle_with_legacy_bridge_still_asks_and_corrects_novel_fact` (1421) | Review bug 1 closed |
+| `test_combined_date_answer_reasks_safely_and_invalid_correction_never_writes` (1475) | Review bug 2 closed; invalid correction leaves facts, dependency and budget unchanged |
+| `test_registry_and_legacy_intake_share_bounded_confirmed_fact_discovery` (1563) | Review bug 3 closed; shared bounded discovery |
 
 Phase 1–2 parser, choice, decimal and provider tests in the same file (lines
-236–653) cover the typed foundation this guide relies on.
+236–737) cover the typed foundation this guide relies on.
 
 ### Why the test setup is safe (and what it does not prove)
 
-`tests\conftest.py` runs before any application import (lines 10-26). It sets
-`SCHEME_SAATHI_DISABLE_DOTENV=1` so `src\config.py` skips `.env` (config.py:47),
+`tests\conftest.py` runs before any application import (lines 12–28). It sets
+`SCHEME_SAATHI_DISABLE_DOTENV=1` so `src\config.py` skips `.env` (config.py:69),
 sets `SCHEME_SAATHI_DISABLE_CROSS_ENCODER=1`, removes the four known
 credential variables from the process environment, and points the checkpoint
 and portal databases at unique project-local files that are deleted when the
-session ends (lines 19–36). Tests also supply fake model, search and rule
-tools, and `test_phase3_agents.py` uses its own unique `.phase3-*` SQLite files.
+session ends (lines 21–28 and 100–107). Tests also supply fake model, search and rule
+tools (the `fake_openrouter` fixture answers chat requests in process), and `test_phase3_agents.py` uses its own unique `.phase3-*` SQLite files.
 
 This is meant to keep tests free of saved credentials, `.env` values and
 demonstration data. It **does not** install a network block, so the suite
@@ -830,7 +831,7 @@ databases only; never point a test at `data\runtime`.
 
 1. The status text `deterministic_fallback` is misleading: after a failed or
    denied model loop there is no fallback rule check (section 9).
-2. Deleting a conversation (`forget_journey`, src\api\app.py:689) deletes the
+2. Deleting a conversation (`forget_journey`, src\api\app.py:1037) deletes the
    conversation thread, but I did not find code deleting the separate
    `budget:<id>` stream. Not tested here.
 3. Multi-candidate budget exhaustion with a real model is derived from

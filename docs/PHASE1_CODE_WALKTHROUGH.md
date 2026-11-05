@@ -1306,6 +1306,12 @@ document. Example: for `PM-KISAN-IN`, supplying all three items as
 `available` gives `checklist_complete`; leaving `land_record` as `missing`
 gives `missing_items`.
 
+> **Later change.** `DEMO_REQUIREMENTS` no longer exists. Since Phase 4 both
+> tools read versioned checklist files in `data/schemes/document_checklists/`
+> through `src/documents/checklists.py`; the pilot lists are still demo-only.
+> See the [Phase 4 guide](PHASE4_CODE_WALKTHROUGH.md), section 6.4. The example
+> above describes the Phase 1 table.
+
 ### Edge cases for Step 4B
 
 | Case | What happens |

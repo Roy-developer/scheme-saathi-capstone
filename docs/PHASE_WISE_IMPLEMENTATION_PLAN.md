@@ -155,7 +155,7 @@ capstone gate is not met.
 | G03 | Phase 3 now revokes persisted unsubmitted approvals, binds monotonic profile/document/rule versions and blocks unreconciled writes. Submitted receipts remain history. | Independently verify still-eligible/unknown/A→B→A, persistence failure, restart and concurrent submission tests; complete manual acceptance. | 3–4 / 3, 4, 5 |
 | G04 | Per-fact attempts, model/token/action/step reservations and independent search counters now survive corrections, same-ID restart and interrupted nodes in separate SQLite checkpoint streams. | Independently verify crash-before-node-return and reservation-write-failure cases; new IDs start independently. | 2–3 / 3, 5 |
 | G05 | Synthetic name/date comparison and discrepancy/referral behavior use one typed, versioned checklist loader shared by both document tools. Pilot data is explicitly demo-only; no official source evidence has been prepared or approved. | The separate human data workstream must collect source passages, review each interpretation, and record exact-content approval before source-backed requirements can activate. | 4 + data workstream / 1, 2, 3, 4 |
-| G06 | `test_document_agent_blocks_application_without_portal_access` already covers missing/unknown/**mismatch** at graph level. Unknown document status is not unknown eligibility. | API/UI mismatch-to-resolution tests; explicit `need_more_information`, `information_only`, `not_eligible` and `tool_error` block draft/approve/submit. Include initially approved drafts becoming uncertain. | 3–4 / 5 with 3, 4, 6 |
+| G06 | `test_document_agent_blocks_application_writes_but_binds_report` (`tests/test_application_tools.py`; earlier name `test_document_agent_blocks_application_without_portal_access`) already covers missing/unknown/**mismatch** at graph level. Unknown document status is not unknown eligibility. | API/UI mismatch-to-resolution tests; explicit `need_more_information`, `information_only`, `not_eligible` and `tool_error` block draft/approve/submit. Include initially approved drafts becoming uncertain. | 3–4 / 5 with 3, 4, 6 |
 | G07 | Document/checklist dependency invalidation and stale refresh are implemented and covered by offline correction/integration tests. | Extend binding to registry/bundle/form versions; preserve fresh review after changes and complete manual/operational acceptance. Refresh must never show stale approval as valid. | 4 / 3, 4, 6 |
 | G08 | Exact revision/fingerprint approval, provisional 15-minute expiry, one-use submission and stable retry recovery are implemented and tested offline. | Ratify expiry policy; preserve atomic authorization consumption and identical-retry receipts through the redesign. Complete outstanding process-kill/multi-worker acceptance; never auto-approve during recovery. | 4 / 3, 4, 5 |
 | G09 | Confirmed category/age hints now trigger bounded rediscovery; results are deduplicated and additions/overflow/failures are traced. The existing profile has no state/gender and retrieval has no age/gender filter. | Do not invent unsupported filters. Language uses explicit locale; state/gender filtering needs reviewed schema/corpus work, not inference from widow status. Complete independent coverage and manual acceptance. | 2–3 / 2, 3 |
@@ -940,6 +940,16 @@ A fresh third draft needs fresh human approval and yields original exact
 `0.12345678901234567` in submission and same-receipt retry. Exact integration:
 **1 passed in 91.01s**; compileall/diff passed. No runtime changes or full-suite
 repeat; preceding full-suite evidence predates this test-only clarification.
+
+**Module naming and library simplification (2026-11-05, commits `85fba19` and
+`34cafd5`):** the phase-named agent modules became `supervisor_agent.py`,
+`intake_agent.py`, `eligibility_agent.py`, `document_agent.py` and
+`application_agent.py`, with shared recovery in `agent_runtime.py`. OpenRouter
+chat calls now go through `src/llm_client.py` (openai SDK, no automatic
+retries), checklist publication uses `filelock`, and several duplicated helpers
+were merged (see [THIRD_PARTY_LIBRARIES_REVIEW.md](THIRD_PARTY_LIBRARIES_REVIEW.md)).
+No behaviour change was intended; the commit message reports a full local run of
+**419 passed**. No acceptance gate above changes.
 
 Done when: the Phase 3 gate and all application lifecycle checks pass, four
 specialists satisfy the ReAct/tool-boundary gate, and submission requires

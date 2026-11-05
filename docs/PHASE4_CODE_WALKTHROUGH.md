@@ -29,6 +29,7 @@ in the [Phase-wise implementation plan](PHASE_WISE_IMPLEMENTATION_PLAN.md).
 > | Derived-fact (age) omission repair | Related offline selection **143 passed**; single full serial run **415 passed** |
 > | Independent re-check of the checklist selection | **31 passed**, with **4** targeted derived-fact cases passing |
 > | Static checks | `compileall -q src` and `git diff --check` passed |
+> | Later library simplification (commit `34cafd5`: `filelock` publication lock, shared `check_and_bind_documents`, `src/llm_client.py`) | Full local run **419 passed**, as reported in the commit message |
 >
 > The author of this guide ran **no tests**; only link, code-fence and diff
 > checks apply to this documentation edit. None of these is a native Python
@@ -339,16 +340,20 @@ statuses) and `test_document_specialist_rejects_mismatched_handoff_and_tool_erro
 
 ### 6.3 What `document_agent` records
 
-`document_agent` in `journey.py` calls `check_documents` through the `documents`
-actor, then uses the `dependency_control` actor to call `bind_documents`. Binding
+`document_agent` in `journey.py` calls `check_and_bind_documents`
+(`src/api/applications.py`), which calls `check_documents` through the
+`documents` actor, then uses the `dependency_control` actor to call
+`bind_documents`. The API's saved-report recheck
+(`_mark_changed_document_reports`) calls the same function, so both produce
+identical fingerprints. Binding
 stores a hash of the report in the portal. If the report **differs** from the
 last one for that conversation and scheme, the portal bumps the document version
 and marks existing unsubmitted drafts for that scheme stale (section 9).
 
 It also computes an **input fingerprint** (`document_input_fingerprint` in
 `src/api/applications.py`) over the scheme, statuses, typed fields, profile
-date, the profile facts used by conditions, and the three checklist digests
-(section 6.4). The graph saves it with the assessment. The API refuses to create a draft
+name and date, the profile facts used by conditions, the typed facts, the bundle
+fingerprint and the three checklist digests (section 6.4). The graph saves it with the assessment. The API refuses to create a draft
 unless the draft request reproduces that same fingerprint and the saved
 assessment is `checklist_complete` for the **current profile version**.
 `test_synthetic_application_requires_exact_approval` proves a changed profile name
@@ -490,7 +495,10 @@ Changing **either** file, even with the same version label, changes
   document version when the active fingerprint changes. That makes each
   **unsubmitted** draft for the scheme stale and clears its approval.
 * Portal transactions and the supported file-update helper share a lock that
-  works across processes. An update waits until submission has been saved.
+  works across processes (a `filelock.FileLock` on
+  `.document_checklists.lock`, built by `_publication_lock` with
+  `is_singleton=True` so a nested use in the same thread does not wait for
+  itself). An update waits until submission has been saved.
   Submission waits if an update is already running. A failed lock stops the
   operation; it does not skip the check.
 * The portal also checks the files again before saving
@@ -1130,10 +1138,10 @@ the Hindi and Marathi wording is still open.
 | Direct checklist tool | `src/mcp_servers/tools/scheme_search.py` | `get_documents`, `SchemeDocuments` |
 | Portal adapter (MCP to HTTP) | `src/mcp_servers/tools/applications.py` | `_call_portal`, `mock_portal` |
 | Portal HTTP service | `src/portal/app.py` | `/internal/actions`, `/health` |
-| Portal rules and SQLite | `src/portal/repository.py` | `_portal_action`, `_approval_expired`, `APPROVAL_TTL_SECONDS`, `_snapshot_matches_request`, `_refresh_document_dependency`, `_assert_snapshot_unchanged` |
+| Portal rules and SQLite | `src/portal/repository.py` | `_portal_action`, `_approval_expired`, `APPROVAL_TTL_SECONDS`, `_snapshot_matches_request`, `_refresh_document_dependency`, `_assert_snapshot_unchanged`, `_revoke_unsubmitted_approvals`, `_recheck_checklist` |
 | Start/stop the portal | `src/api/portal_service.py` | `start_portal_service` |
-| API routes | `src/api/app.py` | `lifespan`, `create_application_draft`, `update_application_approval`, `_mark_changed_document_reports` |
-| Report fingerprint, tool caller | `src/api/applications.py` | `document_input_fingerprint`, `call_application_tool` |
+| API routes | `src/api/app.py` | `lifespan`, `create_application_draft`, `update_application_approval`, `_mark_changed_document_reports`, `_tool_failure` |
+| Report fingerprint, tool caller | `src/api/applications.py` | `document_input_fingerprint`, `check_and_bind_documents`, `call_application_tool` |
 | Bounded document specialist | `src/workflow/document_agent.py` | `run_document_specialist` |
 | Bounded application specialist | `src/workflow/application_agent.py` | `run_application_specialist` |
 | ReAct loop, trace, budget | `src/workflow/agent_runtime.py` | `run_react_loop`, `_trace`, `mask_sensitive_text` |
@@ -1148,7 +1156,7 @@ the Hindi and Marathi wording is still open.
 | Bundle allowlist | `src/rules/bundles.py` | `document_fact_allowlist`, `document_fact_values` |
 | Fact and bundle data | `src/rules/fact_registry.json`, `src/rules/bundle_registry.json` | one registry; pilot bundles are `legacy_compatibility` |
 | Mock form models and loader | `src/documents/forms.py` | `MockFormField`, `load_mock_form_snapshot`, `build_form_fields` |
-| Supported publication helpers | `src/documents/publication.py` | `publish_checklist_file`, `publish_mock_form_file`, `checklist_publication_lock` |
+| Supported publication helpers | `src/documents/publication.py`, `src/documents/forms.py` | `publish_checklist_file`, `checklist_publication_lock`, `_publication_lock` (publication.py); `publish_mock_form_file` (forms.py) |
 | Form data | `data/schemes/mock_forms/` | one mapping file per scheme |
 | MCP rule data | `src/mcp_servers/rule_data.py` | startup load of rules, registry and bundles |
 | Synthetic scholarship fixtures (tests only) | `tests/fixtures/phase4/` | `development_only` bundle, registry 9.0.0, all reviews `pending` |

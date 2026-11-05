@@ -533,15 +533,18 @@ model may choose from a short list of actions. Outside it, nothing changes.
 | File | Job |
 |---|---|
 | [`src/workflow/agent_config.py`](../src/workflow/agent_config.py) | The limits (numbers) and the versioned prompts in English, Hindi and Marathi |
-| [`src/workflow/agent_runtime.py`](../src/workflow/agent_runtime.py) | `run_react_loop`: ask the model for one action, check it, run it, show the result, repeat. Also the OpenRouter adapter and `mask_sensitive_text` |
+| [`src/workflow/agent_runtime.py`](../src/workflow/agent_runtime.py) | `run_react_loop`: ask the model for one action, check it, run it, show the result, repeat. Also the OpenRouter adapter (`OpenRouterToolChoiceProvider`, which sends its requests through `OpenRouterChatClient` in [`src/llm_client.py`](../src/llm_client.py)) and `mask_sensitive_text` |
 | [`src/workflow/supervisor_agent.py`](../src/workflow/supervisor_agent.py) | The plan specialist built on the loop: `propose_supervisor_plan` |
 | [`src/workflow/intake_agent.py`](../src/workflow/intake_agent.py) | The initial fact-proposal specialist built on the loop: `propose_initial_profile_facts` |
 
 The graph gets a model through `build_journey_graph(..., model_provider=...)`.
 In [`src/api/app.py`](../src/api/app.py) (`lifespan`) the API creates an
 `OpenRouterToolChoiceProvider`; if it has **no API key** (`.configured` is
-false) the provider is set to `None`, and every model step is skipped.
-Tests pass a scripted fake instead, so no test calls a real model.
+false) the provider is set to `None`, and every model step is skipped. A
+configured provider keeps one reusable connection and the API closes it at
+shutdown (`aclose`). Tests pass a scripted fake instead, or use the
+`fake_openrouter` fixture in `tests/conftest.py`, which answers chat requests
+in process, so no test calls a real model.
 
 ### The limits (`agent_config.py`)
 
@@ -550,21 +553,22 @@ Tests pass a scripted fake instead, so no test calls a real model.
 | `MAX_AGENT_STEPS_PER_TURN` | 3 | Most actions one intake loop may take (the supervisor loop is capped at 2 in code) |
 | `MAX_CONVERSATION_MODEL_CALLS` | 8 | Model calls over the **whole conversation** |
 | `MAX_CONVERSATION_AGENT_STEPS` | 12 | Agent steps over the whole conversation |
-| `MAX_CONVERSATION_TOOL_CALLS` | 12 | Actions actually executed over the whole conversation |
+| `MAX_CONVERSATION_TOOL_CALLS` | 24 | Actions actually executed over the whole conversation (12 in Phase 2; raised in Phase 4 for checklist rechecks and draft/receipt recovery) |
 | `MAX_CONVERSATION_TOKENS` | 12,000 | Estimated input + reserved output tokens, whole conversation |
 | `MAX_COMPLETION_TOKENS` | 512 | Most tokens the model may write per call |
 | `MODEL_TIMEOUT_SECONDS` | 20 | Wait for the model at most this long |
 | `TOKEN_ESTIMATE_CHARACTERS` | 3 | Rough size guess: one token per 3 characters (deliberately cautious) |
 | `MAX_TRACE_EVENTS` | 40 | The saved trace keeps only the most recent 40 events |
-| `PROMPT_VERSION` | `scheme-saathi-phase2-v1` | Copied into every trace event |
+| `PROMPT_VERSION` | `scheme-saathi-phase4-v1` (was `scheme-saathi-phase2-v1`) | Copied into every trace event |
 
 The provider asks for `temperature` 0, `tool_choice: "required"` (the model
 must pick an action, not chat), `parallel_tool_calls: False` (one action at a
 time) and `strict` tool schemas, and sends the key as a bearer token
 (`test_openrouter_provider_uses_configured_bearer_key_without_network` checks
-this with a fake network response). The model name comes from
-`OPENROUTER_CHAT_MODEL`, with `openai/gpt-4o-mini` as the code default
-(`DEFAULT_CHAT_MODEL`). **These numbers and the model ID are working
+this with a fake network response). `OpenRouterChatClient` sets
+`max_retries=0`, so the SDK never repeats a budgeted call uncounted. The model
+name comes from `OPENROUTER_CHAT_MODEL`, with `openai/gpt-4o-mini` as the code
+default (`DEFAULT_CHAT_MODEL`, in `src/llm_client.py`). **These numbers and the model ID are working
 defaults. The plan still lists "agree model IDs, prompts, limits and a paid
 smoke-test budget" as an open gate.**
 
@@ -637,7 +641,7 @@ is information, not an order.
 | 2 | Model unreachable, timed out, or sent an unreadable reply | `model_unavailable` | `model_unavailable` | `tests/test_planning_and_intake_agents.py` |
 | 3 | Action name not on this agent's allow-list (e.g. `erase_household`) | `denied` | `action_denied` | same test |
 | 4 | The code-owned `actor` does not match the action's actor | `denied` | `action_denied` | `tests/test_planning_and_intake_agents.py` |
-| 5 | Conversation tool-call budget already used (12) | `budget_exhausted` | `budget_exhausted` | same test |
+| 5 | Conversation tool-call budget already used (24) | `budget_exhausted` | `budget_exhausted` | same test |
 | 6 | Arguments break the schema (wrong type, extra field, empty value) | `invalid_arguments` | `invalid_arguments` | same test; also `test_malformed_fact_proposal_is_not_confirmed_or_saved` |
 | 7 | The executor raised `AgentActionError`, or its output breaks the output schema | `action_rejected` | `action_rejected` | `test_supervisor_rejects_dependency_violation_and_keeps_c0_plan` |
 | 8 | Step limit reached with no finishing action | `step_limit` | `step_limit` | `tests/test_planning_and_intake_agents.py` |
@@ -1151,6 +1155,11 @@ across a rule threshold. So:
   `FactDefinition.validate_value` also rejects a decimal *string*.
   Older checkpoints with plain JSON numbers are still accepted and converted with
   `Decimal(str(value))`.
+- Both directions go through two small helpers in `src/rules/facts.py`,
+  `encode_wire_value` and `decode_wire_value`. `resume_journey` encodes the
+  typed answer with the first, and `registered_intake_result` decodes it with
+  the second (plain numbers are **not** accepted there), so the resume payload
+  gets the same strict decimal check as the store.
 - The store is always passed through `validate_against(registry)` on the way in
   and out: registry version, every definition version, type, bounds, and the
   age limits of the derived `age` fact.
@@ -1859,9 +1868,15 @@ choices, actor denial and step limits, masking and deterministic fallback,
 correction plus SQLite restart persistence, shared legacy-call budgets, and
 the localized UI observability output.
 
+> **Later note (2026-11-05).** After the chat calls moved to
+> `src/llm_client.py` (commit `34cafd5`), the commit message reports a full
+> local run of **419 passed**. Chat-call tests now use the shared
+> `fake_openrouter` fixture in `tests/conftest.py` instead of patching
+> `urllib`. This guide did not rerun the suite.
+
 | Test file | What it proves |
 |---|---|
-| `tests/test_planning_and_intake_agents.py` | **New.** Offline, with scripted fake models: observation-driven plan and intake choices, fact proposal → confirm → save, malformed/duplicate/declined proposals, C0 retention after a bad order, schema and actor denial, step and budget limits, masking and fallback, shared query/answer-call budgets, correction and SQLite restart persistence, CSC presence, localized goals/questions/UI observability, and provider bearer-key wiring against a fake response |
+| `tests/test_planning_and_intake_agents.py` | **New.** Offline, with scripted fake models: observation-driven plan and intake choices, fact proposal → confirm → save, malformed/duplicate/declined proposals, C0 retention after a bad order, schema and actor denial, step and budget limits, masking and fallback, shared query/answer-call budgets, correction and SQLite restart persistence, CSC presence, localized goals/questions/UI observability, provider bearer-key wiring against a fake response, and one reused provider connection |
 | `tests/test_phase2_api.py` | **New.** The API accepts a localized CSC intake and rejects a missing presence declaration (422) |
 | `tests/test_fact_registry.py` | **New (registry revision).** Strict registry models, typed parsers, `$decimal` wire form, choice collision rules, bundle activation, and the synthetic dev-only scholarship through the real graph, HTTP routes and checkpoint writes (see Step 4B) |
 | `tests/test_question_picker.py` | Rule-order questions, stop when decided, skipped facts not asked, PM-KISAN stops after income tax, land asked first |
@@ -2001,6 +2016,7 @@ unset to test the C0 path for free.
 | `src/ui/app.py` (revision) | `registered_answer_input` widgets chosen by `question_definition` |
 | Docs | Phase plan status, README journey section, this guide |
 | `src/api/scheme_search.py`, `src/mcp_servers/tools/scheme_search.py` | After Phase 2: the search fallback (`HOSTED_RERANK_FALLBACK_MIN_SCORE = 0.2`) |
+| `src/llm_client.py` | Later (commit `34cafd5`): `OpenRouterChatClient` (openai SDK, `max_retries=0`) now sends every OpenRouter chat request: the tool-choice provider, the search-query rewriter and the free-text answer reader. Embeddings and reranking still use `urllib` |
 
 ---
 
@@ -2028,11 +2044,12 @@ declaration.
   policy gate first (Phase 5).
 - **Phase 3**: more model specialists, re-planning across several schemes,
   **meaning-aware sharing of one answer** between schemes, and **corrections
-  and definition-change review** for registry facts (the registry path today
-  handles one scheme and `correct_journey_answer` still uses `HouseholdProfile`).
+  and definition-change review** for registry facts. (Built later; see the
+  [Phase 3 guide](PHASE3_CODE_WALKTHROUGH.md), section 4B.)
 - **Phase 4**: document checks, **form mapping from data**, drafts and the
   approval pause for registry schemes. This guide does not claim a registry
-  scheme reaches a draft.
+  scheme reaches a draft. (Built later for the synthetic scholarship; see the
+  [Phase 4 guide](PHASE4_CODE_WALKTHROUGH.md).)
 - **A review of this walkthrough** has not been done.
 - **Not claimed:** the whole capstone is complete, a full CI run on Python 3.12
   for the registry revision, or any live paid model run.

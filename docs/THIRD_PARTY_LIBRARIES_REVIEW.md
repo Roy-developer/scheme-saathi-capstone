@@ -24,6 +24,7 @@ Full test suite after the changes: **419 passed** (415 before, plus 4 new tests)
 | P5 | **Skipped** | The three retry loops record different events and treat the budget differently; one helper would need several callbacks and be harder to read. |
 | P6 | **Skipped** | The current "create/add if missing" setup is short and safe to repeat; version numbers add a concept without simplifying. |
 | A5 | **Done** | Duplicate `Authorization` header removed. |
+| Deps | **Done** | `pyproject.toml` runtime dependencies now list `openai`, `filelock` and `httpx` (`httpx` moved out of the `dev` extra). |
 
 **Correction to the P1 example below.** It builds the client once at import time
 (`_client = AsyncOpenAI(api_key=os.getenv(...))`). That reads the key too early: the
@@ -416,6 +417,12 @@ unchanged; each was followed by its targeted tests, then the full suite.
 ---
 
 ## Appendix: full inventory of hand-built code
+
+> **Note (2026-11-05).** The file and line references in this appendix and in the
+> "Today:" paragraphs of Part 2 describe the code **before** commit `34cafd5`. They
+> are kept as the record the proposal was based on; several of the functions they
+> name (`_choose`, `_read_free_text_answer`, `_rewrite_query`, the hand-built lock)
+> no longer exist. Search for the new names in the Outcome and Part 5 tables.
 
 ### A. Could use a library
 
