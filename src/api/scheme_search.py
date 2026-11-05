@@ -12,11 +12,16 @@ import urllib.request
 import uuid
 
 from fastembed.rerank.cross_encoder import TextCrossEncoder
+from langchain_core.documents import Document
+from langchain_core.embeddings import Embeddings
+from langchain_qdrant import QdrantVectorStore
+from openai import OpenAIError
 from rank_bm25 import BM25Okapi
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl
-from qdrant_client import QdrantClient, models
+from qdrant_client import models
 
 from src.config import PROJECT_ROOT
+from src.llm_client import openrouter_embeddings
 
 
 class PassageSource(BaseModel):
@@ -59,7 +64,6 @@ class PassageCorpus(BaseModel):
 
 
 EMBEDDING_MODEL = os.getenv("OPENROUTER_EMBEDDING_MODEL", "voyageai/voyage-4")
-OPENROUTER_EMBEDDINGS_URL = "https://openrouter.ai/api/v1/embeddings"
 OPENROUTER_RERANK_URL = "https://openrouter.ai/api/v1/rerank"
 OPENROUTER_RERANKER_MODEL = "cohere/rerank-v3.5"
 RERANKER_MODEL = "BAAI/bge-reranker-v2-m3-int8"
@@ -86,26 +90,14 @@ class OpenRouterReranker:
     """Rerank passages through OpenRouter without loading a local model."""
 
     def __init__(self, api_key: str | None = None) -> None:
-        self._api_key = (
-            api_key
-            or os.getenv("OPENROUTER_API_KEY_FREE")
-            or os.getenv("OPEN_ROUTER_FREE")
-        )
+        self._api_key = api_key
 
     def __call__(
         self,
         query: str,
         passages: Sequence["SchemePassage"],
     ) -> list[float]:
-        api_key = (
-            self._api_key
-            or os.getenv("OPENROUTER_API_KEY_FREE")
-            or os.getenv("OPEN_ROUTER_FREE")
-        )
-        if not api_key:
-            raise RuntimeError(
-                "OPENROUTER_API_KEY_FREE is required for hosted reranking."
-            )
+        api_key = self._api_key or free_api_key("hosted reranking")
 
         documents = [
             HybridSchemeRetriever.document_text(passage)
@@ -165,69 +157,13 @@ class OpenRouterReranker:
             ) from error
 
 
-class OpenRouterEmbeddings:
-    """Create vectors through the OpenAI-compatible OpenRouter embeddings API."""
+def free_api_key(purpose: str) -> str:
+    """Return the free OpenRouter key used for search, never the chat key."""
 
-    def __init__(
-        self,
-        api_key: str | None = None,
-        model: str = EMBEDDING_MODEL,
-    ) -> None:
-        self._api_key = (
-            api_key
-            or os.getenv("OPENROUTER_API_KEY_FREE")
-            or os.getenv("OPEN_ROUTER_FREE")
-        )
-        self.model = model
-        if not self._api_key:
-            raise RuntimeError(
-                "OPENROUTER_API_KEY_FREE is required for vector search."
-            )
-
-    def embed(self, texts: Sequence[str]) -> list[list[float]]:
-        """Embed a batch of texts without logging the key or submitted text."""
-
-        payload = json.dumps(
-            {"model": self.model, "input": list(texts)}
-        ).encode("utf-8")
-        request = urllib.request.Request(
-            OPENROUTER_EMBEDDINGS_URL,
-            data=payload,
-            headers={
-                "Authorization": f"Bearer {self._api_key}",
-                "Content-Type": "application/json",
-            },
-            method="POST",
-        )
-        try:
-            with urllib.request.urlopen(request, timeout=60) as response:
-                body = json.loads(response.read())
-        except urllib.error.HTTPError as error:
-            raise RuntimeError(
-                f"OpenRouter embeddings request failed with HTTP {error.code}."
-            ) from error
-        except urllib.error.URLError as error:
-            raise RuntimeError("OpenRouter embeddings request failed.") from error
-
-        try:
-            entries = sorted(body["data"], key=lambda item: item["index"])
-            vectors = [
-                [float(value) for value in entry["embedding"]]
-                for entry in entries
-            ]
-        except (KeyError, TypeError, ValueError) as error:
-            raise RuntimeError(
-                "OpenRouter returned an invalid embeddings response."
-            ) from error
-
-        if len(vectors) != len(texts) or not vectors or not vectors[0]:
-            raise RuntimeError(
-                "OpenRouter returned a different number of embeddings than requested."
-            )
-        dimensions = len(vectors[0])
-        if any(len(vector) != dimensions for vector in vectors):
-            raise RuntimeError("OpenRouter returned inconsistent embedding dimensions.")
-        return vectors
+    api_key = os.getenv("OPENROUTER_API_KEY_FREE") or os.getenv("OPEN_ROUTER_FREE")
+    if not api_key:
+        raise RuntimeError(f"OPENROUTER_API_KEY_FREE is required for {purpose}.")
+    return api_key
 
 
 def load_passages(path: Path) -> tuple[SchemePassage, ...]:
@@ -256,7 +192,7 @@ class HybridSchemeRetriever:
         | None = None,
         rerank: Callable[[str, Sequence[SchemePassage]], Sequence[float]]
         | None = None,
-        embeddings: OpenRouterEmbeddings | None = None,
+        embeddings: Embeddings | None = None,
         use_cross_encoder: bool = True,
     ) -> None:
         self.passages = tuple(passages)
@@ -274,7 +210,7 @@ class HybridSchemeRetriever:
         self._rerank_override = rerank
         self._embeddings = embeddings
         self._use_cross_encoder = use_cross_encoder
-        self._qdrant: QdrantClient | None = None
+        self._vector_store: QdrantVectorStore | None = None
         self._reranker: TextCrossEncoder | None = None
 
     def search(
@@ -390,84 +326,74 @@ class HybridSchemeRetriever:
                 for query in queries
             ]
 
-        client = self._get_qdrant()
-        if self._embeddings is None:
-            raise RuntimeError("Embedding client was not initialized.")
-        query_vectors = self._embeddings.embed(queries)
+        store = self._get_vector_store()
         must_filters = []
         jurisdictions = {passage.jurisdiction for passage in candidates}
         languages = {passage.language for passage in candidates}
         if len(jurisdictions) == 1:
-            must_filters.append(
-                models.FieldCondition(
-                    key="jurisdiction",
-                    match=models.MatchValue(value=next(iter(jurisdictions))),
-                )
-            )
+            must_filters.append(models.FieldCondition(
+                key="metadata.jurisdiction",
+                match=models.MatchValue(value=next(iter(jurisdictions))),
+            ))
         if len(languages) == 1:
-            must_filters.append(
-                models.FieldCondition(
-                    key="language",
-                    match=models.MatchValue(value=next(iter(languages))),
-                )
-            )
-
+            must_filters.append(models.FieldCondition(
+                key="metadata.language",
+                match=models.MatchValue(value=next(iter(languages))),
+            ))
         query_filter = models.Filter(must=must_filters) if must_filters else None
-        results = []
-        for vector in query_vectors:
-            response = client.query_points(
-                collection_name=VECTOR_COLLECTION,
-                query=vector,
-                query_filter=query_filter,
-                limit=min(RETRIEVAL_DEPTH, len(candidates)),
-                with_payload=True,
-            )
-            results.append(
-                [
-                    point.payload["passage_id"]
-                    for point in response.points
-                    if point.payload is not None
-                    and isinstance(point.payload.get("passage_id"), str)
-                ]
-            )
-        return results
-
-    def _get_qdrant(self) -> QdrantClient:
-        if self._qdrant is not None:
-            return self._qdrant
-
-        client = QdrantClient(":memory:")
-        if self._embeddings is None:
-            self._embeddings = OpenRouterEmbeddings()
-        vectors = self._embeddings.embed(
-            [self.document_text(passage) for passage in self.passages]
-        )
-        client.create_collection(
-            collection_name=VECTOR_COLLECTION,
-            vectors_config=models.VectorParams(
-                size=len(vectors[0]),
-                distance=models.Distance.COSINE,
-            ),
-        )
-        points = [
-            models.PointStruct(
-                id=str(uuid.uuid5(uuid.NAMESPACE_URL, passage.passage_id)),
-                vector=vector,
-                payload={
-                    "passage_id": passage.passage_id,
-                    "jurisdiction": passage.jurisdiction,
-                    "language": passage.language,
-                },
-            )
-            for passage, vector in zip(self.passages, vectors)
+        # One embeddings request for all query variants, then one lookup each.
+        return [
+            [
+                document.metadata["passage_id"]
+                for document in store.similarity_search_by_vector(
+                    vector, k=min(RETRIEVAL_DEPTH, len(candidates)), filter=query_filter,
+                )
+            ]
+            for vector in self._embed_queries(queries)
         ]
-        client.upload_points(
-            collection_name=VECTOR_COLLECTION,
-            points=points,
-            wait=True,
-        )
-        self._qdrant = client
-        return client
+
+    def _embedding_model(self) -> Embeddings:
+        if self._embeddings is None:
+            self._embeddings = openrouter_embeddings(
+                free_api_key("vector search"), EMBEDDING_MODEL,
+            )
+        return self._embeddings
+
+    def _embed_queries(self, queries: Sequence[str]) -> list[list[float]]:
+        try:
+            return self._embedding_model().embed_documents(list(queries))
+        except OpenAIError as error:
+            # Never echo the provider's error text, which may quote the input.
+            raise RuntimeError("OpenRouter embeddings request failed.") from error
+
+    def _get_vector_store(self) -> QdrantVectorStore:
+        """Index every passage once in an in-memory Qdrant collection."""
+
+        if self._vector_store is None:
+            try:
+                self._vector_store = QdrantVectorStore.from_documents(
+                    [
+                        Document(
+                            page_content=self.document_text(passage),
+                            metadata={
+                                "passage_id": passage.passage_id,
+                                "jurisdiction": passage.jurisdiction,
+                                "language": passage.language,
+                            },
+                        )
+                        for passage in self.passages
+                    ],
+                    self._embedding_model(),
+                    ids=[
+                        str(uuid.uuid5(uuid.NAMESPACE_URL, passage.passage_id))
+                        for passage in self.passages
+                    ],
+                    location=":memory:",
+                    collection_name=VECTOR_COLLECTION,
+                )
+            except OpenAIError as error:
+                raise RuntimeError("OpenRouter embeddings request failed.") from error
+        return self._vector_store
 
     def _rerank(
         self,

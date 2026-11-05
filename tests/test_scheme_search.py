@@ -2,12 +2,13 @@ import json
 from io import BytesIO
 from pathlib import Path
 
+import httpx
 import pytest
 
 from src.api import scheme_search as scheme_search_module
+from src.llm_client import openrouter_embeddings
 from src.api.scheme_search import (
     HybridSchemeRetriever,
-    OpenRouterEmbeddings,
     OpenRouterReranker,
     decompose_query,
     load_passages,
@@ -39,38 +40,62 @@ def build_retriever(passages):
     )
 
 
-def test_openrouter_embeddings_prefers_free_api_key(monkeypatch):
+def test_vector_search_uses_free_key_and_one_embeddings_request(monkeypatch):
+    """Index once, then embed every query variant in one OpenRouter request."""
+
     requests = []
 
-    def fake_urlopen(request, timeout):
+    def handle(request: httpx.Request) -> httpx.Response:
         requests.append(request)
-        return BytesIO(
-            json.dumps(
-                {"data": [{"index": 0, "embedding": [0.1, 0.2]}]}
-            ).encode()
-        )
+        texts = json.loads(request.content)["input"]
+        # Same 2-D vector for every text: enough for Qdrant to return results.
+        return httpx.Response(200, json={
+            "object": "list", "model": "fake",
+            "data": [
+                {"object": "embedding", "index": index, "embedding": [1.0, 0.0]}
+                for index, _ in enumerate(texts)
+            ],
+        })
 
     monkeypatch.setenv("OPENROUTER_API_KEY_FREE", "free-key")
     monkeypatch.setenv("OPENROUTER_API_KEY", "default-key")
-    monkeypatch.setattr(
-        scheme_search_module.urllib.request,
-        "urlopen",
-        fake_urlopen,
+    passages = load_passages(PASSAGE_FILE)
+    embeddings = openrouter_embeddings(
+        "free-key", "voyageai/voyage-4",
+        http_client=httpx.Client(transport=httpx.MockTransport(handle)),
+    )
+    retriever = HybridSchemeRetriever(
+        passages, embeddings=embeddings, use_cross_encoder=False,
     )
 
-    vectors = OpenRouterEmbeddings().embed(["test passage"])
+    rankings = retriever._vector_search_many(
+        ("widow pension", "widow"), passages,
+    )
 
-    assert vectors == [[0.1, 0.2]]
-    assert requests[0].get_header("Authorization") == 'Bearer free-key'
+    assert len(rankings) == 2
+    assert set(rankings[0]) <= {passage.passage_id for passage in passages}
+    assert rankings[0]
+    assert requests[-1].url == "https://openrouter.ai/api/v1/embeddings"
+    assert requests[-1].headers["Authorization"] == "Bearer free-key"
+    assert json.loads(requests[-1].content) == {
+        "model": "voyageai/voyage-4", "input": ["widow pension", "widow"],
+        "encoding_format": "float",
+    }
+    before = len(requests)
+    retriever._vector_search_many(("widow",), passages)
+    assert len(requests) == before + 1, "the passage index is built only once"
 
 
 def test_embeddings_do_not_fall_back_to_chat_key(monkeypatch):
     monkeypatch.delenv("OPENROUTER_API_KEY_FREE", raising=False)
     monkeypatch.delenv("OPEN_ROUTER_FREE", raising=False)
     monkeypatch.setenv("OPENROUTER_API_KEY", "chat-key")
+    retriever = HybridSchemeRetriever(
+        load_passages(PASSAGE_FILE), use_cross_encoder=False,
+    )
 
     with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY_FREE"):
-        OpenRouterEmbeddings()
+        retriever._vector_search_many(("widow",), retriever.passages)
 
 
 def test_openrouter_reranker_returns_scores_in_document_order(monkeypatch):
