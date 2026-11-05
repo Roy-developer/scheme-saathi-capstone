@@ -635,7 +635,7 @@ How it works:
 - `_read_budget` takes the larger of the state value and the Store value for each counter, and ignores malformed values. So **starting again with the same conversation ID does not hand out fresh calls**. A new conversation ID starts at zero.
 - The free-text reply reader is charged to the same counters and has an additional **one attempt per fact** limit. That's remembered in `llm_attempted_facts` and in the Store, so it also survives corrections and restarts.
 
-Proof: `test_same_id_restart_preserves_model_budget` runs a request, builds a **new graph, a new SQLite connection and a new `AsyncSqliteStore`** (like an API restart), runs the same request again and expects `model_calls` to go 2 → 4. `test_fact_interpretation_attempt_survives_correction_and_same_id_restart` does the same for the per-fact attempt.
+Proof: `test_same_id_restart_preserves_model_budget` runs a request, builds a **new graph and a new SQLite connection** (like an API restart), runs the same request again and expects `model_calls` to go 2 → 4; this proves the checkpoint copy. `test_fact_interpretation_attempt_survives_correction_and_same_id_restart` does the same for the per-fact attempt. The Store copy is proved by `test_model_call_reservation_survives_node_crash_and_sqlite_restart` and `test_failed_node_search_reservation_survives_sqlite_process_restart` (`tests/test_phase3_agents.py`), which reopen an `AsyncSqliteStore` after a node crash.
 
 #### What the shared budget does and does not cover
 
@@ -645,7 +645,7 @@ The budget covers the supervisor and intake agents **and** the two one-off chat 
 
 `PII_RULES` (in `agent_runtime.py`) are four LangChain `RedactionRule`s. Matches become `[REDACTED_EMAIL]`, `[REDACTED_AADHAAR]` (a 12-digit, Aadhaar-like number), `[REDACTED_PHONE]` (an Indian mobile number) and `[REDACTED_ACCOUNT]` (any other run of 9–18 digits). They're applied:
 
-1. by `PIIMiddleware` to everything an agent's model sees;
+1. by `PIIMiddleware` to the agent's input message (its default; tool observations carry only codes and typed values);
 2. by `mask_sensitive_text` in `run_journey`, on the optional description and on a search query;
 3. by `mask_sensitive_text` in `resume_journey`, on every typed reply.
 

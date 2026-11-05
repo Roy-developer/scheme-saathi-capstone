@@ -1048,7 +1048,7 @@ a request with an old revision or fingerprint is refused.
 
 ## 13. Safe tracing and the model budget
 
-Every agent model call and tool call, valid or not, is recorded by
+Every agent tool call, valid or not, and every stopped model call is recorded by
 `ScrubbedTraceMiddleware` (`src/workflow/agent_middleware.py`) as one
 `trace_event`. It holds the agent name, action name, status, model name, prompt
 version, step number, token counts, duration and a fixed one-line summary. It
@@ -1062,7 +1062,8 @@ numbers. These guards are LangChain middleware passed to `create_agent`; see
 [HOOKS_WALKTHROUGH.md](HOOKS_WALKTHROUGH.md).
 
 The budget limits (in `agent_config.py`) are **per conversation**: 8 model calls,
-24 tool/action calls, 12 agent steps, 12,000 tokens, and 3 steps per turn. The
+24 tool/action calls, 12 agent steps and 12,000 tokens. Separately, each agent run is
+capped at `max_steps` model calls (2 for the document and application agents). The
 24-call ceiling includes deterministic document rechecks, lost-response draft
 recovery and exact receipt retries; it does **not** buy extra model calls.
 `DurableBudgetMiddleware` **reserves** tokens and counters *before* the paid call

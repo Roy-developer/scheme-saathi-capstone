@@ -66,7 +66,7 @@ See **Part 5** for the further simplifications made after an end-to-end review.
 | 11 | One budget rule for agents and one-off calls | `model_call_fits` / `reserve_model_call`, shared by the middleware and `run_accounted_model_call` | `34fab15` |
 | — | Fixed: Hindi and Marathi `age` note stored as "???" | registry re-pinned; a test now rejects "??" in any question | `230b990` |
 
-**Behaviour change, agreed in advance (option B):** an unknown tool or invalid arguments are now answered with an error message and the model may try again within its step limit (LangChain's standard behaviour). Before, the run stopped at once. In both versions the tool body never runs and nothing is counted.
+**Behaviour change, agreed in advance (option B):** an unknown tool or invalid arguments are now answered with an error message and the model may try again within its step limit (LangChain's standard behaviour). Before, the run stopped at once. In both versions the tool body never runs and no tool call is counted (the model call that chose it still counts).
 
 ### Kept as Saathi code on purpose
 

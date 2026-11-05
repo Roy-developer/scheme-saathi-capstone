@@ -132,14 +132,16 @@ agent_runtime.py · run_agent(...) → create_agent(model, tools, system_prompt,
 │    ◆ [S]  ScrubbedTraceMiddleware   record a data-free event
 │    ◆ [S]  DurableBudgetMiddleware   check limits → save the reservation → force one strict tool call
 │           ChatOpenAI → OpenRouter → returns one tool call
-│  each tool call passes through:
-│    ◆ [LC] unknown tool name? → error message back to the model, nothing runs
-│    ◆ [LC] arguments fail args_schema? → error message back to the model, nothing runs
-│    ◆ [S]  DurableBudgetMiddleware   tool budget left? count it, save it
-│    ◆ [S]  ScrubbedTraceMiddleware   record denied / invalid_arguments / observed / completed
+│  each tool call passes through, outermost first:
+│    ◆ [S]  ScrubbedTraceMiddleware   (records the outcome after the call, below)
+│    ◆ [S]  DurableBudgetMiddleware   unknown tool or bad arguments? pass through uncounted;
+│                                     otherwise: tool budget left? count it, save it
+│    ◆ [LC] create_agent's tool step  unknown tool name or arguments fail args_schema?
+│                                     → error message back to the model, nothing runs
 │           the tool runs → inspect() → check_and_bind_documents(...)
 │             ◆ [S] ServiceClientRouter: is the "documents" role allowed? → MCP doc-check service
 │           the result goes back to the model as observation(...) labelled "outside_text_is_data"
+│    ◆ [S]  ScrubbedTraceMiddleware   record denied / invalid_arguments / observed / completed / action_rejected
 │  returns AgentRunResult(status, budget, trace)
 ▼
 document_agent.py · back in run_document_specialist
@@ -162,6 +164,7 @@ Keep this picture in mind. Section 5 explains each `◆`.
 OpenRouter speaks the OpenAI request format, so LangChain's `ChatOpenAI` works with OpenRouter's address and key. It is built in **one place**, [`llm_client.py:33`](../src/llm_client.py#L33):
 
 ```python
+# shortened: arguments regrouped, comments added
 return ChatOpenAI(
     model=model, api_key=api_key, base_url=OPENROUTER_BASE_URL,
     default_headers=_IDENTIFYING_HEADERS, temperature=0,
@@ -216,6 +219,7 @@ When the tool's name must be chosen at run time, the same thing is built with `S
 Every agent runs through one function, [`agent_runtime.py:153`](../src/workflow/agent_runtime.py#L153):
 
 ```python
+# shortened: the estimate_extra argument and docstring left out
 graph = create_agent(
     model,
     tools=tools,
@@ -267,7 +271,7 @@ PII_RULES = (
 ```
 
 - **Agents:** `PIIMiddleware` applies each rule to the model input.
-- **Everything else** (trace text, intake replies, search queries): `mask_sensitive_text(text)` applies the same rules.
+- **Everything else** (the free-text description, intake replies, search queries): `mask_sensitive_text(text)` applies the same rules. Trace events never hold free text at all, only fixed summaries.
 
 Matches become `[REDACTED_EMAIL]`, `[REDACTED_AADHAAR]`, `[REDACTED_PHONE]` and `[REDACTED_ACCOUNT]`. Aadhaar comes before phone and account so that a 12-digit Aadhaar number isn't partly matched as a phone number.
 
@@ -281,7 +285,7 @@ The **conversation-wide** limits are a different thing. They are Saathi's budget
 
 ### 5.6 The privacy-safe activity log: `ScrubbedTraceMiddleware` **[S]**
 
-[`agent_middleware.py:90`](../src/workflow/agent_middleware.py#L90). After every tool call it records one event:
+[`agent_middleware.py:90`](../src/workflow/agent_middleware.py#L90). After every tool call, and whenever a model call is stopped, it records one event (a model call that succeeds records nothing on its own):
 
 | Event status | Cause |
 |---|---|
@@ -290,7 +294,7 @@ The **conversation-wide** limits are a different thing. They are Saathi's budget
 | `observed` | A normal tool ran; its observation went back to the model |
 | `completed` | A `return_direct` tool ran; the run ends |
 | `action_rejected` | The tool raised `AgentActionError` or a `ValidationError`. The run stops. |
-| `budget_exhausted`, `model_unavailable` | Recorded when the budget middleware stops a model call |
+| `budget_exhausted`, `model_unavailable` | Recorded when the budget middleware stops a model call, or (`budget_exhausted`) a tool call |
 
 Each event has a fixed shape (`trace_event`): agent, action, status, model, prompt version, step, token counts, duration and a **fixed summary sentence**. It never holds prompts, arguments or applicant data, so it can be stored and shown to the person.
 
@@ -316,7 +320,7 @@ class ConversationBudget:
         await self.store.aput(BUDGET_NAMESPACE, self.conversation_id, dict(self.values))
 ```
 
-In production the store is `AsyncSqliteStore`, in the same SQLite file as the checkpoints but on its own connection (`src/api/app.py`). "Forget my data" deletes both the checkpoint and the store item.
+In production the store is `AsyncSqliteStore`, in the same SQLite file as the checkpoints but on its own connection (`src/api/app.py`). "Forget my data" deletes the conversation's checkpoint and approval-gate threads, its portal data, and the Store budget item.
 
 **How code reaches it without passing it everywhere:** `_serialize_journey` ([`journey.py`](../src/workflow/journey.py)) wraps every request. It locks the conversation, loads the budget and puts it in the context variable `CURRENT_BUDGET`. Any function below can then call `reserve_counters(counters)`.
 
@@ -345,13 +349,13 @@ async def reserve_model_call(counters: dict[str, int], estimated_input: int) -> 
 3. `reserve_model_call`, which saves the reservation.
 4. Force **one strict tool call**: `request.override(tool_choice="required", model_settings={"parallel_tool_calls": False, "strict": True})`.
 5. Call the model. Any `OpenAIError` becomes `RunStopped("model_unavailable")`.
-6. Replace the estimate with real usage, release the unused part of the reply reservation, and save again.
+6. Keep the larger of the estimated and real input tokens, replace the 512-token reply reservation with the real reply size, and save again.
 
 **Around each tool call:** an unknown tool or bad arguments pass straight through (LangChain returns an error, nothing runs, nothing is counted). Otherwise it checks the 24-tool limit, counts the call and saves it before the tool runs.
 
 **Why it's Saathi's own:** LangChain's limit middleware counts in memory for one run. Saathi needs a limit shared by all agents for the whole conversation, saved before the call, that survives restarts.
 
-**Tests:** `test_same_id_restart_preserves_model_budget` and `test_model_budget_survives_correction_and_same_id_process_restart` in [`tests/test_planning_and_intake_agents.py`](../tests/test_planning_and_intake_agents.py).
+**Tests:** `test_model_call_reservation_survives_node_crash_and_sqlite_restart` and `test_budget_checkpoint_failure_prevents_model_dispatch` in [`tests/test_phase3_agents.py`](../tests/test_phase3_agents.py): the first reopens an `AsyncSqliteStore` and proves a reservation survives a node crash; the second proves that if the reservation cannot be saved, the model is never called. `test_same_id_restart_preserves_model_budget` and `test_model_budget_survives_correction_and_same_id_process_restart` in [`tests/test_planning_and_intake_agents.py`](../tests/test_planning_and_intake_agents.py) prove the checkpoint copy (`agent_budget`) survives a restart and a correction.
 
 ### 5.8 When the model chooses badly
 
@@ -362,11 +366,11 @@ async def reserve_model_call(counters: dict[str, int], estimated_input: int) -> 
 | calls a real tool, but the task check refuses it | `AgentActionError`. The run stops. | `action_rejected` |
 | keeps going without finishing | `ModelCallLimitMiddleware` ends the run | `step_limit` |
 
-In every case the tool's body never runs, and the trace says why.
+For an unknown tool or bad arguments the tool body never runs. A task check stops the tool before it does any work. In every case the trace says why.
 
 ### 5.9 When there is no model: the code path **[S]**
 
-Every agent wraps a step that plain code can do on its own (run the rule check, inspect documents). If the model **could not be asked** (`budget_exhausted` or `model_unavailable`), `recover_authorized_action` ([`agent_runtime.py:207`](../src/workflow/agent_runtime.py#L207)) runs that code step **once**, counted against the tool budget:
+The eligibility, documents and application agents each wrap a step that plain code can do on its own (run the rule check, inspect documents, perform the authorized portal action). If the model **could not be asked** (`budget_exhausted` or `model_unavailable`), `recover_authorized_action` ([`agent_runtime.py:207`](../src/workflow/agent_runtime.py#L207)) runs that code step **once**, counted against the tool budget:
 
 ```python
 if (
@@ -379,6 +383,8 @@ await reserve_counters(run.budget)
 return await execute()
 ```
 
+The supervisor and intake agents have no such step: they return `deterministic_fallback`, and the fixed plan or fixed questions carry on.
+
 With **no API key at all**, agents skip the model entirely (`if provider is None: ...`) and report `deterministic`.
 
 **Test:** `test_model_recovery_never_bypasses_the_remaining_tool_budget` in [`tests/test_document_and_application_agents.py`](../tests/test_document_and_application_agents.py).
@@ -388,6 +394,7 @@ With **no API key at all**, agents skip the model entirely (`if provider is None
 Intake makes two single calls that aren't agents: reading a free-text answer and rewriting a search query. They use LangChain structured output ([`intake.py`](../src/workflow/intake.py)):
 
 ```python
+# shortened: the surrounding try/except that maps errors to IntakeAgentError is left out
 reader = openrouter_chat_model(api_key, model).with_structured_output(
     schema, method="json_mode",
 )
@@ -424,7 +431,7 @@ def _merge_agent_trace(current, added):
 
 ## 6. The five agents at a glance
 
-Each agent file has the same shape: schemas → `@tool` functions (closures with task checks) → `if provider is None:` code path → `run_agent(...)` → recovery.
+Each agent file has the same shape: schemas → `@tool` functions (closures with task checks) → `if provider is None:` code path → `run_agent(...)` → recovery (eligibility, documents and application only).
 
 | Agent | File | Tools (the allow-list) | `max_steps` | What plain code still decides |
 |---|---|---|---|---|
@@ -451,7 +458,7 @@ class Model(FakeChatModel):
         return ModelDecision(action="inspect_document_metadata", arguments={"scheme_id": "pm-kisan"})
 ```
 
-`choose` receives the agent name and language (worked out from the system prompt), the conversation so far and the bound tools. A test can therefore script the model, check what it was shown, or raise to simulate an outage. No test reaches the network.
+`choose` receives the agent name and language (worked out from the system prompt), the conversation so far and the bound tools. A test can therefore script the model, check what it was shown, or raise `AgentModelError` to simulate an outage (other exceptions are not treated as an outage and escape `run_agent`). No test reaches the network.
 
 ### The fake OpenRouter
 
@@ -468,7 +475,7 @@ async def propose_plan(value: str) -> str:
     calls.append("executed")
     ...
 
-# The model sends bad arguments, then an unknown tool:
+# Run 1 (max_steps=1): the model sends bad arguments. Run 2 (not shown) sends an unknown tool.
 invalid = await run(provider)
 assert [e["status"] for e in invalid.trace] == ["invalid_arguments", "step_limit"]
 assert not calls                       # the tool body never ran
@@ -519,6 +526,7 @@ You don't write a loop, an allow-list, a masking step or a budget check. `run_ag
 |---|---|
 | `model_assisted` | The agent run completed with the model |
 | `deterministic` | No model configured; plain code did the step |
+| `model_validated` | Supervisor only: the model's plan order passed `validate_plan_order` and is used |
 | `deterministic_fallback` | The model couldn't finish; the code path decided (or nothing was done) |
 
 ### Where to find each guard
