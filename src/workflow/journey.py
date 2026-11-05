@@ -2078,9 +2078,15 @@ def build_journey_graph(
         }
         if result is None:
             verdict = CandidateVerdict(scheme_id=scheme_id, result="tool_error")
+            # Say plainly when the stop came from a used-up allowance: retrying
+            # later will not help, a new conversation will.
+            stopped_by_budget = bool(trace) and trace[-1].get("status") == "budget_exhausted"
             return {
                 "status": "tool_error",
-                "message": discovery_message("tool_error", state.get("locale", "en")),
+                "message": discovery_message(
+                    "allowance_used" if stopped_by_budget else "tool_error",
+                    state.get("locale", "en"),
+                ),
                 "eligibility_result": None,
                 "candidate_verdicts": {
                     **state.get("candidate_verdicts", {}),

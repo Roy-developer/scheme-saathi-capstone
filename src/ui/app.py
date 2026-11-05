@@ -39,7 +39,7 @@ from src.workflow.agent_config import (
     MAX_CONVERSATION_TOOL_CALLS,
 )
 from src.workflow.journey import JourneyRequest, JourneyResponse
-from src.workflow.questions import question_for
+from src.workflow.questions import parse_answer, question_for
 from src.workflow.discovery import discovery_message
 
 
@@ -107,7 +107,8 @@ COPY = {
         "source_publication_unknown": "Not recorded",
         "profile_name": "Confirmed synthetic profile name for comparison",
         "document_name": "Name entered from this synthetic document",
-        "document_date": "Date of birth entered from this synthetic document (YYYY-MM-DD)",
+        "document_date": "Date of birth entered from this synthetic document (for example 12-03-1958)",
+        "document_date_invalid": "Could not read a date of birth on a document. Write it like 12 March 1958, 12-03-1958 or 1958-03-12, or leave it empty.",
         "mismatch_help": "The entered name or date differs from the confirmed synthetic profile. Correct the entered fields and recheck; no document was read or authenticated.",
         "requirements_referral": "Requirements for this scheme are unverified. Please ask a human caseworker; do not treat this demo list as official.",
         "approval_expiry": "Approval expires at",
@@ -261,7 +262,8 @@ COPY = {
         "source_publication_unknown": "दर्ज नहीं",
         "profile_name": "तुलना के लिए पुष्टि किया गया कृत्रिम प्रोफ़ाइल नाम",
         "document_name": "इस कृत्रिम दस्तावेज़ से दर्ज नाम",
-        "document_date": "इस कृत्रिम दस्तावेज़ से दर्ज जन्म तिथि (YYYY-MM-DD)",
+        "document_date": "इस कृत्रिम दस्तावेज़ से दर्ज जन्म तिथि (उदाहरण: 12-03-1958)",
+        "document_date_invalid": "किसी दस्तावेज़ की जन्म तिथि समझ में नहीं आई। इसे 12 March 1958, 12-03-1958 या 1958-03-12 की तरह लिखें, या खाली छोड़ें।",
         "mismatch_help": "दर्ज नाम या तारीख पुष्टि किए गए कृत्रिम प्रोफ़ाइल से अलग है। दर्ज जानकारी सुधारकर फिर जाँचें; कोई दस्तावेज़ पढ़ा या प्रमाणित नहीं किया गया।",
         "requirements_referral": "इस योजना की आवश्यकताएँ सत्यापित नहीं हैं। मानव केसवर्कर से पूछें; इस प्रदर्शन सूची को आधिकारिक न मानें।",
         "approval_expiry": "मंज़ूरी समाप्त होने का समय",
@@ -415,7 +417,8 @@ COPY = {
         "source_publication_unknown": "नोंदवलेली नाही",
         "profile_name": "तुलनेसाठी पुष्टी केलेले कृत्रिम प्रोफाइल नाव",
         "document_name": "या कृत्रिम कागदपत्रातून नोंदवलेले नाव",
-        "document_date": "या कृत्रिम कागदपत्रातून नोंदवलेली जन्मतारीख (YYYY-MM-DD)",
+        "document_date": "या कृत्रिम कागदपत्रातून नोंदवलेली जन्मतारीख (उदाहरण: 12-03-1958)",
+        "document_date_invalid": "एखाद्या कागदपत्रावरील जन्मतारीख समजली नाही. ती 12 March 1958, 12-03-1958 किंवा 1958-03-12 अशी लिहा, किंवा रिकामी ठेवा.",
         "mismatch_help": "नोंदवलेले नाव किंवा तारीख पुष्टी केलेल्या कृत्रिम प्रोफाइलपेक्षा वेगळी आहे. नोंद दुरुस्त करून पुन्हा तपासा; कोणतेही कागदपत्र वाचले किंवा प्रमाणित केलेले नाही.",
         "requirements_referral": "या योजनेच्या आवश्यकता पडताळलेल्या नाहीत. मानवी केसवर्करला विचारा; ही प्रात्यक्षिक यादी अधिकृत समजू नका.",
         "approval_expiry": "मंजुरीची मुदत संपण्याची वेळ",
@@ -967,12 +970,24 @@ def save_application_progress(result: dict) -> dict:
     return result
 
 
+class DocumentDateError(ValueError):
+    """A date typed into the document form could not be read."""
+
+
 def _document_metadata_from_session(
     scheme_id: str,
     requirements: list[dict[str, object]],
 ) -> dict[str, dict[str, str]]:
-    """Keep only non-empty synthetic fields in the API assessment request."""
+    """Keep only non-empty synthetic fields in the API assessment request.
 
+    Dates are read like interview answers (``12 March 1958``, ``12-03-1958``,
+    ``1958-03-12``, Hindi/Marathi digits) and sent as ``YYYY-MM-DD``.
+
+    Raises:
+        DocumentDateError: A typed date could not be read.
+    """
+
+    locale = st.session_state.get("journey_locale", "en")
     metadata: dict[str, dict[str, str]] = {}
     for item in requirements:
         document_id = str(item["document_id"])
@@ -980,6 +995,11 @@ def _document_metadata_from_session(
         date_of_birth = st.session_state.get(
             f"doc-date-{scheme_id}-{document_id}", ""
         ).strip()
+        if date_of_birth:
+            parsed = parse_answer("date_of_birth", date_of_birth, locale)
+            if parsed.kind != "value":
+                raise DocumentDateError(document_id)
+            date_of_birth = parsed.value.isoformat()
         fields = {
             key: value
             for key, value in (
@@ -1260,10 +1280,10 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                     statuses = _document_statuses_from_session(
                         scheme_id, visible_items
                     )
-                    metadata = _document_metadata_from_session(
-                        scheme_id, visible_items
-                    )
                     try:
+                        metadata = _document_metadata_from_session(
+                            scheme_id, visible_items
+                        )
                         flow_state["assessment"] = save_application_progress(
                             assess_documents(
                                 conversation_id, scheme_id, statuses,
@@ -1272,6 +1292,8 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                             )
                         )
                         flow_state["error"] = None
+                    except DocumentDateError:
+                        flow_state["error"] = text["document_date_invalid"]
                     except ApplicationApiError:
                         flow_state["error"] = text["application_error"]
                     st.rerun()
@@ -1306,6 +1328,8 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                                 ),
                             )
                         )
+                    except DocumentDateError:
+                        flow_state["error"] = text["document_date_invalid"]
                     except ApplicationApiError:
                         flow_state["error"] = text["application_error"]
                     else:
@@ -1420,10 +1444,10 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                         statuses = _document_statuses_from_session(
                             scheme_id, visible_items
                         )
-                        metadata = _document_metadata_from_session(
-                            scheme_id, visible_items
-                        )
                         try:
+                            metadata = _document_metadata_from_session(
+                                scheme_id, visible_items
+                            )
                             checked = save_application_progress(assess_documents(
                                 conversation_id, scheme_id, statuses,
                                 st.session_state.get(f"profile-name-{scheme_id}") or None,
@@ -1449,6 +1473,8 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                                     )
                                 )
                             flow_state["error"] = None
+                        except DocumentDateError:
+                            flow_state["error"] = text["document_date_invalid"]
                         except ApplicationApiError:
                             flow_state["error"] = text["application_error"]
                         st.rerun()

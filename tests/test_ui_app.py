@@ -926,3 +926,68 @@ def test_discovery_coverage_and_referral_notices_are_localized() -> None:
         assert any("CSC" in warning.value for warning in app.warning)
         assert not any("Only 20 candidates" in warning.value for warning in app.warning)
         assert any("पुष्टि" in caption.value for caption in app.caption)
+
+
+def test_document_dates_accept_everyday_formats_and_explain_unreadable_ones() -> None:
+    """Document dates are read like interview answers and sent as YYYY-MM-DD."""
+
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    conversation_id = uuid4()
+    scheme_id = "IGNWPS-MH"
+    assessment = assess_document_metadata({"scheme_id": scheme_id, "documents": {}})
+    saved = JourneyResponse(
+        conversation_id=conversation_id,
+        plan="Check the scheme",
+        status="eligible",
+        message="Eligible under the mock rules.",
+        eligibility_result=EligibilityResponse(
+            scheme_id=scheme_id, result="eligible",
+            reason="Eligible under the mock rules.",
+            deciding_rule_ids=[], evidence=[],
+        ),
+        candidate_scheme_ids=[scheme_id],
+        candidate_verdicts={scheme_id: CandidateVerdict(
+            scheme_id=scheme_id, result="eligible"
+        )},
+        document_assessments={scheme_id: assessment},
+    )
+
+    with patch(
+        "src.ui.api_client.get_journey_state", return_value=saved
+    ), patch(
+        "src.ui.api_client.list_application_drafts", return_value=[]
+    ), patch(
+        "src.ui.api_client.assess_documents", return_value=assessment,
+    ) as assess:
+        app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS)
+        app.query_params["conversation"] = str(conversation_id)
+        app.query_params["scheme"] = scheme_id
+        app.run()
+        next(
+            button for button in app.button
+            if button.label == "Load demo document checklist"
+        ).click().run()
+        assert not app.exception
+        date_inputs = [
+            item for item in app.text_input if str(item.key).startswith("doc-date-")
+        ]
+        assert date_inputs, "the checklist should offer a document date field"
+        update = lambda: next(
+            button for button in app.button
+            if button.label == "Update and recheck checklist"
+        ).click().run()
+
+        date_inputs[0].input("12-03-1958").run()
+        update()
+        assert not app.exception
+        sent_metadata = assess.call_args.args[4]
+        assert {"date_of_birth": "1958-03-12"} in sent_metadata.values()
+        calls_before = assess.call_count
+
+        next(
+            item for item in app.text_input if item.key == date_inputs[0].key
+        ).input("sometime in spring").run()
+        update()
+        assert not app.exception
+        assert assess.call_count == calls_before
+        assert any("Could not read a date of birth" in item.value for item in app.error)

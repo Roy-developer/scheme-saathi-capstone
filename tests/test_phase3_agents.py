@@ -15,7 +15,7 @@ from src.api.scheme_search import SchemePassage
 from src.rules.data_provider import RulePackageProvider
 from src.rules.models import HouseholdProfile
 from src.mcp_servers.tools import applications, documents
-from src.workflow.agent_config import MAX_CONVERSATION_MODEL_CALLS
+from src.workflow.agent_config import MAX_CONVERSATION_MODEL_CALLS, MAX_CONVERSATION_TOOL_CALLS
 from src.workflow.agent_runtime import ModelDecision
 from src.workflow.conversation_budget import ConversationBudget
 from src.workflow.discovery import MAX_DISCOVERY_CALLS, discovery_input
@@ -119,23 +119,117 @@ def test_eligibility_exhausted_budget_and_wrong_tool_output_do_not_invent_verdic
         model_name = "offline-budget"
 
         async def choose(self, *_args):
-            return ModelDecision(action="check_candidate", arguments={"scheme_id": "IGNWPS-MH"})
+            pytest.fail("The model must not be asked after its allowance is used")
 
+    # Model allowance used up: the rule engine still runs once and its verdict is kept.
+    calls = []
+
+    async def rule_check():
+        calls.append(True)
+        return await evaluate(None, "IGNWPS-MH", HouseholdProfile(**PROFILE))
+
+    result, budget, trace, mode = asyncio.run(run_eligibility_specialist(
+        Model(), "IGNWPS-MH", "en",
+        {"model_calls": MAX_CONVERSATION_MODEL_CALLS}, rule_check,
+    ))
+    assert result.result == "eligible"
+    assert calls == [True]
+    assert budget["tool_calls"] == 1
+    assert trace[-1]["status"] == "budget_exhausted" and mode == "deterministic_fallback"
+
+    # Tool budget also used up: nothing runs and no verdict is produced.
     async def forbidden():
-        pytest.fail("No call permitted after budget exhaustion")
+        pytest.fail("No call permitted after both budgets are exhausted")
 
     result, _, trace, _ = asyncio.run(run_eligibility_specialist(
         Model(), "IGNWPS-MH", "en",
-        {"model_calls": MAX_CONVERSATION_MODEL_CALLS}, forbidden,
+        {"model_calls": MAX_CONVERSATION_MODEL_CALLS,
+         "tool_calls": MAX_CONVERSATION_TOOL_CALLS},
+        forbidden,
     ))
     assert result is None and trace[-1]["status"] == "budget_exhausted"
+
+    class CheckingModel:
+        model_name = "offline-malformed-output"
+
+        async def choose(self, *_args):
+            return ModelDecision(action="check_candidate", arguments={"scheme_id": "IGNWPS-MH"})
 
     async def malformed():
         return {"result": "eligible"}
 
     assert asyncio.run(run_eligibility_specialist(
-        Model(), "IGNWPS-MH", "en", {}, malformed,
+        CheckingModel(), "IGNWPS-MH", "en", {}, malformed,
     ))[0] is None
+
+
+def test_eligibility_runs_rule_check_once_when_model_is_unavailable():
+    """No model step possible: the rule engine still answers, within the tool budget."""
+
+    from src.workflow.agent_runtime import AgentModelError
+
+    class Unavailable:
+        model_name = "offline-unavailable"
+
+        async def choose(self, *_args):
+            raise AgentModelError("Synthetic unavailable model")
+
+    calls = []
+
+    async def rule_check():
+        calls.append(True)
+        return await evaluate(None, "IGNWPS-MH", HouseholdProfile(**PROFILE))
+
+    result, budget, _, mode = asyncio.run(run_eligibility_specialist(
+        Unavailable(), "IGNWPS-MH", "en", {}, rule_check,
+    ))
+    assert result.result == "eligible" and calls == [True]
+    assert budget["model_calls"] == 1 and budget["tool_calls"] == 1
+    assert mode == "deterministic_fallback"
+
+    async def wrong_scheme():
+        return await evaluate(None, "PM-KISAN-IN", HouseholdProfile(**PROFILE))
+
+    assert asyncio.run(run_eligibility_specialist(
+        Unavailable(), "IGNWPS-MH", "en", {}, wrong_scheme,
+    ))[0] is None
+
+
+def test_used_up_allowance_shows_a_new_conversation_message():
+    """When both allowances are spent, say so instead of 'retry later'."""
+
+    class Model:
+        model_name = "offline-spent"
+
+        async def choose(self, *_args):
+            pytest.fail("The model must not be asked after its allowance is used")
+
+    async def forbidden(_client, _scheme_id, _profile):
+        pytest.fail("No rule check is permitted after the tool budget is used")
+
+    async def scenario():
+        saver = MemorySaver()
+        conversation_id = uuid4()
+        ledger = ConversationBudget(saver)
+        await ledger.load(str(conversation_id))
+        await ledger.reserve({
+            "model_calls": MAX_CONVERSATION_MODEL_CALLS,
+            "tool_calls": MAX_CONVERSATION_TOOL_CALLS,
+        })
+        graph = build_journey_graph(
+            None, PACKAGES, eligibility_tool=forbidden,
+            model_provider=Model(), eligibility_model_provider=Model(),
+            checkpointer=saver,
+        )
+        return await run_journey(graph, JourneyRequest(
+            action="evaluate", scheme_id="IGNWPS-MH", profile=PROFILE,
+            conversation_id=conversation_id,
+        ))
+
+    journey = asyncio.run(scenario())
+    assert journey.status == "tool_error"
+    assert "used its allowance" in journey.message
+    assert "Retry later" not in journey.message
 
 
 @pytest.mark.parametrize("unavailable", [False, True])

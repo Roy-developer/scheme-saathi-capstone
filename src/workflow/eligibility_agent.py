@@ -7,7 +7,8 @@ from pydantic import Field, ValidationError
 
 from src.api.eligibility import EligibilityResponse
 from src.workflow.agent_runtime import (
-    AgentAction, AgentActionError, AgentSchema, ToolChoiceProvider, run_react_loop,
+    AgentAction, AgentActionError, AgentSchema, ToolChoiceProvider,
+    recover_authorized_action, run_react_loop,
 )
 from src.workflow.errors import MCPToolError
 
@@ -99,6 +100,18 @@ async def run_eligibility_specialist(
             raise AgentActionError("Only observed missing facts can be requested.")
         return FinishedHandoff(outcome="clarification")
 
+    async def check_without_model() -> dict[str, object]:
+        """Run the same code-bound rule check when no model step is possible."""
+
+        nonlocal observed
+        try:
+            response = EligibilityResponse.model_validate(await evaluate())
+        except (MCPToolError, ValidationError, TypeError):
+            return {}
+        if response.scheme_id == scheme_id:
+            observed = response
+        return {}
+
     async def refer(arguments: AgentSchema) -> AgentSchema:
         if not isinstance(arguments, ReferralRequest) or not attempted or observed is not None:
             raise AgentActionError("Referral needs an observed rule-tool failure.")
@@ -127,8 +140,14 @@ async def run_eligibility_specialist(
         ],
         provider, budget, max_steps=3,
     )
+    # The model could not be asked (allowance used up or unavailable). The
+    # verdict always comes from the rule engine, so run that check once
+    # without the model; it counts against the conversation's tool budget.
+    recovered = run.status in {"budget_exhausted", "model_unavailable"}
+    if recovered and not attempted:
+        await recover_authorized_action(run, check_without_model)
     return (
-        observed if run.status == "completed" else None,
+        observed if run.status == "completed" or recovered else None,
         run.budget, run.trace,
         "model_assisted" if run.status == "completed" else "deterministic_fallback",
     )
