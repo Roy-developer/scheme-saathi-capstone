@@ -577,9 +577,9 @@ def test_model_budget_allows_safe_document_recheck_draft_and_submission_after_re
     class Client:
         async def call_tool(self, name, arguments):
             assert name == "required_facts"
-            return SimpleNamespace(is_error=False, structured_content=list(
+            return SimpleNamespace(is_error=False, structured_content={"result": list(
                 packages[arguments["scheme_id"]].required_facts,
-            ))
+            )})
 
     async def evaluate(_client, scheme_id, confirmed):
         return evaluate_mock_eligibility(confirmed, packages[scheme_id])

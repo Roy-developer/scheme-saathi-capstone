@@ -60,9 +60,9 @@ class FakeRuleClient:
     async def call_tool(self, _name, arguments):
         return SimpleNamespace(
             is_error=False,
-            structured_content=list(
+            structured_content={"result": list(
                 PACKAGES[str(arguments["scheme_id"])].required_facts
-            ),
+            )},
         )
 
 

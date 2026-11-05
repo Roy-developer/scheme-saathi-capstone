@@ -749,7 +749,7 @@ def test_model_enabled_application_journey_fits_durable_conversation_budget(tmp_
             assert name == "required_facts"
             return SimpleNamespace(
                 is_error=False,
-                structured_content=list(packages[arguments["scheme_id"]].required_facts),
+                structured_content={"result": list(packages[arguments["scheme_id"]].required_facts)},
             )
 
     async def eligibility(_client, scheme_id, profile):

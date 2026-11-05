@@ -497,9 +497,9 @@ def test_new_discovery_fact_from_description_is_not_searched_until_confirmed():
     class Client:
         async def call_tool(self, name, arguments):
             assert name == "required_facts"
-            return SimpleNamespace(is_error=False, structured_content=list(
+            return SimpleNamespace(is_error=False, structured_content={"result": list(
                 PACKAGES[arguments["scheme_id"]].required_facts,
-            ))
+            )})
 
     searches = []
 

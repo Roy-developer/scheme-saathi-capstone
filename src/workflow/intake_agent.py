@@ -101,7 +101,9 @@ async def propose_initial_profile_facts(
             raise AgentActionError("Required facts are unavailable.") from error
         if getattr(result, "is_error", True):
             raise AgentActionError("Required facts are unavailable.")
-        content = getattr(result, "structured_content", None)
+        # MCP wraps a list return value as {"result": [...]}.
+        structured = getattr(result, "structured_content", None)
+        content = structured.get("result") if isinstance(structured, dict) else None
         if not isinstance(content, list):
             raise AgentActionError("Required facts returned an invalid schema.")
         declared = set(package_facts)

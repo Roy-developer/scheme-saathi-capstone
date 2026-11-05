@@ -79,9 +79,9 @@ class FakeRuleClient:
         self.calls.append((name, arguments))
         return SimpleNamespace(
             is_error=False,
-            structured_content=list(
+            structured_content={"result": list(
                 PACKAGES[str(arguments["scheme_id"])].required_facts
-            ),
+            )},
         )
 
 
@@ -1021,3 +1021,29 @@ def test_initial_plan_goals_and_questions_are_localized():
 
     assert plan.steps[0].goal == "आपके परिवार की जानकारी समझें"
     assert plan.steps[1].goal == "IGNWPS-MH के नियम जाँचें"
+
+
+def test_intake_reads_required_facts_from_the_real_rule_engine_server():
+    """Contract test: the real MCP server wraps a list as {"result": [...]}."""
+
+    from mcp import Client
+
+    from src.mcp_servers.rule_engine_server import mcp as rule_engine_server
+    from src.workflow.intake_agent import propose_initial_profile_facts
+
+    package = PACKAGES["IGNWPS-MH"]
+    provider = ScriptedProvider([
+        ModelDecision(action="read_required_facts", arguments={"scheme_id": "IGNWPS-MH"}),
+        ModelDecision(action="finish_intake", arguments={"confirm": "return_to_supervisor"}),
+    ])
+
+    async def scenario():
+        async with Client(rule_engine_server) as client:
+            return await propose_initial_profile_facts(
+                provider, client, "intake", str(uuid4()), "IGNWPS-MH", "I am a widow.",
+                HouseholdProfile(), package.required_facts, "en", None,
+            )
+
+    _proposals, _budget, trace, status = asyncio.run(scenario())
+    assert [event["status"] for event in trace][:1] == ["observed"], trace
+    assert status == "model_assisted"
