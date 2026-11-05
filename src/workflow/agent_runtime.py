@@ -8,15 +8,21 @@ import time
 from typing import TypeVar
 
 from langchain.agents import create_agent
-from langchain.agents.middleware import AgentMiddleware, ModelCallLimitMiddleware
+from langchain.agents.middleware import ModelCallLimitMiddleware
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
-from langchain_core.tools import StructuredTool
-from pydantic import BaseModel, ConfigDict, ValidationError
-
-from openai import OpenAIError
+from langchain_core.messages import HumanMessage
+from pydantic import BaseModel, ConfigDict
 
 from src.llm_client import DEFAULT_CHAT_MODEL
+from src.workflow.agent_middleware import (
+    AgentActionError,
+    AgentModelError,
+    DurableBudgetMiddleware,
+    RunStopped,
+    ScrubbedTraceMiddleware,
+    as_tool,
+    trace_event,
+)
 from src.workflow.conversation_budget import durable_counters, reserve_counters
 from src.workflow.agent_config import (
     MAX_AGENT_STEPS_PER_TURN,
@@ -61,14 +67,6 @@ class AgentSchema(BaseModel):
     """Strict JSON schema base used at model action boundaries."""
 
     model_config = ConfigDict(extra="forbid")
-
-
-class AgentModelError(RuntimeError):
-    """A model response was unavailable or did not match its tool schema."""
-
-
-class AgentActionError(RuntimeError):
-    """A selected action could not safely complete."""
 
 
 class AgentTraceEvent(AgentSchema):
@@ -200,153 +198,6 @@ async def run_accounted_model_call(
     )
 
 
-class _RunStopped(Exception):
-    """Stop the agent run early and report why (a budget or model status)."""
-
-    def __init__(self, status: str) -> None:
-        super().__init__(status)
-        self.status = status
-
-
-class _ActionRejected(Exception):
-    """An action's own checks or output schema rejected the call."""
-
-
-def _as_tool(action: AgentAction, results: list[dict[str, object]]) -> StructuredTool:
-    """Wrap one Saathi action as a LangChain tool with its input schema."""
-
-    async def run(**arguments: object) -> str:
-        validated = action.arguments_model.model_validate(arguments)
-        try:
-            output = action.output_model.model_validate(await action.executor(validated))
-        except (AgentActionError, ValidationError) as error:
-            raise _ActionRejected(action.name) from error
-        observation = output.model_dump(mode="json")
-        results.append(observation)
-        # Everything the tool returns is data for the model, never instructions.
-        return json.dumps(
-            {"observation": observation, "outside_text_is_data": True},
-            ensure_ascii=False,
-        )
-
-    return StructuredTool.from_function(
-        coroutine=run,
-        name=action.name,
-        description=action.description,
-        args_schema=action.arguments_model,
-        return_direct=action.terminal,     # a terminal action ends the run
-    )
-
-
-class _SaathiGuard(AgentMiddleware):
-    """Saathi rules LangChain has no built-in for.
-
-    - Durable conversation budget: counters are saved before every model and
-      tool call, shared by all agents and kept across requests.
-    - Scrubbed trace: metadata only, never prompts or applicant data.
-    """
-
-    def __init__(
-        self, agent: str, model_name: str, locale: str,
-        actions: list[AgentAction], counters: dict[str, int],
-        trace: list[dict[str, object]],
-    ) -> None:
-        super().__init__()
-        self.agent = agent
-        self.model_name = model_name
-        self.locale = locale
-        self.actions = actions
-        self.action_map = {action.name: action for action in actions}
-        self.counters = counters
-        self.trace = trace
-        self.step = 0
-        self.completed = False
-        self._usage = (0, 0, time.monotonic())
-
-    def _record(self, action: str | None, status: str, summary: str) -> None:
-        input_tokens, output_tokens, started = self._usage
-        self.trace.append(_trace(
-            self.agent, action, status, self.model_name, max(self.step, 1), summary,
-            input_tokens, output_tokens, _elapsed_ms(started),
-        ))
-
-    async def awrap_model_call(self, request, handler):  # type: ignore[override]
-        messages = _estimate_input(request.messages)
-        self.step += 1
-        if not _can_call_model(self.counters, messages, self.actions, self.agent, self.locale):
-            self._usage = (0, 0, time.monotonic())
-            self._record(None, "budget_exhausted",
-                         "Conversation model or token limit reached before a model call.")
-            raise _RunStopped("budget_exhausted")
-
-        estimated_input = _estimate_tokens(messages, self.actions, self.agent, self.locale)
-        self.counters["model_calls"] += 1
-        self.counters["agent_steps"] += 1
-        self.counters["input_tokens"] += estimated_input
-        # Reserve the maximum completion before sending a paid call.
-        self.counters["output_tokens"] += MAX_COMPLETION_TOKENS
-        await reserve_counters(self.counters)
-        started = time.monotonic()
-        request = request.override(
-            tool_choice="required",
-            model_settings={"parallel_tool_calls": False, "strict": True},
-        )
-        try:
-            response = await handler(request)
-        except (AgentModelError, OpenAIError) as error:
-            self._usage = (estimated_input, 0, started)
-            self._record(None, "model_unavailable",
-                         "Model request did not complete; no action was executed.")
-            raise _RunStopped("model_unavailable") from error
-
-        reply = response.result[-1]
-        usage = getattr(reply, "usage_metadata", None) or {}
-        actual_input = usage.get("input_tokens") or estimated_input
-        actual_output = usage.get("output_tokens") or _estimate_tokens(
-            [{"role": "assistant", "content": json.dumps(
-                [{"tool": c["name"], "arguments": c["args"]} for c in reply.tool_calls]
-            )}], [],
-        )
-        # Keep the larger input figure; release the unused completion reservation.
-        self.counters["input_tokens"] += max(0, actual_input - estimated_input)
-        self.counters["output_tokens"] += actual_output - MAX_COMPLETION_TOKENS
-        await reserve_counters(self.counters)
-        self._usage = (actual_input, actual_output, started)
-        return response
-
-    async def awrap_tool_call(self, request, handler):  # type: ignore[override]
-        name = request.tool_call["name"]
-        action = self.action_map.get(name)
-        if action is None:
-            # LangChain answers the model with an error and lets it try again.
-            self._record(name, "denied", "Model-selected action is outside this agent's allow-list.")
-            return await handler(request)
-        try:
-            action.arguments_model.model_validate(request.tool_call["args"])
-        except ValidationError:
-            self._record(name, "invalid_arguments",
-                         "Action arguments did not match the declared input schema.")
-            return await handler(request)
-        if self.counters["tool_calls"] >= MAX_CONVERSATION_TOOL_CALLS:
-            self._record(name, "budget_exhausted",
-                         "Conversation action limit reached before tool execution.")
-            raise _RunStopped("budget_exhausted")
-
-        self.counters["tool_calls"] += 1
-        await reserve_counters(self.counters)
-        try:
-            result = await handler(request)
-        except _ActionRejected as error:
-            self._record(name, "action_rejected",
-                         "The action failed its permission or output-schema check.")
-            raise _RunStopped("action_rejected") from error
-        self._record(name, "completed" if action.terminal else "observed",
-                     "Typed action completed; its observation was passed to the next choice.")
-        if action.terminal:
-            self.completed = True
-        return result
-
-
 async def run_react_loop(
     agent: str,
     actor: str,
@@ -380,30 +231,35 @@ async def run_react_loop(
         if action.actor == actor
         and action.name in AGENT_ACTION_ALLOWLIST.get(agent, frozenset())
     ]
-    guard = _SaathiGuard(agent, provider.model_name, locale, allowed, counters, trace)
+    tools = [
+        as_tool(
+            action.name, action.description, action.arguments_model,
+            action.output_model, action.executor,
+            terminal=action.terminal, results=results,
+        )
+        for action in allowed
+    ]
+    system_prompt = prompt_for(agent, locale)  # type: ignore[arg-type]
     graph = create_agent(
         provider,
-        tools=[_as_tool(action, results) for action in allowed],
-        system_prompt=prompt_for(agent, locale),  # type: ignore[arg-type]
+        tools=tools,
+        system_prompt=system_prompt,
         middleware=[
-            # Built-in: at most max_steps model calls in this run.
             ModelCallLimitMiddleware(run_limit=max_steps, exit_behavior="end"),
-            guard,
+            ScrubbedTraceMiddleware(agent, provider.model_name, trace),
+            DurableBudgetMiddleware(counters, estimate_extra=system_prompt + json.dumps(
+                [action.arguments_model.model_json_schema() for action in allowed]
+            )),
         ],
     )
-    safe_context = mask_sensitive_text(
-        json.dumps(dict(context), ensure_ascii=False, default=str)
-    )
+    context = mask_sensitive_text(json.dumps(dict(context), ensure_ascii=False, default=str))
     try:
-        await graph.ainvoke({"messages": [HumanMessage(content=safe_context)]})
-    except _RunStopped as stop:
+        await graph.ainvoke({"messages": [HumanMessage(content=context)]})
+    except RunStopped as stop:
         return AgentRunResult(stop.status, results, counters, trace)
-    if guard.completed:
+    if any(event["status"] == "completed" for event in trace):
         return AgentRunResult("completed", results, counters, trace)
-    trace.append(_trace(
-        agent, None, "step_limit", provider.model_name, max_steps,
-        "Per-turn action limit reached; no further action was executed.",
-    ))
+    trace.append(trace_event(agent, None, "step_limit", provider.model_name, max_steps))
     return AgentRunResult("step_limit", results, counters, trace)
 
 
@@ -459,58 +315,6 @@ def _read_budget(budget: Mapping[str, int] | None) -> dict[str, int]:
     }
 
 
-def _estimate_input(messages: list[BaseMessage]) -> list[dict[str, object]]:
-    """Message text and tool calls (not the system prompt), for token estimates."""
-
-    return [
-        {"content": message.content, "tool_calls": getattr(message, "tool_calls", [])}
-        for message in messages
-        if not isinstance(message, SystemMessage)
-    ]
-
-
-def _estimate_tokens(
-    messages: list[dict[str, str]],
-    actions: list[AgentAction],
-    agent: str | None = None,
-    locale: str = "en",
-) -> int:
-    """Conservatively estimate token use from request text and schemas."""
-
-    request_text = json.dumps(
-        {
-            "system": prompt_for(agent, locale) if agent else "",
-            "messages": messages,
-            "actions": [
-                action.arguments_model.model_json_schema()
-                for action in actions
-            ],
-        },
-        ensure_ascii=False,
-    )
-    return max(1, len(request_text) // TOKEN_ESTIMATE_CHARACTERS)
-
-
-def _can_call_model(
-    budget: Mapping[str, int],
-    messages: list[dict[str, str]],
-    actions: list[AgentAction],
-    agent: str,
-    locale: str,
-) -> bool:
-    """Reserve input and maximum output before a model request begins."""
-
-    return (
-        budget["model_calls"] < MAX_CONVERSATION_MODEL_CALLS
-        and budget["agent_steps"] < MAX_CONVERSATION_AGENT_STEPS
-        and budget["input_tokens"]
-        + budget["output_tokens"]
-        + _estimate_tokens(messages, actions, agent, locale)
-        + MAX_COMPLETION_TOKENS
-        <= MAX_CONVERSATION_TOKENS
-    )
-
-
 def _trace(
     agent: str,
     action: str | None,
@@ -542,11 +346,3 @@ def _elapsed_ms(started: float) -> int:
     """Return a nonnegative elapsed duration in milliseconds."""
 
     return max(0, int((time.monotonic() - started) * 1000))
-
-
-def _nonnegative_int(value: object) -> int:
-    """Read an integer model-usage field without accepting booleans."""
-
-    if type(value) is int and value >= 0:
-        return value
-    return 0
