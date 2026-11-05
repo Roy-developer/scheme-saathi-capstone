@@ -456,3 +456,28 @@ def parse_interpreted_answer(
             error=DATE_HINTS.get(locale, DATE_HINTS["en"]),
         )
     return parse_answer(fact, value, locale)
+
+
+def direct_answer_question(fact: str, locale: str = "en") -> str:
+    """Ask for a fact directly after the person declined a proposed value."""
+
+    prompt = {
+        "hi": "ठीक है। कृपया सीधे उत्तर दें:",
+        "mr": "ठीक आहे. कृपया थेट उत्तर द्या:",
+    }.get(locale, "Okay. Please answer directly:")
+    return (
+        f"{prompt} {question_for(fact, locale)} "
+        f"{parse_answer(fact, '', locale).error or ''}"
+    ).strip()
+
+
+def confirm_yes_or_no_question(locale: str = "en") -> str:
+    """Ask again when a confirmation reply was neither yes nor no."""
+
+    return {
+        "hi": '"हाँ" या "नहीं" में उत्तर दें। क्या यह समझ सही है?',
+        "mr": '"होय" किंवा "नाही" असे उत्तर द्या. हे समजणे बरोबर आहे का?',
+    }.get(
+        locale,
+        'Please confirm with "yes" or "no". Is my interpretation correct?',
+    )

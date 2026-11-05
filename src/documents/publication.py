@@ -6,10 +6,10 @@ from contextlib import contextmanager
 import os
 from pathlib import Path
 import re
-import threading
-import time
 import uuid
 from typing import Iterator
+
+from filelock import FileLock, Timeout
 
 from src.documents.checklists import (
     CHECKLIST_DIRECTORY,
@@ -24,60 +24,18 @@ LOCK_FILENAME = ".document_checklists.lock"
 REVISION_FILENAME = ".document_checklists.revision"
 SCHEME_FILENAME_PATTERN = re.compile(r"^[A-Z0-9][A-Z0-9-]{1,79}\.json$")
 LOCK_WAIT_SECONDS = 10.0
-LOCK_RETRY_SECONDS = 0.05
-_LOCKS_GUARD = threading.Lock()
-_LOCAL_LOCKS: dict[str, threading.Lock] = {}
-_THREAD_LOCK_STATE = threading.local()
 
 
-def _local_lock(lock_path: Path) -> threading.Lock:
-    """Return one in-process mutex paired with the shared OS file lock."""
+def _publication_lock(lock_path: Path) -> FileLock:
+    """Return the one shared cross-process lock for this lock file.
 
-    key = str(lock_path.resolve())
-    with _LOCKS_GUARD:
-        return _LOCAL_LOCKS.setdefault(key, threading.Lock())
+    ``is_singleton=True`` returns the same object for the same file, so a
+    thread that already holds the lock can take it again (nested use, for
+    example a portal action that then loads a checklist). A *new* object for
+    the same file would wait for itself until the timeout instead.
+    """
 
-
-def _acquire_file_lock(stream) -> None:
-    """Acquire one byte-range lock on Windows or flock on POSIX."""
-
-    deadline = time.monotonic() + LOCK_WAIT_SECONDS
-    while True:
-        try:
-            if os.name == "nt":
-                import msvcrt
-
-                stream.seek(0, os.SEEK_END)
-                if stream.tell() == 0:
-                    stream.write(b"\0")
-                    stream.flush()
-                stream.seek(0)
-                msvcrt.locking(stream.fileno(), msvcrt.LK_NBLCK, 1)
-            else:
-                import fcntl
-
-                fcntl.flock(
-                    stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB
-                )
-            return
-        except OSError:
-            if time.monotonic() >= deadline:
-                raise
-            time.sleep(LOCK_RETRY_SECONDS)
-
-
-def _release_file_lock(stream) -> None:
-    """Release the platform-specific publication lock."""
-
-    if os.name == "nt":
-        import msvcrt
-
-        stream.seek(0)
-        msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
-    else:
-        import fcntl
-
-        fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
+    return FileLock(lock_path, timeout=LOCK_WAIT_SECONDS, is_singleton=True)
 
 
 @contextmanager
@@ -90,44 +48,19 @@ def checklist_publication_lock(
         checklist_directory: Data directory whose parent contains the lock file.
     """
 
-    lock_path = checklist_directory.parent / LOCK_FILENAME
-    key = str(lock_path.resolve())
-    active = getattr(_THREAD_LOCK_STATE, "active", set())
-    if key in active:
-        yield
-        return
-    process_lock = _local_lock(lock_path)
-    if not process_lock.acquire(timeout=LOCK_WAIT_SECONDS):
-        raise RuntimeError(
-            "The document checklist publication lock is unavailable."
-        )
-    stream = None
+    lock_path = (checklist_directory.parent / LOCK_FILENAME).resolve()
+    lock = _publication_lock(lock_path)
     try:
         lock_path.parent.mkdir(parents=True, exist_ok=True)
-        stream = lock_path.open("a+b")
-        _acquire_file_lock(stream)
-    except Exception as error:
-        try:
-            if stream is not None:
-                stream.close()
-        finally:
-            process_lock.release()
+        lock.acquire()
+    except (Timeout, OSError) as error:
         raise RuntimeError(
             "The document checklist publication lock is unavailable."
         ) from error
-    active = set(active)
-    active.add(key)
-    _THREAD_LOCK_STATE.active = active
     try:
         yield
     finally:
-        active.remove(key)
-        _THREAD_LOCK_STATE.active = active
-        try:
-            _release_file_lock(stream)
-        finally:
-            stream.close()
-            process_lock.release()
+        lock.release()
 
 
 def _read_revision(path: Path) -> int:

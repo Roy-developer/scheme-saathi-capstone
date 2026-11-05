@@ -780,10 +780,11 @@ def test_failed_publication_lock_prevents_portal_action_and_file_change(
         "SCHEME_SAATHI_APPLICATION_DB", str(tmp_path / "portal.sqlite3")
     )
 
-    def fail_lock(_stream) -> None:
-        raise OSError("synthetic lock failure")
+    class FailingLock:
+        def acquire(self) -> None:
+            raise OSError("synthetic lock failure")
 
-    monkeypatch.setattr(publication, "_acquire_file_lock", fail_lock)
+    monkeypatch.setattr(publication, "_publication_lock", lambda _path: FailingLock())
     with pytest.raises(RuntimeError, match="publication lock"):
         publication.publish_checklist_file(
             evidence_file.name,

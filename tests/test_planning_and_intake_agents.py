@@ -8,6 +8,7 @@ from types import SimpleNamespace
 from uuid import uuid4
 
 import aiosqlite
+import httpx
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from pydantic import Field
@@ -15,7 +16,6 @@ from pydantic import Field
 from src.api.eligibility import EligibilityResponse, evaluate_mock_eligibility
 from src.rules.data_provider import RulePackageProvider
 from src.rules.models import HouseholdProfile
-from src.workflow import intake as intake_module
 from src.workflow.agent_runtime import (
     AgentAction,
     AgentModelError,
@@ -100,40 +100,12 @@ def _plan_choices(order: list[str] | None = None) -> list[ModelDecision]:
 
 
 def test_openrouter_provider_uses_configured_bearer_key_without_network(
-    monkeypatch,
+    fake_openrouter,
 ):
     """Keep the live provider's credential wiring testable with a fake response."""
 
-    captured_requests = []
-
-    class FakeResponse:
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *_args):
-            return False
-
-        def read(self):
-            return json.dumps({
-                "choices": [{
-                    "message": {
-                        "tool_calls": [{
-                            "function": {
-                                "name": "propose_plan",
-                                "arguments": '{"step_ids":["intake","eligibility"]}',
-                            }
-                        }]
-                    }
-                }]
-            }).encode()
-
-    def fake_urlopen(request, timeout):
-        captured_requests.append(request)
-        assert timeout > 0
-        return FakeResponse()
-
-    monkeypatch.setattr(
-        "src.workflow.agent_runtime.urllib.request.urlopen", fake_urlopen
+    fake_openrouter.answer(
+        tool_call=("propose_plan", '{"step_ids":["intake","eligibility"]}')
     )
     provider = OpenRouterToolChoiceProvider(
         api_key="synthetic-test-key",
@@ -152,13 +124,60 @@ def test_openrouter_provider_uses_configured_bearer_key_without_network(
         fake_executor,
     )
 
-    decision = provider._choose("supervisor", "en", [], [action])
+    async def choose_then_close():
+        try:
+            return await provider.choose("supervisor", "en", [], [action])
+        finally:
+            await provider.aclose()
+
+    decision = asyncio.run(choose_then_close())
 
     assert decision.action == "propose_plan"
-    assert (
-        captured_requests[0].get_header("Authorization")
-        == "Bearer synthetic-test-key"
+    assert decision.arguments == {"step_ids": ["intake", "eligibility"]}
+    request = fake_openrouter.requests[0]
+    assert request.headers["Authorization"] == "Bearer synthetic-test-key"
+    payload = fake_openrouter.sent_json()
+    assert payload["model"] == "fake-phase2-model"
+    assert payload["tool_choice"] == "required"
+    assert payload["parallel_tool_calls"] is False
+    assert payload["tools"][0]["function"]["name"] == "propose_plan"
+    assert payload["tools"][0]["function"]["strict"] is True
+
+
+def test_openrouter_provider_reuses_one_connection_for_many_calls(
+    fake_openrouter, monkeypatch,
+):
+    """The provider builds its HTTP connection once, not once per model call."""
+
+    from src import llm_client
+
+    built = []
+    make_fake_client = llm_client._http_client
+    monkeypatch.setattr(
+        llm_client, "_http_client", lambda: built.append(1) or make_fake_client()
     )
+    fake_openrouter.answer(tool_call=("finish_plan", '{"confirm":"use_validated_plan"}'))
+    provider = OpenRouterToolChoiceProvider(api_key="synthetic-test-key")
+
+    async def fake_executor(_arguments: AgentSchema) -> AgentSchema:
+        return PlanProposalObservation(accepted=True, step_ids=[])
+
+    action = AgentAction(
+        "finish_plan", "Finish.", "supervisor",
+        PlanProposalArguments, PlanProposalObservation, fake_executor,
+    )
+
+    async def three_calls_then_close():
+        try:
+            for _ in range(3):
+                await provider.choose("supervisor", "en", [], [action])
+        finally:
+            await provider.aclose()
+
+    asyncio.run(three_calls_then_close())
+
+    assert len(fake_openrouter.requests) == 3
+    assert built == [1]
 
 
 def test_supervisor_uses_observation_to_choose_next_action():
@@ -525,13 +544,11 @@ def test_search_query_rewrite_uses_the_durable_model_budget():
     assert "test@example.invalid" not in trace_text
 
 
-def test_query_rewriter_timeout_falls_back_with_counted_trace(monkeypatch):
+def test_query_rewriter_timeout_falls_back_with_counted_trace(
+    monkeypatch, fake_openrouter,
+):
     monkeypatch.setenv("OPENROUTER_API_KEY", "synthetic-test-key")
-
-    def timeout(_request, timeout):
-        raise TimeoutError("Synthetic timeout.")
-
-    monkeypatch.setattr(intake_module.urllib.request, "urlopen", timeout)
+    fake_openrouter.reply = httpx.ReadTimeout("Synthetic timeout.")
 
     async def search(_client, query):
         assert query == "widow pension"

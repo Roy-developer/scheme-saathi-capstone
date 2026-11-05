@@ -327,13 +327,7 @@ def _refresh_document_dependency(
             ),
         )
     if changed:
-        connection.execute(
-            """UPDATE application_drafts SET stale=1, approved_revision=NULL,
-               approved_fingerprint=NULL, approval_expires_at=NULL,
-               approval_issued_at=NULL, approval_token=NULL, updated_at=?
-               WHERE journey_id=? AND scheme_id=? AND submitted_receipt IS NULL""",
-            (now, journey_id, scheme_id),
-        )
+        _revoke_unsubmitted_approvals(connection, now, journey_id, scheme_id)
     return version
 
 
@@ -357,6 +351,46 @@ def _get_row(
     if row is None:
         raise ValueError("Draft was not found for this journey.")
     return row
+
+
+def _revoke_unsubmitted_approvals(
+    connection: sqlite3.Connection,
+    now: str,
+    journey_id: str,
+    scheme_id: str | None = None,
+) -> None:
+    """Mark unsubmitted drafts stale and cancel their approvals.
+
+    Used whenever something the approval depended on changes (answers,
+    rules or documents). Submitted drafts keep their receipts.
+
+    Args:
+        scheme_id: Limit to one scheme, or None for the whole journey.
+    """
+
+    scheme_filter = "AND scheme_id=? " if scheme_id is not None else ""
+    connection.execute(
+        f"""UPDATE application_drafts SET stale=1, approved_revision=NULL,
+           approved_fingerprint=NULL, approval_expires_at=NULL,
+           approval_issued_at=NULL, approval_token=NULL, updated_at=?
+           WHERE journey_id=? {scheme_filter}AND submitted_receipt IS NULL""",
+        (now, journey_id) + ((scheme_id,) if scheme_id is not None else ()),
+    )
+
+
+def _recheck_checklist(
+    connection: sqlite3.Connection, journey_id: str, scheme_id: str, now: str,
+) -> ChecklistSnapshot:
+    """Reload a scheme's checklist, record any change, and fail if it moved.
+
+    Returns:
+        The checklist snapshot that was checked.
+    """
+
+    snapshot = _load_current_checklist(scheme_id)
+    _refresh_document_dependency(connection, journey_id, scheme_id, snapshot, now)
+    _assert_snapshot_unchanged(scheme_id, snapshot.active_fingerprint)
+    return snapshot
 
 
 def _portal_action_transaction(data: dict[str, object]) -> dict[str, object]:
@@ -391,13 +425,7 @@ def _portal_action_transaction(data: dict[str, object]) -> dict[str, object]:
                 "UPDATE journey_dependencies SET profile_version=profile_version+1, blocked=1 WHERE journey_id=?",
                 (request.journey_id,),
             )
-            connection.execute(
-                """UPDATE application_drafts SET stale=1, approved_revision=NULL,
-                   approved_fingerprint=NULL, approval_expires_at=NULL,
-                   approval_issued_at=NULL, approval_token=NULL, updated_at=?
-                   WHERE journey_id=? AND submitted_receipt IS NULL""",
-                (now, request.journey_id),
-            )
+            _revoke_unsubmitted_approvals(connection, now, request.journey_id)
             connection.commit()
             return {"dependency_version": dependency["profile_version"] + 1}
         if request.action == "reconcile_profile":
@@ -434,12 +462,8 @@ def _portal_action_transaction(data: dict[str, object]) -> dict[str, object]:
                        version=excluded.version, fingerprint=excluded.fingerprint""",
                     (request.journey_id, request.scheme_id, version, request.rules_fingerprint),
                 )
-                connection.execute(
-                    """UPDATE application_drafts SET stale=1, approved_revision=NULL,
-                       approved_fingerprint=NULL, approval_expires_at=NULL,
-                       approval_issued_at=NULL, approval_token=NULL, updated_at=?
-                       WHERE journey_id=? AND scheme_id=? AND submitted_receipt IS NULL""",
-                    (now, request.journey_id, request.scheme_id),
+                _revoke_unsubmitted_approvals(
+                    connection, now, request.journey_id, request.scheme_id
                 )
             connection.commit()
             return {"dependency_version": version}
@@ -490,12 +514,8 @@ def _portal_action_transaction(data: dict[str, object]) -> dict[str, object]:
                         snapshot.active_fingerprint,
                     ),
                 )
-                connection.execute(
-                    """UPDATE application_drafts SET stale=1, approved_revision=NULL,
-                       approved_fingerprint=NULL, approval_expires_at=NULL,
-                       approval_issued_at=NULL, approval_token=NULL, updated_at=?
-                       WHERE journey_id=? AND scheme_id=? AND submitted_receipt IS NULL""",
-                    (now, request.journey_id, request.scheme_id),
+                _revoke_unsubmitted_approvals(
+                    connection, now, request.journey_id, request.scheme_id
                 )
             _assert_snapshot_unchanged(
                 request.scheme_id, snapshot.active_fingerprint
@@ -711,13 +731,8 @@ def _portal_action_transaction(data: dict[str, object]) -> dict[str, object]:
             for draft_row in rows:
                 if draft_row["submitted_receipt"]:
                     continue
-                snapshot = _load_current_checklist(draft_row["scheme_id"])
-                _refresh_document_dependency(
-                    connection, request.journey_id, draft_row["scheme_id"],
-                    snapshot, now,
-                )
-                _assert_snapshot_unchanged(
-                    draft_row["scheme_id"], snapshot.active_fingerprint
+                snapshot = _recheck_checklist(
+                    connection, request.journey_id, draft_row["scheme_id"], now
                 )
             rows = connection.execute(
                 "SELECT * FROM application_drafts WHERE journey_id=? ORDER BY created_at",
@@ -737,12 +752,8 @@ def _portal_action_transaction(data: dict[str, object]) -> dict[str, object]:
                 connection.commit()
                 return {"not_found": True}
             if not row["submitted_receipt"]:
-                snapshot = _load_current_checklist(row["scheme_id"])
-                _refresh_document_dependency(
-                    connection, request.journey_id, row["scheme_id"], snapshot, now
-                )
-                _assert_snapshot_unchanged(
-                    row["scheme_id"], snapshot.active_fingerprint
+                snapshot = _recheck_checklist(
+                    connection, request.journey_id, row["scheme_id"], now
                 )
                 row = _get_row(connection, request.draft_id, request.journey_id)
             connection.commit()
@@ -782,12 +793,8 @@ def _portal_action_transaction(data: dict[str, object]) -> dict[str, object]:
                 return _safe_record(row)
             raise RuntimeError("This submission authorization was already consumed.")
         if not row["submitted_receipt"]:
-            snapshot = _load_current_checklist(row["scheme_id"])
-            _refresh_document_dependency(
-                connection, request.journey_id, row["scheme_id"], snapshot, now
-            )
-            _assert_snapshot_unchanged(
-                row["scheme_id"], snapshot.active_fingerprint
+            snapshot = _recheck_checklist(
+                connection, request.journey_id, row["scheme_id"], now
             )
             row = _get_row(connection, request.draft_id, request.journey_id)
             if request.action in {"edit_draft", "approve", "submit"} and not snapshot.usable:

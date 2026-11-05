@@ -1,8 +1,6 @@
 """FastAPI entry point for Scheme Saathi."""
 
 from contextlib import AsyncExitStack, asynccontextmanager
-import hashlib
-import json
 import logging
 import os
 import sys
@@ -31,6 +29,7 @@ from src.api.applications import (
     DraftCreateRequest,
     DraftEditRequest,
     call_application_tool,
+    check_and_bind_documents,
 )
 from src.api.scheme_search import SchemePassage
 from src.documents.forms import build_form_fields, load_mock_form_snapshot
@@ -72,6 +71,21 @@ from src.mcp_servers.rule_data import get_active_rule_data
 
 
 logger = logging.getLogger(__name__)
+
+
+def _tool_failure(
+    detail: str, log_message: str | None = None, *log_args: object, status_code: int = 502,
+) -> HTTPException:
+    """Build the HTTP error for a failed MCP tool call.
+
+    Call it inside ``except MCPToolError``; when ``log_message`` is given the
+    failure is logged with its traceback first. The detail is a short, safe
+    message: raw tool errors are never shown to the user.
+    """
+
+    if log_message is not None:
+        logger.exception(log_message, *log_args)
+    return HTTPException(status_code=status_code, detail=detail)
 
 
 def _bundle_fingerprint(request: Request, scheme_id: str) -> str:
@@ -190,9 +204,7 @@ async def _application_state(
     try:
         current = await get_journey(request.app.state.journey_graph, conversation_id)
     except MCPToolError as error:
-        raise HTTPException(
-            status_code=502, detail="The mock application service is unavailable."
-        ) from error
+        raise _tool_failure("The mock application service is unavailable.") from error
     if current is not None and current.status == "invalid_input":
         raise HTTPException(status_code=409, detail=current.message)
     snapshot = await request.app.state.journey_graph.aget_state(
@@ -369,6 +381,9 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
             )
             if not model_provider.configured:
                 model_provider = None
+            else:
+                # Close the reusable model connection when the API shuts down.
+                client_stack.push_async_callback(model_provider.aclose)
             application.state.journey_graph = build_journey_graph(
                 mcp_client,
                 packages,
@@ -445,10 +460,9 @@ async def evaluate(
         )
     except MCPToolError as error:
         # Return a service error, never a made-up or fixture-based verdict.
-        logger.exception("MCP eligibility tool failed for scheme %s", scheme_id)
-        raise HTTPException(
-            status_code=502,
-            detail="The eligibility tool is unavailable.",
+        raise _tool_failure(
+            "The eligibility tool is unavailable.",
+            "MCP eligibility tool failed for scheme %s", scheme_id,
         ) from error
 
 
@@ -503,72 +517,26 @@ async def _mark_changed_document_reports(
             }
             continue
         try:
-            current = await call_application_tool(
+            current = await check_and_bind_documents(
+                call_application_tool,
                 document_client,
-                "check_documents",
-                {
-                    "scheme_id": scheme_id,
-                    "documents": prior.get("documents", {}),
-                    "profile_name": prior.get("profile_name"),
-                    "profile_date_of_birth": (
-                        profile.date_of_birth.isoformat()
-                        if profile.date_of_birth is not None
-                        else None
-                    ),
-                    "document_metadata": prior.get("document_metadata", {}),
-                    "typed_facts": values.get("typed_facts"),
-                    "profile_conditions": {
-                        "is_widow": profile.is_widow,
-                        "bpl_card_shown": profile.bpl_card_shown,
-                    },
-                },
-            )
-        except MCPToolError:
-            updated[scheme_id] = {
-                **saved, "report_stale": True, "report_status": "stale"
-            }
-            continue
-        documents = prior.get("documents", {})
-        metadata = prior.get("document_metadata", {})
-        profile_conditions = {
-            "is_widow": profile.is_widow,
-            "bpl_card_shown": profile.bpl_card_shown,
-        }
-        input_fingerprint = document_input_fingerprint(
-            scheme_id,
-            documents,
-            prior.get("profile_name"),
-            profile.date_of_birth,
-            metadata,
-            current.get("checklist_fingerprint", ""),
-            current.get("evidence_fingerprint", ""),
-            current.get("active_fingerprint", ""),
-            profile_conditions,
-            values.get("typed_facts"),
-            _bundle_fingerprint(request, scheme_id),
-        )
-        report = json.dumps(
-            {"input_fingerprint": input_fingerprint, "assessment": current},
-            ensure_ascii=False,
-            sort_keys=True,
-        )
-        report_fingerprint = hashlib.sha256(report.encode("utf-8")).hexdigest()
-        current["input_fingerprint"] = input_fingerprint
-        current["document_report_fingerprint"] = report_fingerprint
-        try:
-            dependency = await call_application_tool(
                 dependency_client,
-                "mock_portal",
-                {
-                    "action": "bind_documents",
-                    "journey_id": str(conversation_id),
-                    "scheme_id": scheme_id,
-                    "documents": documents,
-                    "document_report_fingerprint": report_fingerprint,
-                    "checklist_fingerprint": current["checklist_fingerprint"],
-                    "evidence_fingerprint": current["evidence_fingerprint"],
-                    "active_checklist_fingerprint": current["active_fingerprint"],
+                journey_id=str(conversation_id),
+                scheme_id=scheme_id,
+                documents=prior.get("documents", {}),
+                profile_name=prior.get("profile_name"),
+                profile_date_of_birth=(
+                    profile.date_of_birth.isoformat()
+                    if profile.date_of_birth is not None
+                    else None
+                ),
+                document_metadata=prior.get("document_metadata", {}),
+                typed_facts=values.get("typed_facts"),
+                profile_conditions={
+                    "is_widow": profile.is_widow,
+                    "bpl_card_shown": profile.bpl_card_shown,
                 },
+                bundle_fingerprint=_bundle_fingerprint(request, scheme_id),
             )
         except MCPToolError:
             updated[scheme_id] = {
@@ -578,16 +546,16 @@ async def _mark_changed_document_reports(
         is_stale = (
             current.get("active_fingerprint")
             != saved.get("active_fingerprint")
-            or dependency.get("dependency_version")
+            or current["document_dependency_version"]
             != saved.get("document_dependency_version")
         )
         updated[scheme_id] = {
             **saved,
             "report_stale": is_stale,
             "report_status": "stale" if is_stale else "current",
-            "current_document_dependency_version": dependency.get(
-                "dependency_version"
-            ),
+            "current_document_dependency_version": current[
+                "document_dependency_version"
+            ],
         }
     return response.model_copy(update={"document_assessments": updated})
 
@@ -624,10 +592,9 @@ async def search_schemes(
             for passage in passages
         ]
     except MCPToolError as error:
-        logger.exception("MCP scheme search failed")
-        raise HTTPException(
-            status_code=502,
-            detail="The scheme search tool is unavailable.",
+        raise _tool_failure(
+            "The scheme search tool is unavailable.",
+            "MCP scheme search failed",
         ) from error
 
 
@@ -655,10 +622,9 @@ async def journey(
             ],
         })
     except MCPToolError as error:
-        logger.exception("A journey MCP tool failed")
-        raise HTTPException(
-            status_code=502,
-            detail="A journey tool is unavailable.",
+        raise _tool_failure(
+            "A journey tool is unavailable.",
+            "A journey MCP tool failed",
         ) from error
     except IntakeAgentError as error:
         logger.exception("The intake agent failed")
@@ -695,10 +661,9 @@ async def journey_message(
             detail="This conversation is not waiting for an answer.",
         ) from error
     except MCPToolError as error:
-        logger.exception("A journey MCP tool failed")
-        raise HTTPException(
-            status_code=502,
-            detail="A journey tool is unavailable.",
+        raise _tool_failure(
+            "A journey tool is unavailable.",
+            "A journey MCP tool failed",
         ) from error
 
 
@@ -725,10 +690,9 @@ async def journey_correction(
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
     except MCPToolError as error:
-        logger.exception("A journey tool failed while applying a correction")
-        raise HTTPException(
-            status_code=502,
-            detail="A journey tool is unavailable.",
+        raise _tool_failure(
+            "A journey tool is unavailable.",
+            "A journey tool failed while applying a correction",
         ) from error
 
 
@@ -748,9 +712,7 @@ async def journey_state(
             conversation_id,
         )
     except MCPToolError as error:
-        raise HTTPException(
-            status_code=502, detail="A journey tool is unavailable."
-        ) from error
+        raise _tool_failure("A journey tool is unavailable.") from error
     if response is None:
         raise HTTPException(status_code=404, detail="Conversation not found.")
     return await _mark_changed_document_reports(
@@ -796,10 +758,9 @@ async def assess_application_documents(
         )
         return result
     except MCPToolError as error:
-        logger.exception("Document checklist MCP tool failed")
-        raise HTTPException(
-            status_code=502,
-            detail="The document checklist is unavailable.",
+        raise _tool_failure(
+            "The document checklist is unavailable.",
+            "Document checklist MCP tool failed",
         ) from error
 
 
@@ -896,10 +857,9 @@ async def create_application_draft(
     except HTTPException:
         raise
     except MCPToolError as error:
-        logger.exception("Mock application draft MCP tool failed")
-        raise HTTPException(
-            status_code=502,
-            detail="The mock application service is unavailable.",
+        raise _tool_failure(
+            "The mock application service is unavailable.",
+            "Mock application draft MCP tool failed",
         ) from error
 
 
@@ -922,10 +882,9 @@ async def list_application_drafts(
         )
         return _public_application_record(result)
     except MCPToolError as error:
-        logger.exception("Could not list mock application drafts")
-        raise HTTPException(
-            status_code=502,
-            detail="The mock application service is unavailable.",
+        raise _tool_failure(
+            "The mock application service is unavailable.",
+            "Could not list mock application drafts",
         ) from error
 
 
@@ -942,10 +901,7 @@ async def get_application_draft(
             await _get_mock_draft(request, conversation_id, draft_id)
         )
     except MCPToolError as error:
-        raise HTTPException(
-            status_code=502,
-            detail="The mock application service is unavailable.",
-        ) from error
+        raise _tool_failure("The mock application service is unavailable.") from error
 
 
 @app.put("/api/v1/journey/{conversation_id}/drafts/{draft_id}")
@@ -991,9 +947,9 @@ async def edit_application_draft(
     except HTTPException:
         raise
     except MCPToolError as error:
-        raise HTTPException(
+        raise _tool_failure(
+            "The draft could not be edited; reload it and try again.",
             status_code=409,
-            detail="The draft could not be edited; reload it and try again.",
         ) from error
 
 
@@ -1071,10 +1027,9 @@ async def update_application_approval(
     except HTTPException:
         raise
     except MCPToolError as error:
-        logger.exception("Mock application approval MCP tool failed")
-        raise HTTPException(
-            status_code=502,
-            detail="The mock application service is unavailable.",
+        raise _tool_failure(
+            "The mock application service is unavailable.",
+            "Mock application approval MCP tool failed",
         ) from error
 
 
@@ -1110,9 +1065,8 @@ async def forget_journey(conversation_id: str, request: Request) -> None:
             f"budget:{conversation_id}"
         )
     except MCPToolError as error:
-        logger.exception("Could not clear mock application data")
-        raise HTTPException(
-            status_code=502,
-            detail="The mock application service could not clear this session.",
+        raise _tool_failure(
+            "The mock application service could not clear this session.",
+            "Could not clear mock application data",
         ) from error
     await request.app.state.journey_checkpointer.adelete_thread(conversation_id)

@@ -7,7 +7,10 @@ back. These are pure functions (no graph, no I/O), so they are easy to test.
 
 from typing import Literal
 
-from src.workflow.state import ApplicationOperation, Plan, PlanStep, SpecialistName
+from src.workflow.discovery import discovery_message
+from src.workflow.state import (
+    ApplicationOperation, CandidateVerdict, Plan, PlanStep, SpecialistName,
+)
 
 
 PLAN_GOALS: dict[str, dict[str, str]] = {
@@ -214,3 +217,54 @@ def plan_summary(plan: Plan) -> str:
     """One-line text version of the plan, e.g. "Plan: Learn about you -> ..."."""
 
     return "Plan: " + " -> ".join(step.goal for step in plan.steps)
+
+
+def replan_reason(scheme_id: str, verdict: CandidateVerdict, locale: str = "en") -> str:
+    """Explain why the plan moved on to the next candidate scheme.
+
+    Args:
+        scheme_id: The candidate that was just checked.
+        verdict: Its saved result.
+        locale: Reply language; non-English uses the short localized message.
+    """
+
+    if locale != "en":
+        return (
+            f"{scheme_id}: "
+            + discovery_message(verdict.result, locale)
+            + (f" ({', '.join(verdict.deciding_rule_ids)})"
+               if verdict.deciding_rule_ids else "")
+        )
+    if verdict.result == "not_eligible":
+        return (
+            f"{scheme_id} was ruled out by the mock rules"
+            + (
+                f" ({', '.join(verdict.deciding_rule_ids)})"
+                if verdict.deciding_rule_ids else ""
+            )
+            + ". Its result is saved; continuing with the next candidate."
+        )
+    if verdict.result == "eligible":
+        return (
+            f"{scheme_id} meets the current mock rules. Its result is "
+            "saved; continuing with the next candidate."
+        )
+    if verdict.result == "information_only":
+        return (
+            f"{scheme_id} has no reviewed rule package. No eligibility "
+            "decision was made; continuing with the next candidate."
+        )
+    if verdict.result == "tool_error":
+        return (
+            f"{scheme_id} could not be checked within the allowed tools and budgets. "
+            "No eligibility decision was made; continuing with the "
+            "next candidate."
+        )
+    return (
+        f"{scheme_id} still needs information"
+        + (
+            f" ({', '.join(verdict.missing_fields)})"
+            if verdict.missing_fields else ""
+        )
+        + ". Its result is saved; continuing with the next candidate."
+    )

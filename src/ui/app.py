@@ -536,8 +536,8 @@ def show_result_message(kind: str, message: str) -> None:
     getattr(st, kind)(message)
 
 
-# Workflow state is kept separate so changing a scenario cannot retain approval.
-WORKFLOW_STATE_KEYS = {
+# The synthetic draft/approval state; cleared alone by clear_application_state.
+APPLICATION_STATE_KEYS = {
     "approved_fingerprint",
     "draft_district",
     "draft_edit_mode",
@@ -545,6 +545,9 @@ WORKFLOW_STATE_KEYS = {
     "draft_scenario_id",
     "draft_submitted",
     "rejected_draft",
+}
+# Workflow state is kept separate so changing a scenario cannot retain approval.
+WORKFLOW_STATE_KEYS = APPLICATION_STATE_KEYS | {
     "selected_result",
     "journey_started",
     "journey_scheme_id",
@@ -611,15 +614,7 @@ def clear_workflow_state(*, include_inputs: bool = False) -> None:
 def clear_application_state() -> None:
     """Clear only the synthetic application state, preserving conversation."""
 
-    for key in (
-        "approved_fingerprint",
-        "draft_district",
-        "draft_edit_mode",
-        "draft_reference",
-        "draft_scenario_id",
-        "draft_submitted",
-        "rejected_draft",
-    ):
+    for key in APPLICATION_STATE_KEYS:
         st.session_state.pop(key, None)
     st.session_state.selected_result = None
     st.session_state.api_result = None
@@ -784,6 +779,49 @@ def remember_in_url(scheme_id: str, candidate_ids: list[str] | None = None) -> N
         st.query_params["scheme"] = scheme_id
 
 
+def interview_request(
+    locale: str,
+    profile_description: str | None,
+    **schemes: object,
+) -> JourneyRequest:
+    """Build the "start an interview" request for this browser session.
+
+    Args:
+        schemes: ``scheme_id=...`` for one scheme, or
+            ``candidate_scheme_ids=[...]`` for the schemes found by search.
+    """
+
+    return JourneyRequest(
+        action="interview",
+        # The same conversation ID is reused, so "forget" deletes all of it.
+        conversation_id=(
+            UUID(st.session_state.conversation_id)
+            if st.session_state.conversation_id
+            else uuid4()
+        ),
+        profile_description=profile_description,
+        locale=locale,
+        mode=st.session_state.interaction_mode,
+        citizen_present=(
+            st.session_state.interaction_mode == "citizen"
+            or st.session_state.csc_citizen_present
+        ),
+        **schemes,
+    )
+
+
+def render_history(text: dict[str, str]) -> None:
+    """Show retries, tool failures and corrections as short captions."""
+
+    titles = {
+        "tool_retry": "history_retry",
+        "tool_failed": "history_failed",
+        "answer_corrected": "history_corrected",
+    }
+    for event in st.session_state.journey_history:
+        st.caption(f'{text[titles[event["event_type"]]]}: {event["reason"]}')
+
+
 def start_candidate_interview(
     candidate_ids: list[str],
     profile_description: str | None,
@@ -794,21 +832,8 @@ def start_candidate_interview(
     st.session_state.interview_error = None
     try:
         journey = run_journey(
-            JourneyRequest(
-                action="interview",
-                conversation_id=(
-                    UUID(st.session_state.conversation_id)
-                    if st.session_state.conversation_id
-                    else uuid4()
-                ),
-                candidate_scheme_ids=candidate_ids,
-                profile_description=profile_description,
-                locale=locale,
-                mode=st.session_state.interaction_mode,
-                citizen_present=(
-                    st.session_state.interaction_mode == "citizen"
-                    or st.session_state.csc_citizen_present
-                ),
+            interview_request(
+                locale, profile_description, candidate_scheme_ids=candidate_ids
             )
         )
     except JourneyApiError as error:
@@ -899,13 +924,7 @@ def render_candidate_interview(
                 f'Plan {change["from_version"]} → '
                 f'Plan {change["to_version"]}: {change["reason"]}'
             )
-    for event in st.session_state.journey_history:
-        title = text[{
-            "tool_retry": "history_retry",
-            "tool_failed": "history_failed",
-            "answer_corrected": "history_corrected",
-        }[event["event_type"]]]
-        st.caption(f'{title}: {event["reason"]}')
+    render_history(text)
     for turn in st.session_state.journey_conversation:
         with st.chat_message(turn["role"]):
             st.write(turn["content"])
@@ -1588,24 +1607,8 @@ def start_interview(
 
     st.session_state.interview_error = None
     try:
-        # The same conversation ID is reused, so "forget" deletes all of it.
         journey = run_journey(
-            JourneyRequest(
-                action="interview",
-                conversation_id=(
-                    UUID(st.session_state.conversation_id)
-                    if st.session_state.conversation_id
-                    else uuid4()
-                ),
-                scheme_id=scheme_id,
-                profile_description=profile_description,
-                locale=locale,
-                mode=st.session_state.interaction_mode,
-                citizen_present=(
-                    st.session_state.interaction_mode == "citizen"
-                    or st.session_state.csc_citizen_present
-                ),
-            )
+            interview_request(locale, profile_description, scheme_id=scheme_id)
         )
     except JourneyApiError as error:
         st.session_state.interview_error = str(error)
@@ -2180,13 +2183,7 @@ else:
         render_discovery_notices(locale)
         if st.session_state.scheme_search_message:
             st.caption(st.session_state.scheme_search_message)
-        for event in st.session_state.journey_history:
-            title = text[{
-                "tool_retry": "history_retry",
-                "tool_failed": "history_failed",
-                "answer_corrected": "history_corrected",
-            }[event["event_type"]]]
-            st.caption(f'{title}: {event["reason"]}')
+        render_history(text)
         if st.session_state.journey_plan:
             st.caption(st.session_state.journey_plan)
         if st.session_state.journey_conversation:

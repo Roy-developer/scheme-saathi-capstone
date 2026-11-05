@@ -2,6 +2,7 @@
 
 from datetime import date
 from decimal import Decimal, InvalidOperation
+from graphlib import CycleError, TopologicalSorter
 import math
 import re
 from typing import Literal
@@ -34,6 +35,60 @@ def _choice_token(value: str) -> str:
     normalized = value.replace("\u2019", "'").strip().casefold().rstrip(".!?")
     normalized = normalized.translate(str.maketrans("०१२३४५६७८९", "0123456789"))
     return " ".join(normalized.split())
+
+
+def encode_wire_value(value: object) -> object:
+    """Turn a fact value into JSON-safe data without losing precision.
+
+    Decimals become ``{"$decimal": "<text>"}`` and dates become ISO text;
+    everything else is returned unchanged.
+    """
+
+    if isinstance(value, Decimal):
+        return {DECIMAL_WIRE_KEY: str(value)}
+    if isinstance(value, date):
+        return value.isoformat()
+    return value
+
+
+def decode_wire_value(
+    definition: "FactDefinition",
+    value: object,
+    *,
+    allow_plain_numbers: bool = False,
+) -> object:
+    """Reverse ``encode_wire_value`` for one fact, checking the stored form.
+
+    Args:
+        definition: The fact's definition (its ``value_type`` decides decoding).
+        value: The stored JSON value.
+        allow_plain_numbers: Accept a plain JSON number for a decimal fact
+            (only older checkpoints stored them that way).
+
+    Raises:
+        ValueError: The stored value does not have a valid form.
+    """
+
+    if definition.value_type == "decimal":
+        if isinstance(value, dict):
+            if set(value) != {DECIMAL_WIRE_KEY}:
+                raise ValueError("Decimal wire value has an invalid shape")
+            decimal_text = value[DECIMAL_WIRE_KEY]
+            if (
+                type(decimal_text) is not str
+                or DECIMAL_TEXT_PATTERN.fullmatch(decimal_text) is None
+            ):
+                raise ValueError("Decimal wire value is invalid")
+            return Decimal(decimal_text)
+        if allow_plain_numbers and type(value) in (int, float, Decimal):
+            return Decimal(str(value))
+        raise ValueError("Decimal facts require a numeric value")
+    if definition.value_type == "date" and isinstance(value, str):
+        try:
+            return date.fromisoformat(value)
+        except ValueError as error:
+            raise ValueError("Date wire value is invalid") from error
+    return value
 
 
 class StrictDataModel(BaseModel):
@@ -317,23 +372,14 @@ class FactRegistry(StrictDataModel):
     def _validate_acyclic(by_id: dict[str, FactDefinition]) -> None:
         """Reject cycles so data cannot recursively derive itself."""
 
-        visiting: set[str] = set()
-        visited: set[str] = set()
-
-        def visit(fact_id: str) -> None:
-            if fact_id in visiting:
-                raise ValueError("Derived fact definitions contain a cycle")
-            if fact_id in visited:
-                return
-            visiting.add(fact_id)
-            for dependency in by_id[fact_id].derived_from:
-                if dependency in by_id:
-                    visit(dependency)
-            visiting.remove(fact_id)
-            visited.add(fact_id)
-
-        for fact_id in by_id:
-            visit(fact_id)
+        dependencies = {
+            fact_id: [d for d in definition.derived_from if d in by_id]
+            for fact_id, definition in by_id.items()
+        }
+        try:
+            TopologicalSorter(dependencies).prepare()
+        except CycleError as error:
+            raise ValueError("Derived fact definitions contain a cycle") from error
 
     def get(self, fact_id: str) -> FactDefinition:
         """Return a registered fact or raise ``KeyError``."""
@@ -379,10 +425,7 @@ class TypedFactStore(StrictDataModel):
         for fact_id, state in self.facts.items():
             value = state.value
             if state.status == "known":
-                if isinstance(value, Decimal):
-                    value = {DECIMAL_WIRE_KEY: str(value)}
-                elif isinstance(value, date):
-                    value = value.isoformat()
+                value = encode_wire_value(value)
             states[fact_id] = {
                 "status": state.status,
                 "value": value,
@@ -411,32 +454,11 @@ class TypedFactStore(StrictDataModel):
             if not isinstance(raw_state, dict):
                 raise ValueError("Fact state wire data must be an object")
             state_data = dict(raw_state)
-            value = state_data.get("value")
-            if state_data.get("status") == "known" and definition.value_type == "decimal":
-                if isinstance(value, dict):
-                    if set(value) != {DECIMAL_WIRE_KEY}:
-                        raise ValueError("Decimal wire value has an invalid shape")
-                    decimal_text = value[DECIMAL_WIRE_KEY]
-                    if (
-                        type(decimal_text) is not str
-                        or DECIMAL_TEXT_PATTERN.fullmatch(decimal_text) is None
-                    ):
-                        raise ValueError("Decimal wire value is invalid")
-                    state_data["value"] = Decimal(decimal_text)
-                elif type(value) in (int, float, Decimal):
-                    # Preserve compatibility with previously checkpointed JSON numbers.
-                    state_data["value"] = Decimal(str(value))
-                else:
-                    raise ValueError("Decimal facts require a numeric value")
-            elif (
-                state_data.get("status") == "known"
-                and definition.value_type == "date"
-                and isinstance(value, str)
-            ):
-                try:
-                    state_data["value"] = date.fromisoformat(value)
-                except ValueError as error:
-                    raise ValueError("Date wire value is invalid") from error
+            if state_data.get("status") == "known":
+                # Older checkpoints stored decimals as plain JSON numbers.
+                state_data["value"] = decode_wire_value(
+                    definition, state_data.get("value"), allow_plain_numbers=True
+                )
             facts[fact_id] = state_data
         restored["facts"] = facts
         return cls.model_validate(restored).validate_against(registry)

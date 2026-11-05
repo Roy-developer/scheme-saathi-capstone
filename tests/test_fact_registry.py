@@ -628,6 +628,39 @@ def test_fact_registry_rejects_duplicate_ids_and_unsupported_types() -> None:
         FactRegistry.model_validate(invalid_version)
 
 
+def test_wire_values_round_trip_and_reject_malformed_decimals() -> None:
+    """Saved answers decode exactly, and only the strict decimal form is accepted."""
+
+    from types import SimpleNamespace
+
+    from src.rules.facts import decode_wire_value, encode_wire_value
+
+    decimal_fact = SimpleNamespace(value_type="decimal")
+    date_fact = SimpleNamespace(value_type="date")
+    exact = Decimal("0.12345678901234567")
+    assert decode_wire_value(decimal_fact, encode_wire_value(exact)) == exact
+    assert decode_wire_value(date_fact, encode_wire_value(date(1981, 3, 12))) == date(1981, 3, 12)
+    for malformed in ({"$decimal": "1_000"}, {"$decimal": " 1 "}, {"$decimal": "abc"}, 5):
+        with pytest.raises(ValueError):
+            decode_wire_value(decimal_fact, malformed)
+    assert decode_wire_value(decimal_fact, 5, allow_plain_numbers=True) == Decimal("5")
+
+
+def test_derived_fact_cycle_check_rejects_cycles_and_ignores_unknown_inputs() -> None:
+    """The defensive cycle check catches loops; unregistered inputs are skipped."""
+
+    from types import SimpleNamespace
+
+    def graph(**edges: tuple[str, ...]) -> dict[str, SimpleNamespace]:
+        return {fact: SimpleNamespace(derived_from=inputs) for fact, inputs in edges.items()}
+
+    FactRegistry._validate_acyclic(graph(age=("dob", "today"), dob=(), today=()))
+    FactRegistry._validate_acyclic(graph(age=("not_registered",)))
+    for cyclic in (graph(a=("b",), b=("a",)), graph(a=("a",)), graph(a=("b",), b=("c",), c=("a",))):
+        with pytest.raises(ValueError, match="Derived fact definitions contain a cycle"):
+            FactRegistry._validate_acyclic(cyclic)
+
+
 def test_provider_rejects_duplicate_json_keys_and_modified_rule_hash(
     tmp_path: Path,
 ) -> None:

@@ -1,18 +1,16 @@
 """Run bounded model-selected actions behind typed permissions and budgets."""
 
-import asyncio
 from collections.abc import Awaitable, Callable, Mapping
 from dataclasses import dataclass
 import json
 import re
 import time
-import urllib.error
-import urllib.request
 from typing import Protocol, TypeVar
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from src.config import openrouter_chat_settings
+from src.llm_client import DEFAULT_CHAT_MODEL, ChatRequestError, OpenRouterChatClient
 from src.workflow.conversation_budget import durable_counters, reserve_counters
 from src.workflow.agent_config import (
     MAX_AGENT_STEPS_PER_TURN,
@@ -22,15 +20,12 @@ from src.workflow.agent_config import (
     MAX_CONVERSATION_TOKENS,
     MAX_CONVERSATION_TOOL_CALLS,
     AUXILIARY_PROMPT_TOKEN_RESERVE,
-    MODEL_TIMEOUT_SECONDS,
     PROMPT_VERSION,
     TOKEN_ESTIMATE_CHARACTERS,
     prompt_for,
 )
 
 
-OPENROUTER_CHAT_URL = "https://openrouter.ai/api/v1/chat/completions"
-DEFAULT_CHAT_MODEL = "openai/gpt-4o-mini"
 _CallResult = TypeVar("_CallResult")
 AGENT_ACTION_ALLOWLIST: dict[str, frozenset[str]] = {
     "eligibility": frozenset({
@@ -146,12 +141,21 @@ class OpenRouterToolChoiceProvider:
         )
         self.api_key = api_key if api_key is not None else configured_key
         self.model_name = model_name or configured_model
+        # One reusable connection for the provider's lifetime (the API creates
+        # one provider at startup and closes it at shutdown).
+        self._chat = OpenRouterChatClient(self.api_key) if self.api_key else None
 
     @property
     def configured(self) -> bool:
         """Whether production has an API credential for model-assisted actions."""
 
         return bool(self.api_key)
+
+    async def aclose(self) -> None:
+        """Close the reusable model connection."""
+
+        if self._chat is not None:
+            await self._chat.aclose()
 
     async def choose(
         self,
@@ -162,22 +166,7 @@ class OpenRouterToolChoiceProvider:
     ) -> ModelDecision:
         """Ask the configured model to select exactly one allowed tool."""
 
-        return await asyncio.to_thread(
-            self._choose,
-            agent,
-            locale,
-            messages,
-            actions,
-        )
-
-    def _choose(
-        self,
-        agent: str,
-        locale: str,
-        messages: list[dict[str, str]],
-        actions: list[AgentAction],
-    ) -> ModelDecision:
-        if not self.api_key:
+        if self._chat is None:
             raise AgentModelError("The configured model is unavailable.")
         tools = [
             {
@@ -191,8 +180,8 @@ class OpenRouterToolChoiceProvider:
             }
             for action in actions
         ]
-        payload = json.dumps(
-            {
+        try:
+            reply = await self._chat.complete({
                 "model": self.model_name,
                 "temperature": 0,
                 "max_tokens": MAX_COMPLETION_TOKENS,
@@ -206,45 +195,23 @@ class OpenRouterToolChoiceProvider:
                 "tools": tools,
                 "tool_choice": "required",
                 "parallel_tool_calls": False,
-            }
-        ).encode("utf-8")
-        request = urllib.request.Request(
-            OPENROUTER_CHAT_URL,
-            data=payload,
-            headers={
-                "Authorization": f"Bearer {self.api_key}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "https://scheme-saathi.local",
-                "X-Title": "Scheme Saathi",
-            },
-            method="POST",
-        )
-        try:
-            with urllib.request.urlopen(
-                request, timeout=MODEL_TIMEOUT_SECONDS
-            ) as response:
-                body = json.loads(response.read().decode("utf-8"))
-        except (urllib.error.URLError, TimeoutError, OSError) as error:
+            })
+        except ChatRequestError as error:
             raise AgentModelError("The configured model is unavailable.") from error
-        except (UnicodeDecodeError, json.JSONDecodeError) as error:
-            raise AgentModelError("The model returned an invalid response.") from error
 
         try:
-            choice = body["choices"][0]["message"]["tool_calls"][0]["function"]
-            action = choice["name"]
-            arguments = json.loads(choice["arguments"])
-            usage = body.get("usage", {})
-            if not isinstance(action, str) or not isinstance(arguments, dict):
+            function = reply.choices[0].message.tool_calls[0].function
+            arguments = json.loads(function.arguments)
+            if not isinstance(function.name, str) or not isinstance(arguments, dict):
                 raise TypeError("Invalid tool choice.")
-            if not isinstance(usage, dict):
-                usage = {}
+            usage = reply.usage
             return ModelDecision(
-                action=action,
+                action=function.name,
                 arguments=arguments,
-                input_tokens=_nonnegative_int(usage.get("prompt_tokens")),
-                output_tokens=_nonnegative_int(usage.get("completion_tokens")),
+                input_tokens=_nonnegative_int(getattr(usage, "prompt_tokens", None)),
+                output_tokens=_nonnegative_int(getattr(usage, "completion_tokens", None)),
             )
-        except (KeyError, IndexError, TypeError, json.JSONDecodeError) as error:
+        except (AttributeError, IndexError, TypeError, json.JSONDecodeError) as error:
             raise AgentModelError("The model returned an invalid tool choice.") from error
 
 

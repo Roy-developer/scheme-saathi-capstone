@@ -3,6 +3,7 @@
 from datetime import date
 import hashlib
 import json
+from collections.abc import Awaitable, Callable
 from typing import Any, Literal
 
 from mcp import Client
@@ -119,3 +120,90 @@ async def call_application_tool(
     if not isinstance(result.structured_content, dict):
         raise MCPToolError(f"The MCP {tool} tool returned an invalid response.")
     return result.structured_content
+
+
+ToolCaller = Callable[[Client, str, dict[str, Any]], Awaitable[dict[str, Any]]]
+
+
+async def check_and_bind_documents(
+    call_tool: ToolCaller,
+    document_client: Client,
+    dependency_client: Client,
+    *,
+    journey_id: str,
+    scheme_id: str,
+    documents: dict[str, str],
+    profile_name: str | None,
+    profile_date_of_birth: str | None,
+    document_metadata: dict[str, Any],
+    typed_facts: dict[str, object] | None,
+    profile_conditions: dict[str, bool | None],
+    bundle_fingerprint: str,
+    dependency_version: int | None = None,
+) -> dict[str, Any]:
+    """Check the documents, fingerprint the report and bind it to the journey.
+
+    The same steps run when the document specialist checks documents and
+    when the API re-checks a saved report, so both produce identical
+    fingerprints.
+
+    Args:
+        call_tool: Sends one MCP tool call (``call_application_tool`` or a
+            test fake).
+        dependency_version: The profile version the report was made for;
+            None skips that check in the portal.
+
+    Returns:
+        The checker's assessment plus ``input_fingerprint``,
+        ``document_report_fingerprint`` and ``document_dependency_version``.
+
+    Raises:
+        MCPToolError: The checker or the portal call failed.
+    """
+
+    assessment = await call_tool(document_client, "check_documents", {
+        "scheme_id": scheme_id,
+        "documents": documents,
+        "profile_name": profile_name,
+        "profile_date_of_birth": profile_date_of_birth,
+        "document_metadata": document_metadata,
+        "typed_facts": typed_facts,
+        "profile_conditions": profile_conditions,
+    })
+    input_fingerprint = document_input_fingerprint(
+        scheme_id,
+        documents,
+        profile_name,
+        profile_date_of_birth,
+        document_metadata,
+        assessment["checklist_fingerprint"],
+        assessment["evidence_fingerprint"],
+        assessment["active_fingerprint"],
+        profile_conditions,
+        typed_facts,
+        bundle_fingerprint,
+    )
+    report = json.dumps(
+        {"input_fingerprint": input_fingerprint, "assessment": assessment},
+        ensure_ascii=False,
+        sort_keys=True,
+    )
+    assessment["input_fingerprint"] = input_fingerprint
+    assessment["document_report_fingerprint"] = hashlib.sha256(
+        report.encode("utf-8")
+    ).hexdigest()
+    bind_arguments: dict[str, Any] = {
+        "action": "bind_documents",
+        "journey_id": journey_id,
+        "scheme_id": scheme_id,
+        "documents": documents,
+        "document_report_fingerprint": assessment["document_report_fingerprint"],
+        "checklist_fingerprint": assessment["checklist_fingerprint"],
+        "evidence_fingerprint": assessment["evidence_fingerprint"],
+        "active_checklist_fingerprint": assessment["active_fingerprint"],
+    }
+    if dependency_version is not None:
+        bind_arguments["dependency_version"] = dependency_version
+    binding = await call_tool(dependency_client, "mock_portal", bind_arguments)
+    assessment["document_dependency_version"] = binding["dependency_version"]
+    return assessment
