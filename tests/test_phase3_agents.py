@@ -108,7 +108,10 @@ def test_eligibility_denied_or_malformed_choices_never_call_rule_tool(decision):
     result, _, trace, mode = asyncio.run(run_eligibility_specialist(
         Model(), "IGNWPS-MH", "en", {}, forbidden,
     ))
-    assert result is None and trace[-1]["status"] in {
+    # The bad choice is refused (and may be retried within the step limit);
+    # the rule tool never runs and no verdict is produced.
+    assert result is None
+    assert {event["status"] for event in trace} & {
         "denied", "invalid_arguments", "action_rejected",
     }
     assert mode == "deterministic_fallback"
@@ -657,8 +660,11 @@ def test_model_call_reservation_survives_node_crash_and_sqlite_restart():
                 checkpointer=AsyncSqliteSaver(connection),
             )
             result = await run_journey(graph, request)
-            assert result.agent_budget["model_calls"] == 2
-            assert result.agent_budget["agent_steps"] == 2
+            # 1 call reserved before the crash survived the restart; the
+            # second run's supervisor then retries its denied choice once
+            # within its 2-step limit (1 + 2 = 3).
+            assert result.agent_budget["model_calls"] == 3
+            assert result.agent_budget["agent_steps"] == 3
             assert result.agent_budget["output_tokens"] >= 512
             assert result.eligibility_result.result == "eligible"
 

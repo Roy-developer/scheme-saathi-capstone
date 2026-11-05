@@ -435,12 +435,14 @@ def test_malformed_fact_proposal_is_not_confirmed_or_saved():
             action="read_required_facts",
             arguments={"scheme_id": "IGNWPS-MH"},
         ),
-        ModelDecision(
+        # The malformed proposal is refused and the model may try again within
+        # its 3-step limit; here it repeats the same mistake.
+        *[ModelDecision(
             action="propose_profile_facts",
             arguments={
                 "facts": [{"fact_name": "is_widow", "value": ["yes"]}],
             },
-        ),
+        )] * 2,
     ])
     client = FakeRuleClient()
     graph = _interview_graph(client, provider)
@@ -769,6 +771,9 @@ def test_agent_action_schema_denial_and_budget_stop_before_executor():
         ModelDecision(action="erase_household", arguments={}),
     ])
 
+    # A bad choice is answered with an error and the model may try again
+    # within its step limit (LangChain behaviour). max_steps=1 gives it no
+    # second try, so each run records the refusal and then stops.
     async def scenario():
         invalid = await run_react_loop(
             "supervisor",
@@ -777,8 +782,12 @@ def test_agent_action_schema_denial_and_budget_stop_before_executor():
             {},
             [action],
             provider,
+            max_steps=1,
         )
-        assert invalid.status == "invalid_arguments"
+        assert [event["status"] for event in invalid.trace] == [
+            "invalid_arguments", "step_limit",
+        ]
+        assert invalid.status == "step_limit"
         assert not calls
 
         denied = await run_react_loop(
@@ -788,8 +797,10 @@ def test_agent_action_schema_denial_and_budget_stop_before_executor():
             {},
             [action],
             provider,
+            max_steps=1,
         )
-        assert denied.status == "action_denied"
+        assert [event["status"] for event in denied.trace] == ["denied", "step_limit"]
+        assert denied.status == "step_limit"
         assert not calls
 
         mismatched_actor_provider = ScriptedProvider([
@@ -805,9 +816,12 @@ def test_agent_action_schema_denial_and_budget_stop_before_executor():
             {},
             [action],
             mismatched_actor_provider,
+            max_steps=1,
         )
-        assert mismatched_actor.status == "action_denied"
-        assert mismatched_actor.trace[-1]["status"] == "denied"
+        # An action owned by another actor is never offered as a tool.
+        assert [event["status"] for event in mismatched_actor.trace] == [
+            "denied", "step_limit",
+        ]
         assert not calls
 
         step_limit_provider = ScriptedProvider([

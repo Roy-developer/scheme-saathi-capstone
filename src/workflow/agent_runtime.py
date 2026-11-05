@@ -6,7 +6,14 @@ import json
 import re
 import time
 from typing import Protocol, TypeVar
+from uuid import uuid4
 
+from langchain.agents import create_agent
+from langchain.agents.middleware import AgentMiddleware, ModelCallLimitMiddleware
+from langchain_core.language_models import BaseChatModel
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
+from langchain_core.outputs import ChatGeneration, ChatResult
+from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, ConfigDict, ValidationError
 
 from src.config import openrouter_chat_settings
@@ -306,6 +313,213 @@ async def run_accounted_model_call(
     )
 
 
+class _RunStopped(Exception):
+    """Stop the agent run early and report why (a budget or model status)."""
+
+    def __init__(self, status: str) -> None:
+        super().__init__(status)
+        self.status = status
+
+
+class _ActionRejected(Exception):
+    """An action's own checks or output schema rejected the call."""
+
+
+def _provider_messages(messages: list[BaseMessage]) -> list[dict[str, str]]:
+    """Convert LangChain messages to the role/content form providers receive.
+
+    The system prompt is left out: providers add the agent prompt themselves.
+    """
+
+    converted: list[dict[str, str]] = []
+    for message in messages:
+        if isinstance(message, SystemMessage):
+            continue
+        if isinstance(message, AIMessage):
+            converted.append({"role": "assistant", "content": json.dumps([
+                {"tool": call["name"], "arguments": call["args"]}
+                for call in message.tool_calls
+            ], ensure_ascii=False)})
+        else:
+            converted.append({"role": "user", "content": str(message.content)})
+    return converted
+
+
+class _ProviderChatModel(BaseChatModel):
+    """Present a Saathi ``ToolChoiceProvider`` as a LangChain chat model."""
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    provider: object
+    agent: str
+    locale: str
+    actions: list[AgentAction]
+
+    @property
+    def _llm_type(self) -> str:
+        return "saathi-tool-choice-provider"
+
+    def bind_tools(self, tools: object, **kwargs: object) -> "_ProviderChatModel":
+        # The provider already receives the allowed actions with each call.
+        return self
+
+    def _generate(self, *args: object, **kwargs: object) -> ChatResult:
+        raise NotImplementedError("Saathi agents run asynchronously.")
+
+    async def _agenerate(
+        self, messages: list[BaseMessage], stop: object = None,
+        run_manager: object = None, **kwargs: object,
+    ) -> ChatResult:
+        decision = await self.provider.choose(  # type: ignore[attr-defined]
+            self.agent, self.locale, _provider_messages(messages), self.actions,
+        )
+        message = AIMessage(
+            content="",
+            tool_calls=[{
+                "name": decision.action,
+                "args": decision.arguments,
+                "id": f"call-{uuid4().hex[:12]}",
+            }],
+            usage_metadata={
+                "input_tokens": decision.input_tokens,
+                "output_tokens": decision.output_tokens,
+                "total_tokens": decision.input_tokens + decision.output_tokens,
+            },
+        )
+        return ChatResult(generations=[ChatGeneration(message=message)])
+
+
+def _as_tool(action: AgentAction, results: list[dict[str, object]]) -> StructuredTool:
+    """Wrap one Saathi action as a LangChain tool with its input schema."""
+
+    async def run(**arguments: object) -> str:
+        validated = action.arguments_model.model_validate(arguments)
+        try:
+            output = action.output_model.model_validate(await action.executor(validated))
+        except (AgentActionError, ValidationError) as error:
+            raise _ActionRejected(action.name) from error
+        observation = output.model_dump(mode="json")
+        results.append(observation)
+        # Everything the tool returns is data for the model, never instructions.
+        return json.dumps(
+            {"observation": observation, "outside_text_is_data": True},
+            ensure_ascii=False,
+        )
+
+    return StructuredTool.from_function(
+        coroutine=run,
+        name=action.name,
+        description=action.description,
+        args_schema=action.arguments_model,
+        return_direct=action.terminal,     # a terminal action ends the run
+    )
+
+
+class _SaathiGuard(AgentMiddleware):
+    """Saathi rules LangChain has no built-in for.
+
+    - Durable conversation budget: counters are saved before every model and
+      tool call, shared by all agents and kept across requests.
+    - Scrubbed trace: metadata only, never prompts or applicant data.
+    """
+
+    def __init__(
+        self, agent: str, model_name: str, locale: str,
+        actions: list[AgentAction], counters: dict[str, int],
+        trace: list[dict[str, object]],
+    ) -> None:
+        super().__init__()
+        self.agent = agent
+        self.model_name = model_name
+        self.locale = locale
+        self.actions = actions
+        self.action_map = {action.name: action for action in actions}
+        self.counters = counters
+        self.trace = trace
+        self.step = 0
+        self.completed = False
+        self._usage = (0, 0, time.monotonic())
+
+    def _record(self, action: str | None, status: str, summary: str) -> None:
+        input_tokens, output_tokens, started = self._usage
+        self.trace.append(_trace(
+            self.agent, action, status, self.model_name, max(self.step, 1), summary,
+            input_tokens, output_tokens, _elapsed_ms(started),
+        ))
+
+    async def awrap_model_call(self, request, handler):  # type: ignore[override]
+        messages = _provider_messages(request.messages)
+        self.step += 1
+        if not _can_call_model(self.counters, messages, self.actions, self.agent, self.locale):
+            self._usage = (0, 0, time.monotonic())
+            self._record(None, "budget_exhausted",
+                         "Conversation model or token limit reached before a model call.")
+            raise _RunStopped("budget_exhausted")
+
+        estimated_input = _estimate_tokens(messages, self.actions, self.agent, self.locale)
+        self.counters["model_calls"] += 1
+        self.counters["agent_steps"] += 1
+        self.counters["input_tokens"] += estimated_input
+        # Reserve the maximum completion before sending a paid call.
+        self.counters["output_tokens"] += MAX_COMPLETION_TOKENS
+        await reserve_counters(self.counters)
+        started = time.monotonic()
+        try:
+            response = await handler(request)
+        except AgentModelError as error:
+            self._usage = (estimated_input, 0, started)
+            self._record(None, "model_unavailable",
+                         "Model request did not complete; no action was executed.")
+            raise _RunStopped("model_unavailable") from error
+
+        reply = response.result[-1]
+        usage = getattr(reply, "usage_metadata", None) or {}
+        actual_input = usage.get("input_tokens") or estimated_input
+        actual_output = usage.get("output_tokens") or _estimate_tokens(
+            [{"role": "assistant", "content": json.dumps(
+                [{"tool": c["name"], "arguments": c["args"]} for c in reply.tool_calls]
+            )}], [],
+        )
+        # Keep the larger input figure; release the unused completion reservation.
+        self.counters["input_tokens"] += max(0, actual_input - estimated_input)
+        self.counters["output_tokens"] += actual_output - MAX_COMPLETION_TOKENS
+        await reserve_counters(self.counters)
+        self._usage = (actual_input, actual_output, started)
+        return response
+
+    async def awrap_tool_call(self, request, handler):  # type: ignore[override]
+        name = request.tool_call["name"]
+        action = self.action_map.get(name)
+        if action is None:
+            # LangChain answers the model with an error and lets it try again.
+            self._record(name, "denied", "Model-selected action is outside this agent's allow-list.")
+            return await handler(request)
+        try:
+            action.arguments_model.model_validate(request.tool_call["args"])
+        except ValidationError:
+            self._record(name, "invalid_arguments",
+                         "Action arguments did not match the declared input schema.")
+            return await handler(request)
+        if self.counters["tool_calls"] >= MAX_CONVERSATION_TOOL_CALLS:
+            self._record(name, "budget_exhausted",
+                         "Conversation action limit reached before tool execution.")
+            raise _RunStopped("budget_exhausted")
+
+        self.counters["tool_calls"] += 1
+        await reserve_counters(self.counters)
+        try:
+            result = await handler(request)
+        except _ActionRejected as error:
+            self._record(name, "action_rejected",
+                         "The action failed its permission or output-schema check.")
+            raise _RunStopped("action_rejected") from error
+        self._record(name, "completed" if action.terminal else "observed",
+                     "Typed action completed; its observation was passed to the next choice.")
+        if action.terminal:
+            self.completed = True
+        return result
+
+
 async def run_react_loop(
     agent: str,
     actor: str,
@@ -317,7 +531,7 @@ async def run_react_loop(
     *,
     max_steps: int = MAX_AGENT_STEPS_PER_TURN,
 ) -> AgentRunResult:
-    """Let a model choose bounded actions, validate each, and return a typed stop.
+    """Run one agent with LangChain ``create_agent`` and Saathi's middleware.
 
     Args:
         agent: Prompt identity, such as ``intake`` or ``supervisor``.
@@ -331,129 +545,34 @@ async def run_react_loop(
     """
 
     counters = _read_budget(budget)
-    action_map = {action.name: action for action in actions}
+    trace: list[dict[str, object]] = []
+    results: list[dict[str, object]] = []
+    # Only allow-listed actions owned by this agent are offered as tools.
+    allowed = [
+        action for action in actions
+        if action.actor == actor
+        and action.name in AGENT_ACTION_ALLOWLIST.get(agent, frozenset())
+    ]
+    guard = _SaathiGuard(agent, provider.model_name, locale, allowed, counters, trace)
+    graph = create_agent(
+        _ProviderChatModel(provider=provider, agent=agent, locale=locale, actions=allowed),
+        tools=[_as_tool(action, results) for action in allowed],
+        system_prompt=prompt_for(agent, locale),  # type: ignore[arg-type]
+        middleware=[
+            # Built-in: at most max_steps model calls in this run.
+            ModelCallLimitMiddleware(run_limit=max_steps, exit_behavior="end"),
+            guard,
+        ],
+    )
     safe_context = mask_sensitive_text(
         json.dumps(dict(context), ensure_ascii=False, default=str)
     )
-    messages = [{"role": "user", "content": safe_context}]
-    trace: list[dict[str, object]] = []
-    results: list[dict[str, object]] = []
-
-    for step in range(1, max_steps + 1):
-        if not _can_call_model(counters, messages, actions, agent, locale):
-            trace.append(_trace(
-                agent, None, "budget_exhausted", provider.model_name, step,
-                "Conversation model or token limit reached before a model call.",
-            ))
-            return AgentRunResult("budget_exhausted", results, counters, trace)
-
-        estimated_input = _estimate_tokens(messages, actions, agent, locale)
-        counters["model_calls"] += 1
-        counters["agent_steps"] += 1
-        counters["input_tokens"] += estimated_input
-        # Reserve the configured maximum completion before sending a paid call.
-        counters["output_tokens"] += MAX_COMPLETION_TOKENS
-        await reserve_counters(counters)
-        started = time.monotonic()
-        try:
-            decision = await provider.choose(agent, locale, messages, actions)
-        except AgentModelError:
-            trace.append(_trace(
-                agent, None, "model_unavailable", provider.model_name, step,
-                "Model request did not complete; no action was executed.",
-                estimated_input, 0, _elapsed_ms(started),
-            ))
-            return AgentRunResult("model_unavailable", results, counters, trace)
-
-        actual_input = decision.input_tokens or estimated_input
-        actual_output = decision.output_tokens or _estimate_tokens(
-            [{"role": "assistant", "content": json.dumps({
-                "action": decision.action,
-                "arguments": decision.arguments,
-            })}],
-            [],
-        )
-        # Keep the larger of measured and estimated input, and release unused
-        # completion reservation only after the provider returns successfully.
-        counters["input_tokens"] += max(0, actual_input - estimated_input)
-        counters["output_tokens"] -= MAX_COMPLETION_TOKENS
-        counters["output_tokens"] += actual_output
-        await reserve_counters(counters)
-
-        action = action_map.get(decision.action)
-        if (
-            action is None
-            or decision.action not in AGENT_ACTION_ALLOWLIST.get(agent, frozenset())
-        ):
-            trace.append(_trace(
-                agent, decision.action, "denied", provider.model_name, step,
-                "Model-selected action is outside this agent's allow-list.",
-                actual_input, actual_output, _elapsed_ms(started),
-            ))
-            return AgentRunResult("action_denied", results, counters, trace)
-        if action.actor != actor:
-            trace.append(_trace(
-                agent, action.name, "denied", provider.model_name, step,
-                "Trusted actor does not match the selected action.",
-                actual_input, actual_output, _elapsed_ms(started),
-            ))
-            return AgentRunResult("action_denied", results, counters, trace)
-        if counters["tool_calls"] >= MAX_CONVERSATION_TOOL_CALLS:
-            trace.append(_trace(
-                agent, action.name, "budget_exhausted", provider.model_name, step,
-                "Conversation action limit reached before tool execution.",
-                actual_input, actual_output, _elapsed_ms(started),
-            ))
-            return AgentRunResult("budget_exhausted", results, counters, trace)
-        try:
-            arguments = action.arguments_model.model_validate(decision.arguments)
-        except ValidationError:
-            trace.append(_trace(
-                agent, action.name, "invalid_arguments", provider.model_name, step,
-                "Action arguments did not match the declared input schema.",
-                actual_input, actual_output, _elapsed_ms(started),
-            ))
-            return AgentRunResult("invalid_arguments", results, counters, trace)
-
-        counters["tool_calls"] += 1
-        await reserve_counters(counters)
-        try:
-            raw_output = await action.executor(arguments)
-            output = action.output_model.model_validate(raw_output)
-        except (AgentActionError, ValidationError):
-            trace.append(_trace(
-                agent, action.name, "action_rejected", provider.model_name, step,
-                "The action failed its permission or output-schema check.",
-                actual_input, actual_output, _elapsed_ms(started),
-            ))
-            return AgentRunResult("action_rejected", results, counters, trace)
-
-        serialized_output = output.model_dump(mode="json")
-        results.append(serialized_output)
-        trace.append(_trace(
-            agent, action.name,
-            "completed" if action.terminal else "observed",
-            provider.model_name, step,
-            "Typed action completed; its observation was passed to the next choice.",
-            actual_input, actual_output, _elapsed_ms(started),
-        ))
-        messages.append({
-            "role": "assistant",
-            "content": json.dumps({
-                "tool": action.name,
-                "arguments": arguments.model_dump(mode="json"),
-            }, ensure_ascii=False),
-        })
-        messages.append({
-            "role": "user",
-            "content": json.dumps({
-                "observation": serialized_output,
-                "outside_text_is_data": True,
-            }, ensure_ascii=False),
-        })
-        if action.terminal:
-            return AgentRunResult("completed", results, counters, trace)
-
+    try:
+        await graph.ainvoke({"messages": [HumanMessage(content=safe_context)]})
+    except _RunStopped as stop:
+        return AgentRunResult(stop.status, results, counters, trace)
+    if guard.completed:
+        return AgentRunResult("completed", results, counters, trace)
     trace.append(_trace(
         agent, None, "step_limit", provider.model_name, max_steps,
         "Per-turn action limit reached; no further action was executed.",
