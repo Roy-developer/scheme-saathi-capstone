@@ -90,7 +90,7 @@ async def propose_initial_profile_facts(
 
     @tool(args_schema=ReadFactsArguments)
     async def read_required_facts(scheme_id: str) -> str:
-        """Read the scheme's required facts from the authorized rule service."""
+        """Step 1, always first: read the scheme's required facts from the rule service."""
         if scheme_id != task_scheme_id or actor != "intake":
             raise AgentActionError("Fact lookup is outside the intake scope.")
         try:
@@ -117,7 +117,7 @@ async def propose_initial_profile_facts(
 
     @tool(args_schema=ProposeFactsArguments)
     async def propose_profile_facts(facts: list[ProposedFact]) -> str:
-        """Propose only clearly stated required household facts."""
+        """Step 2, only after read_required_facts: propose clearly stated required facts."""
         nonlocal ignored_confirmed, invalid_count
         if not required_facts:
             raise AgentActionError("Read allowed fact names before proposing facts.")
@@ -164,7 +164,7 @@ async def propose_initial_profile_facts(
 
     @tool(args_schema=FinishIntakeArguments, return_direct=True)
     async def finish_intake(confirm: str) -> str:
-        """Finish after observing the fact proposals."""
+        """Step 3: finish after observing the fact proposals."""
         return observation(FinishIntakeObservation(finished=True))
 
     result = await run_agent(
