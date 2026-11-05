@@ -17,6 +17,7 @@ from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from src.config import (
     PORTAL_URL,
     PROJECT_ROOT,
+    openrouter_chat_settings,
     portal_database_path,
     test_rule_package_directory,
 )
@@ -44,7 +45,7 @@ from src.workflow.errors import MCPToolError
 from src.workflow.application_gate import (
     application_gate_thread_id,
 )
-from src.workflow.agent_runtime import OpenRouterToolChoiceProvider
+from src.llm_client import DEFAULT_CHAT_MODEL, openrouter_chat_model
 from src.workflow.intake import IntakeAgentError
 from src.workflow.journey import (
     ApplicationTaskError,
@@ -376,14 +377,11 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
             application.state.mcp_client = mcp_client
             application.state.mcp_services = tuple(server_modules)
             application.state.journey_checkpointer = checkpointer
-            model_provider: OpenRouterToolChoiceProvider | None = (
-                OpenRouterToolChoiceProvider()
+            api_key, model_name = openrouter_chat_settings(DEFAULT_CHAT_MODEL)
+            # No key: every agent uses its deterministic (no-AI) path.
+            model_provider = (
+                openrouter_chat_model(api_key, model_name) if api_key else None
             )
-            if not model_provider.configured:
-                model_provider = None
-            else:
-                # Close the reusable model connection when the API shuts down.
-                client_stack.push_async_callback(model_provider.aclose)
             application.state.journey_graph = build_journey_graph(
                 mcp_client,
                 packages,

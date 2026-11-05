@@ -16,8 +16,9 @@ from langchain_core.outputs import ChatGeneration, ChatResult
 from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, ConfigDict, ValidationError
 
-from src.config import openrouter_chat_settings
-from src.llm_client import DEFAULT_CHAT_MODEL, ChatRequestError, OpenRouterChatClient
+from openai import OpenAIError
+
+from src.llm_client import DEFAULT_CHAT_MODEL
 from src.workflow.conversation_budget import durable_counters, reserve_counters
 from src.workflow.agent_config import (
     MAX_AGENT_STEPS_PER_TURN,
@@ -132,94 +133,6 @@ class ToolChoiceProvider(Protocol):
         actions: list[AgentAction],
     ) -> ModelDecision:
         """Return one schema-constrained action choice."""
-
-
-class OpenRouterToolChoiceProvider:
-    """OpenRouter chat-completions adapter for model-selected function tools."""
-
-    def __init__(
-        self,
-        *,
-        api_key: str | None = None,
-        model_name: str | None = None,
-    ) -> None:
-        configured_key, configured_model = openrouter_chat_settings(
-            DEFAULT_CHAT_MODEL
-        )
-        self.api_key = api_key if api_key is not None else configured_key
-        self.model_name = model_name or configured_model
-        # One reusable connection for the provider's lifetime (the API creates
-        # one provider at startup and closes it at shutdown).
-        self._chat = OpenRouterChatClient(self.api_key) if self.api_key else None
-
-    @property
-    def configured(self) -> bool:
-        """Whether production has an API credential for model-assisted actions."""
-
-        return bool(self.api_key)
-
-    async def aclose(self) -> None:
-        """Close the reusable model connection."""
-
-        if self._chat is not None:
-            await self._chat.aclose()
-
-    async def choose(
-        self,
-        agent: str,
-        locale: str,
-        messages: list[dict[str, str]],
-        actions: list[AgentAction],
-    ) -> ModelDecision:
-        """Ask the configured model to select exactly one allowed tool."""
-
-        if self._chat is None:
-            raise AgentModelError("The configured model is unavailable.")
-        tools = [
-            {
-                "type": "function",
-                "function": {
-                    "name": action.name,
-                    "description": action.description,
-                    "parameters": action.arguments_model.model_json_schema(),
-                    "strict": True,
-                },
-            }
-            for action in actions
-        ]
-        try:
-            reply = await self._chat.complete({
-                "model": self.model_name,
-                "temperature": 0,
-                "max_tokens": MAX_COMPLETION_TOKENS,
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": prompt_for(agent, locale),  # type: ignore[arg-type]
-                    },
-                    *messages,
-                ],
-                "tools": tools,
-                "tool_choice": "required",
-                "parallel_tool_calls": False,
-            })
-        except ChatRequestError as error:
-            raise AgentModelError("The configured model is unavailable.") from error
-
-        try:
-            function = reply.choices[0].message.tool_calls[0].function
-            arguments = json.loads(function.arguments)
-            if not isinstance(function.name, str) or not isinstance(arguments, dict):
-                raise TypeError("Invalid tool choice.")
-            usage = reply.usage
-            return ModelDecision(
-                action=function.name,
-                arguments=arguments,
-                input_tokens=_nonnegative_int(getattr(usage, "prompt_tokens", None)),
-                output_tokens=_nonnegative_int(getattr(usage, "completion_tokens", None)),
-            )
-        except (AttributeError, IndexError, TypeError, json.JSONDecodeError) as error:
-            raise AgentModelError("The model returned an invalid tool choice.") from error
 
 
 @dataclass
@@ -464,9 +377,13 @@ class _SaathiGuard(AgentMiddleware):
         self.counters["output_tokens"] += MAX_COMPLETION_TOKENS
         await reserve_counters(self.counters)
         started = time.monotonic()
+        request = request.override(
+            tool_choice="required",
+            model_settings={"parallel_tool_calls": False, "strict": True},
+        )
         try:
             response = await handler(request)
-        except AgentModelError as error:
+        except (AgentModelError, OpenAIError) as error:
             self._usage = (estimated_input, 0, started)
             self._record(None, "model_unavailable",
                          "Model request did not complete; no action was executed.")
@@ -554,8 +471,12 @@ async def run_react_loop(
         and action.name in AGENT_ACTION_ALLOWLIST.get(agent, frozenset())
     ]
     guard = _SaathiGuard(agent, provider.model_name, locale, allowed, counters, trace)
+    model = (
+        provider if isinstance(provider, BaseChatModel)
+        else _ProviderChatModel(provider=provider, agent=agent, locale=locale, actions=allowed)
+    )
     graph = create_agent(
-        _ProviderChatModel(provider=provider, agent=agent, locale=locale, actions=allowed),
+        model,
         tools=[_as_tool(action, results) for action in allowed],
         system_prompt=prompt_for(agent, locale),  # type: ignore[arg-type]
         middleware=[

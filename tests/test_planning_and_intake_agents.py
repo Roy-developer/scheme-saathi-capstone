@@ -21,7 +21,6 @@ from src.workflow.agent_runtime import (
     AgentModelError,
     AgentSchema,
     ModelDecision,
-    OpenRouterToolChoiceProvider,
     run_accounted_model_call,
     run_react_loop,
 )
@@ -99,21 +98,20 @@ def _plan_choices(order: list[str] | None = None) -> list[ModelDecision]:
     ]
 
 
-def test_openrouter_provider_uses_configured_bearer_key_without_network(
+def test_openrouter_chat_model_sends_one_strict_tool_choice_without_network(
     fake_openrouter,
 ):
-    """Keep the live provider's credential wiring testable with a fake response."""
+    """The real ChatOpenAI agent path, answered by an in-process fake OpenRouter."""
+
+    from src.llm_client import openrouter_chat_model
 
     fake_openrouter.answer(
         tool_call=("propose_plan", '{"step_ids":["intake","eligibility"]}')
     )
-    provider = OpenRouterToolChoiceProvider(
-        api_key="synthetic-test-key",
-        model_name="fake-phase2-model",
-    )
+    model = openrouter_chat_model("synthetic-test-key", "fake-phase2-model")
 
     async def fake_executor(_arguments: AgentSchema) -> AgentSchema:
-        return PlanProposalObservation(accepted=True, step_ids=[])
+        return PlanProposalObservation(accepted=True, step_ids=["intake", "eligibility"])
 
     action = AgentAction(
         "propose_plan",
@@ -124,17 +122,14 @@ def test_openrouter_provider_uses_configured_bearer_key_without_network(
         fake_executor,
     )
 
-    async def choose_then_close():
-        try:
-            return await provider.choose("supervisor", "en", [], [action])
-        finally:
-            await provider.aclose()
+    run = asyncio.run(run_react_loop(
+        "supervisor", "supervisor", "en", {}, [action], model, max_steps=1,
+    ))
 
-    decision = asyncio.run(choose_then_close())
-
-    assert decision.action == "propose_plan"
-    assert decision.arguments == {"step_ids": ["intake", "eligibility"]}
+    assert run.trace[0]["action"] == "propose_plan"
+    assert run.budget["model_calls"] == 1 and run.budget["tool_calls"] == 1
     request = fake_openrouter.requests[0]
+    assert str(request.url) == "https://openrouter.ai/api/v1/chat/completions"
     assert request.headers["Authorization"] == "Bearer synthetic-test-key"
     payload = fake_openrouter.sent_json()
     assert payload["model"] == "fake-phase2-model"
@@ -142,42 +137,8 @@ def test_openrouter_provider_uses_configured_bearer_key_without_network(
     assert payload["parallel_tool_calls"] is False
     assert payload["tools"][0]["function"]["name"] == "propose_plan"
     assert payload["tools"][0]["function"]["strict"] is True
+    assert len(fake_openrouter.requests) == 1   # max_retries=0: no hidden retries
 
-
-def test_openrouter_provider_reuses_one_connection_for_many_calls(
-    fake_openrouter, monkeypatch,
-):
-    """The provider builds its HTTP connection once, not once per model call."""
-
-    from src import llm_client
-
-    built = []
-    make_fake_client = llm_client._http_client
-    monkeypatch.setattr(
-        llm_client, "_http_client", lambda: built.append(1) or make_fake_client()
-    )
-    fake_openrouter.answer(tool_call=("finish_plan", '{"confirm":"use_validated_plan"}'))
-    provider = OpenRouterToolChoiceProvider(api_key="synthetic-test-key")
-
-    async def fake_executor(_arguments: AgentSchema) -> AgentSchema:
-        return PlanProposalObservation(accepted=True, step_ids=[])
-
-    action = AgentAction(
-        "finish_plan", "Finish.", "supervisor",
-        PlanProposalArguments, PlanProposalObservation, fake_executor,
-    )
-
-    async def three_calls_then_close():
-        try:
-            for _ in range(3):
-                await provider.choose("supervisor", "en", [], [action])
-        finally:
-            await provider.aclose()
-
-    asyncio.run(three_calls_then_close())
-
-    assert len(fake_openrouter.requests) == 3
-    assert built == [1]
 
 
 def test_supervisor_uses_observation_to_choose_next_action():

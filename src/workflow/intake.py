@@ -6,8 +6,9 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr, model_validator
 
 from src.config import openrouter_chat_settings
-from src.llm_client import DEFAULT_CHAT_MODEL, ChatRequestError, OpenRouterChatClient
-from src.workflow.agent_config import MAX_COMPLETION_TOKENS
+from openai import APIStatusError, OpenAIError
+
+from src.llm_client import DEFAULT_CHAT_MODEL, openrouter_chat_model
 
 
 class IntakeAgentError(RuntimeError):
@@ -44,9 +45,6 @@ async def interpret_free_text_answer(
         )
 
     body = {
-        "model": model,
-        "temperature": 0,
-        "max_tokens": MAX_COMPLETION_TOKENS,
         "messages": [
             {
                 "role": "system",
@@ -102,17 +100,18 @@ async def interpret_free_text_answer(
         },
     }
     try:
-        async with OpenRouterChatClient(api_key) as chat:
-            response = await chat.complete(body)
-    except ChatRequestError as error:
-        if error.status_code is not None:
-            raise IntakeAgentError(
-                f"OpenRouter answer-reading request failed with HTTP {error.status_code}."
-            ) from error
+        reply = await openrouter_chat_model(api_key, model).ainvoke(
+            body["messages"], response_format=body["response_format"],
+        )
+    except APIStatusError as error:
+        raise IntakeAgentError(
+            f"OpenRouter answer-reading request failed with HTTP {error.status_code}."
+        ) from error
+    except OpenAIError as error:
         raise IntakeAgentError("OpenRouter answer-reading request failed.") from error
 
     try:
-        content = response.choices[0].message.content
+        content = reply.content
         if not isinstance(content, str):
             raise TypeError("Answer interpretation content must be text.")
         content = content.strip()
@@ -136,9 +135,6 @@ async def rewrite_scheme_query(query: str) -> str:
         )
 
     body = {
-        "model": model,
-        "temperature": 0,
-        "max_tokens": MAX_COMPLETION_TOKENS,
         "messages": [
             {
                 "role": "system",
@@ -158,17 +154,18 @@ async def rewrite_scheme_query(query: str) -> str:
         "response_format": {"type": "json_object"},
     }
     try:
-        async with OpenRouterChatClient(api_key) as chat:
-            response = await chat.complete(body)
-    except ChatRequestError as error:
-        if error.status_code is not None:
-            raise IntakeAgentError(
-                f"OpenRouter intake request failed with HTTP {error.status_code}."
-            ) from error
+        reply = await openrouter_chat_model(api_key, model).ainvoke(
+            body["messages"], response_format=body["response_format"],
+        )
+    except APIStatusError as error:
+        raise IntakeAgentError(
+            f"OpenRouter intake request failed with HTTP {error.status_code}."
+        ) from error
+    except OpenAIError as error:
         raise IntakeAgentError("OpenRouter intake request failed.") from error
 
     try:
-        content = response.choices[0].message.content
+        content = reply.content
         response_data = json.loads(content)
         search_query = response_data["search_query"]
     except (AttributeError, KeyError, IndexError, TypeError, json.JSONDecodeError) as error:
