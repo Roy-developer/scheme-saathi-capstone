@@ -16,11 +16,11 @@ from pydantic import Field
 from src.api.eligibility import EligibilityResponse, evaluate_mock_eligibility
 from src.rules.data_provider import RulePackageProvider
 from src.rules.models import HouseholdProfile
+from fake_chat_model import FakeChatModel, ModelDecision
 from src.workflow.agent_runtime import (
     AgentAction,
     AgentModelError,
     AgentSchema,
-    ModelDecision,
     run_accounted_model_call,
     run_react_loop,
 )
@@ -51,12 +51,13 @@ from src.workflow.supervisor import build_initial_plan
 PACKAGES = RulePackageProvider().packages
 
 
-class ScriptedProvider:
+class ScriptedProvider(FakeChatModel):
     """Return predetermined tool choices without network access."""
 
-    model_name = "fake-phase2-model"
+    model_name: str = "fake-phase2-model"
 
     def __init__(self, choices: list[ModelDecision]) -> None:
+        super().__init__()
         self.choices = choices
         self.messages: list[list[dict[str, str]]] = []
 
@@ -144,10 +145,11 @@ def test_openrouter_chat_model_sends_one_strict_tool_choice_without_network(
 def test_supervisor_uses_observation_to_choose_next_action():
     """The next proposal depends on the code-validated plan observation."""
 
-    class ObservationDrivenProvider:
-        model_name = "fake-observation-model"
+    class ObservationDrivenProvider(FakeChatModel):
+        model_name: str = "fake-observation-model"
 
         def __init__(self):
+            super().__init__()
             self.observed_validation = False
 
         async def choose(self, _agent, _locale, messages, _actions):
@@ -189,10 +191,11 @@ def test_supervisor_uses_observation_to_choose_next_action():
 
 
 def test_intake_selects_each_action_from_the_prior_observation():
-    class ObservationDrivenProvider:
-        model_name = "fake-intake-observation-model"
+    class ObservationDrivenProvider(FakeChatModel):
+        model_name: str = "fake-intake-observation-model"
 
         def __init__(self):
+            super().__init__()
             self.choices = []
 
         async def choose(self, agent, _locale, messages, _actions):
@@ -425,8 +428,8 @@ def test_malformed_fact_proposal_is_not_confirmed_or_saved():
 
 
 def test_model_failures_fall_back_to_the_fixed_question_flow():
-    class UnavailableProvider:
-        model_name = "fake-unavailable-model"
+    class UnavailableProvider(FakeChatModel):
+        model_name: str = "fake-unavailable-model"
 
         async def choose(self, _agent, _locale, _messages, _actions):
             raise AgentModelError("Synthetic provider failure.")

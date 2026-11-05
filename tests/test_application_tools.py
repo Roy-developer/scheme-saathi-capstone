@@ -21,7 +21,7 @@ from src.workflow.application_gate import (
     application_gate_thread_id,
     build_application_gate,
 )
-from src.workflow.agent_runtime import ModelDecision
+from fake_chat_model import FakeChatModel, ModelDecision
 from src.workflow.agent_config import (
     MAX_CONVERSATION_AGENT_STEPS,
     MAX_CONVERSATION_MODEL_CALLS,
@@ -657,8 +657,8 @@ def test_model_enabled_application_journey_fits_durable_conversation_budget(tmp_
     packages = RulePackageProvider().packages
     decisions = []
 
-    class FullJourneyProvider:
-        model_name = "offline-full-journey"
+    class FullJourneyProvider(FakeChatModel):
+        model_name: str = "offline-full-journey"
 
         async def choose(self, agent, _locale, messages, _actions):
             observation = (

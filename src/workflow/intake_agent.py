@@ -4,6 +4,7 @@ from collections.abc import Mapping
 from typing import Literal
 
 from pydantic import Field, StrictBool, StrictStr
+from langchain_core.language_models import BaseChatModel
 
 from src.mcp_servers.service_routing import ToolActor
 from src.rules.models import FactName, HouseholdProfile
@@ -12,7 +13,6 @@ from src.workflow.agent_runtime import (
     AgentActionError,
     AgentRunResult,
     AgentSchema,
-    ToolChoiceProvider,
     copy_agent_budget,
     run_react_loop,
 )
@@ -65,7 +65,7 @@ class FinishIntakeObservation(AgentSchema):
 
 
 async def propose_initial_profile_facts(
-    provider: ToolChoiceProvider | None,
+    provider: BaseChatModel | None,
     client: object,
     actor: ToolActor,
     journey_id: str,

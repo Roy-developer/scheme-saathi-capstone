@@ -4,13 +4,13 @@ from collections.abc import Awaitable, Callable, Mapping
 from typing import Literal
 
 from pydantic import Field
+from langchain_core.language_models import BaseChatModel
 
 from src.workflow.agent_runtime import (
     AgentAction,
     AgentActionError,
     AgentRunResult,
     AgentSchema,
-    ToolChoiceProvider,
     recover_authorized_action,
     run_react_loop,
 )
@@ -63,7 +63,7 @@ def _expected_document_outcome(status: str) -> tuple[str, str]:
 
 
 async def run_document_specialist(
-    provider: ToolChoiceProvider | None,
+    provider: BaseChatModel | None,
     scheme_id: str,
     locale: str,
     budget: Mapping[str, int],

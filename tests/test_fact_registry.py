@@ -22,7 +22,7 @@ from src.mcp_servers.tools import applications, documents
 from src.rules.data_provider import RulePackageProvider
 from src.rules.facts import FactDefinition, FactRegistry, FactState, TypedFactStore
 from src.rules.models import RulePackage
-from src.workflow.agent_runtime import ModelDecision
+from fake_chat_model import FakeChatModel, ModelDecision
 from src.workflow.errors import MCPToolError
 from src.workflow.journey import (
     ApplicationTaskError,
@@ -743,10 +743,11 @@ def test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosur
     provider, package = _write_synthetic_bundle(tmp_path)
     checkpointer = MemorySaver()
 
-    class Planner:
-        model_name = "offline-planner"
+    class Planner(FakeChatModel):
+        model_name: str = "offline-planner"
 
         def __init__(self) -> None:
+            super().__init__()
             self.decisions = [
                 ModelDecision(
                     action="propose_plan",
@@ -1073,8 +1074,8 @@ def test_data_only_multischeme_discovery_sharing_and_typed_correction_through_ht
             scheme_id, store, provider.packages, provider.bundles, provider.registry
         )
 
-    class ForbiddenRegistryModel:
-        model_name = "offline-must-not-disclose"
+    class ForbiddenRegistryModel(FakeChatModel):
+        model_name: str = "offline-must-not-disclose"
 
         async def choose(self, *_args):
             pytest.fail("Registry answers and derived verdicts must not reach a model")

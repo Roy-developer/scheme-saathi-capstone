@@ -4,12 +4,12 @@ from collections.abc import Mapping
 from typing import Literal
 
 from pydantic import Field
+from langchain_core.language_models import BaseChatModel
 
 from src.workflow.agent_runtime import (
     AgentAction,
     AgentActionError,
     AgentSchema,
-    ToolChoiceProvider,
     copy_agent_budget,
     run_react_loop,
 )
@@ -61,7 +61,7 @@ def validate_plan_order(plan: Plan, step_ids: list[str]) -> list[str] | None:
 
 
 async def propose_supervisor_plan(
-    provider: ToolChoiceProvider | None,
+    provider: BaseChatModel | None,
     plan: Plan,
     locale: Literal["en", "hi", "mr"],
     budget: Mapping[str, int] | None,

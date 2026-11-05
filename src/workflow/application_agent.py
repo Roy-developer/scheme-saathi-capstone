@@ -4,13 +4,13 @@ from collections.abc import Awaitable, Callable, Mapping
 from typing import Literal
 
 from pydantic import Field
+from langchain_core.language_models import BaseChatModel
 
 from src.workflow.agent_runtime import (
     AgentAction,
     AgentActionError,
     AgentRunResult,
     AgentSchema,
-    ToolChoiceProvider,
     recover_authorized_action,
     run_react_loop,
 )
@@ -45,7 +45,7 @@ class ApplicationHandoffObservation(AgentSchema):
 
 
 async def run_application_specialist(
-    provider: ToolChoiceProvider | None,
+    provider: BaseChatModel | None,
     operation: str,
     draft_id: str | None,
     revision: int | None,

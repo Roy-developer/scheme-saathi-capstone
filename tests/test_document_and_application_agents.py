@@ -19,10 +19,10 @@ from src.mcp_servers.tools import applications, documents
 from src.rules.data_provider import RulePackageProvider
 from src.workflow.agent_config import MAX_CONVERSATION_MODEL_CALLS
 from src.workflow.agent_config import MAX_CONVERSATION_TOOL_CALLS
+from fake_chat_model import FakeChatModel, ModelDecision
 from src.workflow.agent_runtime import (
     AGENT_ACTION_ALLOWLIST,
     AgentModelError,
-    ModelDecision,
 )
 from src.workflow.errors import MCPToolError
 from src.workflow.conversation_budget import ConversationBudget
@@ -38,12 +38,13 @@ from src.workflow.document_agent import (
 )
 
 
-class DocumentChoiceModel:
+class DocumentChoiceModel(FakeChatModel):
     """Choose a typed handoff only after seeing the deterministic report."""
 
-    model_name = "offline-document-model"
+    model_name: str = "offline-document-model"
 
     def __init__(self, outcome: str, expected_status: str) -> None:
+        super().__init__()
         self.outcome = outcome
         self.expected_status = expected_status
 
@@ -141,8 +142,8 @@ def test_document_specialist_selects_allowed_handoff_from_observation(status, ou
 
 
 def test_document_specialist_rejects_mismatched_handoff_and_tool_error():
-    class WrongHandoffModel:
-        model_name = "offline-wrong-document-handoff"
+    class WrongHandoffModel(FakeChatModel):
+        model_name: str = "offline-wrong-document-handoff"
 
         async def choose(self, _agent, _locale, messages, _actions):
             if len(messages) == 1:
@@ -189,8 +190,8 @@ def test_document_specialist_rejects_mismatched_handoff_and_tool_error():
 def test_application_specialist_observes_safe_result_for_each_allowed_action(
     operation, action, status
 ):
-    class ApplicationChoiceModel:
-        model_name = "offline-application-model"
+    class ApplicationChoiceModel(FakeChatModel):
+        model_name: str = "offline-application-model"
 
         async def choose(self, agent, locale, messages, actions):
             assert agent == "application" and locale == "hi"
@@ -236,8 +237,8 @@ def test_application_specialist_observes_safe_result_for_each_allowed_action(
 
 
 def test_application_specialist_denies_spoofed_approval_and_never_reports_tool_failure_as_success():
-    class SpoofingModel:
-        model_name = "offline-spoof"
+    class SpoofingModel(FakeChatModel):
+        model_name: str = "offline-spoof"
 
         async def choose(self, *_args):
             return ModelDecision(action="approve", arguments={})
@@ -254,8 +255,8 @@ def test_application_specialist_denies_spoofed_approval_and_never_reports_tool_f
     assert "denied" in {event["status"] for event in trace}
     assert mode == "deterministic_fallback"
 
-    class SubmitModel:
-        model_name = "offline-submit-failure"
+    class SubmitModel(FakeChatModel):
+        model_name: str = "offline-submit-failure"
 
         async def choose(self, _agent, _locale, messages, _actions):
             if len(messages) == 1:
@@ -293,10 +294,11 @@ def test_application_specialist_denies_spoofed_approval_and_never_reports_tool_f
 def test_application_specialist_preserves_committed_write_if_handoff_fails(
     operation, action, result,
 ):
-    class HandoffFailureModel:
-        model_name = "offline-handoff-failure"
+    class HandoffFailureModel(FakeChatModel):
+        model_name: str = "offline-handoff-failure"
 
         def __init__(self) -> None:
+            super().__init__()
             self.calls = 0
 
         async def choose(self, *_args):
@@ -534,8 +536,8 @@ def test_model_budget_allows_safe_document_recheck_draft_and_submission_after_re
     calls: list[str] = []
     lost_responses: list[str] = []
 
-    class Model:
-        model_name = "offline-full-phase4"
+    class Model(FakeChatModel):
+        model_name: str = "offline-full-phase4"
 
         async def choose(self, agent, _locale, messages, _actions):
             calls.append(agent)
@@ -664,8 +666,8 @@ def test_model_budget_allows_safe_document_recheck_draft_and_submission_after_re
 
 @pytest.mark.parametrize("specialist", ["documents", "application"])
 def test_model_recovery_never_bypasses_the_remaining_tool_budget(specialist):
-    class Unavailable:
-        model_name = "offline-unavailable"
+    class Unavailable(FakeChatModel):
+        model_name: str = "offline-unavailable"
 
         async def choose(self, *_args):
             raise AgentModelError("Synthetic unavailable model")

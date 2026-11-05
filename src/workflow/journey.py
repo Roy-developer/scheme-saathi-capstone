@@ -40,6 +40,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import Command, interrupt
 from mcp import Client
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+from langchain_core.language_models import BaseChatModel
 
 from src.api.eligibility import EligibilityResponse
 from src.api.applications import (
@@ -70,7 +71,6 @@ from src.workflow.agent_config import MAX_TRACE_EVENTS
 from src.workflow.agent_runtime import (
     AgentTraceEvent,
     DEFAULT_CHAT_MODEL,
-    ToolChoiceProvider,
     mask_sensitive_text,
     run_accounted_model_call,
 )
@@ -504,8 +504,8 @@ def build_journey_graph(
     answer_interpreter: Callable[
         [str, str, str], Awaitable[AnswerInterpretation]
     ] = interpret_free_text_answer,
-    model_provider: ToolChoiceProvider | None = None,
-    eligibility_model_provider: ToolChoiceProvider | None = None,
+    model_provider: BaseChatModel | None = None,
+    eligibility_model_provider: BaseChatModel | None = None,
     checkpointer: BaseCheckpointSaver | None = None,
     today: Callable[[], date] = date.today,
     application_tool: Callable[

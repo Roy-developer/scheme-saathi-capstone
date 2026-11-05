@@ -4,10 +4,11 @@ from collections.abc import Awaitable, Callable, Mapping
 from typing import Literal
 
 from pydantic import Field, ValidationError
+from langchain_core.language_models import BaseChatModel
 
 from src.api.eligibility import EligibilityResponse
 from src.workflow.agent_runtime import (
-    AgentAction, AgentActionError, AgentSchema, ToolChoiceProvider,
+    AgentAction, AgentActionError, AgentSchema, 
     recover_authorized_action, run_react_loop,
 )
 from src.workflow.errors import MCPToolError
@@ -55,7 +56,7 @@ class ReferralRequest(AgentSchema):
 
 
 async def run_eligibility_specialist(
-    provider: ToolChoiceProvider | None,
+    provider: BaseChatModel | None,
     scheme_id: str,
     locale: str,
     budget: Mapping[str, int],

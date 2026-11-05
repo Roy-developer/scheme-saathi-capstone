@@ -9,19 +9,20 @@ from langgraph.checkpoint.memory import MemorySaver
 from src.api.app import app
 from src.api.eligibility import evaluate_mock_eligibility
 from src.rules.data_provider import RulePackageProvider
-from src.workflow.agent_runtime import ModelDecision
+from fake_chat_model import FakeChatModel, ModelDecision
 from src.workflow.journey import build_journey_graph
 
 
 PACKAGES = RulePackageProvider().packages
 
 
-class FakeModel:
+class FakeModel(FakeChatModel):
     """Provide one complete planner/intake action trace offline."""
 
-    model_name = "fake-api-model"
+    model_name: str = "fake-api-model"
 
     def __init__(self) -> None:
+        super().__init__()
         self.choices = [
             ModelDecision(
                 action="propose_plan",

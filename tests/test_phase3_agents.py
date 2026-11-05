@@ -16,7 +16,7 @@ from src.rules.data_provider import RulePackageProvider
 from src.rules.models import HouseholdProfile
 from src.mcp_servers.tools import applications, documents
 from src.workflow.agent_config import MAX_CONVERSATION_MODEL_CALLS, MAX_CONVERSATION_TOOL_CALLS
-from src.workflow.agent_runtime import ModelDecision
+from fake_chat_model import FakeChatModel, ModelDecision
 from src.workflow.conversation_budget import ConversationBudget
 from src.workflow.discovery import MAX_DISCOVERY_CALLS, discovery_input
 from src.workflow.eligibility_agent import run_eligibility_specialist
@@ -56,8 +56,8 @@ async def evaluate(_client, scheme_id, profile):
 
 
 def test_eligibility_specialist_chooses_handoff_from_observation():
-    class ObservingModel:
-        model_name = "offline-eligibility"
+    class ObservingModel(FakeChatModel):
+        model_name: str = "offline-eligibility"
 
         async def choose(self, agent, locale, messages, actions):
             assert agent == "eligibility" and locale == "mr"
@@ -96,8 +96,8 @@ def test_eligibility_specialist_chooses_handoff_from_observation():
     ModelDecision(action="refer_for_help", arguments={"confirm": "refer_without_verdict"}),
 ])
 def test_eligibility_denied_or_malformed_choices_never_call_rule_tool(decision):
-    class Model:
-        model_name = "offline-malformed"
+    class Model(FakeChatModel):
+        model_name: str = "offline-malformed"
 
         async def choose(self, *_args):
             return decision
@@ -118,8 +118,8 @@ def test_eligibility_denied_or_malformed_choices_never_call_rule_tool(decision):
 
 
 def test_eligibility_exhausted_budget_and_wrong_tool_output_do_not_invent_verdict():
-    class Model:
-        model_name = "offline-budget"
+    class Model(FakeChatModel):
+        model_name: str = "offline-budget"
 
         async def choose(self, *_args):
             pytest.fail("The model must not be asked after its allowance is used")
@@ -152,8 +152,8 @@ def test_eligibility_exhausted_budget_and_wrong_tool_output_do_not_invent_verdic
     ))
     assert result is None and trace[-1]["status"] == "budget_exhausted"
 
-    class CheckingModel:
-        model_name = "offline-malformed-output"
+    class CheckingModel(FakeChatModel):
+        model_name: str = "offline-malformed-output"
 
         async def choose(self, *_args):
             return ModelDecision(action="check_candidate", arguments={"scheme_id": "IGNWPS-MH"})
@@ -171,8 +171,8 @@ def test_eligibility_runs_rule_check_once_when_model_is_unavailable():
 
     from src.workflow.agent_runtime import AgentModelError
 
-    class Unavailable:
-        model_name = "offline-unavailable"
+    class Unavailable(FakeChatModel):
+        model_name: str = "offline-unavailable"
 
         async def choose(self, *_args):
             raise AgentModelError("Synthetic unavailable model")
@@ -201,8 +201,8 @@ def test_eligibility_runs_rule_check_once_when_model_is_unavailable():
 def test_used_up_allowance_shows_a_new_conversation_message():
     """When both allowances are spent, say so instead of 'retry later'."""
 
-    class Model:
-        model_name = "offline-spent"
+    class Model(FakeChatModel):
+        model_name: str = "offline-spent"
 
         async def choose(self, *_args):
             pytest.fail("The model must not be asked after its allowance is used")
@@ -237,8 +237,8 @@ def test_used_up_allowance_shows_a_new_conversation_message():
 
 @pytest.mark.parametrize("unavailable", [False, True])
 def test_eligibility_observation_selects_clarification_or_safe_referral(unavailable):
-    class ObservingModel:
-        model_name = "offline-clarification"
+    class ObservingModel(FakeChatModel):
+        model_name: str = "offline-clarification"
 
         async def choose(self, _agent, _locale, messages, _actions):
             if len(messages) == 1:
@@ -473,10 +473,11 @@ def test_failed_node_search_reservation_survives_sqlite_process_restart():
 
 
 def test_new_discovery_fact_from_description_is_not_searched_until_confirmed():
-    class Model:
-        model_name = "offline-description"
+    class Model(FakeChatModel):
+        model_name: str = "offline-description"
 
         def __init__(self):
+            super().__init__()
             self.decisions = iter([
                 ModelDecision(action="propose_plan", arguments={
                     "step_ids": ["intake", "eligibility:IGNWPS-MH"]}),
@@ -632,10 +633,11 @@ def test_approval_revocation_and_fresh_exact_approval_survive_sqlite_restart(mon
 def test_model_call_reservation_survives_node_crash_and_sqlite_restart():
     database = Path.cwd() / f".phase3-model-budget-{uuid4().hex}.sqlite3"
 
-    class Model:
-        model_name = "offline-reservation"
+    class Model(FakeChatModel):
+        model_name: str = "offline-reservation"
 
         def __init__(self, crash):
+            super().__init__()
             self.crash = crash
 
         async def choose(self, *_args):
@@ -676,8 +678,8 @@ def test_model_call_reservation_survives_node_crash_and_sqlite_restart():
 
 
 def test_budget_checkpoint_failure_prevents_model_dispatch(monkeypatch):
-    class Model:
-        model_name = "offline-forbidden-dispatch"
+    class Model(FakeChatModel):
+        model_name: str = "offline-forbidden-dispatch"
 
         async def choose(self, *_args):
             pytest.fail("A failed durable reservation must prevent model dispatch")

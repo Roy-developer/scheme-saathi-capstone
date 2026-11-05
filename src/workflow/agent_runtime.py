@@ -5,14 +5,12 @@ from dataclasses import dataclass
 import json
 import re
 import time
-from typing import Protocol, TypeVar
-from uuid import uuid4
+from typing import TypeVar
 
 from langchain.agents import create_agent
 from langchain.agents.middleware import AgentMiddleware, ModelCallLimitMiddleware
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
-from langchain_core.outputs import ChatGeneration, ChatResult
+from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 from langchain_core.tools import StructuredTool
 from pydantic import BaseModel, ConfigDict, ValidationError
 
@@ -73,15 +71,6 @@ class AgentActionError(RuntimeError):
     """A selected action could not safely complete."""
 
 
-class ModelDecision(AgentSchema):
-    """One tool choice returned by a provider, including optional usage data."""
-
-    action: str
-    arguments: dict[str, object]
-    input_tokens: int = 0
-    output_tokens: int = 0
-
-
 class AgentTraceEvent(AgentSchema):
     """Scrubbed metadata about one model decision or action boundary."""
 
@@ -118,21 +107,6 @@ class AgentAction:
         self.output_model = output_model
         self.executor = executor
         self.terminal = terminal
-
-
-class ToolChoiceProvider(Protocol):
-    """Provider interface used by production and deterministic fake models."""
-
-    model_name: str
-
-    async def choose(
-        self,
-        agent: str,
-        locale: str,
-        messages: list[dict[str, str]],
-        actions: list[AgentAction],
-    ) -> ModelDecision:
-        """Return one schema-constrained action choice."""
 
 
 @dataclass
@@ -238,70 +212,6 @@ class _ActionRejected(Exception):
     """An action's own checks or output schema rejected the call."""
 
 
-def _provider_messages(messages: list[BaseMessage]) -> list[dict[str, str]]:
-    """Convert LangChain messages to the role/content form providers receive.
-
-    The system prompt is left out: providers add the agent prompt themselves.
-    """
-
-    converted: list[dict[str, str]] = []
-    for message in messages:
-        if isinstance(message, SystemMessage):
-            continue
-        if isinstance(message, AIMessage):
-            converted.append({"role": "assistant", "content": json.dumps([
-                {"tool": call["name"], "arguments": call["args"]}
-                for call in message.tool_calls
-            ], ensure_ascii=False)})
-        else:
-            converted.append({"role": "user", "content": str(message.content)})
-    return converted
-
-
-class _ProviderChatModel(BaseChatModel):
-    """Present a Saathi ``ToolChoiceProvider`` as a LangChain chat model."""
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    provider: object
-    agent: str
-    locale: str
-    actions: list[AgentAction]
-
-    @property
-    def _llm_type(self) -> str:
-        return "saathi-tool-choice-provider"
-
-    def bind_tools(self, tools: object, **kwargs: object) -> "_ProviderChatModel":
-        # The provider already receives the allowed actions with each call.
-        return self
-
-    def _generate(self, *args: object, **kwargs: object) -> ChatResult:
-        raise NotImplementedError("Saathi agents run asynchronously.")
-
-    async def _agenerate(
-        self, messages: list[BaseMessage], stop: object = None,
-        run_manager: object = None, **kwargs: object,
-    ) -> ChatResult:
-        decision = await self.provider.choose(  # type: ignore[attr-defined]
-            self.agent, self.locale, _provider_messages(messages), self.actions,
-        )
-        message = AIMessage(
-            content="",
-            tool_calls=[{
-                "name": decision.action,
-                "args": decision.arguments,
-                "id": f"call-{uuid4().hex[:12]}",
-            }],
-            usage_metadata={
-                "input_tokens": decision.input_tokens,
-                "output_tokens": decision.output_tokens,
-                "total_tokens": decision.input_tokens + decision.output_tokens,
-            },
-        )
-        return ChatResult(generations=[ChatGeneration(message=message)])
-
-
 def _as_tool(action: AgentAction, results: list[dict[str, object]]) -> StructuredTool:
     """Wrap one Saathi action as a LangChain tool with its input schema."""
 
@@ -361,7 +271,7 @@ class _SaathiGuard(AgentMiddleware):
         ))
 
     async def awrap_model_call(self, request, handler):  # type: ignore[override]
-        messages = _provider_messages(request.messages)
+        messages = _estimate_input(request.messages)
         self.step += 1
         if not _can_call_model(self.counters, messages, self.actions, self.agent, self.locale):
             self._usage = (0, 0, time.monotonic())
@@ -443,7 +353,7 @@ async def run_react_loop(
     locale: str,
     context: Mapping[str, object],
     actions: list[AgentAction],
-    provider: ToolChoiceProvider,
+    provider: BaseChatModel,
     budget: Mapping[str, int] | None = None,
     *,
     max_steps: int = MAX_AGENT_STEPS_PER_TURN,
@@ -456,7 +366,7 @@ async def run_react_loop(
         locale: Supported prompt language.
         context: Minimal task data. Sensitive identifiers are masked first.
         actions: Typed actions available to this agent.
-        provider: Production model adapter or an offline fake.
+        provider: The chat model (ChatOpenAI in production, a fake in tests).
         budget: Conversation-level counters loaded from the checkpoint.
         max_steps: A per-turn limit independent of the conversation ceiling.
     """
@@ -471,12 +381,8 @@ async def run_react_loop(
         and action.name in AGENT_ACTION_ALLOWLIST.get(agent, frozenset())
     ]
     guard = _SaathiGuard(agent, provider.model_name, locale, allowed, counters, trace)
-    model = (
-        provider if isinstance(provider, BaseChatModel)
-        else _ProviderChatModel(provider=provider, agent=agent, locale=locale, actions=allowed)
-    )
     graph = create_agent(
-        model,
+        provider,
         tools=[_as_tool(action, results) for action in allowed],
         system_prompt=prompt_for(agent, locale),  # type: ignore[arg-type]
         middleware=[
@@ -551,6 +457,16 @@ def _read_budget(budget: Mapping[str, int] | None) -> dict[str, int]:
         name: max(0, value) if type(value := reserved.get(name, 0)) is int else 0
         for name in names
     }
+
+
+def _estimate_input(messages: list[BaseMessage]) -> list[dict[str, object]]:
+    """Message text and tool calls (not the system prompt), for token estimates."""
+
+    return [
+        {"content": message.content, "tool_calls": getattr(message, "tool_calls", [])}
+        for message in messages
+        if not isinstance(message, SystemMessage)
+    ]
 
 
 def _estimate_tokens(
