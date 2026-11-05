@@ -1,9 +1,8 @@
-"""Run bounded model-selected actions behind typed permissions and budgets."""
+"""Run each specialist as a LangChain ``create_agent`` with Saathi's middleware."""
 
 from collections.abc import Awaitable, Callable, Mapping
 from dataclasses import dataclass
 import json
-import re
 import time
 from typing import TypeVar
 
@@ -16,6 +15,8 @@ from pydantic import BaseModel, ConfigDict
 
 from src.llm_client import DEFAULT_CHAT_MODEL
 from src.workflow.agent_middleware import (
+    model_call_fits,
+    reserve_model_call,
     AgentActionError,
     AgentModelError,
     DurableBudgetMiddleware,
@@ -28,9 +29,6 @@ from src.workflow.conversation_budget import durable_counters, reserve_counters
 from src.workflow.agent_config import (
     MAX_AGENT_STEPS_PER_TURN,
     MAX_COMPLETION_TOKENS,
-    MAX_CONVERSATION_AGENT_STEPS,
-    MAX_CONVERSATION_MODEL_CALLS,
-    MAX_CONVERSATION_TOKENS,
     MAX_CONVERSATION_TOOL_CALLS,
     AUXILIARY_PROMPT_TOKEN_RESERVE,
     PROMPT_VERSION,
@@ -76,7 +74,7 @@ class AgentTraceEvent(AgentSchema):
 
 @dataclass
 class AgentRunResult:
-    """Outcome and updated durable counters from one bounded ReAct turn."""
+    """Outcome, updated counters and trace from one agent run."""
 
     status: str
     budget: dict[str, int]
@@ -98,11 +96,13 @@ async def run_accounted_model_call(
     list[dict[str, object]],
     str,
 ]:
-    """Run one non-ReAct chat call under the same durable conversation limits.
+    """Run one non-agent chat call under the same durable conversation limits.
 
-    The helper reserves a conservative input allowance and the maximum
-    completion before invoking the callback. Counters therefore remain safe
-    even when the legacy adapter does not report provider usage.
+    Intake's one-off calls (reading a free-text answer, rewriting a search
+    query) do not run inside ``create_agent``, so agent middleware cannot wrap
+    them. They use the same ``model_call_fits`` / ``reserve_model_call`` rules
+    as ``DurableBudgetMiddleware``: the call and its maximum reply are saved
+    before the request is sent.
     """
 
     counters = _read_budget(budget)
@@ -111,17 +111,7 @@ async def run_accounted_model_call(
         + AUXILIARY_PROMPT_TOKEN_RESERVE
     )
     step = counters["agent_steps"] + 1
-    if (
-        counters["model_calls"] >= MAX_CONVERSATION_MODEL_CALLS
-        or counters["agent_steps"] >= MAX_CONVERSATION_AGENT_STEPS
-        or (
-            counters["input_tokens"]
-            + counters["output_tokens"]
-            + estimated_input
-            + MAX_COMPLETION_TOKENS
-            > MAX_CONVERSATION_TOKENS
-        )
-    ):
+    if not model_call_fits(counters, estimated_input):
         return (
             None,
             counters,
@@ -133,11 +123,7 @@ async def run_accounted_model_call(
             "budget_exhausted",
         )
 
-    counters["model_calls"] += 1
-    counters["agent_steps"] += 1
-    counters["input_tokens"] += estimated_input
-    counters["output_tokens"] += MAX_COMPLETION_TOKENS
-    await reserve_counters(counters)
+    await reserve_model_call(counters, estimated_input)
     started = time.monotonic()
     try:
         result = await callback()
@@ -180,9 +166,11 @@ async def run_agent(
         model: The chat model (ChatOpenAI in production, a fake in tests).
         agent: Prompt identity, such as ``intake`` or ``supervisor``.
         locale: Supported prompt language.
-        context: Minimal task data. Sensitive identifiers are masked first.
+        context: Minimal task data. PIIMiddleware masks identifiers before
+            the model sees it.
         tools: The only actions this agent may take (its allow-list).
-        budget: Conversation-level counters loaded from the checkpoint.
+        budget: Conversation counters from the graph state; ``_read_budget``
+            merges in reservations saved in the LangGraph Store.
         max_steps: Model calls allowed in this run.
     """
 

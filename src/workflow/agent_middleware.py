@@ -3,13 +3,14 @@
 Every agent runs as::
 
     create_agent(model, tools, system_prompt=..., middleware=[
+        PIIMiddleware(...),             # LangChain: mask identifiers (one per rule)
         ModelCallLimitMiddleware(run_limit=max_steps, exit_behavior="end"),
-        ScrubbedTraceMiddleware(...),   # privacy-safe activity log
-        DurableBudgetMiddleware(...),   # shared conversation budget
+        ScrubbedTraceMiddleware(...),   # Saathi: privacy-safe activity log
+        DurableBudgetMiddleware(...),   # Saathi: shared conversation budget
     ])
 
-The first middleware in the list wraps the others, so the trace sees every
-budget stop and records it. Agents define their actions with ``@tool`` and
+Earlier middleware wraps later middleware, so the trace sees every budget
+stop and records it. Agents define their actions with ``@tool`` and
 return ``observation(Model(...))``.
 """
 
@@ -146,13 +147,34 @@ class ScrubbedTraceMiddleware(AgentMiddleware):
         return result
 
 
+def model_call_fits(counters: dict[str, int], estimated_input: int) -> bool:
+    """Whether one more model call (with its maximum reply) fits the budget."""
+
+    return not (
+        counters["model_calls"] >= MAX_CONVERSATION_MODEL_CALLS
+        or counters["agent_steps"] >= MAX_CONVERSATION_AGENT_STEPS
+        or counters["input_tokens"] + counters["output_tokens"]
+        + estimated_input + MAX_COMPLETION_TOKENS > MAX_CONVERSATION_TOKENS
+    )
+
+
+async def reserve_model_call(counters: dict[str, int], estimated_input: int) -> None:
+    """Count one model call and its maximum reply, saved before it is sent."""
+
+    counters["model_calls"] += 1
+    counters["agent_steps"] += 1
+    counters["input_tokens"] += estimated_input
+    counters["output_tokens"] += MAX_COMPLETION_TOKENS
+    await reserve_counters(counters)
+
+
 class DurableBudgetMiddleware(AgentMiddleware):
     """Enforce the conversation budget shared by every agent.
 
     Counters (model calls, agent steps, tokens, tool calls) are saved with
     ``reserve_counters`` *before* each paid model call and each tool call,
     so a crash can never leave a call uncounted, and they persist across
-    requests in the conversation's ``budget:<id>`` checkpoint.
+    requests in the LangGraph ``Store`` (see ``conversation_budget``).
     """
 
     def __init__(self, counters: dict[str, int], estimate_extra: str) -> None:
@@ -173,19 +195,9 @@ class DurableBudgetMiddleware(AgentMiddleware):
     ) -> ModelResponse:
         counters = self.counters
         estimated_input = self._estimate_input(request.messages)
-        if (
-            counters["model_calls"] >= MAX_CONVERSATION_MODEL_CALLS
-            or counters["agent_steps"] >= MAX_CONVERSATION_AGENT_STEPS
-            or counters["input_tokens"] + counters["output_tokens"]
-            + estimated_input + MAX_COMPLETION_TOKENS > MAX_CONVERSATION_TOKENS
-        ):
+        if not model_call_fits(counters, estimated_input):
             raise RunStopped("budget_exhausted")
-
-        counters["model_calls"] += 1
-        counters["agent_steps"] += 1
-        counters["input_tokens"] += estimated_input
-        counters["output_tokens"] += MAX_COMPLETION_TOKENS   # reserve the maximum reply
-        await reserve_counters(counters)
+        await reserve_model_call(counters, estimated_input)
 
         # One tool per step, strict argument schemas.
         request = request.override(
