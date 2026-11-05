@@ -686,6 +686,8 @@ def build_journey_graph(
             ]
         else:
             found = None
+            # Hand-written retry, not RetryPolicy: a failed attempt must leave a visible
+            # history note and the final failure must become a calm reply, not an error.
             for attempt in (1, 2):
                 if calls >= MAX_DISCOVERY_CALLS:
                     break
@@ -2053,6 +2055,8 @@ def build_journey_graph(
         # rule files itself (least privilege).
         history: list[dict[str, Any]] = []
         async def checked_verdict() -> EligibilityResponse:
+            # Hand-written retry, not RetryPolicy: a failed attempt must leave a visible
+            # history note and the final failure must become a calm reply, not an error.
             for attempt in (1, 2):
                 try:
                     return await eligibility_tool(
@@ -2131,6 +2135,8 @@ def build_journey_graph(
         history: list[dict[str, Any]] = []
         passages = None
         search_calls = durable_counters({"search_calls": state.get("search_calls", 0)})["search_calls"]
+        # Hand-written retry, not RetryPolicy: a failed attempt must leave a visible
+        # history note and the final failure must become a calm reply, not an error.
         for attempt in (1, 2):
             if search_calls >= MAX_DISCOVERY_CALLS:
                 break
