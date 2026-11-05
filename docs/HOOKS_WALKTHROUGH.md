@@ -19,8 +19,9 @@ This guide explains **how the hooks are written in the code**: which files and f
 7. [How the hooks are tested](#7-how-the-hooks-are-tested)
 8. [Adding hooks to a new agent, step by step](#8-adding-hooks-to-a-new-agent-step-by-step)
 9. [Reference tables](#9-reference-tables)
-10. [Known gaps](#10-known-gaps)
-11. [Appendix: a complete runnable mini version](#11-appendix-a-complete-runnable-mini-version)
+10. [The three two-try retry loops, seen in the UI](#10-the-three-two-try-retry-loops-seen-in-the-ui)
+11. [Known gaps](#11-known-gaps)
+12. [Appendix: a complete runnable mini version](#12-appendix-a-complete-runnable-mini-version)
 
 ---
 
@@ -1230,9 +1231,117 @@ Then call it as `application_tool(specialist_client("feedback", journey_id), "<t
 | `specialist_client(...)`, `ServiceClientRouter.call_tool` | P8 |
 | `run.status in {"budget_exhausted", "model_unavailable"}` | P9 |
 
+## 10. The three two-try retry loops, seen in the UI
+
+Three places call an MCP tool and, if it fails, try **exactly once more**. They are hand-written loops, not LangGraph `RetryPolicy`, on purpose:
+
+- `RetryPolicy` throws away everything a failed attempt wrote to the state, so the "Retrying once" note would never be saved.
+- After the last attempt, `RetryPolicy` lets the error escape the graph, so the user would get an API error instead of the calm "No decision was invented" reply.
+
+Budget counting is **not** a reason. Each search reservation is saved in the LangGraph `Store` before the call, so a re-run would still count it.
+
+```
+ User message
+     │
+     ▼
+ scheme_search_tool   Loop 1: "Which schemes match what I typed?"
+     │
+     ▼
+ interview answers    Loop 2: discover_candidates, "With these confirmed facts, are there more schemes?"
+     │
+     ▼
+ eligibility_agent    Loop 3: checked_verdict, "Does this household pass this scheme's rules?"
+```
+
+| | Loop 1: Search | Loop 2: Discovery | Loop 3: Rule check |
+|---|---|---|---|
+| Code | `scheme_search_tool` in `journey.py` | `discover_candidates` in `journey.py` | `checked_verdict` inside `eligibility_agent` |
+| Trigger | The user's request | Newly confirmed facts (multi-scheme mode, profile signature changed) | Ready to check one scheme |
+| MCP tool | `search_schemes` | `search_schemes` | `evaluate_eligibility` |
+| Budget | 4 searches per conversation, shared with loop 2; each try counts | Same shared 4 | None (the rule engine is free code) |
+| If both tries fail | Calm message, a `tool_failed` history note, and a `tool_error` report to the supervisor | Existing schemes kept; the `tool_error` notice is shown | "No verdict" for that scheme only |
+| Why not `RetryPolicy` | It would lose the note and the calm failure | It's a helper inside other nodes, not a node | Re-running the node would also re-run the agent's AI calls |
+
+How it appears on screen:
+- History notes are grey captions: `render_history` in `src/ui/app.py` turns `tool_retry` / `tool_failed` into "Retry" / "Tool failed" (translated for hi/mr).
+- Discovery notices are yellow warnings: `render_discovery_notices`, with text from `DISCOVERY_MESSAGES` in `src/workflow/discovery.py`.
+
+### Loop 1: Scheme search
+
+Sunita, a widow in Pune, types: *"I lost my husband last year, is there any pension for me?"*
+
+**The first try fails and the retry works.** Searches used: 2 of 4.
+```
+Retry: Scheme search failed. Retrying once.                     (grey)
+Schemes found:
+ • Sanjay Gandhi Niradhar Anudan Yojana   [source]
+ • Indira Gandhi National Widow Pension   [source]
+ [ Start interview ]
+```
+
+**Both tries fail.** Searches used: 2 of 4, so she can try again later in the same conversation.
+```
+Retry: Scheme search failed. Retrying once.                     (grey)
+Tool failed: Scheme search failed twice. No search results are available.  (grey)
+⚠ A check or search could not finish. No decision was invented.
+  Retry later or ask a CSC operator for help.
+```
+
+### Loop 2: Discovery, the re-search after answers
+
+Ramesh is checking widow-pension schemes for his mother in multi-scheme mode. He confirms: *"Yes, the family owns 1 acre of farmland."*
+
+**The re-search finds more.** PM-KISAN joins the list, the plan version goes up, and its questions are added to the interview.
+```
+Confirmed facts added retrieved candidates. Only reviewed rules decide eligibility.  (grey)
+pm-kisan                                                        (grey)
+Next question: Is the land registered in the family's name?
+```
+
+**The first try fails and the retry works.**
+```
+Discovery failed; retrying once within the same conversation budget.  (grey)
+Confirmed facts added retrieved candidates. ...                 (grey)
+```
+
+**Both tries fail.** The existing schemes stay and the interview goes on; only the extra scheme is missed.
+```
+⚠ A check or search could not finish. No decision was invented. ...
+Next question: What is the mother's age?
+```
+
+**The allowance is already used up.** No search is attempted at all.
+```
+⚠ The conversation's search limit is reached. Some schemes may remain
+  unchecked; ask a CSC operator for help.
+```
+
+### Loop 3: Eligibility rule check
+
+Ramesh has answered every PM-KISAN question.
+
+**The first try fails and the retry works.** Nothing counts against any allowance.
+```
+Retry: Eligibility tool retry.                                  (grey)
+PM-KISAN: This scheme meets the current mock rules. ✔
+ [ Document checklist ]
+```
+
+**Both tries fail.** The other schemes' results still show; Saathi never guesses a verdict.
+```
+Retry: Eligibility tool retry.                                  (grey)
+Tool failed: Eligibility tool failed; no verdict.               (grey)
+⚠ Some candidates could not be checked. No eligibility decision was
+  made for them; ask a CSC operator for help.
+Widow pension: This scheme meets the current mock rules. ✔
+PM-KISAN: no verdict
+```
+
+**The rule behind all three:** one failure shows a grey "Retry" note and then normal results. Two failures show a warning that says what wasn't done, with a CSC referral. There's never an invented answer, a crash, or a lost conversation.
+
 ---
 
-## 10. Known gaps
+## 11. Known gaps
 
 | Gap | Detail |
 |---|---|
@@ -1243,7 +1352,7 @@ Then call it as `application_tool(specialist_client("feedback", journey_id), "<t
 
 ---
 
-## 11. Appendix: a complete runnable mini version
+## 12. Appendix: a complete runnable mini version
 
 This is a self-contained version of P1, P2, P3, P5 (simplified), P6 and P7 in one file, with tests. It has been run in this project's environment: **9 tests pass.**
 
