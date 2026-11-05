@@ -77,6 +77,13 @@ HOSTED_RERANK_MIN_SCORE = 0.3
 # any money support?" score ~0.24 for the right PM-KISAN passage, while
 # off-topic questions scored at most 0.145 (PMAY housing) in a live check.
 HOSTED_RERANK_FALLBACK_MIN_SCORE = 0.2
+# Below 0.2, the best passage is still kept when it scores at least this AND
+# keyword search and meaning search both rank its scheme first. Calibrated
+# 2026-11-05 on 75 development questions (scripts/calibrate_search_fallback.py):
+# right answers missed by the 0.2 line scored 0.186-0.198 and all had both
+# searches agreeing; off-topic questions scored at most 0.068. Details and the
+# re-calibration procedure: docs/RETRIEVAL_IMPROVEMENT_BACKLOG.md.
+HOSTED_RERANK_AGREEMENT_MIN_SCORE = 0.12
 RRF_K = 60
 
 _QUERY_STOPWORDS = {
@@ -222,6 +229,7 @@ class HybridSchemeRetriever:
         limit: int = 10,
         min_score: float | None = None,
         fallback_min_score: float | None = None,
+        agreement_min_score: float | None = None,
     ) -> tuple[SchemePassage, ...]:
         """Expand the query, retrieve with both methods, fuse, then rerank.
 
@@ -229,7 +237,10 @@ class HybridSchemeRetriever:
         effect when reranking is disabled. If that leaves nothing, the single
         best passage is still returned when it scores at least
         ``fallback_min_score``, so a plainly worded but relevant question
-        is not answered with "no results".
+        is not answered with "no results". It is also returned when it scores
+        at least ``agreement_min_score`` **and** keyword search and meaning
+        (vector) search both rank its scheme first: two independent methods
+        agreeing is strong evidence even when the reranker is unsure.
         """
 
         if not tokenize(query):
@@ -247,12 +258,11 @@ class HybridSchemeRetriever:
             return ()
 
         variants = decompose_query(query)
-        rankings: list[Sequence[str]] = []
-        rankings.extend(
-            self._bm25_search(variant, candidates)
-            for variant in variants
-        )
-        rankings.extend(self._vector_search_many(variants, candidates))
+        keyword_rankings = [
+            self._bm25_search(variant, candidates) for variant in variants
+        ]
+        vector_rankings = list(self._vector_search_many(variants, candidates))
+        rankings: list[Sequence[str]] = [*keyword_rankings, *vector_rankings]
 
         fused_ids = reciprocal_rank_fusion(rankings)[: max(limit * 5, RETRIEVAL_DEPTH)]
         fused_passages = [
@@ -278,11 +288,25 @@ class HybridSchemeRetriever:
             for _, (score, passage) in reranked
             if min_score is None or float(score) >= min_score
         )[:limit]
-        if not kept and fallback_min_score is not None:
+        if not kept:
             best_score, best_passage = reranked[0][1]
-            if float(best_score) >= fallback_min_score:
+            if fallback_min_score is not None and float(best_score) >= fallback_min_score:
+                return (best_passage,)
+            if (
+                agreement_min_score is not None
+                and float(best_score) >= agreement_min_score
+                and best_passage.scheme_id
+                == self._top_scheme(keyword_rankings)
+                == self._top_scheme(vector_rankings)
+            ):
                 return (best_passage,)
         return kept
+
+    def _top_scheme(self, rankings: Sequence[Sequence[str]]) -> str | None:
+        """The scheme of the passage one retrieval method ranks first overall."""
+
+        fused = reciprocal_rank_fusion(rankings)
+        return self._passage_by_id[fused[0]].scheme_id if fused else None
 
     def _bm25_search(
         self,

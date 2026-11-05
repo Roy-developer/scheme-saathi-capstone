@@ -408,3 +408,45 @@ def test_search_can_skip_cross_encoder_and_keep_fused_order(monkeypatch):
     expected = expected_retriever.search("where do I apply")
 
     assert results == expected
+
+
+def _agreement_retriever(vector_first_scheme: str):
+    """Reranker unsure (0.19); keyword search ranks PM-KISAN first for 'farmer';
+    meaning search ranks ``vector_first_scheme`` first."""
+
+    passages = load_passages(PASSAGE_FILE)
+    ordered = sorted(passages, key=lambda passage: passage.scheme_id != vector_first_scheme)
+    ids = [passage.passage_id for passage in ordered]
+    return HybridSchemeRetriever(
+        passages,
+        vector_search=lambda query, candidates, limit: ids[:limit],
+        rerank=lambda query, candidates: [
+            0.19 if passage.passage_id == "PM-KISAN-IN-BENEFIT-01" else 0.05
+            for passage in candidates
+        ],
+    )
+
+
+def test_agreement_keeps_a_near_miss_when_both_searches_rank_its_scheme_first():
+    retriever = _agreement_retriever("PM-KISAN-IN")
+    arguments = dict(limit=5, min_score=0.3, fallback_min_score=0.2)
+
+    # Today's rule alone: 0.19 is under the 0.2 fallback, so nothing is shown.
+    assert retriever.search("small farmer money support", **arguments) == ()
+    # Both searches rank PM-KISAN first and 0.19 >= 0.12: the passage is shown.
+    results = retriever.search(
+        "small farmer money support", **arguments, agreement_min_score=0.12,
+    )
+    assert [passage.passage_id for passage in results] == ["PM-KISAN-IN-BENEFIT-01"]
+    # Below the agreement floor, agreement alone is not enough.
+    assert retriever.search(
+        "small farmer money support", **arguments, agreement_min_score=0.195,
+    ) == ()
+
+
+def test_agreement_needs_both_searches_to_rank_the_same_scheme_first():
+    retriever = _agreement_retriever("IGNWPS-MH")
+    assert retriever.search(
+        "small farmer money support",
+        limit=5, min_score=0.3, fallback_min_score=0.2, agreement_min_score=0.12,
+    ) == ()

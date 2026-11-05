@@ -95,9 +95,11 @@ with a Cohere rerank score below 0.3 (`HOSTED_RERANK_MIN_SCORE`), a value
 chosen from the 43-query development set (keeps 94% of relevant passages,
 drops about 90% of the rest); revisit it if the reranker or corpus changes.
 If no passage reaches 0.3, the single best passage is still returned when it
-scores at least 0.2 (`HOSTED_RERANK_FALLBACK_MIN_SCORE`). Plainly worded
-farmer questions score about 0.24 for the right PM-KISAN passage, while
-off-topic questions scored 0.145 or less in a live check.
+scores at least 0.2 (`HOSTED_RERANK_FALLBACK_MIN_SCORE`), or at least 0.12
+(`HOSTED_RERANK_AGREEMENT_MIN_SCORE`) when keyword search and meaning search
+both rank its scheme first. Both values were calibrated on 75 development
+questions; see the "Search fallback calibration" section of
+[`docs/RETRIEVAL_IMPROVEMENT_BACKLOG.md`](docs/RETRIEVAL_IMPROVEMENT_BACKLOG.md).
 The first search embeds the public passage corpus through OpenRouter, and the
 local BGE reranker model is downloaded if it is not cached.
 The Qdrant index is rebuilt in memory when the MCP server starts; persistent

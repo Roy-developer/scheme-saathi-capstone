@@ -10,6 +10,7 @@ from src.config import PROJECT_ROOT
 from src.documents.checklists import load_checklist_snapshot
 from src.mcp_servers.rule_data import get_active_rule_data
 from src.api.scheme_search import (
+    HOSTED_RERANK_AGREEMENT_MIN_SCORE,
     HOSTED_RERANK_FALLBACK_MIN_SCORE,
     HOSTED_RERANK_MIN_SCORE,
     HybridSchemeRetriever,
@@ -119,6 +120,11 @@ def register_tools(mcp: MCPServer) -> None:
                     ),
                     fallback_min_score=(
                         HOSTED_RERANK_FALLBACK_MIN_SCORE
+                        if rerank_mode == "openrouter"
+                        else None
+                    ),
+                    agreement_min_score=(
+                        HOSTED_RERANK_AGREEMENT_MIN_SCORE
                         if rerank_mode == "openrouter"
                         else None
                     ),

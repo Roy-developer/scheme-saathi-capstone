@@ -13,6 +13,100 @@ the generic runtime exists, but do not claim broad catalogue coverage or mix
 that synthetic package into official/gold counts. No paid retrieval run is
 authorized by this planning update; historical measurements below stay intact.
 
+## Search fallback calibration (2026-11-05, branch `supervisor-redesign-3`)
+
+### The problem
+
+Live search showed "No matching passages were found" for plainly worded,
+on-topic questions such as *"small farmer with 1 acre, any money support?"*.
+Search had found the right scheme (PM-KISAN ranked first), but the hosted
+reranker (`cohere/rerank-v3.5` via OpenRouter) gave the best passage **0.198**,
+just under the 0.2 fallback line, so it was hidden. The old (branch 2) and new
+(LangChain `OpenAIEmbeddings` + `QdrantVectorStore`) search code gave identical
+rankings and scores for this question, so this was a threshold problem, not a
+regression.
+
+The rule before the fix: show passages scoring ≥ 0.3; if none, show the single
+best passage if it scores ≥ 0.2; otherwise show nothing. The 0.2 line came from a
+few live questions (plain farmer questions about 0.24, off-topic up to 0.145).
+
+### The fix: a second check ("both searches agree")
+
+Saathi retrieves with two independent methods before reranking: **keyword**
+search (BM25) and **meaning** search (vectors). When the reranker is unsure,
+agreement between the two is strong evidence. New rule, applied only when
+nothing reaches 0.3 and the best passage is under 0.2:
+
+> Show the best passage if it scores **≥ 0.12** **and** keyword search and
+> meaning search both rank **its scheme** first.
+
+Code: `HybridSchemeRetriever.search(..., agreement_min_score=...)` and
+`_top_scheme` in `src/api/scheme_search.py`; the value is
+`HOSTED_RERANK_AGREEMENT_MIN_SCORE = 0.12`, passed by the `search_schemes` MCP
+tool in hosted-rerank mode. Offline tests:
+`test_agreement_keeps_a_near_miss_when_both_searches_rank_its_scheme_first`,
+`test_agreement_needs_both_searches_to_rank_the_same_scheme_first`.
+
+### How the value was chosen (measured, not guessed)
+
+1. **Questions (75, development only):** the 43 existing questions in
+   `data/schemes/retrieval_eval_dev.json` (all on-topic), plus 32 new ones in
+   `data/schemes/retrieval_calibration_dev.json`: 16 plainly worded on-topic
+   questions (8 English, 4 Hindi, 4 Marathi) and 16 off-topic questions that
+   must show nothing (home loans, scholarships, gas and ration cards, health and
+   crop insurance, army pension, weather; English, Hindi and Marathi). Labels are
+   scheme-level and **provisional**; they need domain/bilingual review.
+2. **Signals recorded once** with `scripts/calibrate_search_fallback.py --record`
+   (paid: ~75 query rewrites, embeddings and rerank calls, a few cents). Each
+   question is rewritten exactly as live search does, then the script records
+   the best rerank score and scheme, and the scheme keyword and meaning search
+   each rank first.
+3. **Rules compared for free** with `--analyse` on the recorded signals:
+
+| Rule | Right scheme shown (59 on-topic) | Nothing shown | Off-topic wrongly shown (16) |
+|---|---:|---:|---:|
+| Before: keep 0.3, fallback 0.2 | 55 | 4 | 0 |
+| + agreement ≥ 0.05 | 59 | 0 | **2** |
+| **+ agreement ≥ 0.12 (chosen)** | **59** | **0** | **0** |
+| + agreement ≥ 0.18 | 59 | 0 | 0 |
+| Fallback simply lowered to 0.15 | 59 | 0 | 0 |
+
+What the data showed:
+- The 4 missed right answers scored **0.186–0.198**, and **all four** had both
+  searches agreeing on the right scheme (the farmer question, a Marathi
+  question, a plain "help for small land farmers", and a cross-scheme question).
+- Off-topic questions scored at most **0.068**. Two of them ("army pension" at
+  0.067, "scholarship" at 0.060) did have both searches agreeing, so agreement
+  alone is **not** enough; a score floor is still needed.
+- **0.12** sits with a margin on both sides: ~0.05 above the highest off-topic
+  score and ~0.07 below the lowest missed right answer.
+- Simply lowering the fallback to 0.15 also passed this set, but an earlier
+  live check saw an off-topic housing question at 0.145; requiring agreement
+  protects against such a case where only the reranker is fooled.
+
+### Caveats
+
+- Small, synthetic, provisional set (16 off-topic questions; a 13-passage,
+  two-scheme corpus). The rule must be re-checked when schemes or passages are
+  added, or the reranker or embedding model changes.
+- Scores are rerank scores on the **rewritten** query; a change to the
+  query-rewrite prompt also requires re-calibration.
+- Keyword search finds nothing for some untranslated Hindi/Marathi questions
+  (no shared words with the English corpus); those cannot "agree" and fall back
+  to the 0.3 / 0.2 rule.
+
+### How to re-calibrate
+
+```powershell
+python scripts/calibrate_search_fallback.py --record retrieval_signals_<date>.json   # paid, a few cents
+python scripts/calibrate_search_fallback.py --analyse retrieval_signals_<date>.json  # free
+```
+
+Pick the lowest agreement floor that still shows **zero** off-topic questions,
+keep a margin above the highest off-topic score, update
+`HOSTED_RERANK_AGREEMENT_MIN_SCORE` with the date and set size in its comment,
+and add the new table here.
+
 ## Historical development baseline (2026-11-01)
 
 **Reconciled 2026-11-03:** these numbers describe the recorded configuration
