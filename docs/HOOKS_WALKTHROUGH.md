@@ -210,6 +210,10 @@ What each part does:
 | `observation(...)` | The result goes back as JSON marked `"outside_text_is_data": True`, so text inside it is never treated as instructions |
 | `return_direct=True` | Calling this tool ends the run. These are the "handoff" or "finish" tools. |
 
+**The docstring is the tool's description, and the model reads it on every call.** Use it to steer the model. For example, the intake tools say "Step 1, always first", "Step 2, only after read_required_facts" and "Step 3", because the live model otherwise skipped the reading step and its proposals were refused.
+
+**MCP results arrive wrapped.** When an MCP tool returns a list, MCP sends it as `{"result": [...]}` in `structured_content`; a dict comes as-is. Read it the way the real server sends it, and make test fakes return the same shape (`test_intake_reads_required_facts_from_the_real_rule_engine_server` runs the intake agent against the real rule-engine server to guard this).
+
 When the tool's name must be chosen at run time, the same thing is built with `StructuredTool.from_function(coroutine=..., name=..., args_schema=...)`, as in [`application_agent.py:101`](../src/workflow/application_agent.py#L101).
 
 **Test:** `test_agent_action_schema_denial_and_budget_stop_before_executor` in [`tests/test_planning_and_intake_agents.py`](../tests/test_planning_and_intake_agents.py) proves that bad arguments, unknown tools and budget stops never run the tool.
@@ -436,7 +440,7 @@ Each agent file has the same shape: schemas → `@tool` functions (closures with
 | Agent | File | Tools (the allow-list) | `max_steps` | What plain code still decides |
 |---|---|---|---|---|
 | Supervisor | [`supervisor_agent.py`](../src/workflow/supervisor_agent.py) | `propose_plan`, `finish_plan`* | 2 | The plan must use known step IDs in a valid order; otherwise the fixed plan is kept |
-| Intake | [`intake_agent.py`](../src/workflow/intake_agent.py) | `read_required_facts`, `propose_profile_facts`, `finish_intake`* | default 3 | Proposed facts are only proposals; the person confirms each one |
+| Intake | [`intake_agent.py`](../src/workflow/intake_agent.py) | `read_required_facts`, `propose_profile_facts`, `finish_intake`* | default 3 | Proposed facts are only proposals; the person confirms each one. Proposing before reading is refused; the tool descriptions state the order |
 | Eligibility | [`eligibility_agent.py`](../src/workflow/eligibility_agent.py) | `check_candidate`, `handoff_verdict`*, `request_clarification`*, `refer_for_help`* | 3 | The verdict always comes from the rule engine |
 | Documents | [`document_agent.py`](../src/workflow/document_agent.py) | `inspect_document_metadata`, `handoff_documents`* | 2 | The handoff must match the checker's report |
 | Application | [`application_agent.py`](../src/workflow/application_agent.py) | one portal action named for the operation (`prepare_draft`, `edit_draft`, `submit_draft`, `read_application_status`), `handoff_application`* | 2 | The backend authorizes the action; submitting needs the person's exact approval |

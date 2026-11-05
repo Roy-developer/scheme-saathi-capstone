@@ -678,7 +678,7 @@ The `summary` is a fixed sentence such as *"Typed action completed; its observat
 
 `propose_initial_profile_facts(...)` gives the model three tools:
 
-1. `read_required_facts(scheme_id)` calls the MCP `required_facts` tool as the `intake` role. It accepts the answer only if every name is a fact the rule package declares. The model also gets `required_fact_names` in its context, but this tool call is what fills the code's `required_facts` set; **proposing before reading is rejected**.
+1. `read_required_facts(scheme_id)` calls the MCP `required_facts` tool as the `intake` role. It accepts the answer only if every name is a fact the rule package declares. The model also gets `required_fact_names` in its context, but this tool call is what fills the code's `required_facts` set; **proposing before reading is rejected**. The real MCP server returns the list as `{"result": [...]}`, which is what the code reads. The three tool descriptions say "Step 1, always first", "Step 2, only after read_required_facts" and "Step 3": without that, the live model skipped the reading step and intake fell back to the fixed questions.
 2. `propose_profile_facts(facts)` takes at most 12 `{fact_name, value}` items. For each one, code checks, in order:
    - the name is a required fact (else it counts as `invalid_count`);
    - the profile's value for it is still **empty** (else `ignored_confirmed`, so the model **cannot overwrite a confirmed fact**);
