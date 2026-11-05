@@ -213,10 +213,14 @@ def advance_plan(
     return plan, None
 
 
-def plan_summary(plan: Plan) -> str:
+PLAN_PREFIX = {"en": "Plan: ", "hi": "योजना: ", "mr": "नियोजन: "}
+
+
+def plan_summary(plan: Plan, locale: str = "en") -> str:
     """One-line text version of the plan, e.g. "Plan: Learn about you -> ..."."""
 
-    return "Plan: " + " -> ".join(step.goal for step in plan.steps)
+    prefix = PLAN_PREFIX.get(locale, PLAN_PREFIX["en"])
+    return prefix + " -> ".join(step.goal for step in plan.steps)
 
 
 def replan_reason(scheme_id: str, verdict: CandidateVerdict, locale: str = "en") -> str:

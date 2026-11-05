@@ -1008,7 +1008,7 @@ def build_journey_graph(
                     replan_reason=reason,
                 )
             first = plan.steps[0]
-            summary = plan_summary(plan)
+            summary = plan_summary(plan, state.get("locale", "en"))
             handoff = Handoff(
                 sender="supervisor",
                 recipient=first.specialist,
@@ -2188,7 +2188,20 @@ def build_journey_graph(
         candidate_scheme_ids, excess = merge_candidates(
             [], [passage.scheme_id for passage in passages],
         )
-        if passages:
+        locale = state.get("locale", "en")
+        if passages and locale == "hi":
+            message = (
+                f"{len(candidate_scheme_ids)} योजना(ओं) में {len(passages)} प्रासंगिक "
+                f"स्रोत-सहित अंश मिले। अधिकतम {SEARCH_PASSAGE_LIMIT} अंश दिखाए जाते हैं; "
+                "खोज हर उपयोगी योजना नहीं ढूँढ सकती।"
+            )
+        elif passages and locale == "mr":
+            message = (
+                f"{len(candidate_scheme_ids)} योजनांमध्ये {len(passages)} संबंधित "
+                f"स्रोतासह उतारे सापडले. जास्तीत जास्त {SEARCH_PASSAGE_LIMIT} उतारे "
+                "दाखवले जातात; शोधात प्रत्येक उपयुक्त योजना सापडेलच असे नाही."
+            )
+        elif passages:
             passage_label = "passage" if len(passages) == 1 else "passages"
             scheme_label = (
                 "scheme" if len(candidate_scheme_ids) == 1 else "schemes"
@@ -2200,7 +2213,10 @@ def build_journey_graph(
                 "relevant scheme."
             )
         else:
-            message = "No matching passages were found. Try different wording."
+            message = {
+                "hi": "कोई मिलता-जुलता अंश नहीं मिला। दूसरे शब्दों में पूछें।",
+                "mr": "जुळणारे उतारे सापडले नाहीत. वेगळ्या शब्दांत विचारा.",
+            }.get(locale, "No matching passages were found. Try different wording.")
         return {
             "status": "search_results",
             "message": message,

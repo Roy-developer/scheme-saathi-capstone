@@ -93,3 +93,24 @@ def test_localized_answers_questions_and_confirmations(
     assert parse_answer("date_of_birth", date_reply, locale).value == date(1981, 3, 12)
     assert question_for("is_widow", locale) != question_for("is_widow")
     assert yes in fact_confirmation("is_widow", True, locale)
+
+
+@pytest.mark.parametrize(
+    ("locale", "reply", "expected"),
+    [
+        ("hi", "12 मार्च 1958", date(1958, 3, 12)),
+        ("hi", "१२ मार्च १९५८", date(1958, 3, 12)),
+        ("hi", "5 फ़रवरी 1960", date(1960, 2, 5)),
+        ("hi", "5 \u092b\u093cरवरी 1960", date(1960, 2, 5)),
+        ("hi", "1 सितम्बर 1970", date(1970, 9, 1)),
+        ("mr", "12 मार्च 1958", date(1958, 3, 12)),
+        ("mr", "3 मे 1965", date(1965, 5, 3)),
+        ("mr", "30 डिसेंबर 1959", date(1959, 12, 30)),
+    ],
+)
+def test_hindi_and_marathi_month_names_are_read(locale, reply, expected):
+    """The hi/mr date questions show "12 मार्च 1981" as their own example."""
+
+    parsed = parse_answer("date_of_birth", reply, locale)
+    assert parsed.kind == "value"
+    assert parsed.value == expected

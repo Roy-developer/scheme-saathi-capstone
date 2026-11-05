@@ -138,6 +138,30 @@ DATE_FORMATS = (
     "%b %d %Y",  # Mar 12 1981
 )
 
+# Hindi and Marathi month names (with common spelling variants), mapped to the
+# English names DATE_FORMATS understands. Longer names come first so a
+# replacement never cuts a longer name ("फ़रवरी" before shorter forms).
+DEVANAGARI_MONTHS = {
+    name: english
+    for english, names in (
+        ("january", ("जनवरी", "जानेवारी")),
+        # "फ़" may be typed as one character (U+095E) or as फ + nukta.
+        ("february", ("फ़रवरी", "फ़रवरी", "फरवरी", "फेब्रुवारी")),
+        ("march", ("मार्च",)),
+        ("april", ("अप्रैल", "एप्रिल")),
+        ("may", ("मई", "मे")),
+        ("june", ("जून",)),
+        ("july", ("जुलाई", "जुलै")),
+        ("august", ("अगस्त", "ऑगस्ट")),
+        ("september", ("सितंबर", "सितम्बर", "सप्टेंबर")),
+        ("october", ("अक्टूबर", "अक्तूबर", "ऑक्टोबर")),
+        ("november", ("नवंबर", "नवम्बर", "नोव्हेंबर")),
+        ("december", ("दिसंबर", "दिसम्बर", "डिसेंबर")),
+    )
+    for name in names
+}
+DEVANAGARI_MONTHS = dict(sorted(DEVANAGARI_MONTHS.items(), key=lambda item: -len(item[0])))
+
 
 @dataclass(frozen=True)
 class ParsedAnswer:
@@ -387,6 +411,10 @@ def _normalise(reply: str, locale: str = "en") -> str:
 def _parse_date(text: str) -> date | None:
     """Try each known date format; return None if none match."""
 
+    # Hindi/Marathi month names -> English, so "12 मार्च 1981" (the example the
+    # hi/mr questions show) parses like "12 March 1981".
+    for local_name, english_name in DEVANAGARI_MONTHS.items():
+        text = text.replace(local_name, english_name)
     # Commas are optional: "March 12, 1981" -> "march 12 1981".
     text = text.replace(",", " ")
     text = " ".join(text.split())
