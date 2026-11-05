@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "scheme_id": "IGNWPS-MH",
+  "form_version": "1.0.0",
+  "status": "demo_only",
+  "fields": [
+    {
+      "field_id": "date_of_birth",
+      "labels": {
+        "en": "Date of birth",
+        "hi": "जन्म तिथि",
+        "mr": "जन्मतारीख"
+      },
+      "value_type": "date",
+      "required": true,
+      "fact_id": "date_of_birth"
+    },
+    {
+      "field_id": "is_widow",
+      "labels": {
+        "en": "Widow status",
+        "hi": "विधवा स्थिति",
+        "mr": "विधवा स्थिती"
+      },
+      "value_type": "boolean",
+      "required": true,
+      "fact_id": "is_widow"
+    }
+  ]
+}

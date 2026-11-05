@@ -119,30 +119,42 @@ mock baseline; the current landholding cutoff and State/UT records are not
 verified, so this is not an official eligibility decision.
 Search queries are also sent to OpenRouter for embedding.
 
-### First LangGraph user journey
+### Phase 2 supervisor and intake
 
-The UI calls `POST /api/v1/journey`; it does not call MCP directly. A
-LangGraph supervisor builds a visible plan and hands each step to a
-specialist (intake, search or eligibility), which reports back. Intake uses
-the standard OpenRouter key only to normalize the user's query for search;
-the search tool returns cited passages. For an eligibility check, intake
-asks only the questions the rule package still needs, one at a time: the
-graph pauses with `interrupt()` and continues when the user replies. Answers
-are read by plain code (yes / no / don't know, or a date), not by a model.
-`GET /api/v1/journey/{conversation_id}` reloads a saved conversation after a
-page refresh. Widow pension can still use a preset synthetic profile, which
-is needed for the draft and approval demo. The eligibility agent calls the
-deterministic rule-engine MCP tool. PM-KISAN uses its separately typed,
-versioned mock rule package after the same scheme-selection and Continue
-steps; it does not use or alter the widow-pension rule package. No model
-produces or changes an eligibility verdict.
+The UI calls `POST /api/v1/journey` through `src/ui/api_client.py`; it does
+not call MCP directly. The supervisor uses a bounded ReAct tool-choice runtime
+to propose a plan order. Code validates the allowed steps and dependencies;
+the deterministic planner remains the C0 fallback. For interview requests, an
+optional synthetic household description can be sent with `profile_description`.
+When `OPENROUTER_API_KEY` is configured, intake may select the authorized
+`required_facts` tool, propose typed profile facts, and return a typed handoff.
+Code validates each fact and the person explicitly confirms each proposal
+before it changes the profile. Existing confirmed facts cannot be overwritten.
+Questions, answer parsing, and plan wording support English, Hindi, and Marathi.
+
+The request's `locale` (`en`, `hi`, `mr`) and `mode` (`citizen`, `csc`) are
+checkpointed and returned. CSC intake requires the citizen to be present;
+operators may assist, but the citizen confirms facts and personally approves
+any exact draft. The model never decides eligibility, which remains the
+deterministic rule engine's result through MCP. If the key is absent or a
+model action is invalid, denied, unavailable or over budget, the journey falls
+back safely to C0 planning and code-selected questions.
+
+The runtime masks common email/phone/long-number identifiers before model
+requests and records only bounded scrubbed action metadata. Conversation model,
+tool and step counters and per-fact interpretation attempts are saved in the
+journey checkpoint. No private reasoning or raw model prompts are traced.
+Automated tests use fake model choices and make no paid requests. This does
+not constitute manual browser acceptance or a live-model smoke test.
 
 Typed graph state and conversation turns are checkpointed in the local SQLite
 file `data/runtime/journey.sqlite3`; `DELETE /api/v1/journey/{conversation_id}`
 deletes a session's checkpoint. This is prototype short-term session memory,
-not a consent-managed household profile. This first slice has no guardrails,
-document checker, mock-portal writes, or long-term memory; those remain
-capstone work.
+not a consent-managed household profile. Phase 3 adds bounded eligibility
+rediscovery; Phase 4 adds document/application specialists, exact-draft
+approval and a shared, demo-only document checklist loader. Source-backed
+checklists still require human evidence review and approval. Phase 5 guardrails
+and long-term memory remain incomplete.
 
 A 43-query, synthetic, unprotected development set is available at
 `data/schemes/retrieval_eval_dev.json`. Run its Recall@5 baseline with:

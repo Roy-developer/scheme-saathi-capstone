@@ -46,6 +46,7 @@ class SchemePassage(BaseModel):
     text: str = Field(min_length=1)
     source: PassageSource
     review_status: Literal["pending_review", "reviewed", "rejected"]
+    eligible_for_mock_flow: bool = False
 
 
 class PassageCorpus(BaseModel):

@@ -5,6 +5,14 @@ verified or approved policy corpus.
 **Prepared:** 2026-10-30
 **Scope:** central Government of India schemes plus Maharashtra schemes.
 
+**Planning reconciliation, 2026-11-03:** this is the data/evidence workstream.
+Its numbered stages are not the application phases. Use
+[the six-phase plan](PHASE_WISE_IMPLEMENTATION_PLAN.md) for implementation
+order (including the 2026-11-04 data-driven onboarding gates) and
+[the end-to-end plan](END_TO_END_IMPLEMENTATION_PLAN.md) for architecture.
+The shortlist below remains a proposal; this review approves no scheme rules,
+corpus records, document requirements or held-out labels.
+
 This document combines the project target, a diverse 50-scheme shortlist, a
 proposed 15-scheme gold-policy set, and an implementation and evaluation plan.
 It does not establish current eligibility, benefit amounts, application
@@ -35,11 +43,13 @@ The project brief calls for:
 - **Deployment:** GitHub Actions validation must pass before deploying a new
   Azure Container Apps revision.
 
-The repository currently has a synthetic Maharashtra widow-pension fixture,
-seven development examples, a Streamlit demonstration, and a frontend
-fingerprint demonstration for approval invalidation. The fixture policy is
-still marked draft. That is a useful starting point, not the requested corpus,
-gold set, held-out set, or secured production workflow.
+The original October baseline was a widow-pension fixture and frontend approval
+simulation. The November implementation now has two runtime rule packages
+(`IGNWPS-MH`, `PM-KISAN-IN`), shared interviews, candidate verdicts, a demo
+metadata checklist and backend mock drafts/approval. That does not establish
+40–60 reviewed sources, 15 approved gold schemes, protected persona labels or
+a capstone-complete agent system. Do not equate catalogue candidates, retrieval
+passages, implemented rule packages and gold-policy schemes when counting.
 
 ## 2. Catalogue decision
 
@@ -200,18 +210,55 @@ were retrieved on that date. Keep quoted text faithful to its source; store
 translated display text separately and do not use a translation as the sole
 policy authority.
 
-## 4. Delivery plan and gates
+### Preparing a scheme for data-only onboarding
 
-| Phase | Work and accountable roles | Exit gate |
+**New planning requirement, not implemented or approved data.** A prepared
+dataset must contain more than passages. For each scheme, Roles 1–4 prepare
+and review a compatible bundle containing:
+
+- Registry fact references with precise meaning, scope (person or family),
+  time period, units, type and validation. Reuse an ID only for the same fact.
+- Reviewed English/Hindi/Marathi questions, help and choice labels. Stable
+  choice codes, not translated labels, are stored in answers.
+- Deterministic rules, exact source evidence and currentness/review records.
+- The shared document checklist with alternatives and supported conditions.
+- A mock form mapping from confirmed facts to reviewed fields, labels and
+  required extra answers. This never configures a real government submission.
+- Exact schema/registry/rule/checklist/form/evidence versions and content hashes,
+  plus approved privacy/consent/model-disclosure/retention policy for new facts.
+
+Role 1 approves policy meaning; Role 2 collects evidence; Roles 3 and 4 check
+the typed representation and supported operations; Role 6 verifies the UI
+wording and mapping. No model or package author may self-approve policy.
+Question text and source text are data, never tool instructions.
+
+Before collecting a new field, check whether its type and calculation are
+supported. A new scheme using supported operations should need data changes
+only after the common runtime is built. Unsupported logic goes to developer
+review; do not approximate it or claim eligibility from search text.
+
+Start by describing the existing two pilots without changing their reviewed
+rule JSON. Use a third **synthetic development-only** scholarship to prove a
+new numeric fact and choice question work from data alone. It is not official
+source evidence, a gold scheme, held-out data or a new normal-catalogue entry.
+Human source approval remains separate from technical schema validation.
+
+## 4. Data/delivery workstream stages and gates
+
+Stages below can support the application phases in parallel. In particular,
+source/gold preparation and independent evaluation labelling need not wait for
+agent code, but application sign-off cannot assume they are finished.
+
+| Workstream stage | Work and accountable roles | Exit gate |
 |---|---|---|
 | 0. Scope lock | Roles 1 and 6 agree that the list is central + Maharashtra, assign owners/backups, and define whether linked central/state components count as one record or related records. | Team approves 40–60 candidate scope and naming/counting rules. |
 | 1. Source curation | Role 2 gathers scheme-specific official pages/PDFs; Role 1 checks currentness and ownership. Quarantine inaccessible, inactive, or conflicting candidates and replace them by category. | At least 40, at most 60 accepted records have every required metadata field, exact official URL, collection date, and clause text. |
 | 2. Typed contracts | Roles 3 and 4 define versioned profile, verdict, citation, checklist, consent, and application models. Represent unknown answers explicitly; reject undeclared or malformed fields. | Contract examples and validation tests cover all three verdicts, citations, missing facts, and synthetic-only data. |
 | 3. Gold policies | Role 1 quotes and approves clauses for the selected 15. Role 3 writes deterministic rules; Role 4 reviews fail-closed behavior and tests boundaries, conflicts, and unknowns. | Every gold rule traces to a clause; no AI-generated verdict can bypass the rule engine. |
 | 4. Development and held-out evaluation | Role 5 authors/labels the 60+ synthetic personas before system evaluation: ~20 development and >=40 held-out. Keep related boundary families in one split. | Two independent labels per persona; adjudicated expected results; protected set inaccessible to app/agent code. |
-| 5. User journey | Role 6 wires consent, citizen/CSC-assisted mode, three scenarios, citations, checklist, mock application, approve/edit/reject, edit invalidation, and forget-data control. Roles 3/4 own API and approval controls. | Automated UI/API tests prove the full journey; only synthetic fixtures are used; edits clear approvals; forget clears demo state. |
+| 5. User journey | Role 6 wires consent, Citizen/CSC mode, three-language scenarios, citations, sourced checklist, mock application and forget. Roles 3/4 own bounded ReAct, typed handoffs, tool permissions and approval controls. | API/UI/manual tests prove the journey; fact/document/rule changes revoke approval even if values later revert; unknowns/conflicts block writes and show referral. |
 | 6. Security suite | Role 5 maintains >=30 separate red-team cases; Role 4 tests access boundaries, prompt/data separation, injection handling, redaction, and approval enforcement. | Tests include scams, prompt injection, fraud requests, cross-household access, and ID leakage. The suite does not contain held-out expected answers. |
-| 7. CI and deployment | Role 6 runs formatting/static checks, unit/integration tests, fixture validation, and image build in GitHub Actions. Deploy only after validation passes; configure the Container Apps workflow to create a new revision and perform health/readiness checks. | Failed checks cannot deploy; successful deploy identifies the image/version and revision; smoke test passes; rollback path is documented. |
+| 7. CI and deployment | Role 6 runs existing compilation, unit/integration tests, fixture validation and image build, then adds agreed development-evaluation gates. No linter/type checker is currently configured. Deploy only after exact-commit validation. | Failed checks/evaluation thresholds cannot deploy; revision/version and smoke results are recorded; storage/rollback and full Compose/streaming/observability gates are separate evidence. |
 | 8. Freeze and held-out run | All roles freeze corpus, rules, prompts, and lessons. Role 5 alone runs held-out evaluation and reports metrics. | Any exposed held-out case is reclassified as development and replaced; no tuning occurs against held-out answers. |
 
 ### User-facing behavior to preserve
@@ -226,11 +273,142 @@ policy authority.
   checklist must distinguish source-verified requirements from items not yet
   verified; never invent a required document.
 - Approval is bound to the exact draft/version. Any edit invalidates it.
-  Rejection ends the mock flow; approval can reach only a mock endpoint.
+  Relevant fact/document/rule changes also revoke it, including changes that
+  preserve eligibility or later revert. Rejection never submits; an explicit
+  edit can reopen review with fresh approval. Approval can reach only a mock
+  endpoint, with expiry/one-use policy and stable identical-retry receipts.
 - “Forget demonstration data” clears the active synthetic session and any
   stored demo state covered by the feature. State its limits clearly.
 - The live deployment never submits to government services and never uses real
   Aadhaar, bank, or other sensitive personal data for this prototype.
+
+### Additional data dependencies exposed by the architecture review
+
+#### Document evidence and checklists: start with the two pilots
+
+**Approved planning direction; source evidence still needs human preparation
+and approval.** Start with
+`IGNWPS-MH` and `PM-KISAN-IN`. Collecting and reviewing their document lists is
+a parallel data task, not application Phase 1 or Phase 4 coding. Phase 4 will
+use a source-backed result only after that gate. Do not expand to the full
+catalogue until this small flow has been reviewed and tested.
+
+Keep two connected records:
+
+| Record | What it contains | Why we need it |
+|---|---|---|
+| Evidence passage | `section="documents"`, stable passage ID, exact source wording, official URL, page/heading/table locator, language, collection date, publication date if known, and source review status | Lets a reviewer and user find the original document list |
+| Structured checklist | Scheme ID, checklist version, stable requirement/document IDs, display labels, required groups, alternatives, conditions, evidence passage IDs and checklist approval record | Tells both tools what to check without guessing from a search result |
+
+Use one passage for a meaningful source list or clause. Do not split it into
+one passage per document if that loses the wording or the meaning of the list.
+Keep translations separate from the exact source quote.
+
+For example, the **invented format example**, "Aadhaar or voter ID, and a bank
+passbook", becomes two required groups: one identity group accepting either
+alternative, and one bank-passbook group. It does not become three mandatory
+documents. This example is not evidence for either pilot scheme.
+
+The versioned JSON layout in `data/schemes/document_checklists/` is now
+implemented for the two pilots. Its entries preserve the existing synthetic
+demo IDs and are explicitly `demo_only`; they contain no official source
+claims. `data/schemes/document_evidence.json` is intentionally empty until
+the separate source-review workstream supplies genuine passages. No source
+review or checklist approval is implied. A future source-backed checklist
+should record:
+
+```text
+scheme_id, checklist_version
+requirements[]:
+  requirement_id, label
+  alternatives[]: document_id, label
+  condition: unconditional or an explicitly reviewed supported condition
+  evidence_passage_ids[]
+approval: pending_review | approved | conflict | superseded
+approval_record:
+  reviewer_role, review_reference, reviewed_on, checklist_version
+  checklist_content_sha256, evidence_content_sha256
+```
+
+Different requirement groups are all required; alternatives within a group
+mean "any one". Do not add a free-form expression language. If a condition
+cannot be represented or its meaning is unclear, stop that item for human
+review rather than guess. The checklist digest is SHA-256 over canonical
+sorted compact JSON for the checklist with its `approval` field excluded; the
+evidence digest is SHA-256 over the exact evidence-corpus file bytes. Any
+content or approval-status change therefore requires fresh review; formatting
+changes to the evidence file conservatively invalidate its bound digest too.
+
+**Preparation and review order**
+
+1. Role 2 collects the official lists for the two pilots, with exact quotes
+   and locators. Missing or conflicting lists stay unresolved.
+2. Role 1 reviews the source and its meaning. A reviewed source passage alone
+   does not approve our structured interpretation.
+3. Roles 3 and 4 check the checklist format, alternatives, conditions and
+   evidence links. Role 1 approves the exact checklist interpretation before
+   it is used as a trusted requirement list.
+4. The shared typed loader and portal dependency checks are implemented.
+   Roles 3 and 4 review the approved files against their active schema and
+   verify that citations, alternatives and conditions retain the reviewed
+   meaning before use.
+5. Test the two pilots with synthetic document cases, then obtain source and
+   UI sign-off before expanding the data set.
+
+**Data gate:** every active item has evidence, the source passage is
+`reviewed`, the exact checklist is `approved`, and alternatives/conditions
+have been checked. `source_cited` means evidence is linked, not that it has
+passed approval. Rejected, missing, conflicting or superseded evidence cannot
+support an active approved item. An empty or missing list means "requirements
+not verified", not "no documents required".
+
+Supported local publication is through
+`src.documents.publication.publish_checklist_file`, one complete JSON file per
+call:
+
+```python
+from src.documents.publication import publish_checklist_file
+
+publish_checklist_file("document_evidence.json", reviewed_evidence_bytes)
+publish_checklist_file("IGNWPS-MH.json", reviewed_checklist_bytes)
+```
+
+Prepare and independently review exact bytes first; publish the evidence corpus,
+then each affected scheme checklist bound to those exact evidence bytes.
+An evidence update immediately makes old checklist approvals stale until their
+checklists are re-reviewed and republished. The helper validates schema and
+links, performs an atomic single-file replace, and advances a shared revision
+under the same cross-process lock held from portal checklist read through
+transaction commit. It does not collect sources, verify a reviewer’s identity,
+or approve a checklist. Use no direct/manual file replacement for supported
+updates: edits that bypass the lock and revision ledger are not coordinated or
+covered by this guarantee. A crash after the revision advances but before the
+file replace conservatively invalidates prior approvals; retry publication.
+
+The current Python lists remain explicitly **demo-only** until this gate and
+the Phase 4 integration tests pass. Do not relabel them as official or change
+existing corpus review statuses merely because this plan has been accepted.
+
+#### Other data dependencies
+
+- **Requirements evidence:** attach official source/locator, version/date and
+  review status to each document requirement; distinguish unverified from
+  "not required". Existing demo checklist items do not count as verified.
+- **Synthetic document cases:** prepare clearly fake name/date fields/text,
+  mismatched/missing/unknown cases and expected comparison/referral outcomes.
+  No real documents or new sensitive fields are needed to demonstrate this.
+- **Rule changes:** publish source/package version changes to the draft
+  dependency checks; a new rule package must not leave an old approval usable.
+- **Two signature evaluations:** maintain a reviewed 15-scheme gold-rule set
+  for extraction accuracy and the separately governed 60+ persona set for
+  end-to-end outcomes. A retrieval query label is neither of those.
+- **Fair experiments:** record corpus/rules/prompts/model IDs/budgets in each
+  frozen E1–E4 configuration. E3 lessons use development schemes only;
+  held-out schemes/personas and simulated-citizen hidden profiles stay
+  inaccessible to builders/agent tools, even when running the comparison.
+- **Language review:** EN/HI/MR questions, evidence explanations and discrepancy
+  guidance need bilingual/domain review. Same fact meaning and scope must
+  produce the same deterministic verdict, not merely similar translations.
 
 ## 5. Evaluation split and access controls
 
@@ -287,8 +465,10 @@ silently approve policy or deploy unreviewed changes.
    rules; retain the current three demo outcomes as development examples.
 3. Add source records and clause-level retrieval text for the first 15 gold
    schemes, then expand the verified catalogue to at least 40.
-4. Finalize typed contracts and an end-to-end mock flow before broadening rule
-   extraction or adding autonomous agents.
+4. Extend the existing typed contracts and bounded specialists to the registry
+   and compatible scheme bundles under the canonical Phase 1–4 gates.
+   Preserve implemented mock-flow safety repairs and deterministic rules;
+   complete outstanding acceptance rather than rebuilding the agents.
 5. Ask Role 5 to build and protect the 60+ persona evaluation and 30+ red-team
    sets before the prompts/rules are tuned against them.
 6. Require a successful GitHub Actions run and smoke check before each new

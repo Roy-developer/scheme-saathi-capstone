@@ -10,6 +10,31 @@ from typing import Literal
 from src.workflow.state import ApplicationOperation, Plan, PlanStep, SpecialistName
 
 
+PLAN_GOALS: dict[str, dict[str, str]] = {
+    "en": {
+        "intake": "Learn about you",
+        "evaluate_intake": "Check your answers",
+        "search_intake": "Understand your request",
+        "search": "Find source-cited schemes",
+        "rules_for": "Check the rules for {scheme}",
+    },
+    "hi": {
+        "intake": "आपके परिवार की जानकारी समझें",
+        "evaluate_intake": "दी गई जानकारी जाँचें",
+        "search_intake": "आपकी ज़रूरत समझें",
+        "search": "स्रोत सहित योजनाएँ खोजें",
+        "rules_for": "{scheme} के नियम जाँचें",
+    },
+    "mr": {
+        "intake": "तुमच्या कुटुंबाची माहिती समजून घ्या",
+        "evaluate_intake": "दिलेली उत्तरे तपासा",
+        "search_intake": "तुमची गरज समजून घ्या",
+        "search": "स्रोतांसह योजना शोधा",
+        "rules_for": "{scheme} चे नियम तपासा",
+    },
+}
+
+
 # Statuses that mean a specialist finished its step successfully. Any other
 # status (for example "invalid_input") stops the plan early.
 SUCCESS_STATUSES: dict[str, frozenset[str]] = {
@@ -65,6 +90,7 @@ def build_initial_plan(
     action: Literal["search", "evaluate", "interview"],
     scheme_id: str | None = None,
     candidate_scheme_ids: list[str] | None = None,
+    locale: Literal["en", "hi", "mr"] = "en",
 ) -> Plan:
     """Create the first plan for a request, with the first step started.
 
@@ -78,12 +104,12 @@ def build_initial_plan(
             PlanStep(
                 step_id="intake",
                 specialist="intake",
-                goal="Understand your request",
+                goal=PLAN_GOALS[locale]["search_intake"],
             ),
             PlanStep(
                 step_id="search",
                 specialist="search",
-                goal="Find source-cited schemes",
+                goal=PLAN_GOALS[locale]["search"],
             ),
         ]
     else:
@@ -94,16 +120,21 @@ def build_initial_plan(
                 step_id="intake",
                 specialist="intake",
                 goal=(
-                    "Learn about you"
+                    PLAN_GOALS[locale]["intake"]
                     if action == "interview"
-                    else "Check your answers"
+                    else PLAN_GOALS[locale]["evaluate_intake"]
                 ),
                 scheme_id=scheme_id,
             ),
             PlanStep(
                 step_id="eligibility",
                 specialist="eligibility",
-                goal=f"Check the rules for {scheme_id or 'the chosen scheme'}",
+                goal=PLAN_GOALS[locale]["rules_for"].format(
+                    scheme=scheme_id or {
+                        "hi": "चुनी हुई योजना",
+                        "mr": "निवडलेली योजना",
+                    }.get(locale, "the chosen scheme")
+                ),
                 scheme_id=scheme_id,
             ),
         ]
@@ -112,7 +143,9 @@ def build_initial_plan(
             PlanStep(
                 step_id=f"eligibility:{candidate}",
                 specialist="eligibility",
-                goal=f"Check the rules for {candidate}",
+                goal=PLAN_GOALS[locale]["rules_for"].format(
+                    scheme=candidate
+                ),
                 scheme_id=candidate,
             )
             for candidate in candidate_scheme_ids

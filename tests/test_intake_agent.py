@@ -5,6 +5,7 @@ from io import BytesIO
 import pytest
 
 from src.workflow import intake
+from src.workflow.agent_config import MAX_COMPLETION_TOKENS, MODEL_TIMEOUT_SECONDS
 from src.workflow.intake import IntakeAgentError
 
 
@@ -17,6 +18,7 @@ def test_query_rewriter_uses_chat_key_and_does_not_send_embedding_key(
     monkeypatch.setenv("OPENROUTER_CHAT_MODEL", "test/chat-model")
 
     def fake_urlopen(request, timeout):
+        assert timeout == MODEL_TIMEOUT_SECONDS
         requests.append(request)
         body = {
             "choices": [
@@ -39,6 +41,7 @@ def test_query_rewriter_uses_chat_key_and_does_not_send_embedding_key(
     assert requests[0].get_header("Authorization") == 'Bearer chat-test-key'
     payload = json.loads(requests[0].data)
     assert payload["model"] == "test/chat-model"
+    assert payload["max_tokens"] == MAX_COMPLETION_TOKENS
     assert payload["messages"][-1]["content"] == "मासिक विधवा पेंशन"
 
 
@@ -75,6 +78,7 @@ def test_answer_reader_returns_typed_interpretation(monkeypatch: pytest.MonkeyPa
     monkeypatch.setenv("OPENROUTER_CHAT_MODEL", "test/chat-model")
 
     def fake_urlopen(request, timeout):
+        assert timeout == MODEL_TIMEOUT_SECONDS
         requests.append(request)
         body = {
             "choices": [{
@@ -102,6 +106,7 @@ def test_answer_reader_returns_typed_interpretation(monkeypatch: pytest.MonkeyPa
     assert result.confidence == 0.96
     assert requests[0].get_header("Authorization") == 'Bearer chat-test-key'
     payload = json.loads(requests[0].data)
+    assert payload["max_tokens"] == MAX_COMPLETION_TOKENS
     assert payload["messages"][-1]["content"] == json.dumps({
         "fact": "is_widow",
         "question": "Are you a widow?",

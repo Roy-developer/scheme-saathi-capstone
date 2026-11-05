@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "scheme_id": "PM-KISAN-IN",
+  "form_version": "1.0.0",
+  "status": "demo_only",
+  "fields": [
+    {
+      "field_id": "landholding_family_in_state_records",
+      "labels": {
+        "en": "Family landholding recorded",
+        "hi": "राज्य रिकॉर्ड में परिवार की भूमि",
+        "mr": "राज्य नोंदीतील कुटुंबाची जमीन"
+      },
+      "value_type": "boolean",
+      "required": true,
+      "fact_id": "landholding_family_in_state_records"
+    }
+  ]
+}

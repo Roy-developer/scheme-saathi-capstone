@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "bundles": [
+    {
+      "scheme_id": "IGNWPS-MH",
+      "bundle_version": "1.0.0",
+      "activation_state": "legacy_compatibility",
+      "package_file": "ignwps_mh.v1.json",
+      "package_version": "1.0.0",
+      "package_sha256": "d74284819f122d827a9913405dc69907d687868a93b298679c3a46f6840bea45",
+      "registry_version": "1.0.0",
+      "registry_sha256": "02122ee9e617daf2528eb8d797705a16b3336a90622eac71e98ed2af91146982",
+      "fact_ids": [
+        "age",
+        "application_date",
+        "bpl_card_shown",
+        "date_of_birth",
+        "is_widow"
+      ],
+      "legacy_profile_mapping": {
+        "is_widow": "is_widow",
+        "date_of_birth": "date_of_birth",
+        "bpl_card_shown": "bpl_card_shown",
+        "application_date": "application_date"
+      },
+      "source_clause_ids": [
+        "IGNWPS-MH-ELIGIBILITY-01"
+      ],
+      "checklist_version": null,
+      "mock_form_version": null
+    },
+    {
+      "scheme_id": "PM-KISAN-IN",
+      "bundle_version": "1.0.0",
+      "activation_state": "legacy_compatibility",
+      "package_file": "pmkisan_in.v1.json",
+      "package_version": "1.0.0",
+      "package_sha256": "3e7b14c676a21a878ef5c11a0e2d2fd8e202ff50c40318299d9d644ab20cb4a7",
+      "registry_version": "1.0.0",
+      "registry_sha256": "02122ee9e617daf2528eb8d797705a16b3336a90622eac71e98ed2af91146982",
+      "fact_ids": [
+        "excluded_government_employee_member",
+        "income_tax_paid_last_assessment_year",
+        "institutional_landholder",
+        "landholding_family_in_state_records",
+        "listed_public_office_member",
+        "nri_new_beneficiary",
+        "pension_at_least_10000_excluding_stated_grades",
+        "registered_practicing_professional_member"
+      ],
+      "legacy_profile_mapping": {
+        "landholding_family_in_state_records": "landholding_family_in_state_records",
+        "pension_at_least_10000_excluding_stated_grades": "pension_at_least_10000_excluding_stated_grades",
+        "nri_new_beneficiary": "nri_new_beneficiary",
+        "institutional_landholder": "institutional_landholder",
+        "registered_practicing_professional_member": "registered_practicing_professional_member",
+        "excluded_government_employee_member": "excluded_government_employee_member",
+        "income_tax_paid_last_assessment_year": "income_tax_paid_last_assessment_year",
+        "listed_public_office_member": "listed_public_office_member"
+      },
+      "source_clause_ids": [
+        "PMKISAN-GUIDELINES-2020-3",
+        "PMKISAN-GUIDELINES-2020-4.1(a)",
+        "PMKISAN-GUIDELINES-2020-4.1(b)(i)-(ii)",
+        "PMKISAN-GUIDELINES-2020-4.1(b)(iii)",
+        "PMKISAN-GUIDELINES-2020-4.1(b)(iv)",
+        "PMKISAN-GUIDELINES-2020-4.1(b)(v)",
+        "PMKISAN-GUIDELINES-2020-4.1(b)(vi)",
+        "PMKISAN-GUIDELINES-2020-4.1(c)"
+      ],
+      "checklist_version": null,
+      "mock_form_version": null
+    }
+  ]
+}

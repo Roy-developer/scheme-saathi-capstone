@@ -7,8 +7,10 @@ import pytest
 from src.rules.models import HouseholdProfile
 from src.workflow.questions import (
     QUESTIONS,
+    fact_confirmation,
     parse_answer,
     parse_interpreted_answer,
+    question_for,
 )
 
 
@@ -73,3 +75,21 @@ def test_interpreted_answers_must_match_the_fact_type():
         "date_of_birth", "1981-03-12"
     ).value == date(1981, 3, 12)
     assert parse_interpreted_answer("date_of_birth", True).kind == "invalid"
+
+
+@pytest.mark.parametrize(
+    ("locale", "yes", "no", "unknown", "date_reply"),
+    [
+        ("hi", "हाँ", "नहीं", "मुझे नहीं पता", "१२/०३/१९८१"),
+        ("mr", "होय", "नाही", "माहित नाही", "१२/०३/१९८१"),
+    ],
+)
+def test_localized_answers_questions_and_confirmations(
+    locale, yes, no, unknown, date_reply
+):
+    assert parse_answer("is_widow", yes, locale).value is True
+    assert parse_answer("is_widow", no, locale).value is False
+    assert parse_answer("is_widow", unknown, locale).kind == "unknown"
+    assert parse_answer("date_of_birth", date_reply, locale).value == date(1981, 3, 12)
+    assert question_for("is_widow", locale) != question_for("is_widow")
+    assert yes in fact_confirmation("is_widow", True, locale)

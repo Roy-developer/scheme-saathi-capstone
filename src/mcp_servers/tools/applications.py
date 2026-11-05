@@ -1,296 +1,225 @@
-"""Synthetic document checks and an approval-gated local mock portal."""
+"""MCP adapter for the independent synthetic HTTP portal service."""
 
-import hashlib
 import json
-import os
-import sqlite3
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Any, Literal
-from uuid import uuid4
-
+import urllib.error
+import urllib.request
 from mcp.server import MCPServer
-from mcp.server.mcpserver.exceptions import ToolError
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from mcp.types import ToolAnnotations
+from pydantic import BaseModel, ConfigDict, ValidationError, model_serializer
+from pydantic.functional_serializers import SerializerFunctionWrapHandler
 
-from src.mcp_servers.tools.documents import (
-    DEMO_REQUIREMENTS,
-    DocumentStatus,
-    assess_document_metadata,
-)
+from src.mcp_servers.contracts import tool_error
+from src.config import PORTAL_URL
+from src.mcp_servers.tools.documents import DocumentStatus
+from src.portal.repository import PortalAction, PortalInput, _portal_action
 
-PortalAction = Literal[
-    "list_drafts",
-    "create_draft",
-    "get_draft",
-    "edit_draft",
-    "approve",
-    "reject",
-    "submit",
-    "delete_journey",
-]
 
-class StrictInput(BaseModel):
+class PortalResponse(BaseModel):
+    """Typed fields returned by draft, status, and trusted workflow actions."""
+
     model_config = ConfigDict(extra="forbid")
 
+    draft_id: str | None = None
+    journey_id: str | None = None
+    scheme_id: str | None = None
+    revision: int | None = None
+    draft: dict[str, object] | None = None
+    fingerprint: str | None = None
+    approved: bool | None = None
+    rejected: bool | None = None
+    receipt_id: str | None = None
+    approval_expires_at: str | None = None
+    approval_expired: bool | None = None
+    approval_token: str | None = None
+    deleted: bool | None = None
+    not_found: bool | None = None
+    drafts: list[dict[str, object]] | None = None
+    status: str | None = None
+    stale: bool | None = None
+    dependency_version: int | None = None
+    blocked: bool | None = None
 
-class PortalInput(StrictInput):
-    action: PortalAction
-    journey_id: str = Field(min_length=1, max_length=80)
-    scheme_id: str | None = Field(default=None, max_length=80)
-    draft_id: str | None = Field(default=None, max_length=80)
-    revision: int | None = Field(default=None, ge=1)
-    fingerprint: str | None = Field(default=None, min_length=64, max_length=64)
-    profile: dict[str, Any] | None = None
-    rule_package_version: str | None = Field(default=None, max_length=80)
-    deciding_rule_ids: list[str] | None = None
-    documents: dict[str, DocumentStatus] | None = None
-    applicant_reference: str | None = Field(default=None, max_length=80)
-    district: str | None = Field(default=None, max_length=80)
+    @model_serializer(mode="wrap")
+    def omit_empty_fields(
+        self, handler: SerializerFunctionWrapHandler
+    ) -> dict[str, object]:
+        """Keep older action clients' payloads free of unused null fields."""
 
-
-def _database_path() -> Path:
-    return Path(os.getenv(
-        "SCHEME_SAATHI_APPLICATION_DB",
-        "data/runtime/applications.sqlite3",
-    ))
-
-
-def _connect() -> sqlite3.Connection:
-    path = _database_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    connection = sqlite3.connect(path, timeout=10, isolation_level=None)
-    connection.row_factory = sqlite3.Row
-    connection.execute("PRAGMA journal_mode=WAL")
-    connection.execute(
-        """
-        CREATE TABLE IF NOT EXISTS application_drafts (
-            draft_id TEXT PRIMARY KEY,
-            journey_id TEXT NOT NULL,
-            scheme_id TEXT NOT NULL,
-            revision INTEGER NOT NULL,
-            payload TEXT NOT NULL,
-            fingerprint TEXT NOT NULL,
-            approved_revision INTEGER,
-            approved_fingerprint TEXT,
-            rejected INTEGER NOT NULL DEFAULT 0,
-            submitted_receipt TEXT,
-            created_at TEXT NOT NULL,
-            updated_at TEXT NOT NULL
-        )
-        """
-    )
-    return connection
+        return {
+            name: value
+            for name, value in handler(self).items()
+            if value is not None
+            or (name == "receipt_id" and self.draft_id is not None)
+        }
 
 
-def _canonical_fingerprint(payload: dict[str, Any]) -> str:
-    canonical = json.dumps(
-        payload, ensure_ascii=False, separators=(",", ":"), sort_keys=True
-    )
-    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+def _call_portal(data: dict[str, object]) -> PortalResponse:
+    """Send one typed request over HTTP and turn safe service failures into MCP errors."""
 
-
-def _safe_record(row: sqlite3.Row) -> dict[str, Any]:
-    return {
-        "draft_id": row["draft_id"],
-        "journey_id": row["journey_id"],
-        "scheme_id": row["scheme_id"],
-        "revision": row["revision"],
-        "draft": json.loads(row["payload"]),
-        "fingerprint": row["fingerprint"],
-        "approved": (
-            row["approved_revision"] == row["revision"]
-            and row["approved_fingerprint"] == row["fingerprint"]
-        ),
-        "rejected": bool(row["rejected"]),
-        "receipt_id": row["submitted_receipt"],
-    }
-
-
-def _get_row(
-    connection: sqlite3.Connection, draft_id: str, journey_id: str
-) -> sqlite3.Row:
-    row = connection.execute(
-        "SELECT * FROM application_drafts WHERE draft_id=? AND journey_id=?",
-        (draft_id, journey_id),
-    ).fetchone()
-    if row is None:
-        raise ValueError("Draft was not found for this journey.")
-    return row
-
-
-def _portal_action(data: dict[str, Any]) -> dict[str, Any]:
-    request = PortalInput.model_validate(data)
-    now = datetime.now(timezone.utc).isoformat()
-    connection = _connect()
     try:
-        connection.execute("BEGIN IMMEDIATE")
-        if request.action == "create_draft":
-            if request.scheme_id not in DEMO_REQUIREMENTS:
-                raise ValueError("This scheme has no supported demo draft.")
-            if request.profile is None or request.documents is None:
-                raise ValueError("A profile and document report are required.")
-            if not (request.applicant_reference or "Synthetic applicant").strip():
-                raise ValueError("Applicant reference cannot be blank.")
-            if not (request.district or "Synthetic district").strip():
-                raise ValueError("District cannot be blank.")
-            document_result = assess_document_metadata({
-                "scheme_id": request.scheme_id,
-                "documents": request.documents,
-            })
-            if document_result["status"] != "checklist_complete":
-                raise ValueError("The demo document checklist is not complete.")
-            payload = {
-                "scheme_id": request.scheme_id,
-                "profile": request.profile,
-                "rule_package_version": request.rule_package_version,
-                "deciding_rule_ids": request.deciding_rule_ids or [],
-                "documents": document_result["requirements"],
-                "applicant_reference": request.applicant_reference or "Synthetic applicant",
-                "district": request.district or "Synthetic district",
-                "declaration": (
-                    "This is a synthetic demonstration draft. "
-                    "It is not a government application."
-                ),
-            }
-            draft_id = str(uuid4())
-            fingerprint = _canonical_fingerprint(payload)
-            connection.execute(
-                """
-                INSERT INTO application_drafts
-                    (draft_id, journey_id, scheme_id, revision, payload,
-                     fingerprint, created_at, updated_at)
-                VALUES (?, ?, ?, 1, ?, ?, ?, ?)
-                """,
-                (
-                    draft_id, request.journey_id, request.scheme_id,
-                    json.dumps(payload, ensure_ascii=False), fingerprint, now, now,
-                ),
-            )
-            row = _get_row(connection, draft_id, request.journey_id)
-            connection.commit()
-            return _safe_record(row)
-
-        if request.action == "delete_journey":
-            connection.execute(
-                "DELETE FROM application_drafts WHERE journey_id=?",
-                (request.journey_id,),
-            )
-            connection.commit()
-            return {"deleted": True}
-
-        if request.action == "list_drafts":
-            rows = connection.execute(
-                "SELECT * FROM application_drafts WHERE journey_id=? ORDER BY created_at",
-                (request.journey_id,),
-            ).fetchall()
-            connection.commit()
-            return {"drafts": [_safe_record(row) for row in rows]}
-
-        if not request.draft_id:
-            raise ValueError("draft_id is required.")
-        if request.action == "get_draft":
-            row = connection.execute(
-                "SELECT * FROM application_drafts WHERE draft_id=? AND journey_id=?",
-                (request.draft_id, request.journey_id),
-            ).fetchone()
-            if row is None:
-                connection.commit()
-                return {"not_found": True}
-            connection.commit()
-            return _safe_record(row)
-        row = _get_row(connection, request.draft_id, request.journey_id)
-
-        if request.action == "edit_draft":
-            if request.revision != row["revision"]:
-                raise RuntimeError("The draft revision is stale.")
-            if request.applicant_reference is None or request.district is None:
-                raise ValueError("Applicant reference and district are required.")
-            if not request.applicant_reference.strip() or not request.district.strip():
-                raise ValueError("Applicant reference and district cannot be blank.")
-            payload = json.loads(row["payload"])
-            payload["applicant_reference"] = request.applicant_reference.strip()
-            payload["district"] = request.district.strip()
-            fingerprint = _canonical_fingerprint(payload)
-            connection.execute(
-                """
-                UPDATE application_drafts
-                SET revision=revision+1, payload=?, fingerprint=?,
-                    approved_revision=NULL, approved_fingerprint=NULL,
-                    rejected=0, updated_at=?
-                WHERE draft_id=? AND journey_id=? AND revision=?
-                """,
-                (
-                    json.dumps(payload, ensure_ascii=False), fingerprint, now,
-                    request.draft_id, request.journey_id, request.revision,
-                ),
-            )
-        elif request.action == "approve":
-            if request.revision != row["revision"] or request.fingerprint != row["fingerprint"]:
-                raise RuntimeError("The displayed draft is stale and cannot be approved.")
-            if row["rejected"] or row["submitted_receipt"]:
-                raise RuntimeError("This draft cannot be approved in its current state.")
-            connection.execute(
-                """
-                UPDATE application_drafts
-                SET approved_revision=revision, approved_fingerprint=fingerprint,
-                    rejected=0, updated_at=?
-                WHERE draft_id=? AND journey_id=? AND revision=? AND fingerprint=?
-                """,
-                (now, request.draft_id, request.journey_id, request.revision, request.fingerprint),
-            )
-        elif request.action == "reject":
-            if request.revision != row["revision"] or request.fingerprint != row["fingerprint"]:
-                raise RuntimeError("The displayed draft is stale and cannot be rejected.")
-            if row["submitted_receipt"]:
-                raise RuntimeError("A submitted draft cannot be rejected.")
-            connection.execute(
-                """
-                UPDATE application_drafts
-                SET rejected=1, approved_revision=NULL,
-                    approved_fingerprint=NULL, updated_at=?
-                WHERE draft_id=? AND journey_id=? AND revision=?
-                """,
-                (now, request.draft_id, request.journey_id, request.revision),
-            )
-        elif request.action == "submit":
-            if request.revision != row["revision"] or request.fingerprint != row["fingerprint"]:
-                raise RuntimeError("The displayed draft is stale and cannot be submitted.")
-            if row["submitted_receipt"]:
-                connection.commit()
-                return _safe_record(row)
-            if (
-                row["approved_revision"] != row["revision"]
-                or row["approved_fingerprint"] != row["fingerprint"]
-                or row["rejected"]
-            ):
-                raise RuntimeError("This exact draft has not been approved.")
-            receipt = str(uuid4())
-            connection.execute(
-                """
-                UPDATE application_drafts SET submitted_receipt=?, updated_at=?
-                WHERE draft_id=? AND journey_id=? AND revision=?
-                  AND fingerprint=? AND approved_revision=revision
-                  AND approved_fingerprint=fingerprint AND rejected=0
-                  AND submitted_receipt IS NULL
-                """,
-                (receipt, now, request.draft_id, request.journey_id,
-                 request.revision, request.fingerprint),
-            )
-        row = _get_row(connection, request.draft_id, request.journey_id)
-        connection.commit()
-        return _safe_record(row)
-    except Exception:
-        connection.rollback()
-        raise
-    finally:
-        connection.close()
+        request = PortalInput.model_validate(data)
+    except ValidationError as error:
+        raise tool_error(
+            "invalid_input", "Portal action did not match the expected schema."
+        ) from error
+    body = json.dumps(
+        request.model_dump(mode="json", exclude_none=True)
+    ).encode("utf-8")
+    http_request = urllib.request.Request(
+        f"{PORTAL_URL}/internal/actions",
+        data=body,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(http_request, timeout=5) as response:
+            result = json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as error:
+        try:
+            detail = json.loads(error.read().decode("utf-8")).get("detail", {})
+        except (json.JSONDecodeError, AttributeError):
+            detail = {}
+        code = (
+            "conflict"
+            if error.code == 409
+            else "not_found"
+            if error.code == 404
+            else "invalid_input"
+        )
+        message = detail.get("message", "The portal request was rejected.")
+        raise tool_error(code, str(message)) from error
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as error:
+        raise tool_error(
+            "service_unavailable", "The synthetic portal service is unavailable."
+        ) from error
+    try:
+        return PortalResponse.model_validate(result)
+    except (TypeError, ValueError) as error:
+        raise tool_error(
+            "internal_error", "The synthetic portal returned an invalid response."
+        ) from error
 
 
 def register_tools(mcp: MCPServer) -> None:
-    """Register the read-only checklist and one action-based mock portal."""
+    """Register portal operations; write actions remain behind the HTTP boundary."""
 
-    @mcp.tool()
+    @mcp.tool(
+        annotations=ToolAnnotations(
+            title="Create synthetic draft",
+            readOnlyHint=False,
+            destructiveHint=False,
+            idempotentHint=False,
+            openWorldHint=False,
+        )
+    )
+    def create_draft(
+        journey_id: str,
+        scheme_id: str,
+        profile: dict[str, object],
+        documents: dict[str, DocumentStatus],
+        rule_package_version: str | None = None,
+        deciding_rule_ids: list[str] | None = None,
+        document_report_fingerprint: str | None = None,
+        checklist_fingerprint: str | None = None,
+        evidence_fingerprint: str | None = None,
+        active_checklist_fingerprint: str | None = None,
+        typed_facts: dict[str, object] | None = None,
+        form_values: dict[str, object] | None = None,
+        applicant_reference: str | None = None,
+        district: str | None = None,
+    ) -> PortalResponse:
+        """Create a synthetic draft in the separate local portal service."""
+
+        return _call_portal({
+            "action": "create_draft",
+            "journey_id": journey_id,
+            "scheme_id": scheme_id,
+            "profile": profile,
+            "documents": documents,
+            "rule_package_version": rule_package_version,
+            "deciding_rule_ids": deciding_rule_ids,
+            "document_report_fingerprint": document_report_fingerprint,
+            "checklist_fingerprint": checklist_fingerprint,
+            "evidence_fingerprint": evidence_fingerprint,
+            "active_checklist_fingerprint": active_checklist_fingerprint,
+            "typed_facts": typed_facts,
+            "form_values": form_values,
+            "applicant_reference": applicant_reference,
+            "district": district,
+        })
+
+    @mcp.tool(
+        annotations=ToolAnnotations(
+            title="Read synthetic draft",
+            readOnlyHint=True,
+            destructiveHint=False,
+            idempotentHint=True,
+            openWorldHint=False,
+        )
+    )
+    def get_draft(journey_id: str, draft_id: str) -> PortalResponse:
+        """Read a draft that belongs to the supplied synthetic journey."""
+
+        return _call_portal({
+            "action": "get_draft",
+            "journey_id": journey_id,
+            "draft_id": draft_id,
+        })
+
+    @mcp.tool(
+        annotations=ToolAnnotations(
+            title="Read synthetic application status",
+            readOnlyHint=True,
+            destructiveHint=False,
+            idempotentHint=True,
+            openWorldHint=False,
+        )
+    )
+    def get_status(journey_id: str, draft_id: str) -> PortalResponse:
+        """Read draft, approval, rejection, or mock submission status."""
+
+        return _call_portal({
+            "action": "get_status",
+            "journey_id": journey_id,
+            "draft_id": draft_id,
+        })
+
+    @mcp.tool(
+        annotations=ToolAnnotations(
+            title="Submit approved synthetic draft",
+            readOnlyHint=False,
+            destructiveHint=True,
+            idempotentHint=True,
+            openWorldHint=False,
+        )
+    )
+    def submit_draft(
+        journey_id: str,
+        draft_id: str,
+        revision: int,
+        fingerprint: str,
+        approval_token: str,
+    ) -> PortalResponse:
+        """Submit only the exact revision and fingerprint already approved by a person."""
+
+        return _call_portal({
+            "action": "submit",
+            "journey_id": journey_id,
+            "draft_id": draft_id,
+            "revision": revision,
+            "fingerprint": fingerprint,
+            "approval_token": approval_token,
+        })
+
+    @mcp.tool(
+        annotations=ToolAnnotations(
+            title="Scoped synthetic portal action",
+            readOnlyHint=False,
+            destructiveHint=True,
+            idempotentHint=False,
+            openWorldHint=False,
+        )
+    )
     def mock_portal(
         action: PortalAction,
         journey_id: str,
@@ -298,29 +227,44 @@ def register_tools(mcp: MCPServer) -> None:
         draft_id: str | None = None,
         revision: int | None = None,
         fingerprint: str | None = None,
-        profile: dict[str, Any] | None = None,
+        profile: dict[str, object] | None = None,
         rule_package_version: str | None = None,
         deciding_rule_ids: list[str] | None = None,
-        documents: dict[str, str] | None = None,
+        documents: dict[str, DocumentStatus] | None = None,
         applicant_reference: str | None = None,
         district: str | None = None,
-    ) -> dict[str, Any]:
-        """Manage synthetic drafts; submit succeeds only after exact approval."""
+        dependency_version: int | None = None,
+        rules_fingerprint: str | None = None,
+        document_report_fingerprint: str | None = None,
+        checklist_fingerprint: str | None = None,
+        evidence_fingerprint: str | None = None,
+        active_checklist_fingerprint: str | None = None,
+        typed_facts: dict[str, object] | None = None,
+        form_values: dict[str, object] | None = None,
+        approval_token: str | None = None,
+    ) -> PortalResponse:
+        """Route trusted workflow actions through the independent HTTP portal."""
 
-        try:
-            return _portal_action({
-                "action": action,
-                "journey_id": journey_id,
-                "scheme_id": scheme_id,
-                "draft_id": draft_id,
-                "revision": revision,
-                "fingerprint": fingerprint,
-                "profile": profile,
-                "rule_package_version": rule_package_version,
-                "deciding_rule_ids": deciding_rule_ids,
-                "documents": documents,
-                "applicant_reference": applicant_reference,
-                "district": district,
-            })
-        except (ValidationError, ValueError, RuntimeError) as error:
-            raise ToolError(str(error)) from error
+        return _call_portal({
+            "action": action,
+            "journey_id": journey_id,
+            "scheme_id": scheme_id,
+            "draft_id": draft_id,
+            "revision": revision,
+            "fingerprint": fingerprint,
+            "profile": profile,
+            "rule_package_version": rule_package_version,
+            "deciding_rule_ids": deciding_rule_ids,
+            "documents": documents,
+            "applicant_reference": applicant_reference,
+            "district": district,
+            "dependency_version": dependency_version,
+            "rules_fingerprint": rules_fingerprint,
+            "document_report_fingerprint": document_report_fingerprint,
+            "checklist_fingerprint": checklist_fingerprint,
+            "evidence_fingerprint": evidence_fingerprint,
+            "active_checklist_fingerprint": active_checklist_fingerprint,
+            "typed_facts": typed_facts,
+            "form_values": form_values,
+            "approval_token": approval_token,
+        })

@@ -252,12 +252,19 @@ def assess_documents(
     conversation_id: str,
     scheme_id: str,
     documents: dict[str, str] | None = None,
+    profile_name: str | None = None,
+    document_metadata: dict[str, dict[str, str | None]] | None = None,
 ) -> dict:
     return _application_request(
         conversation_id,
         "/documents",
         method="POST",
-        body={"scheme_id": scheme_id, "documents": documents or {}},
+        body={
+            "scheme_id": scheme_id,
+            "documents": documents or {},
+            "profile_name": profile_name,
+            "document_metadata": document_metadata or {},
+        },
     )
 
 
@@ -273,6 +280,9 @@ def create_application_draft(
     conversation_id: str,
     scheme_id: str,
     documents: dict[str, str],
+    profile_name: str | None = None,
+    document_metadata: dict[str, dict[str, str | None]] | None = None,
+    form_values: dict[str, object] | None = None,
 ) -> dict:
     return _application_request(
         conversation_id,
@@ -281,6 +291,9 @@ def create_application_draft(
         body={
             "scheme_id": scheme_id,
             "documents": documents,
+            "profile_name": profile_name,
+            "document_metadata": document_metadata or {},
+            "form_values": form_values or {},
         },
     )
 

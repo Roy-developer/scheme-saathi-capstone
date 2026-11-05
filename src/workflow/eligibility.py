@@ -7,6 +7,7 @@ from pydantic import ValidationError
 
 # These models define the facts sent to the tool and the response expected.
 from src.api.eligibility import EligibilityResponse
+from src.rules.facts import TypedFactStore
 from src.rules.models import HouseholdProfile
 from src.workflow.errors import MCPToolError
 
@@ -14,7 +15,7 @@ from src.workflow.errors import MCPToolError
 async def evaluate_eligibility(
     client: Client,
     scheme_id: str,
-    profile: HouseholdProfile,
+    profile: HouseholdProfile | TypedFactStore,
 ) -> EligibilityResponse:
     """Call the MCP tool and validate its structured result."""
     # Ask the connected server for the named tool using JSON-compatible inputs.
@@ -25,7 +26,11 @@ async def evaluate_eligibility(
                 # Tell the server which versioned scheme rules to use.
                 "scheme_id": scheme_id,
                 # Convert date values and the Pydantic profile into JSON values.
-                "profile": profile.model_dump(mode="json"),
+                "profile": (
+                    profile.to_wire()
+                    if isinstance(profile, TypedFactStore)
+                    else profile.model_dump(mode="json")
+                ),
             },
         )
     # Preserve the original cause for developers while exposing a safe error.

@@ -1,6 +1,8 @@
 """FastAPI entry point for Scheme Saathi."""
 
-from contextlib import asynccontextmanager
+from contextlib import AsyncExitStack, asynccontextmanager
+import hashlib
+import json
 import logging
 import os
 import sys
@@ -14,17 +16,26 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from mcp import Client, StdioServerParameters
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
-from src.config import PROJECT_ROOT
+from src.config import (
+    PORTAL_URL,
+    PROJECT_ROOT,
+    portal_database_path,
+    test_rule_package_directory,
+)
+from src.api.portal_service import start_portal_service, stop_portal_service
 from src.api.eligibility import EligibilityResponse
 from src.api.applications import (
     DocumentAssessmentRequest,
+    document_input_fingerprint,
     DraftApprovalRequest,
     DraftCreateRequest,
     DraftEditRequest,
     call_application_tool,
 )
 from src.api.scheme_search import SchemePassage
-from src.rules.data_provider import RulePackageProvider
+from src.documents.forms import build_form_fields, load_mock_form_snapshot
+from src.rules.facts import TypedFactStore
+from src.rules.bundles import bundle_fingerprint
 from src.rules.models import HouseholdProfile
 # This adapter calls the MCP tool and translates failures for the API layer.
 from src.workflow.eligibility import (
@@ -34,6 +45,7 @@ from src.workflow.errors import MCPToolError
 from src.workflow.application_gate import (
     application_gate_thread_id,
 )
+from src.workflow.agent_runtime import OpenRouterToolChoiceProvider
 from src.workflow.intake import IntakeAgentError
 from src.workflow.journey import (
     ApplicationTaskError,
@@ -51,9 +63,103 @@ from src.workflow.journey import (
 )
 from src.workflow.state import ApplicationOperation
 from src.workflow.scheme_search import search_scheme_passages
+from src.mcp_servers.service_routing import (
+    SERVICE_TOOLS,
+    ServiceClientRouter,
+    ToolClient,
+)
+from src.mcp_servers.rule_data import get_active_rule_data
 
 
 logger = logging.getLogger(__name__)
+
+
+def _bundle_fingerprint(request: Request, scheme_id: str) -> str:
+    """Return exact active rule, registry and bundle version dependencies."""
+
+    bundle = getattr(request.app.state, "rule_bundles", {}).get(scheme_id)
+    if bundle is None:
+        return ""
+    return bundle_fingerprint(bundle)
+
+
+def _confirmed_form_values(
+    request: Request,
+    scheme_id: str,
+    typed_facts: dict[str, object] | None,
+    extra_values: dict[str, object] | None = None,
+    profile: dict[str, object] | None = None,
+) -> tuple[dict[str, object], dict[str, object]]:
+    """Return exact confirmed values and a localized, data-driven form preview."""
+
+    snapshot = load_mock_form_snapshot(
+        scheme_id, request.app.state.fact_registry,
+        bundle=request.app.state.rule_bundles.get(scheme_id),
+    )
+    if snapshot.mapping is None:
+        return {}, {
+            "status": "unavailable",
+            "notice": snapshot.notice,
+            "missing_fields": [],
+            "fields": [],
+        }
+    store = None
+    if typed_facts is None:
+        bundle = request.app.state.rule_bundles.get(scheme_id)
+        facts = {}
+        for fact_id, profile_field in (
+            bundle.legacy_profile_mapping.items() if bundle else ()
+        ):
+            value = (profile or {}).get(profile_field)
+            facts[fact_id] = (
+                request.app.state.fact_registry.get(fact_id).validate_value(value)
+                if value is not None
+                else None
+            )
+    else:
+        store = TypedFactStore.from_wire(typed_facts, request.app.state.fact_registry)
+        facts = {
+            fact_id: state.value if state.status == "known" else None
+            for fact_id, state in store.facts.items()
+        }
+    fields, missing = build_form_fields(
+        snapshot, request.app.state.fact_registry, facts, extra_values,
+        bundle=request.app.state.rule_bundles.get(scheme_id),
+        typed_store=store,
+    )
+    preview = {
+        "status": snapshot.mapping.status,
+        "form_version": snapshot.mapping.form_version,
+        "mapping_fingerprint": snapshot.fingerprint,
+        "notice": snapshot.notice,
+        "missing_fields": missing,
+        "fields": [
+            {
+                **field.model_dump(mode="json"),
+                "value": fields.get(field.field_id),
+            }
+            for field in snapshot.mapping.fields
+        ],
+    }
+    return fields, preview
+
+
+def _form_mapping_fingerprint(request: Request, scheme_id: str) -> str | None:
+    """Return the active mapping hash or fail closed when it is invalid."""
+
+    snapshot = load_mock_form_snapshot(
+        scheme_id, request.app.state.fact_registry,
+        bundle=request.app.state.rule_bundles.get(scheme_id),
+    )
+    return snapshot.fingerprint if snapshot.mapping is not None else None
+
+
+def _portal_reader(request: Request, conversation_id: UUID | str) -> ToolClient:
+    """Bind read-only portal access to the journey from the trusted route."""
+
+    return request.app.state.mcp_client.for_actor(
+        "api_read", str(conversation_id)
+    )
 
 
 async def _dispatch_application_task(
@@ -81,6 +187,14 @@ async def _application_state(
 ) -> tuple[dict, HouseholdProfile]:
     """Require a saved, current eligible result and return its profile."""
 
+    try:
+        current = await get_journey(request.app.state.journey_graph, conversation_id)
+    except MCPToolError as error:
+        raise HTTPException(
+            status_code=502, detail="The mock application service is unavailable."
+        ) from error
+    if current is not None and current.status == "invalid_input":
+        raise HTTPException(status_code=409, detail=current.message)
     snapshot = await request.app.state.journey_graph.aget_state(
         {"configurable": {"thread_id": str(conversation_id)}}
     )
@@ -94,13 +208,15 @@ async def _application_state(
             detail="This scheme has no current eligible result in this conversation.",
         )
     profile_data = values.get("profile")
-    if not profile_data:
+    if not profile_data and not (
+        values.get("registry_intake") and values.get("typed_facts")
+    ):
         raise HTTPException(
             status_code=409,
             detail="A completed profile is required for a mock application.",
         )
     try:
-        profile = HouseholdProfile.model_validate(profile_data)
+        profile = HouseholdProfile.model_validate(profile_data or {})
     except Exception as error:
         logger.exception("Saved journey profile could not be validated")
         raise HTTPException(status_code=409, detail="The saved profile is invalid.") from error
@@ -112,8 +228,9 @@ async def _get_mock_draft(
     conversation_id: UUID,
     draft_id: str,
 ) -> dict:
+    await get_journey(request.app.state.journey_graph, conversation_id)
     record = await call_application_tool(
-        request.app.state.mcp_client,
+        _portal_reader(request, conversation_id),
         "mock_portal",
         {
             "action": "get_draft",
@@ -129,20 +246,37 @@ async def _get_mock_draft(
     return record
 
 
+def _public_application_record(record: dict) -> dict:
+    """Keep the one-use portal authorization inside trusted backend code."""
+
+    public = {key: value for key, value in record.items() if key != "approval_token"}
+    if isinstance(public.get("drafts"), list):
+        public["drafts"] = [
+            {key: value for key, value in item.items() if key != "approval_token"}
+            for item in public["drafts"]
+            if isinstance(item, dict)
+        ]
+    return public
+
+
 @asynccontextmanager
 async def lifespan(application: FastAPI) -> AsyncIterator[None]:
-    """Load rules and keep the MCP client alive for the API's lifetime."""
+    """Load rules and keep four isolated MCP clients and a portal alive."""
 
     # Validate rule packages before accepting requests; fail startup if rules
     # are missing or malformed.
     try:
-        packages = RulePackageProvider().packages
+        get_active_rule_data.cache_clear()
+        rule_data = get_active_rule_data()
+        packages = rule_data.packages
     except Exception:
         logger.exception("Failed to load scheme rule packages during API startup")
         raise
 
     # Store known schemes so request handlers can reject unknown IDs early.
     application.state.rule_packages = packages
+    application.state.rule_bundles = rule_data.bundles
+    application.state.fact_registry = rule_data.registry
     # Build an operational summary without including applicant information.
     package_details = ", ".join(
         f"{scheme_id} v{package.package_version} ({len(package.rules)} rules)"
@@ -161,57 +295,99 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         )
     )
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
-    application_db_path = Path(os.getenv(
-        "SCHEME_SAATHI_APPLICATION_DB",
-        str(PROJECT_ROOT / "data" / "runtime" / "applications.sqlite3"),
-    ))
-    application_db_path.parent.mkdir(parents=True, exist_ok=True)
     checkpoint_connection = await aiosqlite.connect(checkpoint_path)
     checkpointer = AsyncSqliteSaver(checkpoint_connection)
     await checkpointer.setup()
 
-    # Find the project root so the child process can import the `src` package.
-    project_root = PROJECT_ROOT
-    # Launch the MCP server with the same Python executable as this API.
-    server_parameters = StdioServerParameters(
-        command=sys.executable,
-        args=["-m", "src.mcp_servers.saathi_mcp_server"],
-        env={
-            "SCHEME_SAATHI_DISABLE_DOTENV": "1",
-            "SCHEME_SAATHI_RERANKER": "openrouter",
-            "SCHEME_SAATHI_APPLICATION_DB": str(application_db_path),
-            "OPENBLAS_NUM_THREADS": "1",
-            **{
-                name: value
-                for name in (
-                    "OPENROUTER_API_KEY_FREE",
-                    "OPEN_ROUTER_FREE",
-                    "OPENROUTER_EMBEDDING_MODEL",
-                )
-                if (value := os.getenv(name)) is not None
-            },
-        },
-        cwd=project_root,
-    )
-    # Entering Client starts the child MCP process and opens the stdio link.
+    server_modules = {
+        "rule-engine": "src.mcp_servers.rule_engine_server",
+        "schemes-kb": "src.mcp_servers.schemes_kb_server",
+        "doc-check": "src.mcp_servers.doc_check_server",
+        "mock-portal": "src.mcp_servers.mock_portal_server",
+    }
+    portal_process = None
     try:
-        async with Client(server_parameters) as mcp_client:
-            # Make the connected client available to API request handlers.
+        portal_db_path = portal_database_path()
+        portal_process = start_portal_service(portal_db_path)
+        async with AsyncExitStack() as client_stack:
+            clients: dict[str, ToolClient] = {}
+            for service_name, module_name in server_modules.items():
+                service_environment = {
+                    "SCHEME_SAATHI_DISABLE_DOTENV": "1",
+                    "OPENBLAS_NUM_THREADS": "1",
+                }
+                if service_name == "schemes-kb":
+                    service_environment["SCHEME_SAATHI_RERANKER"] = "openrouter"
+                    if embedding_credential := (
+                        os.getenv("OPENROUTER_API_KEY_FREE")
+                        or os.getenv("OPEN_ROUTER_FREE")
+                    ):
+                        service_environment["OPENROUTER_API_KEY_FREE"] = (
+                            embedding_credential
+                        )
+                    if embedding_model := os.getenv("OPENROUTER_EMBEDDING_MODEL"):
+                        service_environment["OPENROUTER_EMBEDDING_MODEL"] = (
+                            embedding_model
+                        )
+                elif service_name == "mock-portal":
+                    service_environment["SCHEME_SAATHI_PORTAL_URL"] = PORTAL_URL
+                if test_packages := test_rule_package_directory():
+                    service_environment["SCHEME_SAATHI_TEST_RULE_PACKAGE_DIR"] = (
+                        str(test_packages)
+                    )
+                    service_environment["PYTEST_CURRENT_TEST"] = os.environ[
+                        "PYTEST_CURRENT_TEST"
+                    ]
+                server_parameters = StdioServerParameters(
+                    command=sys.executable,
+                    args=["-m", module_name],
+                    env=service_environment,
+                    cwd=PROJECT_ROOT,
+                )
+                client = await client_stack.enter_async_context(
+                    Client(server_parameters)
+                )
+                discovered = await client.list_tools()
+                discovered_names = {tool.name for tool in discovered.tools}
+                if discovered_names != SERVICE_TOOLS[service_name]:
+                    missing_tools = SERVICE_TOOLS[service_name] - discovered_names
+                    unexpected_tools = (
+                        discovered_names - SERVICE_TOOLS[service_name]
+                    )
+                    raise RuntimeError(
+                        f"MCP service {service_name} tool inventory mismatch; "
+                        f"missing={sorted(missing_tools)}, "
+                        f"unexpected={sorted(unexpected_tools)}"
+                    )
+                clients[service_name] = client
+            mcp_client = ServiceClientRouter(clients)
             application.state.mcp_client = mcp_client
+            application.state.mcp_services = tuple(server_modules)
             application.state.journey_checkpointer = checkpointer
+            model_provider: OpenRouterToolChoiceProvider | None = (
+                OpenRouterToolChoiceProvider()
+            )
+            if not model_provider.configured:
+                model_provider = None
             application.state.journey_graph = build_journey_graph(
                 mcp_client,
                 packages,
+                model_provider=model_provider,
+                eligibility_model_provider=model_provider,
                 checkpointer=checkpointer,
+                fact_registry=rule_data.registry,
+                rule_bundles=rule_data.bundles,
             )
-            logger.info("Connected to the local Saathi MCP server")
-            # FastAPI serves requests inside this context. On shutdown, leaving
-            # it closes the client and stops its child process.
+            logger.info(
+                "Connected to four purpose-specific MCP services and the mock portal"
+            )
             yield
     except Exception:
-        logger.exception("Failed to connect to the Saathi MCP server")
+        logger.exception("Failed to connect to the Saathi MCP services")
         raise
     finally:
+        if portal_process is not None:
+            stop_portal_service(portal_process)
         await checkpoint_connection.close()
 
 
@@ -276,6 +452,146 @@ async def evaluate(
         ) from error
 
 
+async def _mark_changed_document_reports(
+    request: Request,
+    conversation_id: UUID,
+    response: JourneyResponse,
+) -> JourneyResponse:
+    """Compare saved document reports with each checklist's current file snapshot."""
+
+    if not response.document_assessments:
+        return response
+    snapshot = await request.app.state.journey_graph.aget_state(
+        {"configurable": {"thread_id": str(conversation_id)}}
+    )
+    values = snapshot.values
+    if not values.get("profile"):
+        return response.model_copy(update={
+            "document_assessments": {
+                scheme_id: {
+                    **assessment,
+                    "report_stale": True,
+                    "report_status": "stale",
+                }
+                for scheme_id, assessment in response.document_assessments.items()
+            }
+        })
+    try:
+        profile = HouseholdProfile.model_validate(values.get("profile") or {})
+    except ValueError:
+        return response.model_copy(update={
+            "document_assessments": {
+                scheme_id: {
+                    **assessment,
+                    "report_stale": True,
+                    "report_status": "stale",
+                }
+                for scheme_id, assessment in response.document_assessments.items()
+            }
+        })
+    inputs = values.get("document_input_reports", {})
+    updated: dict[str, dict] = {}
+    document_client = request.app.state.mcp_client.for_actor("documents")
+    dependency_client = request.app.state.mcp_client.for_actor(
+        "dependency_control", str(conversation_id)
+    )
+    for scheme_id, saved in response.document_assessments.items():
+        prior = inputs.get(scheme_id)
+        if prior is None:
+            updated[scheme_id] = {
+                **saved, "report_stale": True, "report_status": "stale"
+            }
+            continue
+        try:
+            current = await call_application_tool(
+                document_client,
+                "check_documents",
+                {
+                    "scheme_id": scheme_id,
+                    "documents": prior.get("documents", {}),
+                    "profile_name": prior.get("profile_name"),
+                    "profile_date_of_birth": (
+                        profile.date_of_birth.isoformat()
+                        if profile.date_of_birth is not None
+                        else None
+                    ),
+                    "document_metadata": prior.get("document_metadata", {}),
+                    "typed_facts": values.get("typed_facts"),
+                    "profile_conditions": {
+                        "is_widow": profile.is_widow,
+                        "bpl_card_shown": profile.bpl_card_shown,
+                    },
+                },
+            )
+        except MCPToolError:
+            updated[scheme_id] = {
+                **saved, "report_stale": True, "report_status": "stale"
+            }
+            continue
+        documents = prior.get("documents", {})
+        metadata = prior.get("document_metadata", {})
+        profile_conditions = {
+            "is_widow": profile.is_widow,
+            "bpl_card_shown": profile.bpl_card_shown,
+        }
+        input_fingerprint = document_input_fingerprint(
+            scheme_id,
+            documents,
+            prior.get("profile_name"),
+            profile.date_of_birth,
+            metadata,
+            current.get("checklist_fingerprint", ""),
+            current.get("evidence_fingerprint", ""),
+            current.get("active_fingerprint", ""),
+            profile_conditions,
+            values.get("typed_facts"),
+            _bundle_fingerprint(request, scheme_id),
+        )
+        report = json.dumps(
+            {"input_fingerprint": input_fingerprint, "assessment": current},
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        report_fingerprint = hashlib.sha256(report.encode("utf-8")).hexdigest()
+        current["input_fingerprint"] = input_fingerprint
+        current["document_report_fingerprint"] = report_fingerprint
+        try:
+            dependency = await call_application_tool(
+                dependency_client,
+                "mock_portal",
+                {
+                    "action": "bind_documents",
+                    "journey_id": str(conversation_id),
+                    "scheme_id": scheme_id,
+                    "documents": documents,
+                    "document_report_fingerprint": report_fingerprint,
+                    "checklist_fingerprint": current["checklist_fingerprint"],
+                    "evidence_fingerprint": current["evidence_fingerprint"],
+                    "active_checklist_fingerprint": current["active_fingerprint"],
+                },
+            )
+        except MCPToolError:
+            updated[scheme_id] = {
+                **saved, "report_stale": True, "report_status": "stale"
+            }
+            continue
+        is_stale = (
+            current.get("active_fingerprint")
+            != saved.get("active_fingerprint")
+            or dependency.get("dependency_version")
+            != saved.get("document_dependency_version")
+        )
+        updated[scheme_id] = {
+            **saved,
+            "report_stale": is_stale,
+            "report_status": "stale" if is_stale else "current",
+            "current_document_dependency_version": dependency.get(
+                "dependency_version"
+            ),
+        }
+    return response.model_copy(update={"document_assessments": updated})
+
+
 @app.get(
     "/api/v1/schemes/search",
     response_model=list[SchemePassage],
@@ -293,13 +609,20 @@ async def search_schemes(
         raise HTTPException(status_code=422, detail="Search query cannot be empty")
 
     try:
-        return await search_scheme_passages(
+        passages = await search_scheme_passages(
             request.app.state.mcp_client,
             query,
             jurisdiction=jurisdiction,
             language=language,
             limit=limit,
         )
+        return [
+            passage.model_copy(update={
+                "eligible_for_mock_flow": passage.scheme_id
+                in request.app.state.rule_packages
+            })
+            for passage in passages
+        ]
     except MCPToolError as error:
         logger.exception("MCP scheme search failed")
         raise HTTPException(
@@ -318,10 +641,19 @@ async def journey(
     """Run one orchestrated discovery or synthetic eligibility step."""
 
     try:
-        return await run_journey(
+        result = await run_journey(
             request.app.state.journey_graph,
             journey_request,
         )
+        return result.model_copy(update={
+            "passages": [
+                passage.model_copy(update={
+                    "eligible_for_mock_flow": passage.scheme_id
+                    in request.app.state.rule_packages
+                })
+                for passage in result.passages
+            ],
+        })
     except MCPToolError as error:
         logger.exception("A journey MCP tool failed")
         raise HTTPException(
@@ -388,7 +720,7 @@ async def journey_correction(
     except JourneyNotWaitingError as error:
         raise HTTPException(
             status_code=409,
-            detail="This conversation has no multi-scheme answers to correct.",
+            detail="This conversation has no confirmed answers to correct.",
         ) from error
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
@@ -410,13 +742,20 @@ async def journey_state(
 ) -> JourneyResponse:
     """Return a saved conversation, e.g. to continue after a page refresh."""
 
-    response = await get_journey(
-        request.app.state.journey_graph,
-        conversation_id,
-    )
+    try:
+        response = await get_journey(
+            request.app.state.journey_graph,
+            conversation_id,
+        )
+    except MCPToolError as error:
+        raise HTTPException(
+            status_code=502, detail="A journey tool is unavailable."
+        ) from error
     if response is None:
         raise HTTPException(status_code=404, detail="Conversation not found.")
-    return response
+    return await _mark_changed_document_reports(
+        request, conversation_id, response
+    )
 
 
 @app.post("/api/v1/journey/{conversation_id}/documents")
@@ -427,7 +766,9 @@ async def assess_application_documents(
 ) -> dict:
     """Check user-reported synthetic document metadata for an eligible scheme."""
 
-    await _application_state(request, conversation_id, assessment.scheme_id)
+    values, profile = await _application_state(
+        request, conversation_id, assessment.scheme_id
+    )
     if assessment.scheme_id not in request.app.state.rule_packages:
         raise HTTPException(status_code=409, detail="This scheme is information-only.")
     try:
@@ -436,7 +777,22 @@ async def assess_application_documents(
             {
                 "scheme_id": assessment.scheme_id,
                 "documents": assessment.documents,
+                "profile_name": assessment.profile_name,
+                "profile_date_of_birth": (
+                    profile.date_of_birth.isoformat()
+                    if profile.date_of_birth is not None
+                    else None
+                ),
+                "document_metadata": {
+                    document_id: metadata.model_dump(mode="json")
+                    for document_id, metadata in assessment.document_metadata.items()
+                },
+                "typed_facts": values.get("typed_facts"),
             },
+        )
+        _, result["form_preview"] = _confirmed_form_values(
+            request, assessment.scheme_id, values.get("typed_facts"),
+            profile=profile.model_dump(mode="json"),
         )
         return result
     except MCPToolError as error:
@@ -455,23 +811,88 @@ async def create_application_draft(
 ) -> dict:
     """Create a mock draft only after current eligibility and demo documents pass."""
 
-    await _application_state(
+    values, profile = await _application_state(
         request, conversation_id, draft_request.scheme_id
     )
     package = request.app.state.rule_packages.get(draft_request.scheme_id)
     if package is None:
         raise HTTPException(status_code=409, detail="This scheme is information-only.")
+    assessment = values.get("document_assessments", {}).get(
+        draft_request.scheme_id, {}
+    )
+    document_metadata = {
+        document_id: metadata.model_dump(mode="json", exclude_none=True)
+        for document_id, metadata in draft_request.document_metadata.items()
+    }
+    expected_report = document_input_fingerprint(
+        draft_request.scheme_id,
+        draft_request.documents,
+        draft_request.profile_name,
+        profile.date_of_birth,
+        document_metadata,
+        assessment.get("checklist_fingerprint", ""),
+        assessment.get("evidence_fingerprint", ""),
+        assessment.get("active_fingerprint", ""),
+        {
+            "is_widow": profile.is_widow,
+            "bpl_card_shown": profile.bpl_card_shown,
+        },
+        values.get("typed_facts"),
+        _bundle_fingerprint(request, draft_request.scheme_id),
+    )
+    try:
+        _, form_preview = _confirmed_form_values(
+            request,
+            draft_request.scheme_id,
+            values.get("typed_facts"),
+            draft_request.form_values,
+            profile.model_dump(mode="json"),
+        )
+    except ValueError as error:
+        raise HTTPException(
+            status_code=409,
+            detail="The active synthetic form mapping is unavailable.",
+        ) from error
+    if form_preview["status"] == "unavailable":
+        raise HTTPException(
+            status_code=409,
+            detail="The active synthetic form mapping is unavailable.",
+        )
+    if form_preview["missing_fields"]:
+        raise HTTPException(
+            status_code=422,
+            detail="Confirm missing registered facts or complete required synthetic form fields.",
+        )
+    if (
+        assessment.get("status") != "checklist_complete"
+        or assessment.get("profile_dependency_version")
+        != values.get("dependency_version", 0)
+        or assessment.get("input_fingerprint") != expected_report
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail="Recheck the documents against the current confirmed profile.",
+        )
     try:
         created = await _dispatch_application_task(
             request, conversation_id, "create_draft",
             {
                 "scheme_id": draft_request.scheme_id,
                 "documents": draft_request.documents,
+                "profile_name": draft_request.profile_name,
+                "profile_date_of_birth": (
+                    profile.date_of_birth.isoformat()
+                    if profile.date_of_birth is not None
+                    else None
+                ),
+                "document_metadata": document_metadata,
+                "typed_facts": values.get("typed_facts"),
+                "form_values": draft_request.form_values,
                 "applicant_reference": draft_request.applicant_reference,
                 "district": draft_request.district,
             },
         )
-        return created
+        return _public_application_record(created)
     except HTTPException:
         raise
     except MCPToolError as error:
@@ -490,14 +911,16 @@ async def list_application_drafts(
     """List saved mock drafts for a conversation after refresh."""
 
     try:
-        return await call_application_tool(
-            request.app.state.mcp_client,
+        await get_journey(request.app.state.journey_graph, conversation_id)
+        result = await call_application_tool(
+            _portal_reader(request, conversation_id),
             "mock_portal",
             {
                 "action": "list_drafts",
                 "journey_id": str(conversation_id),
             },
         )
+        return _public_application_record(result)
     except MCPToolError as error:
         logger.exception("Could not list mock application drafts")
         raise HTTPException(
@@ -515,7 +938,9 @@ async def get_application_draft(
     """Load a persisted draft only within its owning conversation."""
 
     try:
-        return await _get_mock_draft(request, conversation_id, draft_id)
+        return _public_application_record(
+            await _get_mock_draft(request, conversation_id, draft_id)
+        )
     except MCPToolError as error:
         raise HTTPException(
             status_code=502,
@@ -544,6 +969,10 @@ async def edit_application_draft(
             package is None
             or record["draft"].get("profile") != profile.model_dump(mode="json")
             or record["draft"].get("rule_package_version") != package.package_version
+            or record["draft"].get("bundle_fingerprint")
+            != _bundle_fingerprint(request, record["scheme_id"])
+            or record["draft"].get("form_mapping_fingerprint")
+            != _form_mapping_fingerprint(request, record["scheme_id"])
         ):
             raise HTTPException(
                 status_code=409,
@@ -558,7 +987,7 @@ async def edit_application_draft(
                 "district": edit.district,
             },
         )
-        return edited
+        return _public_application_record(edited)
     except HTTPException:
         raise
     except MCPToolError as error:
@@ -599,7 +1028,7 @@ async def update_application_approval(
                 status_code=409,
                 detail="This draft cannot be approved in its current state.",
             )
-        if decision.action != "reject":
+        if decision.action != "reject" and not record.get("receipt_id"):
             _, profile = await _application_state(
                 request, conversation_id, record["scheme_id"]
             )
@@ -610,12 +1039,22 @@ async def update_application_approval(
                     status_code=409,
                     detail="Scheme rules changed. Create and review a new draft.",
                 )
+            if (
+                draft.get("bundle_fingerprint")
+                != _bundle_fingerprint(request, record["scheme_id"])
+                or draft.get("form_mapping_fingerprint")
+                != _form_mapping_fingerprint(request, record["scheme_id"])
+            ):
+                raise HTTPException(
+                    status_code=409,
+                    detail="The scheme form or bundle changed. Create and review a new draft.",
+                )
             if draft.get("profile") != profile.model_dump(mode="json"):
                 raise HTTPException(
                     status_code=409,
                     detail="Your answers changed. Recheck eligibility and create a new draft.",
                 )
-        return await _dispatch_application_task(
+        result = await _dispatch_application_task(
             request, conversation_id, decision.action,
             {
                 "draft_id": draft_id,
@@ -628,6 +1067,7 @@ async def update_application_approval(
                 },
             },
         )
+        return _public_application_record(result)
     except HTTPException:
         raise
     except MCPToolError as error:
@@ -651,7 +1091,7 @@ async def forget_journey(conversation_id: str, request: Request) -> None:
         ) from error
     try:
         drafts = await call_application_tool(
-            request.app.state.mcp_client,
+            _portal_reader(request, conversation_id),
             "mock_portal",
             {"action": "list_drafts", "journey_id": conversation_id},
         )
@@ -666,6 +1106,9 @@ async def forget_journey(conversation_id: str, request: Request) -> None:
                 await request.app.state.journey_checkpointer.adelete_thread(
                     thread_id
                 )
+        await request.app.state.journey_checkpointer.adelete_thread(
+            f"budget:{conversation_id}"
+        )
     except MCPToolError as error:
         logger.exception("Could not clear mock application data")
         raise HTTPException(

@@ -9,7 +9,17 @@ not code.
 from datetime import date
 from typing import Literal, get_args
 
-from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    HttpUrl,
+    StrictBool,
+    StrictFloat,
+    StrictInt,
+    StrictStr,
+    model_validator,
+)
 
 from src.ui.models import calculate_age_on
 
@@ -27,10 +37,10 @@ BoolFact = Literal[
     "nri_new_beneficiary",
 ]
 DateFact = Literal["date_of_birth", "application_date"]
-# Any fact a profile can store.
-FactName = Literal[BoolFact, DateFact]
-# Any fact a rule can check: yes/no facts plus the calculated "age".
-RuleFact = Literal[BoolFact, "age"]
+# New registered facts are data-defined; these aliases remain for callers that
+# use the legacy profile's fact names.
+FactName = str
+RuleFact = str
 
 BOOL_FACTS: frozenset[str] = frozenset(get_args(BoolFact))
 
@@ -127,11 +137,14 @@ class Rule(RulePackageModel):
 
     model_config = ConfigDict(frozen=True)
 
-    rule_id: str
+    rule_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$")
     field: RuleFact
     operator: Literal["eq", "gte", "lte"]
-    value: bool | int
-    source_clause_id: str
+    value: StrictBool | StrictInt | StrictFloat | StrictStr
+    unit: str | None = Field(default=None, max_length=80)
+    source_clause_id: str = Field(
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9_.:/()-]{0,119}$"
+    )
     # Per-rule source text overrides the package's eligibility text.
     source_text: str | None = None
     source_location: str | None = None
@@ -154,9 +167,13 @@ class Rule(RulePackageModel):
                 and type(self.value) is int
                 and 0 <= self.value <= 125
             )
-        else:
+        elif self.field in BOOL_FACTS:
             # Yes/no facts can only be compared with eq true or eq false.
             valid = self.operator == "eq" and isinstance(self.value, bool)
+        else:
+            # Generic registered-fact compatibility is checked by the
+            # provider against its pinned registry before activation.
+            valid = self.operator in {"eq", "gte", "lte"}
         if not valid:
             raise ValueError(
                 f"Invalid operator or value for rule field '{self.field}'"
@@ -189,8 +206,8 @@ class RulePackage(RulePackageModel):
 
     model_config = ConfigDict(frozen=True)
 
-    package_version: str
-    scheme_id: str
+    package_version: str = Field(pattern=r"^[0-9]+\.[0-9]+\.[0-9]+$")
+    scheme_id: str = Field(pattern=r"^[A-Z0-9]+(?:-[A-Z0-9]+)*$")
     approval_status: Literal[
         "approved_for_mock_portal",
         "mock_baseline_pending_human_rule_approval",

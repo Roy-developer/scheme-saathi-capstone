@@ -1,15 +1,12 @@
-"""Question text for each profile fact, and plain-code answer reading.
-
-Phase 2 uses fixed English questions and simple rules to read answers, so the
-chat costs nothing to run and behaves the same every time. An LLM can later
-rephrase questions or read free-form answers, but the rules here stay the
-safety net.
-"""
+"""Localized questions for profile facts and deterministic answer reading."""
 
 from dataclasses import dataclass
 from datetime import date, datetime
+from decimal import Decimal, InvalidOperation
+import re
 from typing import Literal
 
+from src.rules.facts import FactDefinition, FactRegistry
 from src.rules.models import BOOL_FACTS
 
 
@@ -53,14 +50,52 @@ QUESTIONS: dict[str, str] = {
         "(Non-Resident Indian)?"
     ),
 }
+LOCALIZED_QUESTIONS: dict[str, dict[str, str]] = {
+    "hi": {
+        "date_of_birth": "आपकी जन्मतिथि क्या है? उदाहरण: 12 मार्च 1981 या 12/03/1981।",
+        "application_date": "आप किस तारीख को आवेदन कर रहे हैं?",
+        "is_widow": "क्या आवेदक विधवा हैं?",
+        "bpl_card_shown": "क्या आप सरकारी बीपीएल कार्ड दिखा सकते हैं?",
+        "landholding_family_in_state_records": "क्या किसान परिवार की खेती योग्य भूमि राज्य/केंद्रशासित प्रदेश के रिकॉर्ड में दर्ज है?",
+        "institutional_landholder": "क्या भूमि किसी संस्था के नाम पर है?",
+        "listed_public_office_member": "क्या परिवार का कोई सदस्य मंत्री, सांसद, विधायक या महापौर जैसे सूचीबद्ध पद पर है या रहा है?",
+        "excluded_government_employee_member": "क्या परिवार का कोई सदस्य निर्दिष्ट निम्न-श्रेणी अपवादों को छोड़कर सरकारी कर्मचारी है या रहा है?",
+        "pension_at_least_10000_excluding_stated_grades": "क्या परिवार के किसी सदस्य को हर महीने 10,000 रुपये या अधिक पेंशन मिलती है?",
+        "income_tax_paid_last_assessment_year": "क्या परिवार के किसी सदस्य ने पिछले आकलन वर्ष में आयकर दिया?",
+        "registered_practicing_professional_member": "क्या परिवार का कोई सदस्य पंजीकृत और कार्यरत डॉक्टर, इंजीनियर, वकील या चार्टर्ड अकाउंटेंट है?",
+        "nri_new_beneficiary": "क्या यह एनआरआई किसान परिवार का नया आवेदन है?",
+    },
+    "mr": {
+        "date_of_birth": "तुमची जन्मतारीख काय आहे? उदाहरण: 12 मार्च 1981 किंवा 12/03/1981.",
+        "application_date": "तुम्ही कोणत्या तारखेला अर्ज करत आहात?",
+        "is_widow": "अर्जदार विधवा आहेत का?",
+        "bpl_card_shown": "तुम्ही सरकारी बीपीएल कार्ड दाखवू शकता का?",
+        "landholding_family_in_state_records": "शेतकरी कुटुंबाची लागवडीयोग्य जमीन राज्य/केंद्रशासित प्रदेशाच्या नोंदीत आहे का?",
+        "institutional_landholder": "जमीन एखाद्या संस्थेच्या नावावर आहे का?",
+        "listed_public_office_member": "कुटुंबातील कोणी मंत्री, खासदार, आमदार किंवा महापौर यांसारख्या सूचीबद्ध सार्वजनिक पदावर आहे किंवा होते का?",
+        "excluded_government_employee_member": "निर्दिष्ट कनिष्ठ श्रेणी अपवाद वगळता कुटुंबातील कोणी सरकारी कर्मचारी आहे किंवा होते का?",
+        "pension_at_least_10000_excluding_stated_grades": "कुटुंबातील कोणाला दरमहा 10,000 रुपये किंवा अधिक पेन्शन मिळते का?",
+        "income_tax_paid_last_assessment_year": "कुटुंबातील कोणी मागील निर्धारण वर्षात आयकर भरला का?",
+        "registered_practicing_professional_member": "कुटुंबातील कोणी नोंदणीकृत व कार्यरत डॉक्टर, अभियंता, वकील किंवा चार्टर्ड अकाउंटंट आहे का?",
+        "nri_new_beneficiary": "हा अनिवासी भारतीय शेतकरी कुटुंबाचा नवीन अर्ज आहे का?",
+    },
+}
 
 # Hint added before a question when the reply could not be understood.
-YES_NO_HINT = 'Please answer "yes", "no" or "I don\'t know".'
-DATE_HINT = (
-    'Please give a date like 12 March 1981 or 12/03/1981, or say '
-    '"I don\'t know".'
+YES_NO_HINTS = {
+    "en": 'Please answer "yes", "no" or "I don\'t know".',
+    "hi": 'कृपया "हाँ", "नहीं" या "मुझे नहीं पता" में उत्तर दें।',
+    "mr": 'कृपया "होय", "नाही" किंवा "माहित नाही" असे उत्तर द्या.',
+}
+DATE_HINTS = {
+    "en": 'Please give a date like 12 March 1981 or 12/03/1981, or say "I don\'t know".',
+    "hi": 'कृपया 12/03/1981 जैसी तारीख दें या "मुझे नहीं पता" कहें।',
+    "mr": 'कृपया 12/03/1981 अशी तारीख द्या किंवा "माहित नाही" असे सांगा.',
+}
+INTEGER_REPLY_PATTERN = re.compile(r"[+-]?[0-9]+")
+DECIMAL_REPLY_PATTERN = re.compile(
+    r"[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?"
 )
-
 # Accepted replies, compared after trimming, lower-casing and removing
 # punctuation at the end (so "Yes." and " YES " both count as "yes").
 YES_WORDS = frozenset({"yes", "y", "yeah", "yep", "true", "correct"})
@@ -77,6 +112,18 @@ DONT_KNOW_WORDS = frozenset(
         "skip",
     }
 )
+LOCALIZED_YES_WORDS: dict[str, frozenset[str]] = {
+    "hi": frozenset({"हाँ", "हां", "जी", "जी हाँ", "सही"}),
+    "mr": frozenset({"होय", "हो", "बरोबर", "होय आहे"}),
+}
+LOCALIZED_NO_WORDS: dict[str, frozenset[str]] = {
+    "hi": frozenset({"नहीं", "नही", "जी नहीं"}),
+    "mr": frozenset({"नाही", "न", "नसते"}),
+}
+LOCALIZED_UNKNOWN_WORDS: dict[str, frozenset[str]] = {
+    "hi": frozenset({"मुझे नहीं पता", "पता नहीं", "मालूम नहीं", "अनिश्चित"}),
+    "mr": frozenset({"माहित नाही", "माहीत नाही", "ठाऊक नाही", "निश्चित नाही"}),
+}
 
 # Date formats tried in order. %d = day, %m = month number, %B = full month
 # name, %b = short month name, %Y = 4-digit year.
@@ -103,17 +150,227 @@ class ParsedAnswer:
     """
 
     kind: Literal["value", "unknown", "invalid"]
-    value: bool | date | None = None
+    value: object | None = None
     error: str | None = None
 
 
-def question_for(fact: str) -> str:
+def question_for(fact: str, locale: str = "en") -> str:
     """Return the question to ask for a profile fact."""
 
+    if locale in LOCALIZED_QUESTIONS:
+        return LOCALIZED_QUESTIONS[locale][fact]
     return QUESTIONS[fact]
 
 
-def _normalise(reply: str) -> str:
+def registry_question_for(
+    definition: FactDefinition,
+    locale: str = "en",
+) -> str:
+    """Return reviewed question copy for a registry-backed fact."""
+
+    question = definition.questions.get(locale) or definition.questions["en"]
+    return question.text
+
+
+def registered_question_details(
+    definition: FactDefinition,
+    locale: str = "en",
+) -> dict[str, object]:
+    """Build the data-driven answer widget contract for one registered fact."""
+
+    question = definition.questions.get(locale) or definition.questions["en"]
+    labels = definition.choice_labels.get(locale, {})
+    return {
+        "fact_id": definition.fact_id,
+        "value_type": definition.value_type,
+        "unit": definition.unit,
+        "minimum": definition.minimum,
+        "maximum": definition.maximum,
+        "max_length": definition.max_length,
+        "choices": [
+            {"code": choice, "label": labels.get(choice, choice)}
+            for choice in definition.choices
+        ],
+        "help_text": question.help_text,
+    }
+
+
+def parse_registered_answer(
+    definition: FactDefinition,
+    reply: str,
+    locale: str = "en",
+) -> ParsedAnswer:
+    """Parse a reply strictly using its registered type, bounds, and choices."""
+
+    text = _normalise(reply, locale)
+    if (
+        text in DONT_KNOW_WORDS
+        or text in LOCALIZED_UNKNOWN_WORDS.get(locale, frozenset())
+    ):
+        return ParsedAnswer(kind="unknown")
+
+    try:
+        if definition.value_type == "boolean":
+            if text in YES_WORDS | LOCALIZED_YES_WORDS.get(locale, frozenset()):
+                value: object = True
+            elif text in NO_WORDS | LOCALIZED_NO_WORDS.get(locale, frozenset()):
+                value = False
+            else:
+                raise ValueError
+        elif definition.value_type == "date":
+            parsed_date = _parse_date(text)
+            if parsed_date is None:
+                raise ValueError
+            value = parsed_date
+        elif definition.value_type == "integer":
+            if INTEGER_REPLY_PATTERN.fullmatch(text) is None:
+                raise ValueError
+            value = int(text)
+        elif definition.value_type == "decimal":
+            if DECIMAL_REPLY_PATTERN.fullmatch(text) is None:
+                raise ValueError
+            try:
+                value = Decimal(text)
+            except InvalidOperation as error:
+                raise ValueError from error
+            if not value.is_finite():
+                raise ValueError
+        elif definition.value_type == "choice":
+            labels = definition.choice_labels.get(locale, {})
+            value = next(
+                choice
+                for choice in definition.choices
+                if text == _normalise(choice, locale)
+                or (
+                    labels.get(choice)
+                    and text == _normalise(labels[choice], locale)
+                )
+            )
+        elif definition.value_type == "text":
+            value = reply.strip()
+            if not value:
+                raise ValueError
+        else:
+            raise ValueError
+        normalized = definition.validate_value(value)
+    except (ValueError, StopIteration, TypeError):
+        return ParsedAnswer(
+            kind="invalid",
+            error=_registered_answer_hint(definition, locale),
+        )
+    return ParsedAnswer(kind="value", value=normalized)
+
+
+def _registered_answer_hint(
+    definition: FactDefinition,
+    locale: str,
+) -> str:
+    """Explain a registered answer constraint without changing its meaning."""
+
+    if definition.value_type == "boolean":
+        return YES_NO_HINTS.get(locale, YES_NO_HINTS["en"])
+    if definition.value_type == "date":
+        return DATE_HINTS.get(locale, DATE_HINTS["en"])
+    if definition.value_type in {"integer", "decimal"}:
+        bounds = []
+        if definition.minimum is not None:
+            bounds.append(
+                f"{_bound_label('minimum', locale)} {definition.minimum}"
+            )
+        if definition.maximum is not None:
+            bounds.append(
+                f"{_bound_label('maximum', locale)} {definition.maximum}"
+            )
+        unit = f" {definition.unit}" if definition.unit else ""
+        if locale == "hi":
+            return f"कृपया मान{unit} दें" + (
+                f" ({', '.join(bounds)})" if bounds else ""
+            ) + ' या "मुझे नहीं पता" कहें।'
+        if locale == "mr":
+            return f"कृपया मूल्य{unit} द्या" + (
+                f" ({', '.join(bounds)})" if bounds else ""
+            ) + ' किंवा "माहित नाही" असे सांगा.'
+        return f"Enter a valid number{unit}" + (
+            f" ({', '.join(bounds)})" if bounds else ""
+        ) + ' or say "I don\'t know".'
+    if definition.value_type == "text":
+        if locale == "hi":
+            return (
+                f"कृपया {definition.max_length} अक्षरों तक का पाठ दें "
+                'या "मुझे नहीं पता" कहें।'
+            )
+        if locale == "mr":
+            return (
+                f"कृपया {definition.max_length} अक्षरांपर्यंत मजकूर द्या "
+                'किंवा "माहित नाही" असे सांगा.'
+            )
+        return (
+            f"Enter text up to {definition.max_length} characters "
+            'or say "I don\'t know".'
+        )
+    labels = definition.choice_labels.get(locale, {})
+    options = ", ".join(labels.get(code, code) for code in definition.choices)
+    if locale == "hi":
+        return f"कृपया इनमें से चुनें: {options} या कहें “मुझे नहीं पता”।"
+    if locale == "mr":
+        return f"कृपया यापैकी निवडा: {options} किंवा “माहित नाही” असे सांगा."
+    return f"Choose one of: {options}, or say “I don't know”."
+
+
+def _bound_label(bound: str, locale: str) -> str:
+    """Localize numeric-bound labels used in invalid-answer hints."""
+
+    labels = {
+        "minimum": {"en": "minimum", "hi": "न्यूनतम", "mr": "किमान"},
+        "maximum": {"en": "maximum", "hi": "अधिकतम", "mr": "कमाल"},
+    }
+    return labels[bound].get(locale, labels[bound]["en"])
+
+
+def fact_confirmation(
+    fact: str,
+    value: bool | str,
+    locale: str = "en",
+) -> str:
+    """Render a typed proposal for explicit confirmation in the chosen locale."""
+
+    display = (
+        ("हाँ" if value else "नहीं") if locale == "hi" and isinstance(value, bool)
+        else ("होय" if value else "नाही")
+        if locale == "mr" and isinstance(value, bool)
+        else "yes" if value is True
+        else "no" if value is False
+        else str(value)
+    )
+    if locale == "hi":
+        return (
+            f'{question_for(fact, locale)} आपके उत्तर को "{display}" समझा। '
+            "क्या यह सही है? "
+            '"हाँ" या "नहीं" में उत्तर दें।'
+        )
+    if locale == "mr":
+        return (
+            f'{question_for(fact, locale)} तुमचे उत्तर "{display}" असे समजले. '
+            "हे बरोबर आहे का? "
+            '"होय" किंवा "नाही" असे उत्तर द्या.'
+        )
+    return (
+        f'{question_for(fact, locale)} I understood your answer as "{display}". '
+        "Is that correct? "
+        "Please answer yes or no."
+    )
+
+
+def localized_unknown_message(locale: str) -> str:
+    """Return a short localized acknowledgement when a person skips a fact."""
+
+    return {
+        "hi": "ठीक है। इस जानकारी को अभी अज्ञात मानेंगे।",
+        "mr": "ठीक आहे. ही माहिती सध्या अज्ञात मानू.",
+    }.get(locale, "Okay. We will leave this information unknown for now.")
+
+
+def _normalise(reply: str, locale: str = "en") -> str:
     """Lower-case a reply and drop extra spaces and trailing punctuation.
 
     The curly apostrophe (’) from phone keyboards becomes a straight one, so
@@ -121,6 +378,8 @@ def _normalise(reply: str) -> str:
     """
 
     cleaned = reply.replace("\u2019", "'").strip().lower().rstrip(".!?")
+    if locale in {"hi", "mr"}:
+        cleaned = cleaned.translate(str.maketrans("०१२३४५६७८९", "0123456789"))
     # Collapse repeated spaces: "12   March  1981" -> "12 March 1981".
     return " ".join(cleaned.split())
 
@@ -140,7 +399,7 @@ def _parse_date(text: str) -> date | None:
     return None
 
 
-def parse_answer(fact: str, reply: str) -> ParsedAnswer:
+def parse_answer(fact: str, reply: str, locale: str = "en") -> ParsedAnswer:
     """Turn a chat reply into a value for ``fact``.
 
     Examples:
@@ -150,33 +409,50 @@ def parse_answer(fact: str, reply: str) -> ParsedAnswer:
         parse_answer("date_of_birth", "12/03/1981")  -> value 1981-03-12
     """
 
-    text = _normalise(reply)
+    text = _normalise(reply, locale)
 
     # "I don't know" works for every kind of question.
-    if text in DONT_KNOW_WORDS:
+    if (
+        text in DONT_KNOW_WORDS
+        or text in LOCALIZED_UNKNOWN_WORDS.get(locale, frozenset())
+    ):
         return ParsedAnswer(kind="unknown")
 
     if fact in BOOL_FACTS:
-        if text in YES_WORDS:
+        if text in YES_WORDS | LOCALIZED_YES_WORDS.get(locale, frozenset()):
             return ParsedAnswer(kind="value", value=True)
-        if text in NO_WORDS:
+        if text in NO_WORDS | LOCALIZED_NO_WORDS.get(locale, frozenset()):
             return ParsedAnswer(kind="value", value=False)
-        return ParsedAnswer(kind="invalid", error=YES_NO_HINT)
+        return ParsedAnswer(
+            kind="invalid",
+            error=YES_NO_HINTS.get(locale, YES_NO_HINTS["en"]),
+        )
 
     # The only non-yes/no facts are dates.
     parsed_date = _parse_date(text)
     if parsed_date is None:
-        return ParsedAnswer(kind="invalid", error=DATE_HINT)
+        return ParsedAnswer(
+            kind="invalid",
+            error=DATE_HINTS.get(locale, DATE_HINTS["en"]),
+        )
     return ParsedAnswer(kind="value", value=parsed_date)
 
 
-def parse_interpreted_answer(fact: str, value: bool | str) -> ParsedAnswer:
+def parse_interpreted_answer(
+    fact: str, value: bool | str, locale: str = "en"
+) -> ParsedAnswer:
     """Validate an LLM proposal against the expected type for a profile fact."""
 
     if fact in BOOL_FACTS:
         if not isinstance(value, bool):
-            return ParsedAnswer(kind="invalid", error=YES_NO_HINT)
+            return ParsedAnswer(
+                kind="invalid",
+                error=YES_NO_HINTS.get(locale, YES_NO_HINTS["en"]),
+            )
         return ParsedAnswer(kind="value", value=value)
     if not isinstance(value, str):
-        return ParsedAnswer(kind="invalid", error=DATE_HINT)
-    return parse_answer(fact, value)
+        return ParsedAnswer(
+            kind="invalid",
+            error=DATE_HINTS.get(locale, DATE_HINTS["en"]),
+        )
+    return parse_answer(fact, value, locale)

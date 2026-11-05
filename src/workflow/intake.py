@@ -2,12 +2,14 @@
 
 import asyncio
 import json
-import os
 import urllib.error
 import urllib.request
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr, model_validator
+
+from src.config import openrouter_chat_settings
+from src.workflow.agent_config import MAX_COMPLETION_TOKENS, MODEL_TIMEOUT_SECONDS
 
 
 OPENROUTER_CHAT_URL = "https://openrouter.ai/api/v1/chat/completions"
@@ -39,17 +41,17 @@ def _read_free_text_answer(
     question: str,
     reply: str,
 ) -> AnswerInterpretation:
-    api_key = os.getenv("OPENROUTER_API_KEY")
+    api_key, model = openrouter_chat_settings(DEFAULT_CHAT_MODEL)
     if not api_key:
         raise IntakeAgentError(
             "OPENROUTER_API_KEY is required for free-text answer reading."
         )
 
-    model = os.getenv("OPENROUTER_CHAT_MODEL", DEFAULT_CHAT_MODEL)
     payload = json.dumps(
         {
             "model": model,
             "temperature": 0,
+            "max_tokens": MAX_COMPLETION_TOKENS,
             "messages": [
                 {
                     "role": "system",
@@ -118,7 +120,9 @@ def _read_free_text_answer(
     )
     request.add_header("Authorization", f"Bearer {api_key}")
     try:
-        with urllib.request.urlopen(request, timeout=30) as response:
+        with urllib.request.urlopen(
+            request, timeout=MODEL_TIMEOUT_SECONDS
+        ) as response:
             body: dict[str, Any] = json.loads(response.read())
     except urllib.error.HTTPError as error:
         raise IntakeAgentError(
@@ -157,17 +161,17 @@ async def interpret_free_text_answer(
 
 
 def _rewrite_query(query: str) -> str:
-    api_key = os.getenv("OPENROUTER_API_KEY")
+    api_key, model = openrouter_chat_settings(DEFAULT_CHAT_MODEL)
     if not api_key:
         raise IntakeAgentError(
             "OPENROUTER_API_KEY is required for conversational scheme search."
         )
 
-    model = os.getenv("OPENROUTER_CHAT_MODEL", DEFAULT_CHAT_MODEL)
     payload = json.dumps(
         {
             "model": model,
             "temperature": 0,
+            "max_tokens": MAX_COMPLETION_TOKENS,
             "messages": [
                 {
                     "role": "system",
@@ -200,7 +204,9 @@ def _rewrite_query(query: str) -> str:
     )
     request.add_header("Authorization", f"Bearer {api_key}")
     try:
-        with urllib.request.urlopen(request, timeout=30) as response:
+        with urllib.request.urlopen(
+            request, timeout=MODEL_TIMEOUT_SECONDS
+        ) as response:
             body: dict[str, Any] = json.loads(response.read())
     except urllib.error.HTTPError as error:
         raise IntakeAgentError(
@@ -208,7 +214,9 @@ def _rewrite_query(query: str) -> str:
         ) from error
     except urllib.error.URLError as error:
         raise IntakeAgentError("OpenRouter intake request failed.") from error
-    except (json.JSONDecodeError, TypeError) as error:
+    except OSError as error:
+        raise IntakeAgentError("OpenRouter intake request failed.") from error
+    except (json.JSONDecodeError, TypeError, UnicodeDecodeError) as error:
         raise IntakeAgentError(
             "OpenRouter returned an invalid intake response."
         ) from error

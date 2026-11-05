@@ -12,6 +12,8 @@ WORKDIR /app
 COPY pyproject.toml README.md ./
 COPY src ./src
 COPY data/schemes/passages.json ./data/schemes/passages.json
+COPY data/schemes/document_checklists ./data/schemes/document_checklists
+COPY data/schemes/document_evidence.json ./data/schemes/document_evidence.json
 
 RUN pip install --no-cache-dir .
 
