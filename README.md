@@ -122,8 +122,10 @@ Search queries are also sent to OpenRouter for embedding.
 ### Phase 2 supervisor and intake
 
 The UI calls `POST /api/v1/journey` through `src/ui/api_client.py`; it does
-not call MCP directly. The supervisor uses a bounded ReAct tool-choice runtime
-to propose a plan order. Code validates the allowed steps and dependencies;
+not call MCP directly. Each agent is a LangChain `create_agent` run with a
+short tool list and middleware for masking, step limits, a shared budget and a
+scrubbed trace (see [`docs/HOOKS_WALKTHROUGH.md`](docs/HOOKS_WALKTHROUGH.md)).
+The supervisor agent proposes a plan order. Code validates the allowed steps and dependencies;
 the deterministic planner remains the C0 fallback. For interview requests, an
 optional synthetic household description can be sent with `profile_description`.
 When `OPENROUTER_API_KEY` is configured, intake may select the authorized
@@ -136,20 +138,23 @@ The request's `locale` (`en`, `hi`, `mr`) and `mode` (`citizen`, `csc`) are
 checkpointed and returned. CSC intake requires the citizen to be present;
 operators may assist, but the citizen confirms facts and personally approves
 any exact draft. The model never decides eligibility, which remains the
-deterministic rule engine's result through MCP. If the key is absent or a
-model action is invalid, denied, unavailable or over budget, the journey falls
-back safely to C0 planning and code-selected questions.
+deterministic rule engine's result through MCP. An unknown tool or invalid
+arguments are refused with an error and the model may retry within its step
+limit. If the key is absent, or the model is unavailable, over budget or does
+not finish, the journey falls back safely to C0 planning and code-selected
+questions.
 
-The runtime masks common email/phone/long-number identifiers before model
-requests and records only bounded scrubbed action metadata. Conversation model,
-tool and step counters and per-fact interpretation attempts are saved in the
-journey checkpoint. No private reasoning or raw model prompts are traced.
+LangChain's `PIIMiddleware` masks email, Aadhaar-like, phone and long account
+numbers before model requests, and only bounded scrubbed action metadata is
+recorded. Conversation model, tool and step counters and per-fact
+interpretation attempts are saved in the LangGraph `Store` before each call
+(and in the journey checkpoint). No private reasoning or raw model prompts are traced.
 Automated tests use fake model choices and make no paid requests. This does
 not constitute manual browser acceptance or a live-model smoke test.
 
 Typed graph state and conversation turns are checkpointed in the local SQLite
 file `data/runtime/journey.sqlite3`; `DELETE /api/v1/journey/{conversation_id}`
-deletes a session's checkpoint. This is prototype short-term session memory,
+deletes a session's checkpoint and its budget record. This is prototype short-term session memory,
 not a consent-managed household profile. Phase 3 adds bounded eligibility
 rediscovery; Phase 4 adds document/application specialists, exact-draft
 approval and a shared, demo-only document checklist loader. Source-backed

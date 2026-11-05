@@ -153,7 +153,7 @@ capstone gate is not met.
 | G01 | Bounded supervisor/intake, eligibility and document/application specialist loops are implemented and covered by offline tests; independent manual/live acceptance remains open. | Preserve tested loops, typed handoffs and C0 while adding registry-aware inputs/actions. Prove the new data-only flow and complete the remaining acceptance gates; do not rebuild existing agents. | 2–4 / 3, 4 |
 | G02 | Four purpose-specific MCP services and a separate FastAPI mock portal now have automated discovery, routing and permission coverage; manual UI acceptance remains open. | Preserve typed outputs/errors/read-write schemas; complete manual service and portal acceptance and record reviewers. | 1–2 / 4, 6 |
 | G03 | Phase 3 now revokes persisted unsubmitted approvals, binds monotonic profile/document/rule versions and blocks unreconciled writes. Submitted receipts remain history. | Independently verify still-eligible/unknown/A→B→A, persistence failure, restart and concurrent submission tests; complete manual acceptance. | 3–4 / 3, 4, 5 |
-| G04 | Per-fact attempts, model/token/action/step reservations and independent search counters now survive corrections, same-ID restart and interrupted nodes in separate SQLite checkpoint streams. | Independently verify crash-before-node-return and reservation-write-failure cases; new IDs start independently. | 2–3 / 3, 5 |
+| G04 | Per-fact attempts, model/token/action/step reservations and independent search counters now survive corrections, same-ID restart and interrupted nodes (since `supervisor-redesign-3` they are kept in the LangGraph `Store`, written before each call). | Independently verify crash-before-node-return and reservation-write-failure cases; new IDs start independently. | 2–3 / 3, 5 |
 | G05 | Synthetic name/date comparison and discrepancy/referral behavior use one typed, versioned checklist loader shared by both document tools. Pilot data is explicitly demo-only; no official source evidence has been prepared or approved. | The separate human data workstream must collect source passages, review each interpretation, and record exact-content approval before source-backed requirements can activate. | 4 + data workstream / 1, 2, 3, 4 |
 | G06 | `test_document_agent_blocks_application_writes_but_binds_report` (`tests/test_application_tools.py`; earlier name `test_document_agent_blocks_application_without_portal_access`) already covers missing/unknown/**mismatch** at graph level. Unknown document status is not unknown eligibility. | API/UI mismatch-to-resolution tests; explicit `need_more_information`, `information_only`, `not_eligible` and `tool_error` block draft/approve/submit. Include initially approved drafts becoming uncertain. | 3–4 / 5 with 3, 4, 6 |
 | G07 | Document/checklist dependency invalidation and stale refresh are implemented and covered by offline correction/integration tests. | Extend binding to registry/bundle/form versions; preserve fresh review after changes and complete manual/operational acceptance. Refresh must never show stale approval as valid. | 4 / 3, 4, 6 |
@@ -950,6 +950,14 @@ retries), checklist publication uses `filelock`, and several duplicated helpers
 were merged (see [THIRD_PARTY_LIBRARIES_REVIEW.md](THIRD_PARTY_LIBRARIES_REVIEW.md)).
 No behaviour change was intended; the commit message reports a full local run of
 **419 passed**. No acceptance gate above changes.
+
+**Note (branch `supervisor-redesign-3`):** the agent layer now uses standard
+LangChain v1 / LangGraph pieces: `create_agent` with `@tool` actions,
+`ChatOpenAI`, `PIIMiddleware`, `ModelCallLimitMiddleware`, two Saathi middleware
+classes for the shared budget and the scrubbed trace, and the LangGraph `Store`
+for budget records. Every requirement above is mapped to code and tests in
+[THIRD_PARTY_LIBRARIES_REVIEW.md](THIRD_PARTY_LIBRARIES_REVIEW.md) (Outcome 2).
+422 tests pass offline. No acceptance gate above changes.
 
 Done when: the Phase 3 gate and all application lifecycle checks pass, four
 specialists satisfy the ReAct/tool-boundary gate, and submission requires

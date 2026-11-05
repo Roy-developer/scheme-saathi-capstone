@@ -298,8 +298,9 @@ allowlist. Only the engine supplies verdicts. Confirmed category/age search
 hints and explicit locale are supported today; absent state/gender fields and
 unsupported retrieval filters are not inferred. Search has four conversation
 attempts including retries and an explicit 20-ID processing limit with overflow
-reporting. Separate checkpoint streams reserve search/model/token/step/action
-work and interpretation attempts before dispatch, including failed nodes.
+reporting. Durable records (the LangGraph `Store` since branch
+`supervisor-redesign-3`) reserve search/model/token/step/action work and
+interpretation attempts before dispatch, including failed nodes.
 These repairs have offline automated coverage, not manual or live acceptance.
 
 The local roles guide additionally specifies approval expiry and one use.

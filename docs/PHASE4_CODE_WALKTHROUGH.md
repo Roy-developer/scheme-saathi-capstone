@@ -717,10 +717,10 @@ submission, but that is a safety net, not a supported update path.
 
 `run_application_specialist` offers one operation action
 (`prepare_draft`, `edit_draft`, `submit_draft` or `read_application_status`) and
-one `handoff_application`. Approval and rejection are **not** in the model's
-action list: `AGENT_ACTION_ALLOWLIST["application"]` in
-`src/workflow/agent_runtime.py` excludes them, and a model that asks for
-`approve` is denied before anything runs
+one `handoff_application`. These two tools are the model's whole allow-list
+(`run_agent(..., [portal_action, handoff_application], ...)`). Approval and
+rejection are **not** among them, so a model that asks for `approve` is denied
+by LangChain before anything runs
 (`test_application_specialist_denies_spoofed_approval_and_never_reports_tool_failure_as_success`).
 
 The observation returned to the model (`ApplicationActionObservation`) contains
@@ -952,7 +952,7 @@ Use only invented data. Profile name "Synthetic Example", date of birth
 | 10 | Approves revision 2 | Portal stores approval, expiry (+15 min) and token |
 | 11 | Submits | Receipt recorded |
 | 12 | Submits again (a retry, such as a double click) | **Same receipt** |
-| 13 | Forgets the conversation | Application drafts, portal dependency rows, journey/application-gate threads and the separate durable `budget:<conversation_id>` stream are deleted; listing drafts returns empty. |
+| 13 | Forgets the conversation | Application drafts, portal dependency rows, journey/application-gate threads and the conversation's budget record in the LangGraph `Store` are deleted; listing drafts returns empty. |
 
 This is the sequence in `tests/test_api_applications.py::test_synthetic_application_requires_exact_approval`,
 which goes through FastAPI and real MCP child processes. The test setup removes
@@ -1048,23 +1048,26 @@ a request with an old revision or fingerprint is refused.
 
 ## 13. Safe tracing and the model budget
 
-Every model decision, valid or not, is turned into an `AgentTraceEvent` by
-`_trace` in `src/workflow/agent_runtime.py`. It holds the agent name, action name,
-status, model name, prompt version, step number, token counts, duration and a
-fixed one-line summary. It has **no prompt, no private reasoning and no
-applicant values.** The prompts (`src/workflow/agent_config.py`) also tell the
-model not to return private reasoning and to treat outside text as data. The
-model request must be a tool call (`"tool_choice": "required"`). Before text
-reaches a model, `mask_sensitive_text` replaces emails, ID-like numbers and phone
-numbers. There is no separate "hook" framework: the trace events and the budget
-reservations are the observation points.
+Every agent model call and tool call, valid or not, is recorded by
+`ScrubbedTraceMiddleware` (`src/workflow/agent_middleware.py`) as one
+`trace_event`. It holds the agent name, action name, status, model name, prompt
+version, step number, token counts, duration and a fixed one-line summary. It
+has **no prompt, no private reasoning and no applicant values.** The prompts
+(`src/workflow/agent_config.py`) also tell the model not to return private
+reasoning and to treat outside text as data. `DurableBudgetMiddleware` makes
+every model request a single strict tool call (`tool_choice="required"`).
+Before text reaches a model, LangChain's `PIIMiddleware` (with Saathi's
+`PII_RULES`) replaces emails, Aadhaar-like numbers, phone numbers and account
+numbers. These guards are LangChain middleware passed to `create_agent`; see
+[HOOKS_WALKTHROUGH.md](HOOKS_WALKTHROUGH.md).
 
 The budget limits (in `agent_config.py`) are **per conversation**: 8 model calls,
 24 tool/action calls, 12 agent steps, 12,000 tokens, and 3 steps per turn. The
 24-call ceiling includes deterministic document rechecks, lost-response draft
-recovery and exact receipt retries; it does **not** buy extra model calls. The loop
-**reserves** tokens and counters *before* the paid call and saves them durably
-through `ConversationBudget` (`src/workflow/conversation_budget.py`), so a crash
+recovery and exact receipt retries; it does **not** buy extra model calls.
+`DurableBudgetMiddleware` **reserves** tokens and counters *before* the paid call
+and saves them in the LangGraph `Store` through `ConversationBudget`
+(`src/workflow/conversation_budget.py`), so a crash
 or restart cannot give a conversation a fresh budget. A model-assisted document
 or application specialist normally uses two model calls (one action and one
 handoff), but those calls consume the same global conversation budget; the
@@ -1144,9 +1147,10 @@ the Hindi and Marathi wording is still open.
 | Report fingerprint, tool caller | `src/api/applications.py` | `document_input_fingerprint`, `check_and_bind_documents`, `call_application_tool` |
 | Bounded document specialist | `src/workflow/document_agent.py` | `run_document_specialist` |
 | Bounded application specialist | `src/workflow/application_agent.py` | `run_application_specialist` |
-| ReAct loop, trace, budget | `src/workflow/agent_runtime.py` | `run_react_loop`, `_trace`, `mask_sensitive_text` |
+| Agent run, masking | `src/workflow/agent_runtime.py` | `run_agent` (LangChain `create_agent`), `PII_RULES`, `mask_sensitive_text`, `recover_authorized_action` |
+| Budget and trace middleware | `src/workflow/agent_middleware.py` | `DurableBudgetMiddleware`, `ScrubbedTraceMiddleware` |
 | Limits and prompts | `src/workflow/agent_config.py` | `MAX_CONVERSATION_MODEL_CALLS` |
-| Durable budget | `src/workflow/conversation_budget.py` | `ConversationBudget` |
+| Durable budget (LangGraph `Store`) | `src/workflow/conversation_budget.py` | `ConversationBudget`, `BUDGET_NAMESPACE` |
 | Approval pause | `src/workflow/application_gate.py` | `pause_for_application_approval`, `resume_application_approval` |
 | Graph nodes | `src/workflow/journey.py` | `document_agent`, `application_agent`, `run_application_task` |
 | Plan for tasks | `src/workflow/supervisor.py` | `build_application_plan` |
@@ -1300,8 +1304,8 @@ needed/requested; the 415-test full run above predates this test-only adjustment
   an incomplete handoff; exact create retries are deduplicated (sections 6.2
   and 7.1).
 * **Forgetting a conversation** deletes its drafts, portal dependency-version
-  rows, journey/application-gate checkpoint threads and separate
-  `budget:<conversation_id>` checkpoint thread.
+  rows, journey/application-gate checkpoint threads and the conversation's
+  budget record in the LangGraph `Store` (namespace `("budget",)`).
 * **Multi-process behavior:** a separate-process test covers checklist updates
   competing with submission. This is not a full test of several API workers
   or recovery after killing processes at every stage.

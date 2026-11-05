@@ -4,13 +4,19 @@
 **Goal:** replace hand-written plumbing with standard libraries where that makes the
 code shorter and easier to follow, **without** weakening any safety behaviour or test.
 
+> **Status:** the proposal below was carried out in two rounds. **Outcome 1**
+> (branch `supervisor-redesign-2`) and **Outcome 2** (branch `supervisor-redesign-3`,
+> standard LangChain v1 / LangGraph, with a requirement-by-requirement coverage
+> check) record what was actually done. Parts 1–4 and the Appendix are the original
+> proposal and describe the code as it was then.
+
 The proposal has 6 changes, in priority order (biggest win, lowest risk first).
 Part 3 lists what should **not** change and why. The Appendix is the full inventory
 of hand-built code, with file and line references, that the proposal is based on.
 
 ---
 
-## Outcome (2026-11-05, branch `supervisor-redesign-2`, commit `34cafd5`)
+## Outcome 1 (2026-11-05, branch `supervisor-redesign-2`, commit `34cafd5`)
 
 The proposals below were checked against the code, then applied or skipped.
 Full test suite after the changes: **419 passed** (415 before, plus 4 new tests).
@@ -34,6 +40,83 @@ OpenRouterChatClient(key) as chat:`). Tests use one shared `fake_openrouter` fix
 (`tests/conftest.py`) instead of replacing `urlopen`.
 
 See **Part 5** for the further simplifications made after an end-to-end review.
+
+---
+
+## Outcome 2 (2026-11-05, branch `supervisor-redesign-3`): standard LangChain v1 and LangGraph
+
+**Goal of this round:** replace custom code with standard LangChain v1 / LangGraph building blocks wherever one exists, keep custom code only for rules no library can express, and lose **no** planned requirement. Full test suite after the changes: **422 passed** (offline; no paid calls).
+
+> This section supersedes the P1 outcome above. `OpenRouterChatClient`, `ToolChoiceProvider`, `run_react_loop` and `AGENT_ACTION_ALLOWLIST` no longer exist.
+
+### What changed
+
+| # | Change | Standard piece now used | Commit |
+|---|---|---|---|
+| 1 | Upgraded dependencies | `langgraph>=1.2`, `langchain>=1.4`, `langchain-openai>=1.7`, `langgraph-checkpoint-sqlite` | `259a4f4` |
+| 2 | Agents run on LangChain's agent loop | `create_agent(model, tools, system_prompt, middleware=[...])` in `run_agent` | `18dd46b` |
+| 3 | Every OpenRouter chat call | `ChatOpenAI` (OpenRouter `base_url`, `max_retries=0`), built once in `openrouter_chat_model` | `72472a0` |
+| 4 | Test fakes; old provider interface removed | `FakeChatModel`, a `BaseChatModel` subclass (`tests/fake_chat_model.py`) | `b15d54d` |
+| 5 | Saathi's guards split into named middleware | `AgentMiddleware` subclasses: `DurableBudgetMiddleware`, `ScrubbedTraceMiddleware` | `9a0d24a` |
+| 6 | Agent actions | `@tool(args_schema=..., return_direct=...)`; the tool list is the allow-list | `1b5bb8c` |
+| 7 | Intake's one-off answers | `with_structured_output(Model, method="json_mode")` | `3887680` |
+| 8 | Conversation budget storage | LangGraph `Store` (`AsyncSqliteStore`, namespace `("budget",)`) | `257551f` |
+| 9 | Masking personal data | `PIIMiddleware` + `RedactionRule` | `7ba553f` |
+| 10 | Search vectors | `OpenAIEmbeddings` + `QdrantVectorStore` (same model and cosine search; rankings unchanged) | `c356702` |
+| 11 | One budget rule for agents and one-off calls | `model_call_fits` / `reserve_model_call`, shared by the middleware and `run_accounted_model_call` | `34fab15` |
+| — | Fixed: Hindi and Marathi `age` note stored as "???" | registry re-pinned; a test now rejects "??" in any question | `230b990` |
+
+**Behaviour change, agreed in advance (option B):** an unknown tool or invalid arguments are now answered with an error message and the model may try again within its step limit (LangChain's standard behaviour). Before, the run stopped at once. In both versions the tool body never runs and nothing is counted.
+
+### Kept as Saathi code on purpose
+
+| Code | Why no library replaces it |
+|---|---|
+| `DurableBudgetMiddleware` + `ConversationBudget` | LangChain's limit middleware counts in memory for one run. Saathi needs one limit shared by all agents for the whole conversation, saved **before** each paid call and surviving restarts. |
+| `ScrubbedTraceMiddleware` | Standard tracing (for example LangSmith) records prompts and arguments; Saathi's trace must hold none. |
+| Task checks inside each tool (`AgentActionError`) | Business rules (right scheme, observe before handoff, handoff matches the report). |
+| `ServiceClientRouter` | Role and per-action permissions for MCP tools; no library knows Saathi's roles. |
+| `recover_authorized_action` | Runs the code step once when the model can't be asked, within the tool budget. |
+| `run_accounted_model_call` | One-off calls don't run inside `create_agent`, so agent middleware can't wrap them; it uses the same budget rule. |
+| The three two-try retry loops | `RetryPolicy` discards a failed attempt's state (losing the visible "Retrying once" note) and lets the final error escape instead of the calm "No decision was invented" reply. See [HOOKS_WALKTHROUGH.md](HOOKS_WALKTHROUGH.md) section 10. |
+
+### Considered and not adopted
+
+| Candidate | Decision |
+|---|---|
+| `ChatPromptTemplate` for agent prompts | Not needed. The prompts are fixed per language with no `{variables}`; `create_agent(system_prompt="...")` is the standard form for that. |
+| LangGraph `RetryPolicy` | Not adopted (see the retry loops above). |
+| `BM25Retriever` + `EnsembleRetriever` (needs `langchain-community`, `langchain-classic`) | Not adopted. Different tie-breaking and de-duplication would change rankings; the 0.3 / 0.2 reranker thresholds were tuned on the current rankings with the 43-query dev set, so it would need a paid re-run. |
+| LangChain rerankers | No fit: `CohereRerank` calls Cohere directly, not OpenRouter; `CrossEncoderReranker` needs `sentence-transformers`. |
+| `langchain-mcp-adapters` | Blocked: every release (latest 0.3.2) requires `mcp<2`, and Saathi uses MCP 2. It would also save little: role permissions stay Saathi's, and agents call MCP through guarded `@tool` functions rather than raw MCP tools. Adopt when it supports MCP 2 (startup via `MultiServerMCPClient`, permissions as a tool interceptor). |
+
+### Coverage check: every planned requirement touched by this round
+
+Requirements come from [END_TO_END_IMPLEMENTATION_PLAN.md](END_TO_END_IMPLEMENTATION_PLAN.md) ("What qualifies as a specialist", "Guardrails, hooks, and observability", "Replan triggers", "MCP tool boundaries", "Completion gates"). All tests listed pass on this branch.
+
+| Requirement | Where in the code | Proven by |
+|---|---|---|
+| Specialists use ReAct: the model proposes an allowed action, code authorizes it, an observation returns, then another action or a typed handoff | `run_agent` → `create_agent`; each `*_agent.py`; `observation()` | `test_supervisor_uses_observation_to_choose_next_action`, `test_intake_selects_each_action_from_the_prior_observation`, `test_eligibility_specialist_chooses_handoff_from_observation`, `test_document_specialist_selects_allowed_handoff_from_observation`, `test_application_specialist_observes_safe_result_for_each_allowed_action` |
+| Per-agent tool allow-list | The `tools=[...]` list passed to `create_agent` | `test_agent_action_schema_denial_and_budget_stop_before_executor` |
+| Human approval is never a model action | Application agent's tools exclude approve/reject; `ServiceClientRouter` | `test_application_specialist_denies_spoofed_approval_and_never_reports_tool_failure_as_success`, `test_trusted_actors_execute_only_their_allowed_portal_actions` |
+| Schema-constrained actions; bad input never runs | `AgentSchema` (`extra="forbid"`) as `args_schema`; strict tool calls | `test_malformed_fact_proposal_is_not_confirmed_or_saved`, `test_eligibility_denied_or_malformed_choices_never_call_rule_tool` |
+| Per-step iteration limit | `ModelCallLimitMiddleware(run_limit=max_steps)` | `test_agent_action_schema_denial_and_budget_stop_before_executor` (step-limit case) |
+| Conversation-wide call/token ceilings; reject paid actions at the ceiling | `model_call_fits`, `DurableBudgetMiddleware`, `run_accounted_model_call` | `test_agent_action_schema_denial_and_budget_stop_before_executor` (budget cases), `test_legacy_chat_call_is_rejected_before_provider_at_budget_limit` |
+| Budgets persist across correction, refresh, request and process restart | `ConversationBudget` in the LangGraph `Store`; `reserve_counters` before each call; `durable_counters` | `test_same_id_restart_preserves_model_budget`, `test_model_call_reservation_survives_node_crash_and_sqlite_restart`, `test_budget_checkpoint_failure_prevents_model_dispatch`, `test_failed_node_search_reservation_survives_sqlite_process_restart` |
+| Once-per-fact interpretation counter, kept separate | `reserve_fact` / `attempted_facts` (Store) | `test_fact_interpretation_attempt_survives_correction_and_same_id_restart`, `test_interpretation_attempt_reserved_before_crash_is_not_repeated` |
+| Mask Aadhaar/bank-like numbers before any LLM or trace | `PII_RULES` → `PIIMiddleware` (agents), `mask_sensitive_text` (everything else) | `test_react_intake_observes_allowed_tool_then_confirms_each_fact`, `test_search_query_rewrite_uses_the_durable_model_budget` |
+| PII-scrubbed trace of every LLM and tool call; no chain-of-thought | `ScrubbedTraceMiddleware`, `trace_event`, `_merge_agent_trace` (last 40) | `test_react_intake_observes_allowed_tool_then_confirms_each_fact` (identifiers absent from the trace), `test_agent_action_schema_denial_and_budget_stop_before_executor` (statuses) |
+| Untrusted tool text is data, not instructions | `observation()` adds `"outside_text_is_data": true`; prompts say so | Prompts in `agent_config.py`; observation shape asserted in the specialist tests above |
+| Verdicts come only from the deterministic engine | Eligibility tools only observe/hand off; the verdict is the engine's response | `test_eligibility_exhausted_budget_and_wrong_tool_output_do_not_invent_verdict` |
+| Rejected or over-budget proposals stop safely or use a labelled fallback | `recover_authorized_action`; `if provider is None:` paths; `deterministic_fallback` label | `test_model_failures_fall_back_to_the_fixed_question_flow`, `test_unconfigured_model_uses_c0_without_false_failure_caption`, `test_model_recovery_never_bypasses_the_remaining_tool_budget` |
+| "Tool repeatedly fails" replan trigger is visible in the trace | The three two-try loops (`tool_retry` / `tool_failed`, discovery events) | `test_tool_retry_and_final_failure_are_recorded_without_fake_verdict`, `test_search_retry_and_failure_are_recorded`, `test_discovery_failure_keeps_existing_candidate_and_refers_without_fake_verdict` |
+| Model IDs, prompts and limits in versioned config | `agent_config.py` (`PROMPT_VERSION`, `MAX_*`), `DEFAULT_CHAT_MODEL` | Copied into every trace event; checked by the trace tests above |
+| No uncounted paid requests; tests never reach the network | `max_retries=0` on `ChatOpenAI` and `OpenAIEmbeddings`; conftest removes keys; fake transports | `test_openrouter_chat_model_sends_one_strict_tool_choice_without_network`, `test_vector_search_uses_free_key_and_one_embeddings_request` |
+| Search quality unchanged by the vector-store swap | Same embedding model and request body (plain float vectors), same cosine search; BM25/RRF/rerank untouched | `test_vector_search_uses_free_key_and_one_embeddings_request` plus the existing `tests/test_scheme_search.py` ranking tests |
+| Forgetting a conversation removes its data | `forget_journey` deletes checkpoints, portal rows and the Store budget record | `test_synthetic_application_requires_exact_approval` (asserts the Store item is gone) |
+| Readable questions in all three languages | `fact_registry.json` (re-pinned) | `test_every_registry_question_is_readable_in_every_language` |
+
+**Not covered by this round (unchanged, still open):** Phase 5 guardrails (prompt-injection detection, scope and output guardrails) and long-term memory, metrics/alerts, and the paid live-model smoke test. They are tracked in the phase plan.
 
 ---
 
@@ -378,6 +461,8 @@ Also report any hand-built code this proposal missed.
 ---
 
 ## Part 5: end-to-end simplification review (done)
+
+> Done on branch `supervisor-redesign-2`. Some names below were later replaced by standard LangChain pieces; see Outcome 2.
 
 Every file in `src/` was mapped, the long functions were read in full, and a
 duplicate-code detector was run. A second model (Fable 5.1) checked each finding

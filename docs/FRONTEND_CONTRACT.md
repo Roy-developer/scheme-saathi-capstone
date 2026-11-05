@@ -196,8 +196,8 @@ scoped to the conversation, scheme, original payload and dependency versions;
 changed inputs/dependencies require a fresh unapproved draft. Submission retries
 return the existing receipt rather than submit again.
 
-Forget deletes the conversation's journey, revision approval pauses, durable
-`budget:<conversation_id>` stream, portal drafts and profile/document/rule
+Forget deletes the conversation's journey, revision approval pauses, its
+budget record (LangGraph `Store`, namespace `("budget",)`), portal drafts and profile/document/rule
 dependencies without deleting another conversation. Read-only draft/status
 requests do not recreate those dependency rows.
 

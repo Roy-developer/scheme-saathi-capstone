@@ -116,7 +116,7 @@ Streamlit screen                  src\ui\app.py  (api_client.py is the only HTTP
                           +-> optional typed-action loop (eligibility_agent.py; legacy path only)
                           +-> MCP rule-engine tool -> deterministic engine (typed fact store)
   portal approvals          src\portal\repository.py (separate SQLite database)
-  saved budget              src\workflow\conversation_budget.py (separate checkpoint stream)
+  saved budget              src\workflow\conversation_budget.py (LangGraph Store, namespace ("budget",))
   review latch              _check_registry_dependencies (journey.py) -> portal stale marks
 ```
 
@@ -134,8 +134,8 @@ paths use the same ones.
 | 3 | `src\workflow\discovery.py` | Hints, limits, de-duplication, status messages in three languages |
 | 4 | `src\workflow\question_picker.py` | Which missing fact helps most schemes (`pick_shared_fact`, `pick_shared_registered_fact`) |
 | 4b | `src\workflow\questions.py` | `registry_question_for`, `registered_question_details`, `parse_registered_answer` |
-| 5 | `src\workflow\agent_config.py`, `agent_runtime.py` | Limits and the typed-action loop (`run_react_loop`, line 309) |
-| 6 | `src\workflow\eligibility_agent.py` | The eligibility specialist (`run_eligibility_specialist`, line 56) |
+| 5 | `src\workflow\agent_config.py`, `agent_runtime.py`, `agent_middleware.py` | Limits, and `run_agent` (LangChain `create_agent` + Saathi's budget and trace middleware) |
+| 6 | `src\workflow\eligibility_agent.py` | The eligibility specialist (`run_eligibility_specialist`, line 58) |
 | 7 | `src\workflow\conversation_budget.py` | Saved reservations |
 | 8 | `src\workflow\journey.py` | Nodes, correction, serialisation, portal approval storage |
 | 9 | `src\mcp_servers\service_routing.py` | Which caller may use which tool |
@@ -234,7 +234,7 @@ that both need `exam_marks` (a person, percent) ask once. A scheme needing a
 income use different IDs and ask separately even if the English labels match
 (proved with the synthetic bundles in
 `test_data_only_multischeme_discovery_sharing_and_typed_correction_through_http`,
-`tests\test_fact_registry.py:1043`). Different compatibility means different
+`tests\test_fact_registry.py:1044`). Different compatibility means different
 ID; there is no fuzzy matching.
 
 ### 4B.4 Explicit legacy bridges
@@ -272,7 +272,7 @@ consumed, so one impossible birth date left the person with no question to
 answer. Now a failing check (a "complete validation") turns the reply into an
 `invalid` answer, which re-asks the same question with a localised hint and
 no saved change. It is retryable (`test_combined_date_answer_reasks_safely_and_invalid_correction_never_writes`,
-`tests\test_fact_registry.py:1475`).
+`tests\test_fact_registry.py:1476`).
 
 ### 4B.6 Pinning, and the review latch
 
@@ -332,7 +332,7 @@ searched. Now, in registry mode:
 - A candidate with no loaded package stays information only.
 
 `test_registry_and_legacy_intake_share_bounded_confirmed_fact_discovery`
-(`tests\test_fact_registry.py:1563`) checks this for the legacy, initial
+(`tests\test_fact_registry.py:1564`) checks this for the legacy, initial
 registry and newly discovered registry cases: supported hints only, no
 invented filters, an unrelated correction does not search again, a restart
 keeps the count, and search exhaustion is durable.
@@ -361,7 +361,7 @@ float), date, choice and text widgets, and an "I don't know" control. Strings
 and labels exist in English, Hindi and Marathi. Generic corrections show
 registry labels (from `fact_questions`). `api_client.py` is still the only
 caller; no raw server error is shown
-(`test_registry_question_metadata_flows_through_journey_http_api`, line 904).
+(`test_registry_question_metadata_flows_through_journey_http_api`, line 905).
 
 ### 4B.11 A synthetic mixed example
 
@@ -399,7 +399,7 @@ Two places turn passages into candidate IDs.
 
 1. **A plain search request** (`scheme_search_tool`, `journey.py`) retries
    once, groups passages by scheme ID in retrieval order, and caps the list at
-   20 (`merge_candidates`, discovery.py:135). Extra IDs are not dropped
+   20 (`merge_candidates`, discovery.py:138). Extra IDs are not dropped
    quietly: they go to `unprocessed_candidate_ids` with a `candidate_limit`
    notice.
 2. **Rediscovery inside an interview** (section 6) merges new IDs into the
@@ -420,8 +420,8 @@ Only three kinds of fact shape a search, and only in code you can read:
 - A known age appends "age N" when at least one of the above is present.
 
 A fact that is false or unknown adds nothing (`discovery_query`,
-discovery.py:117). The search gets only a query string, the **selected UI
-language** and a limit of 20 (`discovery_input`, discovery.py:104). The
+discovery.py:120). The search gets only a query string, the **selected UI
+language** and a limit of 20 (`discovery_input`, discovery.py:107). The
 profile has no state or gender, and retrieval has no age filter, so none is
 invented from widow status. The reference test checks that an empty profile
 gives an empty query.
@@ -432,7 +432,7 @@ Inside the interview step (`discover_candidates`, `journey.py`, called by both
 the legacy interview and `registered_intake_result`):
 
 1. Build a **signature** of the three inputs (`discovery_signature`,
-   discovery.py:126). It includes false/unknown states, so a correction *to*
+   discovery.py:129). It includes false/unknown states, so a correction *to*
    no or *to* unknown also changes it, but it carries no personal values
    beyond these hint facts and age.
 2. Search only if the signature differs from the saved one **and** the query
@@ -466,7 +466,7 @@ used to skip this step. Now the first look at that profile has no saved
 signature, so it searches once, and the regression test checks the exact
 query "widow pension age 40" and an information-only result with no verdict
 (`test_complete_confirmed_profile_still_discovers_when_description_adds_no_facts`,
-test_phase3_agents.py:235).
+test_phase3_agents.py:335).
 
 ## 7. De-duplicate, add, information only, limit
 
@@ -521,7 +521,7 @@ must confirm it before it is saved. Each fact gets **one** such model attempt
 for the whole conversation: it is recorded before the call and survives a
 restart (`test_interpretation_attempt_reserved_before_crash_is_not_repeated`,
 line 430). Replies are masked for identifiers before any model sees them
-(`mask_sensitive_text`, agent_runtime.py:480). The Phase 2 safeguards carry
+(`mask_sensitive_text`, agent_runtime.py:223). The Phase 2 safeguards carry
 over to registered facts unchanged: decimals stay exact (`Decimal`, never
 float), and replies are masked before being stored. Registered conversations
 make no model attempt at all.
@@ -533,7 +533,7 @@ make no model attempt at all.
 1. Record which rule version the draft depends on (`bind_rules`). A changed
    rule package **or registry dependency** makes drafts for that scheme stale.
 2. Skip the engine for schemes with no package (`information_only`).
-3. Call `run_eligibility_specialist` (eligibility_agent.py:56) with a wrapped
+3. Call `run_eligibility_specialist` (eligibility_agent.py:58) with a wrapped
    rule check that **retries the tool once** and records `tool_retry` /
    `tool_failed` history notes (`checked_verdict`, `journey.py`).
 
@@ -555,18 +555,26 @@ buttons:
 
 The observation holds the scheme ID, a result word, missing-fact names and
 deciding rule IDs. The test confirms no date of birth appears in it
-(test_phase3_agents.py:58). The loop is limited to three steps per run, and a
-wrong scheme ID, a wrong action name, extra fields such as a `verdict`, an
-early handoff, or a malformed tool result are all rejected **before** the rule
-tool runs (line 98). A model can never write or edit a result.
+(test_phase3_agents.py:60). The run is limited to three model calls
+(`max_steps=3`). A wrong scheme ID, a tool name the agent wasn't given, extra
+fields such as a `verdict`, an early handoff, or a malformed tool result never
+run the rule tool
+(`test_eligibility_denied_or_malformed_choices_never_call_rule_tool`, line 100).
+An unknown tool or bad arguments are answered with an error and the model may
+try again within its three calls; a refused task check ends the run. A model
+can never write or edit a result. The full guard list is in
+[HOOKS_WALKTHROUGH.md](HOOKS_WALKTHROUGH.md).
 
 Two honest limits:
 
-- If the loop does not finish (denied action, budget exhausted, model error),
-  the specialist returns *no* result and the journey records `tool_error` for
-  that candidate. It does **not** quietly rerun the plain rule check, even
-  though the status label says `deterministic_fallback`. No verdict is
-  invented.
+- If the model **could not be asked** (conversation budget used up, or the
+  model request failed), the specialist runs the plain rule check once without
+  the model (`recover_authorized_action`, counted against the tool budget) and
+  reports `deterministic_fallback`. The verdict still comes only from the rule
+  engine.
+- If the model **was asked but didn't finish** (it used its three calls, or a
+  task check refused its choice), the specialist returns *no* result and the
+  journey records `tool_error` for that candidate. No verdict is invented.
 - With **no** model configured (including in tests), the specialist skips the
   loop and calls the same rule check directly, labelled `deterministic`.
   This is the default path.
@@ -654,45 +662,47 @@ Two kinds of limits exist (agent_config.py:7–17):
 | Tokens (estimated input plus reserved output) | 12 000; at most 512 output tokens per call |
 | Steps per model run | 3 |
 
-`ConversationBudget` (conversation_budget.py:17) keeps counters in its own
-saved stream next to the interview's checkpoint, so it cannot disturb a paused
-question. `_serialize_journey` loads it at the start of every request. Before
+`ConversationBudget` (conversation_budget.py:24) keeps counters in the
+LangGraph `Store` (namespace `("budget",)`, key = conversation ID), separate
+from the interview's checkpoint, so it cannot disturb a paused question. In
+production the store is an `AsyncSqliteStore` in the same SQLite file. `_serialize_journey` loads it at the start of every request. Before
 a search, a model call, or a fact-interpretation attempt, the new counter value
-is **saved first** (`reserve_counters`, conversation_budget.py:75). If saving
+is **saved first** (`reserve_counters`, conversation_budget.py:77). If saving
 fails, the external call is not made
-(`test_budget_checkpoint_failure_prevents_model_dispatch`, line 578).
+(`test_budget_checkpoint_failure_prevents_model_dispatch`, line 683).
 Afterwards `durable_counters` takes the larger of the graph value and the
-saved value (line 60), so:
+saved value (`durable_counters`, conversation_budget.py:62), so:
 
 - a search that crashed after dispatch still counts
   (`test_failed_node_search_reservation_survives_sqlite_process_restart`,
-  line 340; it reopens a SQLite file, so it is a restart simulation, not a
+  line 440; it reopens a SQLite file, so it is a restart simulation, not a
   real process kill);
 - a model call reserved before a crash is not refunded
   (`test_model_call_reservation_survives_node_crash_and_sqlite_restart`,
-  line 535);
+  line 636);
 - the same conversation ID cannot buy a fresh allowance by restarting or
   correcting (`run_journey` and `correct_journey_answer` both copy these
   counters forward).
 
 The reserved output is conservative: a call is charged 512 output tokens up
 front and adjusted afterwards. With a real model, the shared allowance covers
-planning, interpretation and every candidate's check loop, so a long list of
-candidates can run out of budget; the remaining candidates then end as
-`tool_error` rather than guessed results. This conclusion is derived from the
+planning, interpretation and every candidate's check run, so a long list of
+candidates can run out of model allowance. The remaining candidates are then
+checked by the rule engine without the model, as long as the tool budget (24)
+lasts; after that they end as `tool_error` rather than guessed results. This conclusion is derived from the
 constants above and the loop code, not from a dedicated test.
 
 ## 13. The screen: stale drafts and honest coverage
 
-The UI never runs the graph. `save_journey` (ui\app.py:661) copies the API
+The UI never runs the graph. `save_journey` (ui\app.py:664) copies the API
 reply into session state. If the dependency version changed, or a
 `correction_invalidated` notice arrived, it **clears the cached drafts** so
-the next load asks the portal again (ui\app.py:669–674). A stale draft shows a
-translated warning and no approve or submit buttons (ui\app.py:1382). The notice
-renderer (`render_discovery_notices`, ui\app.py:850) shows each notice code,
+the next load asks the portal again (ui\app.py:672–677). A stale draft shows a
+translated warning and no approve or submit buttons (ui\app.py:1406). The notice
+renderer (`render_discovery_notices`, ui\app.py:853) shows each notice code,
 the added IDs from events, and the unprocessed IDs. Text comes from
 `discovery_message` in English, Hindi and Marathi. The budget expander
-(`render_agent_observability`, ui\app.py:737) shows counters against the
+(`render_agent_observability`, ui\app.py:740) shows counters against the
 limits, never prompts.
 
 `test_single_scheme_correction_reloads_stale_draft_and_removes_submit_controls`
@@ -708,22 +718,22 @@ review.
   short translated notice, not a stack trace. API routes answer 502 "A journey
   tool is unavailable" for tool errors, 409 when a conversation is not
   waiting or has no confirmed answers, and 422 for invalid corrections
-  (`journey_correction`, src\api\app.py:674; tool errors go through `_tool_failure`).
+  (`journey_correction`, src\api\app.py:682; tool errors go through `_tool_failure`).
 - **Draft actions:** before approving or submitting, the API compares the
   draft's saved profile and rule version with the current ones and answers
   409 ("Your answers changed...", "Scheme rules changed...")
-  (`update_application_approval`, app.py:957).
+  (`update_application_approval`, src\api\app.py:965).
   The portal then checks the exact revision and fingerprint, then approval,
   then submits.
 - **Receipts:** submitting an approved, current draft stores one receipt ID;
   submitting the same draft again returns the **same** receipt (portal tests:
   `test_approval_revocation_and_fresh_exact_approval_survive_sqlite_restart`,
-  test_phase3_agents.py:460). A submitted draft is history, not stale: later corrections do not
+  test_phase3_agents.py:561). A submitted draft is history, not stale: later corrections do not
   remove its receipt (`test_monotonic_...` above). Meanwhile, the older
   approved-but-unsubmitted draft cannot be revived, and a fresh draft needs a
   fresh approval of its new fingerprint.
 - **Forget:** deleting a conversation removes its graph checkpoints and portal
-  data, as before. See the open doubt on the budget stream in section 17.
+  data, as before, and its budget record in the LangGraph `Store`.
 
 ---
 
@@ -734,21 +744,21 @@ offline with fake models, fake search, and the local engine.
 
 | Test (line) | Establishes |
 |---|---|
-| `test_eligibility_specialist_chooses_handoff_from_observation` (58) | A model chose by observation; the engine's result returned; observation hides birth date |
-| `test_eligibility_denied_or_malformed_choices_never_call_rule_tool` (98) | Six bad decisions never reach the rule tool |
-| `test_eligibility_exhausted_budget_and_wrong_tool_output_do_not_invent_verdict` (117) | No verdict on budget stop or wrong-shaped tool output |
-| `test_eligibility_observation_selects_clarification_or_safe_referral` (142) | Missing facts lead to clarification; tool failure leads to referral without a verdict |
-| `test_discovery_uses_supported_inputs_...` (174) | Query/language/limit only; no invented state or gender |
-| `test_confirmed_correction_discovers_...` (196) | Dedupe, addition, information only, no search on unrelated change |
-| `test_complete_confirmed_profile_still_discovers_when_description_adds_no_facts` (235) | A fully confirmed profile sent with a description that adds no facts still searches once ("widow pension age 40"), adds an information-only candidate, and gives it no verdict |
-| `test_discovery_limits_are_explicit_...` (255) | Four searches, 20 candidates, overflow shown |
-| `test_discovery_failure_keeps_existing_candidate_...` (283) | Failed search does not erase a verdict |
-| `test_rediscovery_overflow_remains_explicit_...` (305) | Overflow persists across corrections |
-| `test_failed_node_search_reservation_survives_...` (340) | Search count survives crashes |
-| `test_new_discovery_fact_from_description_is_not_searched_until_confirmed` (378) | Proposal is not a confirmed fact |
-| `test_interpretation_attempt_reserved_before_crash_is_not_repeated` (430) | One interpretation attempt per fact |
-| `test_approval_revocation_and_fresh_exact_approval_survive_sqlite_restart` (460) | Approval revoked; fresh exact approval; same receipt twice |
-| `test_model_call_reservation_survives_...` (535), `test_budget_checkpoint_failure_prevents_model_dispatch` (578) | Model reservations and the "save first" rule |
+| `test_eligibility_specialist_chooses_handoff_from_observation` (60) | A model chose by observation; the engine's result returned; observation hides birth date |
+| `test_eligibility_denied_or_malformed_choices_never_call_rule_tool` (100) | Six bad decisions never reach the rule tool |
+| `test_eligibility_exhausted_budget_and_wrong_tool_output_do_not_invent_verdict` (122) | No verdict on budget stop or wrong-shaped tool output |
+| `test_eligibility_observation_selects_clarification_or_safe_referral` (242) | Missing facts lead to clarification; tool failure leads to referral without a verdict |
+| `test_discovery_uses_supported_inputs_...` (274) | Query/language/limit only; no invented state or gender |
+| `test_confirmed_correction_discovers_...` (296) | Dedupe, addition, information only, no search on unrelated change |
+| `test_complete_confirmed_profile_still_discovers_when_description_adds_no_facts` (335) | A fully confirmed profile sent with a description that adds no facts still searches once ("widow pension age 40"), adds an information-only candidate, and gives it no verdict |
+| `test_discovery_limits_are_explicit_...` (355) | Four searches, 20 candidates, overflow shown |
+| `test_discovery_failure_keeps_existing_candidate_...` (383) | Failed search does not erase a verdict |
+| `test_rediscovery_overflow_remains_explicit_...` (405) | Overflow persists across corrections |
+| `test_failed_node_search_reservation_survives_...` (440) | Search count survives crashes |
+| `test_new_discovery_fact_from_description_is_not_searched_until_confirmed` (478) | Proposal is not a confirmed fact |
+| `test_interpretation_attempt_reserved_before_crash_is_not_repeated` (531) | One interpretation attempt per fact |
+| `test_approval_revocation_and_fresh_exact_approval_survive_sqlite_restart` (561) | Approval revoked; fresh exact approval; same receipt twice |
+| `test_model_call_reservation_survives_...` (636), `test_budget_checkpoint_failure_prevents_model_dispatch` (683) | Model reservations and the "save first" rule |
 
 Other files cover the portal transitions (`tests\test_application_tools.py`,
 lines 940, 989, 1037, 1079), the correction API
@@ -765,14 +775,14 @@ rerun them; the table lists the ones that matter for Phase 3.
 | `test_novel_pending_bundle_cannot_masquerade_as_legacy_compatibility` (571) | Only the exact pinned pilots can use the legacy label |
 | `test_explicit_development_loader_accepts_pending_synthetic_bundle` (592) | Synthetic bundle loads only on explicit request |
 | `test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure` (738) | Typed questions, resume, and a spy model not shown an answer |
-| `test_unknown_registry_fact_is_not_reasked_and_saved_definitions_fail_closed` (839) | Unknown stays declined; changed definition cannot reinterpret saved facts |
-| `test_registry_question_metadata_flows_through_journey_http_api` (904) | API sends widget metadata; validation errors; refresh |
-| `test_data_only_multischeme_discovery_sharing_and_typed_correction_through_http` (1043) | Injected search, shared question once, separate scope/period IDs, typed correction (not real retrieval) |
-| `test_dependency_changes_require_review_without_erasing_answers_or_restoring_a_to_b_to_a` (1168) | Content/review change latches; answers kept; A to B to A stays refused |
-| `test_typed_corrections_and_changed_definitions_revoke_real_pilot_approval_after_restart` (1268) | Real offline portal and reopened SQLite: approval revoked even when still eligible |
-| `test_development_bundle_with_legacy_bridge_still_asks_and_corrects_novel_fact` (1421) | Review bug 1 closed |
-| `test_combined_date_answer_reasks_safely_and_invalid_correction_never_writes` (1475) | Review bug 2 closed; invalid correction leaves facts, dependency and budget unchanged |
-| `test_registry_and_legacy_intake_share_bounded_confirmed_fact_discovery` (1563) | Review bug 3 closed; shared bounded discovery |
+| `test_unknown_registry_fact_is_not_reasked_and_saved_definitions_fail_closed` (840) | Unknown stays declined; changed definition cannot reinterpret saved facts |
+| `test_registry_question_metadata_flows_through_journey_http_api` (905) | API sends widget metadata; validation errors; refresh |
+| `test_data_only_multischeme_discovery_sharing_and_typed_correction_through_http` (1044) | Injected search, shared question once, separate scope/period IDs, typed correction (not real retrieval) |
+| `test_dependency_changes_require_review_without_erasing_answers_or_restoring_a_to_b_to_a` (1169) | Content/review change latches; answers kept; A to B to A stays refused |
+| `test_typed_corrections_and_changed_definitions_revoke_real_pilot_approval_after_restart` (1269) | Real offline portal and reopened SQLite: approval revoked even when still eligible |
+| `test_development_bundle_with_legacy_bridge_still_asks_and_corrects_novel_fact` (1422) | Review bug 1 closed |
+| `test_combined_date_answer_reasks_safely_and_invalid_correction_never_writes` (1476) | Review bug 2 closed; invalid correction leaves facts, dependency and budget unchanged |
+| `test_registry_and_legacy_intake_share_bounded_confirmed_fact_discovery` (1564) | Review bug 3 closed; shared bounded discovery |
 
 Phase 1–2 parser, choice, decimal and provider tests in the same file (lines
 236–737) cover the typed foundation this guide relies on.
@@ -829,11 +839,12 @@ databases only; never point a test at `data\runtime`.
 
 ## 17. Remaining factual doubts
 
-1. The status text `deterministic_fallback` is misleading: after a failed or
-   denied model loop there is no fallback rule check (section 9).
-2. Deleting a conversation (`forget_journey`, src\api\app.py:1037) deletes the
-   conversation thread, but I did not find code deleting the separate
-   `budget:<id>` stream. Not tested here.
+1. The status text `deterministic_fallback` covers two cases: the rule check
+   ran without the model, or (after an unfinished model run) nothing ran
+   (section 9). The trace tells them apart; the label does not.
+2. Deleting a conversation (`forget_journey`, src\api\app.py:1045) deletes the
+   conversation thread **and** the budget record in the Store
+   (`test_api_applications.py` checks the Store item is gone).
 3. Multi-candidate budget exhaustion with a real model is derived from
    constants (section 12), not exercised by a test.
 4. The registry-revision counts (37 / 130 / 401, 740 warnings) come from the
