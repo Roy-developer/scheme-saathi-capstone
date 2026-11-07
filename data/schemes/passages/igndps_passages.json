@@ -1,0 +1,275 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "IGNDPS-IN-BENEFICIARY-01",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "Any disabled person whose age is more than 18 years, and with disability 80% or more belonging to the poverty line can apply for this scheme.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Details"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-BENEFIT-01",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "A pension of Rs.300/- per month is provided to Divyangjan between 18-79 years.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Benefits, age 18-79"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-BENEFIT-02",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "A pension of Rs.500/- per month will be provided to Divyangjan aged 80 years and above.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Benefits, age 80 and above"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-ELIGIBILITY-01",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The age of the applicant should be 18 years and above.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Eligibility, point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-ELIGIBILITY-02",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should be a resident of India.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Eligibility, point 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-ELIGIBILITY-03",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should be a physically or mentally disabled person.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Eligibility, point 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-ELIGIBILITY-04",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant’s disability should be more than 80%.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Eligibility, point 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-ELIGIBILITY-05",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Dwarfs are also eligible for this scheme.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Eligibility, point 5"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-ELIGIBILITY-06",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should belong to the Below Poverty Line.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Eligibility, point 6"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-APPLICATION-01",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "One can download UMANG App or visit website https://web.umang.gov.in/web_new/home",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-APPLICATION-02",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The citizen can login using mobile number and OTP.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-APPLICATION-03",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Once logged In, citizen can search for NSAP.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-APPLICATION-04",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Click on “Apply Online”",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-APPLICATION-05",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Fill the basic details, choose the mode of payment of pension, upload photo and click on “Submit”.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 5"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-DOCUMENTS-01",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "BPL Card\nAadhaar card\nAge Proof - For age, the birth certificate or school certificate may be relied on. In their absence ration card and EPIC may be considered. If there is no valid document, any Medical Officer of any government hospital may be authorized to issue the age certificate.\nDisability certificate:- Disability certificate (80% and More) issued from Chief Medical Officer, Community Health Centre or Primary Health Centre will be accepted.\nPassport Size Photographs.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

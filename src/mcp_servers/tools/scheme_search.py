@@ -19,8 +19,8 @@ from src.api.scheme_search import (
 def register_tools(mcp: MCPServer) -> None:
     """Add BM25 retrieval for RAG context to the shared MCP server."""
 
-    passage_file = PROJECT_ROOT / "data" / "schemes" / "passages.json"
-    passages = load_passages(passage_file)
+    passage_dir = PROJECT_ROOT / "data" / "schemes" / "passages"
+    passages = load_passages(passage_dir)
     rerank_mode = os.getenv("SCHEME_SAATHI_RERANKER", "").casefold()
     retriever = HybridSchemeRetriever(
         passages,

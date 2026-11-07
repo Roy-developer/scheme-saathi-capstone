@@ -22,7 +22,6 @@ DEFAULT_WORKBOOK = (
     / "schemes"
     / "scheme_passages_review_v0.4_human_attested.xlsx"
 )
-DEFAULT_OUTPUT = PROJECT_ROOT / "data" / "schemes" / "passages.json"
 
 SOURCE_COLUMNS = {
     "source id",
@@ -278,7 +277,7 @@ def export_workbook(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workbook", type=Path, default=DEFAULT_WORKBOOK)
-    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--corpus-version", required=True)
     args = parser.parse_args()
 

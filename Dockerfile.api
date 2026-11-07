@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY pyproject.toml README.md ./
 COPY src ./src
-COPY data/schemes/passages.json ./data/schemes/passages.json
+COPY data/schemes/passages ./data/schemes/passages
 
 RUN pip install --no-cache-dir .
 

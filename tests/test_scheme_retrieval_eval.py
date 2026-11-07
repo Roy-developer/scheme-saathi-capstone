@@ -14,7 +14,7 @@ from src.api.scheme_search import load_passages
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 EVAL_SET_PATH = PROJECT_ROOT / "data" / "schemes" / "retrieval_eval_dev.json"
-CORPUS_PATH = PROJECT_ROOT / "data" / "schemes" / "passages.json"
+CORPUS_PATH = PROJECT_ROOT / "data" / "schemes" / "passages"
 
 
 class FakeRetriever:

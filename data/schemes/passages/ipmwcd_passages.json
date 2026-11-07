@@ -1,0 +1,257 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "IPMWCD-IN-BENEFICIARY-01",
+      "scheme_id": "IPMWCD-IN",
+      "scheme_name": "Internship Programme for Women Students / Scholars / Social Activists / Teachers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "Ministry of Woman and Child Development (MWCD) is inviting applications from women students/ scholars/ social activists/ teachers enrolled in/ associated with any university/ academic/ non-academic institution under ‘Internship Programmes of the Ministry.",
+      "source": {
+        "source_id": "SRC-IPMWCD-IN-001",
+        "publisher": "Ministry of Women and Child Development",
+        "url": "https://wcd.intern.nic.in/aboutproject",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "department.txt; II. Internship Programme"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IPMWCD-IN-APPLICATION-01",
+      "scheme_id": "IPMWCD-IN",
+      "scheme_name": "Internship Programme for Women Students / Scholars / Social Activists / Teachers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The internship programme will be offered in four distinct terms throughout the financial year: May-June, August-September, November-December, and February- March, each with a duration of two months.",
+      "source": {
+        "source_id": "SRC-IPMWCD-IN-001",
+        "publisher": "Ministry of Women and Child Development",
+        "url": "https://wcd.intern.nic.in/aboutproject",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "department.txt; III. Schedule/Duration of the Internship"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IPMWCD-IN-APPLICATION-02",
+      "scheme_id": "IPMWCD-IN",
+      "scheme_name": "Internship Programme for Women Students / Scholars / Social Activists / Teachers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Prospective interns are required to submit their applications online on the Internship Programme portal http://wcd.intern.nic.in/ The applications can be submitted two months prior to the start of the internship, between 1st and 10th of the month (e.g. 1st -10th March for May-June, 1st -10th June for August-September etc.). Any candidate once selected for the internship shall not be eligible to apply for any subsequent term.",
+      "source": {
+        "source_id": "SRC-IPMWCD-IN-001",
+        "publisher": "Ministry of Women and Child Development",
+        "url": "https://wcd.intern.nic.in/aboutproject",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "department.txt; V. How to Apply"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IPMWCD-IN-BENEFIT-01",
+      "scheme_id": "IPMWCD-IN",
+      "scheme_name": "Internship Programme for Women Students / Scholars / Social Activists / Teachers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Each intern would be provided a lump sum stipend of ₹20,000/- per month and reimbursement of travel cost (by Deluxe/AC Bus/3 Tier AC Train) for joining of the programme in the Ministry and return back home at the end of the programme.",
+      "source": {
+        "source_id": "SRC-IPMWCD-IN-002",
+        "publisher": "Ministry of Women and Child Development",
+        "url": "https://www.myscheme.gov.in/schemes/ipmwcd",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, stipend"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IPMWCD-IN-BENEFIT-02",
+      "scheme_id": "IPMWCD-IN",
+      "scheme_name": "Internship Programme for Women Students / Scholars / Social Activists / Teachers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Interns proceeding on tour as part of the programme would be reimbursed travel cost (by Deluxe/AC Bus/3 Tier AC Train) and DA as per extant Government of India rates.",
+      "source": {
+        "source_id": "SRC-IPMWCD-IN-002",
+        "publisher": "Ministry of Women and Child Development",
+        "url": "https://www.myscheme.gov.in/schemes/ipmwcd",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, tour"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IPMWCD-IN-BENEFIT-03",
+      "scheme_id": "IPMWCD-IN",
+      "scheme_name": "Internship Programme for Women Students / Scholars / Social Activists / Teachers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The interns would also be awarded a certificate on successful completion of the programme on terms such as submission/presentation of papers/reports of the work done.",
+      "source": {
+        "source_id": "SRC-IPMWCD-IN-002",
+        "publisher": "Ministry of Women and Child Development",
+        "url": "https://www.myscheme.gov.in/schemes/ipmwcd",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, certificate"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IPMWCD-IN-BENEFIT-04",
+      "scheme_id": "IPMWCD-IN",
+      "scheme_name": "Internship Programme for Women Students / Scholars / Social Activists / Teachers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Interns would be provided a hostel facility on a sharing basis for the duration of their programme in Delhi. The hostel facility will only include basic amenities like triple sharing accommodation in each room with an attached bathroom, bed (mattress is not included), table, chair and cupboard.",
+      "source": {
+        "source_id": "SRC-IPMWCD-IN-002",
+        "publisher": "Ministry of Women and Child Development",
+        "url": "https://www.myscheme.gov.in/schemes/ipmwcd",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, hostel"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IPMWCD-IN-BENEFIT-05",
+      "scheme_id": "IPMWCD-IN",
+      "scheme_name": "Internship Programme for Women Students / Scholars / Social Activists / Teachers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Note: Mess charges are not included as part of the accommodation and are to be borne by the intern availing the hostel facility",
+      "source": {
+        "source_id": "SRC-IPMWCD-IN-002",
+        "publisher": "Ministry of Women and Child Development",
+        "url": "https://www.myscheme.gov.in/schemes/ipmwcd",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, mess charges note"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IPMWCD-IN-ELIGIBILITY-01",
+      "scheme_id": "IPMWCD-IN",
+      "scheme_name": "Internship Programme for Women Students / Scholars / Social Activists / Teachers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The women students, scholars, social activists and teachers from non-tier-I cities and rural parts of India will be eligible for the programme.",
+      "source": {
+        "source_id": "SRC-IPMWCD-IN-002",
+        "publisher": "Ministry of Women and Child Development",
+        "url": "https://www.myscheme.gov.in/schemes/ipmwcd",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IPMWCD-IN-ELIGIBILITY-02",
+      "scheme_id": "IPMWCD-IN",
+      "scheme_name": "Internship Programme for Women Students / Scholars / Social Activists / Teachers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The age of the applicant should be between 21 to 40 years.",
+      "source": {
+        "source_id": "SRC-IPMWCD-IN-002",
+        "publisher": "Ministry of Women and Child Development",
+        "url": "https://www.myscheme.gov.in/schemes/ipmwcd",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IPMWCD-IN-APPLICATION-03",
+      "scheme_id": "IPMWCD-IN",
+      "scheme_name": "Internship Programme for Women Students / Scholars / Social Activists / Teachers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Interns can select any of the 2-month batches while submitting their applications",
+      "source": {
+        "source_id": "SRC-IPMWCD-IN-002",
+        "publisher": "Ministry of Women and Child Development",
+        "url": "https://www.myscheme.gov.in/schemes/ipmwcd",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Duration, batch selection"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IPMWCD-IN-APPLICATION-04",
+      "scheme_id": "IPMWCD-IN",
+      "scheme_name": "Internship Programme for Women Students / Scholars / Social Activists / Teachers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Applicant have to visit the official portal.\nClick on the Register button, from the top menu.\nProvide the below required details.\nName\nDate of Birth\nGender\nState\nDistrict\nCity\nE-Mail\nMobile No\nPassword and Confirm Password with Captcha Code.\nClick on Register.",
+      "source": {
+        "source_id": "SRC-IPMWCD-IN-002",
+        "publisher": "Ministry of Women and Child Development",
+        "url": "https://www.myscheme.gov.in/schemes/ipmwcd",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, registration"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IPMWCD-IN-APPLICATION-05",
+      "scheme_id": "IPMWCD-IN",
+      "scheme_name": "Internship Programme for Women Students / Scholars / Social Activists / Teachers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Applicant have to visit the official portal.\nClick on the Login button, from the top menu.\nUse the email address and password used at the time of registration for logging in.\nApplicants are required to upload latest password size photograph by updating profile.\nFill the application form and submit.",
+      "source": {
+        "source_id": "SRC-IPMWCD-IN-002",
+        "publisher": "Ministry of Women and Child Development",
+        "url": "https://www.myscheme.gov.in/schemes/ipmwcd",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, fill application form"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IPMWCD-IN-DOCUMENTS-01",
+      "scheme_id": "IPMWCD-IN",
+      "scheme_name": "Internship Programme for Women Students / Scholars / Social Activists / Teachers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Candidate's Photograph.\nID Proof.\nAddress Proof.\nSignature.\nHighest Education Certificate/Degree.\nJoining Letter of the Organization(For Teachers/Social Activist).\nAdmission Certificate/Joining Letter of the Institution in which Currently Enrolled/Working.",
+      "source": {
+        "source_id": "SRC-IPMWCD-IN-002",
+        "publisher": "Ministry of Women and Child Development",
+        "url": "https://www.myscheme.gov.in/schemes/ipmwcd",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

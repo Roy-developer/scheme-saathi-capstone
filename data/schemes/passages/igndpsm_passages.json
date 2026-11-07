@@ -1,0 +1,293 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "IGNDPSM-MH-ELIGIBILITY-01",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "A Disable person in the age group of 18 to 79 years is eligible under this Scheme.",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-disability-pension-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Criteria, age"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-BENEFIT-01",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "He / She is entitled to receive Rs. 300/- per month from Central Government under this Scheme.",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-disability-pension-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Criteria, central pension"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-BENEFIT-02",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "He / She also receives Rs 1200/- per month under State sponsored Sanjay Gandhi Niradhar Anudan Yojana, so total financial assistance of Rs. 1500/- per month is provided.",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-disability-pension-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Criteria, state top-up"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-BENEFICIARY-01",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "All Category Disable Persons",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-disability-pension-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Beneficiary"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-BENEFIT-03",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Under this scheme, Rs. 1500 per month is given to each beneficiary.",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-disability-pension-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-APPLICATION-01",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "The applicant can apply at the Collector’s Office / Tehsildar’s Office, Sanjay Gandhi Niradhar Anudan Yojana Branch / Talathi Office.",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-disability-pension-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; How To Apply"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-ELIGIBILITY-02",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should be a resident of Maharashtra.",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igndpsm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-ELIGIBILITY-03",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should be a person with a disability.",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igndpsm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-ELIGIBILITY-04",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The percentage of the disability should be 80% or more.",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igndpsm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-ELIGIBILITY-05",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should not be receiving pension benefits under any other social security scheme.",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igndpsm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 5"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-APPLICATION-02",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1: The interested applicant should visit (during office hours) the Collector Office/Tahsildar/Talathi of your district, and request the hard copy of the prescribed format of the application form from the concerned authority.",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igndpsm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-APPLICATION-03",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 2: In the application form, fill in all the mandatory fields, paste the passport-sized photograph (signed across, if required), and attach copies of all the mandatory documents (self-attest, if required).",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igndpsm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-APPLICATION-04",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 3: Submit the duly filled and signed application form along with the documents, within the prescribed period (if any), to the concerned authority.",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igndpsm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-APPLICATION-05",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 4: Request a receipt or acknowledgement from the concerned authority to whom the application has been submitted. Ensure that the receipt contains essential details such as the date and time of submission, and a unique identification number (if applicable).",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igndpsm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-APPLICATION-06",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "NOTE: Ensure that the application is submitted within the prescribed period, if any.",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igndpsm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, note"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPSM-MH-DOCUMENTS-01",
+      "scheme_id": "IGNDPSM-MH",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "documents",
+      "text": "Aadhaar Card\nPassport-size Photograph\nIdentity Proof i.e. Voter ID Card, Driving License\nDisability Certificate\nProof of Age\nCaste Certificate, if Applicable\nAddress Proof\nBank Passbook/Bank Account Details\nAny Other Documents as Required",
+      "source": {
+        "source_id": "SRC-IGNDPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igndpsm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

@@ -232,11 +232,22 @@ class OpenRouterEmbeddings:
 
 
 def load_passages(path: Path) -> tuple[SchemePassage, ...]:
-    """Load a versioned passage corpus and reject duplicate passage IDs."""
+    """Load passages from one corpus file or every ``*.json`` in a folder.
 
-    data = json.loads(path.read_text(encoding="utf-8"))
-    corpus = PassageCorpus.model_validate(data)
-    passages = corpus.passages
+    Duplicate passage IDs are rejected across all loaded files.
+    """
+
+    if path.is_dir():
+        files = sorted(path.glob("*.json"))
+        if not files:
+            raise ValueError(f"No passage files found in {path}.")
+    else:
+        files = [path]
+
+    passages: tuple[SchemePassage, ...] = ()
+    for file in files:
+        data = json.loads(file.read_text(encoding="utf-8"))
+        passages += PassageCorpus.model_validate(data).passages
     passage_ids = [passage.passage_id for passage in passages]
     if len(passage_ids) != len(set(passage_ids)):
         raise ValueError("Passage IDs must be unique.")

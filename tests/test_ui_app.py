@@ -46,7 +46,8 @@ def test_evaluating_result_without_prepared_draft_does_not_raise() -> None:
         Path(__file__).resolve().parents[1]
         / "data"
         / "schemes"
-        / "passages.json"
+        / "passages"
+        / "ignwps_mh_passages.json"
     )[0]
 
     def fake_journey(request):
@@ -125,7 +126,7 @@ def _pmkisan_passage():
             Path(__file__).resolve().parents[1]
             / "data"
             / "schemes"
-            / "passages.json"
+            / "passages"
         )
         if passage.scheme_id == "PM-KISAN-IN"
     )
@@ -140,10 +141,67 @@ def _widow_passage():
             Path(__file__).resolve().parents[1]
             / "data"
             / "schemes"
-            / "passages.json"
+            / "passages"
         )
         if passage.scheme_id == "IGNWPS-MH"
     )
+
+
+def _scheme_passage(scheme_id: str):
+    """Return one passage of any scheme from the per-scheme passage files."""
+
+    return next(
+        passage
+        for passage in load_passages(
+            Path(__file__).resolve().parents[1]
+            / "data"
+            / "schemes"
+            / "passages"
+        )
+        if passage.scheme_id == scheme_id
+    )
+
+
+def test_search_for_scheme_without_rules_shows_information_only() -> None:
+    """APY has cited passages but no rule package: no eligibility demo."""
+
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    passage = _scheme_passage("APY-IN")
+
+    def fake_journey(request):
+        assert request.action == "search"
+        return JourneyResponse(
+            conversation_id=uuid4(),
+            plan="Search for a source-cited scheme.",
+            status="search_results",
+            message=(
+                "Found one relevant cited passage across 1 scheme. "
+                "Showing up to 20 passages; search may not find every "
+                "relevant scheme."
+            ),
+            passages=[passage],
+            candidate_scheme_ids=["APY-IN"],
+        )
+
+    with patch("src.ui.api_client.run_journey", side_effect=fake_journey):
+        app = AppTest.from_file(app_path).run()
+        app.text_input[0].set_value("atal pension")
+        next(
+            button for button in app.button if button.label == "Search schemes"
+        ).click().run()
+
+        assert not app.exception
+        assert any(
+            "information only" in element.value for element in app.info
+        )
+        assert not any(
+            button.label == "Continue to the synthetic eligibility demo"
+            for button in app.button
+        )
+        assert any(
+            passage.passage_id in expander.label
+            for expander in app.expander
+        )
 
 
 def _plan(intake_status: str, eligibility_status: str) -> Plan:
