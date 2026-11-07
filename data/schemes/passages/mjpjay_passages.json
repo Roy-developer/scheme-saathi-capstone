@@ -1,0 +1,419 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "MJPJAY-MH-ELIGIBILITY-01",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "From 1st July 2024, it ensures comprehensive, cashless healthcare for the entire population of Maharashtra.",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Details, coverage of all families"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-BENEFIT-01",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Health Coverage for Categories A to E (Excluding D): ₹5 lakhs per family per year on a floater basis under both schemes.",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, categories A to E"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-BENEFIT-02",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Health Coverage for Category D: ₹1 lakh per person per year.",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, category D"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-BENEFIT-03",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "• For categories A to E (Excluding D) - 1356 Health Benefits Packages under 34 specialities.\n• For category D – 184 Health Benefits Packages for Road accident patients.",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Medical Benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-BENEFIT-04",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Follow-up treatment\n262 Health Benefits Packages for both schemes (for categories A to E)",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Follow-up treatment"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-BENEFIT-05",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Treatment Reserved for Govt. Hospitals\n119 Health Benefits Packages for both the schemes (for categories A to E)",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Treatment Reserved for Govt. Hospitals"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-BENEFIT-06",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Hospitalization Costs\nBed charges in general wards.\nNursing and boarding charges.\nSurgeons, anaesthetists, medical practitioners, and consultants' fees.",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits under Health Packages, hospitalization costs"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-BENEFIT-07",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Medical Expenses\nCharges for oxygen, O.T., and ICU facilities.\nCost of surgical appliances, drugs, disposables, consumables, implants, and prosthetic devices.\nExpenses for blood transfusion (as per State Government policy).",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits under Health Packages, medical expenses"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-BENEFIT-08",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Diagnostics and Support Services\nX-rays and diagnostic tests.\nFood for inpatients during hospitalization.",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits under Health Packages, diagnostics and support services"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-BENEFIT-09",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Transportation Costs\nOne-time transport cost by State Transport or second-class rail fare from the hospital to the patient’s residence.\nIn the unfortunate event of a patient's death, the cost of transporting the deceased's body from the network hospital to their village or township.",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits under Health Packages, transportation costs"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-BENEFIT-10",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "The package covers all costs from the date of reporting to discharge, including treatment complications, ensuring a truly cashless experience for patients.",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits under Health Packages, cashless coverage"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-BENEFIT-11",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "The Integrated Scheme is being implemented on an Assurance Basis. This means that the claims of the network hospitals for the expenses of the patients undergoing treatment under the scheme are being paid directly by the State Health Assurance Societies to the respective network hospitals. Accordingly, the State Health Assurance Society is paying claims up to ₹5 lakh per family per year of groups A, B, C and E and ₹1 lakh per person per year for road accident victims of group D.",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Scheme on Assurance Mode"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-ELIGIBILITY-02",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Category A: Families holding Yellow, Antyodaya Anna Yojana (AAY), Annapurna Yojna and Orange Ration Card.",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, Category A"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-ELIGIBILITY-03",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Category B\n• White ration card holder families (including Govt./Semi Gov employees).\n• A family without having any kind of ration card but having domicile certificate of Maharashtra",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, Category B"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-ELIGIBILITY-04",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Category C\n• Students in Govt. and Govt. recognized Ashram School\n• Children in Govt. and Govt. recognized Orphanages\n• Women in Govt. and Govt. recognized Women's Ashram\n• Sr. citizens in Govt. and Govt. recognized old age homes\n• Journalists and their dependent family members as per criteria of Directorate General of Information and Public Relations Office.\n• Construction workers and their families (who are resident of outside of Maharashtra) registered with Maharashtra Building and Other Construction Workers Board.",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, Category C"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-ELIGIBILITY-05",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Category D\nRoad traffic accident victims from outside Maharashtra and outside India who met with an accident on roads in Maharashtra",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, Category D"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-ELIGIBILITY-06",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Category E\nFamilies holding below mentioned ration cards from 865 villages of Belgaon, Karwar, Kalburgi and Bidar Districts of Maharashtra- Karnataka border\n1) Antyodaya Anna Yojana (AAY)\n2) Priority House Holder (PHH)\n3) Annapurna Yojna",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, Category E"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-APPLICATION-01",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1: The interested applicant should visit the  any Govt./Pvt. network hospital in State, and request the hard copy of the prescribed format of the application form from the concerned authority.",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-APPLICATION-02",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 2: In the application form, fill in all the mandatory fields, paste the passport-sized photograph (signed across, if required), and attach copies of all the mandatory documents (self-attest, if required).",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-APPLICATION-03",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 3: Submit the duly filled and signed application form along with the documents, within the prescribed period (if any), to the authority.",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-APPLICATION-04",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 4: Request a receipt or acknowledgement from the concerned authority to whom the application has been submitted. Ensure that the receipt contains essential details such as the date and time of submission, and a unique identification number (if applicable).",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-APPLICATION-05",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "NOTE: Ensure that the application is submitted within the prescribed period, if any.",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, note"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MJPJAY-MH-DOCUMENTS-01",
+      "scheme_id": "MJPJAY-MH",
+      "scheme_name": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "documents",
+      "text": "List of valid photo ID proofs to be accepted along with document of eligible criteria:\n1. Aadhaar Card or Aadhaar Registration Slip with a photo of the beneficiary. An Aadhaar Card would be insisted upon as an identification document and in the absence of an Aadhaar card/number; any document that is accepted for issuance of an Aadhaar card will also be accepted.\n2. Pan Card\n3. Voter ID\n4. Driving License\n5. School/College Id\n6. Passport\n7. Freedom Fighter ID card\n8. Health Card of RGJAY / MJPJAY\n9. Handicap Certificate\n10. Nationalized Bank Passbook with Photo\n11. Senior citizen card issued by the Central Government or State Government\n12. Defense ex-servicemen card issued by Sainik Board\n13. Marine Fishery Identity card (Issued by Ministry of Agriculture / Fisheries Department Government of Maharashtra).\n14. Any photo ID proof issued by the Government of Maharashtra/ Government of India",
+      "source": {
+        "source_id": "SRC-MJPJAY-MH-001",
+        "publisher": "Public Health and Family Welfare Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/mjpjay",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

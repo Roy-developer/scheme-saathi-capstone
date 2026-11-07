@@ -1,0 +1,887 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "EPS-IN-ELIGIBILITY-01",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Subject to the provisions of Section 16 of the-Employees' Provident Funds and Miscellaneous Provisions Act, 1952, this Scheme shall apply to the employees of all factories and other establishments to which the Employees' Provident Funds and Miscellaneous Provisions Act, 1952 applies or is applied under sub-section (3) or sub- section (4) of Section l or Section 3 thereof.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); scope of the Scheme"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-ELIGIBILITY-02",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Membership of the Employees' Pension - Subject to sub-paragraph (3) of paragraph 1, the Scheme shall apply to every employee who on or after the 16th November, 1995, becomes a member of the Employees' Provident Fund Scheme, 1952, or of the Provident Funds of the factories and other establishments exempted by the appropriate Government under section 17 of the Act, or in whose case exemption has been granted under paragraph 27 or 27-A of the Employees' Provident Fund Scheme, 1952 and whose pay on such date is less than or equal to fifteen thousand rupees, from the date of such membership;",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Membership of the Employees' Pension, clause (a)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-ELIGIBILITY-03",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "6A. Retention of membership. - A member of the Employees' Pension Fund shall continue to be such member till he attains the age of 58 years or he avails the withdrawal benefit to which he is entitled under para 14 of the Scheme, or dies, or the pension is vested in him in terms of para 12 of the Scheme whichever is earlier.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Retention of membership (6A)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-ELIGIBILITY-04",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "\" Member \" means an employee who becomes a; member of the Employees' Pension Fund in' accordance with the provisions of this Scheme. Explanation. - An employee shall cease to be the member of Pension Fund from the date of attaining 58 years of age or from the date of vesting admissible benefits under the Scheme, whichever is earlier.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Definition: Member"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-ELIGIBILITY-05",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Determination of eligible The eligible service shall be determined as follows: In the case of \"new entrant\" the \"contributory service\" shall be treated as eligible service. The total contributory service shall be rounded off to the nearest The fraction of service for six months or more shall be treated as one year and the service less than six months shall be ignored. Explanation. - In the case of employees employed seasonally any establishment the period of \"contributory service'' in any year, notwithstanding that such service is less than a year shall be treated as a full year.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Determination of eligible service, new entrant"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-ELIGIBILITY-06",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "\" Family \" means wife in the case of male member of the Employees' Pension Fund; husband in the case of a female member of the Employees' Pension Fund; and sons and daughters of a member of the Employees' Pension Fund; Explanation- The expression \" sons \" and \" daughters \" shall include children legally adopted by the member.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Definition: Family"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-ELIGIBILITY-07",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "\" orphan \" means a person, none of whose parents is alive;",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Definition: orphan"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-ELIGIBILITY-08",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "\" Permanent total disablement \" means such disablement of permanent nature as incapacitates an employee for all work which he/she was capable of performing at the time of disablement, regardless whether such disablement is sustained in the course of employment or otherwise;",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Definition: Permanent total disablement"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-ELIGIBILITY-09",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "\" Pay \" means basic wages, with dearness allowance, retaining allowance and cash value of food concessions admissible, if any;",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Definition: Pay"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-01",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Monthly Member's - (1) A member shall be entitled to: - superannuation pension if he has rendered eligible service of 10 years or more and retires on attaining the age of 58 years; early pension, if he has rendered eligible service of 10 years or more and retires or otherwise ceases to be in the employment before attaining the age of 58 years.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Monthly Member's Pension, entitlement"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-02",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "In the case of a new entrant, the amount of monthly superannuation pension or early pension, as the case may be, shall be computed in accordance with the following factors, namely: - Monthly member's pension = Pensionable salary X Pensionable service 70 Provided that the members' monthly pension shall be determined on a pro-rata basis for the pensionable service upto the 1st day of September, 2014 at the maximum pensionable salary of six thousand and five hundred rupees per month and for the period thereafter at the maximum pensionable salary of fifteen thousand rupees per month.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Monthly Member's Pension, formula"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-03",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Determination of Pensionable Service. - (1) The pensionable service of the member shall be determined with reference to the contributions received or are receivable on his behalf in the Employees' Pension Fund. (2) In the case of the member who superannuates on attaining the age of 58 years, and who has rendered 20 years pensionable service or more, his pensionable service shall be increased by adding a weightage of 2 years.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Determination of Pensionable Service"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-04",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Determination of Pensionable - (1) The pensionable salary shall be the average monthly pay drawn in any manner including on piece rate basis during contributory period of service in the span of sixty months preceding the date of exit from the membership of the Pension Fund and the pensionable salary shall be determined on pro-rata ·basis for the pensionable service up to the 1st day of September, 2014, subject to a maximum of six thousand and five hundred rupees per month, and for the period thereafter at the maximum of fifteen thousand rupees per month :",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Determination of Pensionable Salary"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-05",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Provided that if a member was not in receipt of full pay during the period of sixty months preceding the day, he ceased to be the member of the Pension Fund, the average of previous sixty months full pay drawn by him during the period for which contribution to the pension fund was recovered, shall be considered as pensionable salary for calculating pension.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Determination of Pensionable Salary, proviso"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-06",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Except as otherwise expressly provided hereinafter the monthly member's pension under sub- paragraphs (2) to (5) mentioned hereinabove, as the case may be, shall be payable from a date immediately following the date of completion of 58 years of age notwithstanding that the member has retired or ceased to be in the employment before that date.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Pension payable from age 58"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-07",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "A member if he so desires, may be allowed to draw an early pension from a date earlier than 58 years of age but not earlier than 50 years of age. In such cases, the amount of pension shall be reduced at the rate of four per cent, for every year the age falls short of 58 years.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Early pension"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-08",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "(7A) monthly members pension including any relief payable to any existing or future member under this paragraph shall not be less than one thousand rupees. Provided that, on and from the first day of September, 2014, the minimum pension of one thousand rupees payable under this subparagraph shall be subject to deductions on account of benefits of commutation and return of capital taken by members under the extant provisions of this scheme prior to 26th September, 2008; and deductions on account of early pension under subparagraph (7).",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Minimum pension (7A)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-09",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "(7B) (a) a member who has attained the age of fifty-eight years and is otherwise eligible for pension under clause (a) of sub-paragraph (1) of this paragraph, if he so desires, may be allowed to defer the age of drawing pension later than fifty-eight years but not beyond sixty years of age.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Deferring pension (7B)(a)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-10",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "In such cases as is referred to in clause (a), - the amount of pension shall be increased at the rate of four per cent. for every completed year after the age of fifty-eight years which shall be restricted to the wage ceiling given under the proviso to sub-paragraph (2) of paragraph 3;",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Deferred pension increase (7B)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-11",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "lf a member ceases to be in the employment by way of retirement or otherwise earlier than the date of superannuation from which pension can be drawn, the member may, on his option, either be paid pension as admissible under this Scheme on attaining the age exceeding 50 years or he may be issued a scheme certificate by the Commissioner indicating the pensionable service, the pensionable salary and the amount of pension due on the date of exit from the employment. lf he/she is subsequently employed in an establishment coverable under this Scheme, his/her earlier service as per the scheme certificate shall be reckoned for pension along with the fresh spell of pensionable The member postponing the commencement of payment of pension under this paragraph shall also be entitled to additional relief sanctioned under this Scheme from time to time:",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Leaving employment before pension age; Scheme certificate"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-12",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Benefits on leaving service before being eligible for monthly member's pension. - If a member has not rendered the eligible service specified in sub-paragraph (1) of paragraph 12 on the date of exit, or on attaining the 58 years of age, whichever is earlier, such member shall be entitled to a withdrawal benefit as laid down in Table ' D ' or may opt to receive the Scheme certificate provided on the date he has not attained 58 years of age:",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Benefits on leaving service before eligibility (para 14)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-13",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Benefits on permanent and total disablement during the - (1) A member, who is permanently and totally disabled during the employment shall be entitled to pension as admissible under paragraph 12 subject to a minimum of Rs. 250/- per month notwithstanding the fact that he/she has not rendered the pensionable service entitling him/her to pension under paragraph 12 provided that she/he has made at least one month's contribution to the Pension Fund.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Permanent and total disablement, pension"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-14",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The monthly member's pension in such cases shall be payable from the date following the date of permanent total disablement and shall be tenable for the life-time of the member.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Permanent and total disablement, payment period"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-15",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Benefits to the family on the death of a - (1) Pension to the family shall be admissible from the date following the date of death of the member if the member dies - while in service, provided that at least one month's contribution has been paid into the Employees' Pension Fund, or after the date of exit but before attaining the age of 58, from the employment having rendered service entitling him/her to monthly member's pension but before the commencement of pension payment or after commencement of payment of the monthly member's",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Benefits to the family on the death of a member (para 16)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-16",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "(a) The monthly widow pension shall be : - in the cases covered by clause (a) of sub-paragraph (1), equal to the monthly member's pension which would have been admissible as if the member had retired on the date of death or 450/- or the amount indicated in Table ' C ' whichever is more. in the cases covered by clause (b) of sub-paragraph (1), equal to the monthly member's pension which would have been admissible as if the member had retired on the date of exit or 450/- per month or the amount indicated in Table ' C ' whichever is more. in the cases covered by clause (c) of sub-paragraph (1), equal to 50 per cent. of the monthly member's pension payable to the member on the date of his death subject to a minimum of Rs. 450/- per month.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Monthly widow pension"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-17",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "in all the cases, where the amount of family pension sanctioned under the ceased Family Pension Scheme, 1971 and is paid/payable under this scheme is less than 450 per month the amount of family pension in such cases shall be enhanced to Rs. 450/- per month. in all the cases, where the monthly widow pension including relief, if any, is less than one thousand rupees per month, the amount of monthly widow pension in such cases shall be enhanced to one thousand rupees per month.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Monthly widow pension, minimum"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-18",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "(b) the monthly widow pension shall be payable upto the date of death of the widow or remarriage whichever is earlier.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Monthly widow pension, duration"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-19",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "If there are any surviving children of the deceased member, falling within the definition of family, they shall be entitled to a monthly children pension in addition to the monthly widow/widower pension. Monthly children pension for each child shall be equal to 25 per cent. of the amount admissible to the widow of the deceased member as monthly widow pension payable under clause (a) of sub- paragraph (2): Provided that the minimum monthly children pension including relief, if any, for each child of the deceased member shall not be less than two hundred and fifty rupees per month.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Monthly children pension"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-20",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Monthly children pension shall be payable until the child attains the age of 25 The monthly children pension shall be admissible to maximum of two children at a time and will run from the oldest to the youngest child in that order.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Monthly children pension, age limit and number"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-21",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "If a member dies leaving behind a family having son or daughter who is permanently and totally disabled, such son or daughter shall be entitled to payment of monthly children pension or orphan pension, as the case may be, irrespective of age and number of children in the family in addition to the pension provided under clause (d).",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Monthly children pension, disabled child"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-22",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "(4)(a) If the deceased member is not survived by any widow, but is survived by children falling within the definition of family or if the widow pension is not payable, the children shall be entitled to a monthly orphan pension equal to 75 percent of the amount of the monthly widow pension as payable under clause (a) of subparagraph (2): Provided that the minimum monthly orphan pension including relief, if any, for each orphan shall not be less than seven hundred and fifty rupees per month.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Monthly orphan pension"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-23",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "(aa) The monthly orphan pension shall be payable to each orphan till such orphan attains the age of twenty-five years: Provided that the monthly orphan pension shall be payable to an orphan beyond the age of twenty-five years, if such orphan is suffering from disorder or disability of mind or who is physically crippled or disabled.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Monthly orphan pension, age limit"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-24",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "In the event of death or remarriage of the widow/ widower after sanctioning of widow/widower pension the children shall be entitled in lieu of the monthly children pension, to a monthly orphan pension from the date following the date of death/remarriage of the widow/widower.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Orphan pension after widow's death or remarriage"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-25",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The monthly orphan pension shall be admissible to a maximum of 2 orphans at a time and shall run in order from the oldest to the youngest orphan.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Monthly orphan pension, number of orphans"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-26",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "(5) (a) A member who is not married or who does not have any living spouse and/or an eligible child may nominate a person to receive benefits as laid down hereinafter provided that in the event of his/her acquiring a family subsequently, the nomination so made shall become void. In the event of death of the member such a nominee shall be entitled to receive a monthly pension equal to the monthly widow pension, as admissible under sub-clauses (i) and (ii) of clause (a) of sub- paragraph (2).",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Nominee pension"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-27",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "(aa) If a member dies leaving behind no spouse and/or an eligible child falling within the definition of family and no nomination by such deceased member exists, the widow pension shall be paid under sub-clauses (i) and (ii) of clause (a) of subparagraph 2 either to dependant father or dependent mother as the case may be. On grant of pension to such dependant father and in the event of death of the father pensioner, the admissible pension shall be extended to the surviving mother lifelong.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Pension to dependent father or mother"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-28",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "16-A. Guarantee of pensionary benefits. - None of the pensionary benefits under the Scheme shall be denied to any member or beneficiary for want of compliance of the requirement by the employer under sub-paragraph (1) of paragraph 3 provided, however, that the employer shall not be absolved of his liabilities under the Scheme.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Guarantee of pensionary benefits (16-A)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-BENEFIT-29",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Disbursement of Pension and other benefits. (1) The Commissioner shall with the approval of the Central Board, enter into arrangement for the disbursement of pension and other benefits under this Scheme with disbursing agencies like Post Office or Nationalised Banks or Treasuries or Scheduled Commercial banks including Regional Rural banks or Co-operative Banks through electronic or digital funds transfer system",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Disbursement of pension and other benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-APPLICATION-01",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "17-A. Payment of Pension. - The claims, complete in all respects submitted along with the requisite documents shall be settled and benefit amount paid to the beneficiaries within twenty days from the date of its receipt by the Commissioner. If there is any deficiency in the claim, the same shall be recorded in writing and communicated to the applicant within twenty days from the date of receipt of such application. In case the Commissioner fails without sufficient cause to settle a claim complete in all respects within twenty days, the Commissioner shall be liable for the delay beyond the said period and penal interest at the rate of 12 per cent. per annum may be charged on the benefit amount and the same may be deducted from the salary of the Commissioner.",
+      "source": {
+        "source_id": "SRC-EPS-IN-001",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.epfo.gov.in/eps-scheme/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt (EPS 1995 text); Payment of Pension (17-A), time limit for claims"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-ELIGIBILITY-10",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "NOTE: International workers are eligible under specific social security agreements.",
+      "source": {
+        "source_id": "SRC-EPS-IN-002",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.myscheme.gov.in/schemes/eps",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, note"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-APPLICATION-02",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Applications for this scheme are accepted both online and offline through EPFO portals and regional offices.",
+      "source": {
+        "source_id": "SRC-EPS-IN-002",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.myscheme.gov.in/schemes/eps",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Details"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-APPLICATION-03",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1: Activate UAN (Universal Account Number) Visit the EPFO Unified Portal. Click \"For Employees\" > \"Member UAN/Online Services (OCS/OTCP)\". Enter UAN, mobile number, and CAPTCHA code. Click \"Request OTP\". Enter the OTP received on your registered mobile and click \"Validate OTP\". You will be redirected to the UAN activation page.",
+      "source": {
+        "source_id": "SRC-EPS-IN-002",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.myscheme.gov.in/schemes/eps",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, registration step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-APPLICATION-04",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 2: Set Password & Complete KYC Create a password (8-12 characters, including 1 uppercase, 1 number, and 1 special character). Under \"Manage\", select \"KYC\" and upload documents (Aadhaar, PAN, bank details). KYC status will show as \"Approved\" after verification (takes 3-5 working days).",
+      "source": {
+        "source_id": "SRC-EPS-IN-002",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.myscheme.gov.in/schemes/eps",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, registration step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-APPLICATION-05",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1: Login to the EPFO Portal Go to EPFO Unified Portal. Click \"Employee Login\" > Enter UAN, password, and CAPTCHA. Click \"Sign In\" after that proceed to enter the OTP sent to your registered mobile. Click Submit\". You will land on the member dashboard.",
+      "source": {
+        "source_id": "SRC-EPS-IN-002",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.myscheme.gov.in/schemes/eps",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, application step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-APPLICATION-06",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 2: Navigate to Pension Claim Under \"Online Services\", select \"Form 10D\". The pension application form will open. Fill in all the mandatory fields. Click \"Save & Preview\" to review entries.",
+      "source": {
+        "source_id": "SRC-EPS-IN-002",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.myscheme.gov.in/schemes/eps",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, application step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-APPLICATION-07",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 3: Upload Documents Upload scanned copies (PDF/JPEG/PNG, max 2MB each). Click \"Submit\" to proceed to OTP verification.",
+      "source": {
+        "source_id": "SRC-EPS-IN-002",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.myscheme.gov.in/schemes/eps",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, application step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-APPLICATION-08",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 4: OTP Verification & Final Submission Enter the OTP sent to your Aadhaar linked mobile and email. Click \"Validate OTP & Submit\". A success message with an acknowledgement number will appear. Save the acknowledgement number and screenshot of submission confirmation for future reference.",
+      "source": {
+        "source_id": "SRC-EPS-IN-002",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.myscheme.gov.in/schemes/eps",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, application step 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-APPLICATION-09",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Application Status Tracking Method 1: EPFO Portal > \"Track Claim Status\" (using UAN + acknowledgement number). Method 2: EPFO Unified Portal > “Online Services” > “Track Claim Status”",
+      "source": {
+        "source_id": "SRC-EPS-IN-002",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.myscheme.gov.in/schemes/eps",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, status tracking"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EPS-IN-DOCUMENTS-01",
+      "scheme_id": "EPS-IN",
+      "scheme_name": "Employees' Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Identity Proof (Aadhaar/Passport/Voter ID)\nBank Account Details (Cancelled cheque/passbook copy)\nProof of Date of Birth (Birth certificate/School leaving certificate)\nDeath Certificate (for family pension)\nRelationship proof (for family pension)\nDisability Certificate, from EPFO-approved doctors (for disablement pension)\nService Proof (EPF passbook/employment records/Scheme Certificate)",
+      "source": {
+        "source_id": "SRC-EPS-IN-002",
+        "publisher": "Ministry of Labour and Employment",
+        "url": "https://www.myscheme.gov.in/schemes/eps",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}
