@@ -1,0 +1,833 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "BFFL-MH-BENEFIT-01",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "benefit",
+      "text": "या योजनेअंतर्गत लाभार्थ्याना ठिबक सिंचन संचाच्या उभारणीकरीता 100 टक्के अनुदान देण्यात येईल.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-001",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/SchemeData/SchemeData?str=E9DDFA703C38E51AD8FABF0B538FA508",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "Department page; Subsidy (अनुदान)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-01",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "eligibility",
+      "text": "या योजनेत भाग घेण्यासाठी शेतकरी कोंकण विभागात कमीत कमी १० गुंठे तर जास्तीच जास्त १० हे. आणि इतर विभागात कमीत कमी २० गुंठे तर जास्तीच जास्त ६ हे. क्षेत्र मर्यादेत लाभ घेऊ शकतो.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-001",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/SchemeData/SchemeData?str=E9DDFA703C38E51AD8FABF0B538FA508",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "Department page; Summary, point 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-BENEFICIARY-01",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "beneficiary",
+      "text": "अल्प, अत्यल्प भूधारक, महिला आणि दिव्यांग शेतकऱ्यांना या योजनेत प्राधान्य आहे.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-001",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/SchemeData/SchemeData?str=E9DDFA703C38E51AD8FABF0B538FA508",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "Department page; Summary, point 5"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-02",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "eligibility",
+      "text": "लाभार्थ्यास फळबाग लागवडीसाठी ठिबक सिंचन संच बसविणे अनिवार्य आहे.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-001",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/SchemeData/SchemeData?str=E9DDFA703C38E51AD8FABF0B538FA508",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "Department page; Eligibility (पात्रता), point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-BENEFICIARY-02",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "beneficiary",
+      "text": "सर्व प्रवर्गाअंतर्गत ज्या शेतकऱ्यांच्या कुटुंबाची उपजीविका केवळ शेतीवर अवलंबून आहे त्यांना प्रथम प्राधान्य देण्यात येईल व त्यानंतर अन्य शेतकऱ्यांचा विचार करण्यात येईल. (कुटुंबाची व्याख्या: पती, पत्नी, व अज्ञात मुले)",
+      "source": {
+        "source_id": "SRC-BFFL-MH-001",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/SchemeData/SchemeData?str=E9DDFA703C38E51AD8FABF0B538FA508",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "Department page; Eligibility (पात्रता), point 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-EXCLUSION-01",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "exclusion",
+      "text": "लाभ वैयक्तिक शेतकऱ्यांना देय आहे. संस्थात्मक लाभार्थांना देय नाही.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-001",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/SchemeData/SchemeData?str=E9DDFA703C38E51AD8FABF0B538FA508",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "Department page; Eligibility (पात्रता), point 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-03",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "eligibility",
+      "text": "शेतकऱ्यास स्वतःच्या नावावर ७/१२ असणे आवश्यक आहे. संयुक्त मालकी असल्यास इतर खातेदारांच्या संमतीने शेतकऱ्यास स्वतःच्या हिश्याच्या मर्यादेत लाभ घेता येईल.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-001",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/SchemeData/SchemeData?str=E9DDFA703C38E51AD8FABF0B538FA508",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "Department page; Eligibility (पात्रता), point 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-04",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "eligibility",
+      "text": "७/१२ वर कुळाचे नाव असल्यास कुळाची संमती आवश्यक आहे.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-001",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/SchemeData/SchemeData?str=E9DDFA703C38E51AD8FABF0B538FA508",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "Department page; Eligibility (पात्रता), point 5"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-05",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "eligibility",
+      "text": "परंपरागत वन निवासी (वन अधिकार मान्यता)अधिनियम २००६ नुसार वनपट्टे धारक शेतकरी लाभ घेण्यास पात्र आहेत.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-001",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/SchemeData/SchemeData?str=E9DDFA703C38E51AD8FABF0B538FA508",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "Department page; Eligibility (पात्रता), point 6"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-06",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "eligibility",
+      "text": "इतर शासकीय योजनेतून फळबाग लागवड केली असल्यास ते क्षेत्र वगळून वरील विभागानुसारच्या क्षेत्र मर्यादेत शेतकऱ्यास लाभ घेता येईल.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-001",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/SchemeData/SchemeData?str=E9DDFA703C38E51AD8FABF0B538FA508",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "Department page; Eligibility (पात्रता), point 7"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-APPLICATION-01",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "राज्य / जिल्हास्तरावरुन वर्तमानपत्रामध्ये दरवर्षी माहे एप्रिलमध्ये जाहीरात प्रसिद्ध करुन तसेच अन्य माध्यमाद्वारे पुरेशी प्रसिद्धी देऊन इच्छुक शेतकऱ्यांचे अर्ज मागविण्यात येतील.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 1, section 1.1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-APPLICATION-02",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "इच्छुक शेतकऱ्यांनी जाहिरात दिल्यापासून किमान २१ दिवसात अर्ज सादर करावा.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 1, section 1.2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-APPLICATION-03",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "योजनेअंतर्गत तालुक्यास दिलेल्या आर्थिक लक्षांकापेक्षा जास्त अर्ज प्राप्त झाल्यास तालुकानिहाय सोडत काढून प्राधान्यक्रम यादी करुन लाभार्थी निवड करण्यात येईल.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 1, section 1.3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-APPLICATION-04",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "लाभार्थी निवडीसाठी सोडतीचे ठिकाण, दिनांक व वेळ या बाबी तालुका कृषि अधिकारी आणि उपविभागीय कृषि अधिकारी हे संयुक्तपणे निश्चित करतील.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 1, section 1.4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-APPLICATION-05",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "निवड झालेल्या लाभार्थ्यांनी २ दिवसात आवश्यक ती कागदपत्रे सादर करावीत.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 1, section 1.9"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-APPLICATION-06",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "कागदपत्रे प्राप्त होताच लाभार्थ्यांना पूर्वसंमती प्रदान करण्यात येईल. तसेच लाभार्थ्यांच्या इच्छेनुसार त्यांना शासकीय अथवा कृषि विद्यापीठाच्या रोपवाटिकेतून कलमे / नारळ रोपे उचल करण्याचा परवाना देण्यात येईल.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 1, section 1.10"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-APPLICATION-07",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "लाभार्थ्यांनी पूर्वसंमती मिळाल्याच्या दिनांकापासून ७५ दिवसामध्ये सर्व बाबींसह फळबागेची लागवड करणे आवश्यक राहील.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 1, section 1.11"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-APPLICATION-08",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "पूर्वसंमती प्राप्त लाभार्थ्याने ७५ दिवसामध्ये फळबागेची लागवड केली नाही तर त्याची पूर्वसंमती रद्द समजण्यात येईल आणि प्रतिक्षा यादीतील आद्यक्रमानुसार पात्र लाभार्थीची निवड करण्यात येईल.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 1, section 1.12"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-APPLICATION-09",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "या योजनेअंतर्गत फळबाग लागवडीचा कालावधी प्रतिवर्षी १ मे ते ३० नोव्हेंबर पर्यंत राहील. योजनेत सहभाग घेण्यासाठी अर्ज सादर करणे बंधनकारक राहील.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 3, planting period (फळझाड लागवडीसाठी मुदत)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-APPLICATION-10",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "उपरोक्त फळपिकांच्या बागांची लागवड करण्याकरीता शेतकऱ्यांनी जाहीरात प्रसिध्द झालेल्या दिनांकापासून २१ दिवसाच्या आत विहित नमुन्यातील अर्ज संबंधित तालुका कृषि अधिकाऱ्यांकडे सादर करावेत.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 16, condition 11"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-APPLICATION-11",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "तालुक्याच्या आर्थिक लक्षांकाच्या मर्यादेत शेतकऱ्यांची सोडतीद्वारे योजनेंतर्गत लाभार्थी म्हणून निवड करण्यात येईल व उर्वरित शेतकऱ्यांसाठी प्रतिक्षा यादी ठेवण्यात येईल, सदर प्रतिक्षा यादी चालू लागवड हंगामासाठी असेल.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 16, condition 13"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-APPLICATION-12",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "योजनेसाठी अर्जाचा विहित नमुना WWW.krishi.maharashtra.gov.in या संकेतस्थळावरून डाऊनलोड करून घ्यावा अथवा कृषि विभागाच्या मंडळ / तालुका / उपविभाग / जिल्हा कार्यालयाशी संपर्क करावा.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 16, condition 14"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-APPLICATION-13",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "फळबाग लागवडीसाठी निवड झालेल्या सर्व लाभार्थ्यांनी ठिबक सिंचन संचाकरीता प्रधानमंत्री कृषि सिंचन योजना प्रति थेंब अधिक पिक योजने अंतर्गत पूरक अनुदान उपलब्ध करुन देण्याकरीता ई- ठिबक प्रणालीवर अर्ज भरुन द्यावेत.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 4, section 10.3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-07",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "eligibility",
+      "text": "या योजनेअंतर्गत फळबाग लागवडीकरीता कोकण विभागासाठी किमान ०.१० हेक्टर ते कमाल १०.०० हेक्टर तर उर्वरीत विभागासाठी किमान ०.२० हेक्टर ते कमाल ६.०० हेक्टर क्षेत्र मर्यादा अनुज्ञेय राहील.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 2, section 2.1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-08",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "eligibility",
+      "text": "कमाल क्षेत्रमर्यादेत लाभार्थी त्याच्या इच्छेनुसार एकापेक्षा जास्त फळपिके लागवड करु शकेल.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 2, section 2.2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-09",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "eligibility",
+      "text": "लाभधारकाचे ७/१२ च्या नोंदीनुसार, लाभार्थी जर संयुक्त खातेदार असेल तर संयुक्त खात्यावरील त्याच्या नावे असलेल्या क्षेत्राकरीता लाभ देण्यात यावा.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 2, section 2.3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-10",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "eligibility",
+      "text": "महात्मा गांधी राष्ट्रीय ग्रामीण रोजगार हमी याजनेमध्ये पात्र असणाऱ्या शेतकऱ्यांना या (MREGS) योजनेचा दोन हेक्टर क्षेत्रापर्यंत लाभ घेतल्यानंतर उर्वरीत क्षेत्रासाठी भाऊसाहेब फुंडकर फळबाग लागवड योजनेमूधन लाभ घेता येईल.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 2, section 2.4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-11",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "eligibility",
+      "text": "लाभार्थ्याने यापूर्वी राज्य रोजगार हमी योजनेशी निगडीत फळबाग लागवड वा अन्य योजनेअंतर्गत लाभ घेतला असल्यास सदर लाभ घेतलेले क्षेत्र वगळून उर्वरीत कमाल क्षेत्र मर्यादेपर्यंत लाभार्थी पात्र राहील.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 2, section 2.5"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-12",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "eligibility",
+      "text": "महात्मा गांधी राष्ट्रीय ग्रामीण रोजगार हमी योजनेंतर्गत लाभ देण्यास पात्र असणाऱ्या शेतकऱ्यांना या योजनेंतर्गत अर्थसहाय्य देण्यात येवू नये तथापि, त्यांची दि.६ जुलै, २०१८ च्या शासन निर्णयातील परिच्छेद क्र. ७.३ व ७.४ मध्ये नमूद केल्यानुसार या योजनेअंतर्गत लाभार्थी म्हणून निवड करता येईल.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 2, section 3.7"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-13",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "eligibility",
+      "text": "फळ पिकांची कलमे / रोपे प्राधान्याने शासकीय, कृषि विद्यापीठ, राष्ट्रीय संशोधन संस्था व राष्ट्रीय बागवानी मंडळ मानांकित रोपवाटिकेतूनच घेणे बंधनकारक राहील.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 16, condition 6"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-14",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "eligibility",
+      "text": "७/१२ वर फळबाग लागवडीची नोंद करुन घेण्याची जबाबदारी कार्यक्रमांतर्गत लाभ घेणाऱ्या लाभार्थ्याची राहील.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 3, section 6.2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-BENEFICIARY-03",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "beneficiary",
+      "text": "प्राप्त झालेल्या अर्जामधून लाभार्थ्यांची निवड करताना अनुसूचित जाती/ जमाती, अल्प व अत्यल्प भूधारक, महिला, दिव्यांग व्यक्ती यांना प्राधान्य देण्यात यावे.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 2, section 3.5"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-BENEFIT-02",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "benefit",
+      "text": "या योजनेअंतर्गत लाभार्थ्यास एकूण ३ वर्षाच्या कालावधीत ५०:३०:२० प्रमाणे अनुदान देय राहील.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 3, section 6.1 (first sentence; the table is not included)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-BENEFIT-03",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "benefit",
+      "text": "लाभार्थ्याने लावलेली फळझाडे पहिल्या वर्षी किमान ८० टक्के व दुसऱ्या वर्षी किमान ९० टक्के जगविणे आवश्यक राहील.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 3, section 6.3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-BENEFIT-04",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "benefit",
+      "text": "लाभार्थ्यास प्रतिवर्षी देय असलेले अनुदान त्याच्या आधारसंलग्न बँक खात्यावर वर्ग करावे.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 3, section 6.4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-BENEFIT-05",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "benefit",
+      "text": "परवाना पद्धतीने उचल केलेल्या कलमा/रोपांचे अनुदान थेट शासकीय/कृषि विद्यापीठाच्या रोपवाटीकांना देण्यात यावे.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 3, section 6.5"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-BENEFIT-06",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "benefit",
+      "text": "राष्ट्रीय बागवानी मंडळ मानांकित खाजगी रोपवाटिकेवरुन उचल करण्यात आलेल्या कलमा/ रोपांचे अनुदान थेट लाभार्थ्यांच्या आधार संलग्न बँक खात्यावर वर्ग करण्यात यावे. शासकीय अनुदानाची रक्कम व देयकाची रक्कम यापैकी जी रक्कम कमी असेल तेवढे अनुदान लाभार्थ्यास देण्यात यावे.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 3-4, section 6.6"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-BENEFIT-07",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "benefit",
+      "text": "या योजनेअंतर्गत लाभार्थ्याना ठिबक सिंचन संचाच्या उभारणीकरीता १०० टक्के अनुदान द्यावयाचे आहे. त्या करिता ठिबक सिंचन संच उभारणीसाठी प्रचलित असलेल्या सर्व केंद्र व राज्य योजनांच्या निधीतून अनुज्ञेय असणारे अनुदान प्रथमत: अदा करावे आणि तदनंतर आवश्यक असल्यास भाऊसाहेब फुंडकर फळबाग लागवड योजनेच्या निधीतून उर्वरीत अनुदान अदा करावे.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 4, section 10.2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-BENEFIT-08",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "benefit",
+      "text": "योजनेअंतर्गत केवळ कलमांच्या लागवडीला (नारळ वगळता) अनुदान देय राहील.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 16, condition 5"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-DOCUMENTS-01",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "documents",
+      "text": "७/१२ व ८-अ उतारा\nहमीपत्र\nसंयुक्त खातेदार असल्यास सर्व खातेदारांचे संमतीपत्र\nआधार संलग्न राष्ट्रीयकृत बँक पासबुकच्या प्रथम पानाची छायांकित प्रत (फोटोसहीत)\nआधार कार्ड छायांकित प्रत\nजातीचे प्रमाणपत्र (अनु.जाती/अनु.जमातीशेतकऱ्यांसाठी)",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 13, required documents table (कागदपत्रे)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-DOCUMENTS-02",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "documents",
+      "text": "योजनेअंतर्गत निवड झालेल्या लाभार्थ्यांनी सोडतीनंतर दोन दिवसात ‘७/१२ व ८-अ उतारा, संयुक्त खातेदार असल्यास सर्व खातेदारांचे संमती पत्र, हमीपत्र, आधारकार्ड प्रत, जातीचे प्रमाणपत्र (अनु.जाती/अनु.जमाती), आधार संलग्न राष्ट्रीयकृत बँक पासबुकच्या प्रथम पानाची प्रत (फोटोसहीत),’ ही कागदपत्रे तालुका कृषि अधिकारी कार्यालयात सादर करावीत.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-003",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://mahadbt.maharashtra.gov.in/Farmer/PDF/Scheme-BhausahebPhundkarFalbaagLagvadYojana.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF (read from page image; text layer is garbled); p. 16, condition 12"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-BENEFIT-09",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "The subsidy amount will be directly credited to the Aadhaar link Bank Account every year.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-002",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/bhausaheb-fundkar-horticulture-plantataion-scheme",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Details"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-BENEFIT-10",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "This scheme include the 16 perennial fruit crops like Mango, Cashew, Guava, Sapota, Custered Apple, Pomegranate, Paper Lemon, Coconut, Tamarind, Fig, Amla, Kokum, Jackfruit, Jamun, Orange, Mosambi. Farmer from Konkan division can avail benefit of 0.10 Hector to 10.00 Hector And rest Of Maharashtra 0.20 Ha. to 6.00 Ha. planting under the scheme.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-002",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/bhausaheb-fundkar-horticulture-plantataion-scheme",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Details"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-15",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The beneficiary should be a permanent resident of Maharashtra State",
+      "source": {
+        "source_id": "SRC-BFFL-MH-002",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/bhausaheb-fundkar-horticulture-plantataion-scheme",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-ELIGIBILITY-16",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Farmer should have Aadhaar Card.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-002",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/bhausaheb-fundkar-horticulture-plantataion-scheme",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "BFFL-MH-APPLICATION-14",
+      "scheme_id": "BFFL-MH",
+      "scheme_name": "Bhausaheb Fundkar Falbag Lagvad Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Application link: https://mahadbt.maharashtra.gov.in/ Application Process: 1. Go to the Aaple Sarkar DBT Portal at https://mahadbt.maharashtra.gov.in/. 2. In that go to Farmer Scheme 3. Click on the “New Applicant Registration” button. 4. Enter your basic personal information, including your name, Aadhaar number, mobile number, and email address. 5. Create a username and password. 6. After completion of registration, login to your account and complete the form by entering Personal details,Address details and Land information details to complete profile 100%. 7. After completing profile, apply for the implements, details of implement and its specifications etc and pay the fees to complete application form.",
+      "source": {
+        "source_id": "SRC-BFFL-MH-002",
+        "publisher": "Agriculture Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/bhausaheb-fundkar-horticulture-plantataion-scheme",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

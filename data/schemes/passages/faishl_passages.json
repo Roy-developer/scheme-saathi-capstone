@@ -1,0 +1,239 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "FAISHL-IN-BENEFICIARY-01",
+      "scheme_id": "FAISHL-IN",
+      "scheme_name": "Financial Assistance as Interest Subsidy on Home Loan",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "The aim of this grant is to provide a small measure of relief to war bereaved, war disabled and attributable peace time casualties(all ranks).",
+      "source": {
+        "source_id": "SRC-FAISHL-IN-001",
+        "publisher": "Ministry of Defence",
+        "url": "https://ksb.gov.in/interest-subsidy-on-home-loan.htm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Aim"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FAISHL-IN-BENEFIT-01",
+      "scheme_id": "FAISHL-IN",
+      "scheme_name": "Financial Assistance as Interest Subsidy on Home Loan",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Reimbursement of interest on loan taken from banks for construction of house to War Bereaved, War Disabled and Attributable Peace time casualties is provided out of AFFD Fund. The upper existing limit of Rs 1,00,000/- for eligibility of the interest subsidy, even though the loan taken may be of a higher amount . 50% of the interest charged by the banks or Govt/Public Sector including LIC, GIC and HUDCO would be reimbursable as interest subsidy.",
+      "source": {
+        "source_id": "SRC-FAISHL-IN-001",
+        "publisher": "Ministry of Defence",
+        "url": "https://ksb.gov.in/interest-subsidy-on-home-loan.htm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Financial Assistance"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FAISHL-IN-ELIGIBILITY-01",
+      "scheme_id": "FAISHL-IN",
+      "scheme_name": "Financial Assistance as Interest Subsidy on Home Loan",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "(a) This facility is applicable for War Bereaved, War Disabled and Attributable Peacetime casualties only.",
+      "source": {
+        "source_id": "SRC-FAISHL-IN-001",
+        "publisher": "Ministry of Defence",
+        "url": "https://ksb.gov.in/interest-subsidy-on-home-loan.htm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Conditions (a)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FAISHL-IN-ELIGIBILITY-02",
+      "scheme_id": "FAISHL-IN",
+      "scheme_name": "Financial Assistance as Interest Subsidy on Home Loan",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "(b) Interest subsidy is admissible up to maximum loan of Rs 1,00,000/- only even though the loan taken may be of a higher amount.",
+      "source": {
+        "source_id": "SRC-FAISHL-IN-001",
+        "publisher": "Ministry of Defence",
+        "url": "https://ksb.gov.in/interest-subsidy-on-home-loan.htm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Conditions (b)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FAISHL-IN-BENEFIT-02",
+      "scheme_id": "FAISHL-IN",
+      "scheme_name": "Financial Assistance as Interest Subsidy on Home Loan",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "(c) Subsidy will be paid up to a maximum period of five years or the date of final repayment of loan whichever is earlier.",
+      "source": {
+        "source_id": "SRC-FAISHL-IN-001",
+        "publisher": "Ministry of Defence",
+        "url": "https://ksb.gov.in/interest-subsidy-on-home-loan.htm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Conditions (c)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FAISHL-IN-BENEFIT-03",
+      "scheme_id": "FAISHL-IN",
+      "scheme_name": "Financial Assistance as Interest Subsidy on Home Loan",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "(d) 50% of the interest charged by bank or Govt/public sector including LIC,GIC,HUDCO would be reimbursable as interest subsidy.",
+      "source": {
+        "source_id": "SRC-FAISHL-IN-001",
+        "publisher": "Ministry of Defence",
+        "url": "https://ksb.gov.in/interest-subsidy-on-home-loan.htm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Conditions (d)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FAISHL-IN-BENEFIT-04",
+      "scheme_id": "FAISHL-IN",
+      "scheme_name": "Financial Assistance as Interest Subsidy on Home Loan",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "(e) The interest subsidy would be payable half yearly direct to the applicant.",
+      "source": {
+        "source_id": "SRC-FAISHL-IN-001",
+        "publisher": "Ministry of Defence",
+        "url": "https://ksb.gov.in/interest-subsidy-on-home-loan.htm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Conditions (e)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FAISHL-IN-APPLICATION-01",
+      "scheme_id": "FAISHL-IN",
+      "scheme_name": "Financial Assistance as Interest Subsidy on Home Loan",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Application should be made with recommendation of the concerned Zilla Sainik Board with the following information/documents:-",
+      "source": {
+        "source_id": "SRC-FAISHL-IN-001",
+        "publisher": "Ministry of Defence",
+        "url": "https://ksb.gov.in/interest-subsidy-on-home-loan.htm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Application"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FAISHL-IN-DOCUMENTS-01",
+      "scheme_id": "FAISHL-IN",
+      "scheme_name": "Financial Assistance as Interest Subsidy on Home Loan",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "(a) Certificates from the concerned banker or reputed organizations in Govt/PSUs including LIC,GIC and HUDCO are as follows:-\n(i) A certificate to the effect that there would be no change in the schedule of repayment.\n(ii) A statement showing the amount of interest actually paid for the period covered under the claim.\n(iii) A certificate to the effect that repayment of loan along with interest was regular.\n(b) A copy of Ex-Servicemen Identity Card duly attested.\n(c) A copy of Discharge Book duly attested.",
+      "source": {
+        "source_id": "SRC-FAISHL-IN-001",
+        "publisher": "Ministry of Defence",
+        "url": "https://ksb.gov.in/interest-subsidy-on-home-loan.htm",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Application, documents"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FAISHL-IN-ELIGIBILITY-03",
+      "scheme_id": "FAISHL-IN",
+      "scheme_name": "Financial Assistance as Interest Subsidy on Home Loan",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant must have taken a home loan from a bank, government/public sector undertaking, LIC, GIC, or HUDCO.",
+      "source": {
+        "source_id": "SRC-FAISHL-IN-002",
+        "publisher": "Ministry of Defence",
+        "url": "https://www.myscheme.gov.in/schemes/faishl",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FAISHL-IN-APPLICATION-02",
+      "scheme_id": "FAISHL-IN",
+      "scheme_name": "Financial Assistance as Interest Subsidy on Home Loan",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Select the \"Register\" option. Complete the registration form with the requisite details, including your name, Aadhaar card number, email ID, mobile number, and bank details. Establish a password for your account. Upon successful registration, the applicant will receive a User ID and password.",
+      "source": {
+        "source_id": "SRC-FAISHL-IN-002",
+        "publisher": "Ministry of Defence",
+        "url": "https://www.myscheme.gov.in/schemes/faishl",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, new user registration"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FAISHL-IN-APPLICATION-03",
+      "scheme_id": "FAISHL-IN",
+      "scheme_name": "Financial Assistance as Interest Subsidy on Home Loan",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Log in using the provided User ID and password to access the application form. Click \"New Application\" and select the scheme name. Fill in the complete application form.",
+      "source": {
+        "source_id": "SRC-FAISHL-IN-002",
+        "publisher": "Ministry of Defence",
+        "url": "https://www.myscheme.gov.in/schemes/faishl",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, login and application"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FAISHL-IN-APPLICATION-04",
+      "scheme_id": "FAISHL-IN",
+      "scheme_name": "Financial Assistance as Interest Subsidy on Home Loan",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Click on the \"Save & Forward\" and take the printout of the application form. The applicant submits the printed application along with all the required documents to the District Sainik Board.”",
+      "source": {
+        "source_id": "SRC-FAISHL-IN-002",
+        "publisher": "Ministry of Defence",
+        "url": "https://www.myscheme.gov.in/schemes/faishl",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, submission"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

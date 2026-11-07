@@ -1,0 +1,311 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "FADSE-MH-BENEFIT-01",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "The objective of this scheme is to facilitate self-employment for persons with disabilities who are currently unemployed. Under this scheme, a Financial Assistance is provided to the disabled person to encourage self-employment, small scale business and/or an Agro based project",
+      "source": {
+        "source_id": "SRC-FADSE-MH-001",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://depwd.maharashtra.gov.in/en/scheme/financial-assistance-to-disabled-person-for-self-employment/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Scheme objective"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-BENEFICIARY-01",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "Government Decision of Social Justice Department dated 13.09.2022: According to the Rights of Persons with Disabilities Act 2016, Persons with disabilities in 21 disability categories.",
+      "source": {
+        "source_id": "SRC-FADSE-MH-001",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://depwd.maharashtra.gov.in/en/scheme/financial-assistance-to-disabled-person-for-self-employment/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Beneficiary"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-ELIGIBILITY-01",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Applicant should have a minimum 40% disability",
+      "source": {
+        "source_id": "SRC-FADSE-MH-001",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://depwd.maharashtra.gov.in/en/scheme/financial-assistance-to-disabled-person-for-self-employment/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility criteria, minimum disability"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-ELIGIBILITY-02",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Applicant should be Domicile of Maharashtra",
+      "source": {
+        "source_id": "SRC-FADSE-MH-001",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://depwd.maharashtra.gov.in/en/scheme/financial-assistance-to-disabled-person-for-self-employment/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility criteria, domicile"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-ELIGIBILITY-03",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Applicant should be aged between 18 and 50 years",
+      "source": {
+        "source_id": "SRC-FADSE-MH-001",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://depwd.maharashtra.gov.in/en/scheme/financial-assistance-to-disabled-person-for-self-employment/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility criteria, age"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-ELIGIBILITY-04",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Applicant annual income should be below Rs 100000/-",
+      "source": {
+        "source_id": "SRC-FADSE-MH-001",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://depwd.maharashtra.gov.in/en/scheme/financial-assistance-to-disabled-person-for-self-employment/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility criteria, annual income"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-APPLICATION-01",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Application in given format submitted to the concerned District Social Welfare Officer, Zillah Parishad & Assistant Commissioner Social Welfare Office, Mumbai Urban & Mumbai Suburban",
+      "source": {
+        "source_id": "SRC-FADSE-MH-001",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://depwd.maharashtra.gov.in/en/scheme/financial-assistance-to-disabled-person-for-self-employment/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility criteria, application to District Social Welfare Officer"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-BENEFIT-02",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Under this scheme financial assistance up to Rs.1,50,000/- is provided.",
+      "source": {
+        "source_id": "SRC-FADSE-MH-001",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://depwd.maharashtra.gov.in/en/scheme/financial-assistance-to-disabled-person-for-self-employment/",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt; Benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-ELIGIBILITY-05",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should be a citizen of India.",
+      "source": {
+        "source_id": "SRC-FADSE-MH-002",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/fadse",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-ELIGIBILITY-06",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should be a Person with Disability (Visually Handicapped, Low Vision, Hearing Impaired, Orthopedically Handicapped, etc).",
+      "source": {
+        "source_id": "SRC-FADSE-MH-002",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/fadse",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-BENEFIT-03",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "80% loan amount is provided by the Nationalized Bank.",
+      "source": {
+        "source_id": "SRC-FADSE-MH-002",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/fadse",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, loan"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-BENEFIT-04",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "20% subsidy of up to ₹30,000/- is provided by the Department of Social Justice & Special Assistance.",
+      "source": {
+        "source_id": "SRC-FADSE-MH-002",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/fadse",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, subsidy"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-APPLICATION-02",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1: Visit the District Social Welfare Office, and request a hard copy of the format of the application form for the scheme from the concerned authority.",
+      "source": {
+        "source_id": "SRC-FADSE-MH-002",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/fadse",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-APPLICATION-03",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 2: In the application form, fill in all the mandatory fields, paste the passport-sized photograph (signed across), and attach all the (self-attested) mandatory documents.",
+      "source": {
+        "source_id": "SRC-FADSE-MH-002",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/fadse",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-APPLICATION-04",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 3: Submit the duly filled and signed application form along with the documents to the Assistant Commissioner, District Social Welfare Office.",
+      "source": {
+        "source_id": "SRC-FADSE-MH-002",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/fadse",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-APPLICATION-05",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 4: Acquire the receipt/acknowledgment of the successful submission of the application form from the District Social Welfare Office.",
+      "source": {
+        "source_id": "SRC-FADSE-MH-002",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/fadse",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "FADSE-MH-DOCUMENTS-01",
+      "scheme_id": "FADSE-MH",
+      "scheme_name": "Financial Assistance To Disabled For Self Employment",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "documents",
+      "text": "Aadhaar Card.\nProof of Age (Birth Certificate, Marksheet of Class 10th/12th, etc).\n2-Passport Sized Photograph (Signed Across).\nResidential Certificate / Domicile Certificate of the State of Maharashtra.\nDisability Certificate.\nIncome Certificate.\nDetails of the Bank Account (Bank Name, Branch Name, Address, IFSC, etc).\nAny other document required by the District Social Welfare Office.",
+      "source": {
+        "source_id": "SRC-FADSE-MH-002",
+        "publisher": "Department of Social Justice & Special Assistance, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/fadse",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

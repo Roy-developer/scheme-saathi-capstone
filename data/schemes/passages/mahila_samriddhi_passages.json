@@ -1,0 +1,347 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "MSY-IN-BENEFIT-01",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Loans under Mahila Samridhi Yojana (MSY) are provided through State Channelizing Agencies (SCAs), Regional Rural Banks (RRBs) and Nationalized Banks to the target group.",
+      "source": {
+        "source_id": "SRC-MSY-IN-001",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.dosje.gov.in/schemes-and-services/mahila-samridhi-yojna-msy/",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "department.txt; loan channels"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-ELIGIBILITY-01",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Loan under this scheme is provided to Safai Karamchari and Scavenger and their dependants for projects with a maximum project cost up to Rs.1,00,000/- for small and petty trade/business and sundry income generating activities.",
+      "source": {
+        "source_id": "SRC-MSY-IN-001",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.dosje.gov.in/schemes-and-services/mahila-samridhi-yojna-msy/",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "department.txt; target group and maximum project cost"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-BENEFIT-02",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Loan under the scheme is provided upto 90% and balance 10% provided by the State Channelizing Agencies ( SCAs ) in the form of loan, subsidy or from any other available source of funds.",
+      "source": {
+        "source_id": "SRC-MSY-IN-001",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.dosje.gov.in/schemes-and-services/mahila-samridhi-yojna-msy/",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "department.txt; loan share"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-BENEFIT-03",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Interest Rate: Maximum Limit Interest Chargeable from SCA Beneficiary Upto Rs.1,00,000/- per beneficiary / unit 2% p.a. 6% p.a.",
+      "source": {
+        "source_id": "SRC-MSY-IN-001",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.dosje.gov.in/schemes-and-services/mahila-samridhi-yojna-msy/",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "department.txt; interest rate"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-BENEFIT-04",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Repayment period: 3 years after implementation period of 4 months & moratorium period of 6 months (in case of municipality no moratorium period).",
+      "source": {
+        "source_id": "SRC-MSY-IN-001",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.dosje.gov.in/schemes-and-services/mahila-samridhi-yojna-msy/",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "department.txt; repayment period"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-BENEFICIARY-01",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "Mahila Samridhi Yojana (MSY) is a scheme aimed to benefit women entrepreneurs from backward backgrounds or poor backgrounds.",
+      "source": {
+        "source_id": "SRC-MSY-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/cbssc-msy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Details"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-BENEFICIARY-02",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "Self-help groups (SHGs): It aims to strengthen and assist SHGs, particularly those that include women. These people make up the autonomous, economically disadvantaged category.",
+      "source": {
+        "source_id": "SRC-MSY-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/cbssc-msy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Details, targeted beneficiaries"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-BENEFICIARY-03",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "Women belonging to economically and socially backward classes (targeted groups): Women from the underprivileged classes are considered, particularly those who fall under the SC or ST category.",
+      "source": {
+        "source_id": "SRC-MSY-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/cbssc-msy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Details, targeted beneficiaries"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-BENEFIT-05",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Under this scheme, the Corporation bears the training cost and stipend for training that is provided to groups of about 20 women, in suitable craft activities. The group is formed into a SHG and after the training, micro-credit is provided.",
+      "source": {
+        "source_id": "SRC-MSY-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/cbssc-msy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Details"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-BENEFIT-06",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "It is a microfinance scheme for women with a rebate in interest.",
+      "source": {
+        "source_id": "SRC-MSY-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/cbssc-msy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-BENEFIT-07",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "On repayment of loans under MSY, through the concerned State Channelizing Agencies (SCA), the eligible beneficiaries can avail of any loan under the NSFDC scheme.",
+      "source": {
+        "source_id": "SRC-MSY-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/cbssc-msy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-ELIGIBILITY-02",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Applicant must be between 18 to 55 years of age.",
+      "source": {
+        "source_id": "SRC-MSY-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/cbssc-msy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-ELIGIBILITY-03",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Applicable to Women from low-income families or women who belong to SC/ST/OBC categories as notified by the Central/State Government and whose family income is less than Rupees three lakhs per annum.",
+      "source": {
+        "source_id": "SRC-MSY-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/cbssc-msy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-ELIGIBILITY-04",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Applicable to Women looking to start their own business or engage in income-generating activities.",
+      "source": {
+        "source_id": "SRC-MSY-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/cbssc-msy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-APPLICATION-01",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Visit the official website of NSFDC or your state government portal to apply. Download the Mahila Samridhi Yojana application form. Fill up the application form carefully and provide the necessary details, such as your age, name, contact information, required amount, etc. Submit the form along with the required documents.",
+      "source": {
+        "source_id": "SRC-MSY-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/cbssc-msy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-APPLICATION-02",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "NSFDC provides loans to the eligible target group under its schemes through its Channel Partners.",
+      "source": {
+        "source_id": "SRC-MSY-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/cbssc-msy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-APPLICATION-03",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The loan applications are to be submitted by the eligible target group (Scheduled Castes persons having annual family income up to Rs. 3.00 lakhs ) to the District Offices of State Channelizing Agencies (SCAs).",
+      "source": {
+        "source_id": "SRC-MSY-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/cbssc-msy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-APPLICATION-04",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Eligible target group can also submit their loan application to other Channelizing Agencies of NSFDC such as Regional Rural Banks/ Public Sector Banks/ NBFC-MFIs etc. with whom NSFDC has signed Memorandum of Agreements.",
+      "source": {
+        "source_id": "SRC-MSY-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/cbssc-msy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "MSY-IN-DOCUMENTS-01",
+      "scheme_id": "MSY-IN",
+      "scheme_name": "Mahila Samriddhi Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Address Proof\nIdentity Proof\nSHG membership ID\nCaste certificate (if applicable)\nIncome Certificate from a competent authority\nAadhaar Card\nBank Account details\nRecent Passport Size Photographs",
+      "source": {
+        "source_id": "SRC-MSY-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/cbssc-msy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

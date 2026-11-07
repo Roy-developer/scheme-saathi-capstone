@@ -347,7 +347,8 @@ def test_search_endpoint_calls_adapter_with_filters_and_limit(
                 Path(__file__).resolve().parents[1]
                 / "data"
                 / "schemes"
-                / "passages.json"
+                / "passages"
+                / "apy_passages.json"
             )[:limit]
         )
 
@@ -355,8 +356,8 @@ def test_search_endpoint_calls_adapter_with_filters_and_limit(
     response = client.get(
         "/api/v1/schemes/search",
         params={
-            "query": "below poverty line",
-            "jurisdiction": "IN-MH",
+            "query": "atal pension",
+            "jurisdiction": "IN",
             "language": "en",
             "limit": 2,
         },
@@ -365,9 +366,9 @@ def test_search_endpoint_calls_adapter_with_filters_and_limit(
     assert response.status_code == 200
     passages = response.json()
     assert len(passages) == 2
-    assert passages[0]["scheme_id"] == "IGNWPS-MH"
+    assert passages[0]["scheme_id"] == "APY-IN"
     assert passages[0]["review_status"] == "reviewed"
-    assert calls == [("below poverty line", "IN-MH", "en", 2)]
+    assert calls == [("atal pension", "IN", "en", 2)]
 
 
 def test_search_endpoint_returns_empty_list_for_no_match(
@@ -422,7 +423,8 @@ def test_journey_endpoint_returns_orchestrated_search(
         Path(__file__).resolve().parents[1]
         / "data"
         / "schemes"
-        / "passages.json"
+        / "passages"
+        / "eps_passages.json"
     )[0]
     calls = []
 
@@ -442,14 +444,15 @@ def test_journey_endpoint_returns_orchestrated_search(
         json={
             "action": "search",
             "conversation_id": conversation_id,
-            "query": "widow pension",
+            "query": "employees pension",
         },
     )
 
     assert response.status_code == 200
     assert response.json()["status"] == "search_results"
     assert response.json()["passages"][0]["passage_id"] == passage.passage_id
-    assert calls[0][1].query == "widow pension"
+    assert response.json()["passages"][0]["scheme_id"] == "EPS-IN"
+    assert calls[0][1].query == "employees pension"
 
 
 def test_journey_endpoint_runs_and_forgets_with_async_sqlite_checkpoint(

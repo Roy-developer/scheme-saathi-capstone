@@ -1,0 +1,257 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "IGOAPSM-MH-ELIGIBILITY-01",
+      "scheme_id": "IGOAPSM-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Eligible elderly individuals aged 65 and above, whose names are on the Below Poverty Line (BPL) list, receive monthly financial assistance under the Indira Gandhi National Old Age Pension Scheme.",
+      "source": {
+        "source_id": "SRC-IGOAPSM-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Criteria"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGOAPSM-MH-BENEFIT-01",
+      "scheme_id": "IGOAPSM-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "From the central government:\n₹200 per month for eligible elderly individuals aged 65 to 79 years.\n₹500 per month for eligible elderly individuals aged 80 years and above.",
+      "source": {
+        "source_id": "SRC-IGOAPSM-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "department.txt; Nature of Benefits, central government"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGOAPSM-MH-BENEFIT-02",
+      "scheme_id": "IGOAPSM-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "From the state government under the Shravanbal Seva State Pension Scheme:\n₹1300 per month for eligible elderly individuals aged 65 to 79 years.\n₹1000 per month for eligible elderly individuals aged 80 years and above.",
+      "source": {
+        "source_id": "SRC-IGOAPSM-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "department.txt; Nature of Benefits, state government"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGOAPSM-MH-BENEFICIARY-01",
+      "scheme_id": "IGOAPSM-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "All Categories",
+      "source": {
+        "source_id": "SRC-IGOAPSM-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "department.txt; Beneficiary"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGOAPSM-MH-BENEFIT-03",
+      "scheme_id": "IGOAPSM-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Under this scheme, Rs. 1500 per month is given to each beneficiary.",
+      "source": {
+        "source_id": "SRC-IGOAPSM-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "department.txt; Benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGOAPSM-MH-APPLICATION-01",
+      "scheme_id": "IGOAPSM-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "The applicant can apply at the Collector’s Office / Tehsildar’s Office, Sanjay Gandhi Niradhar Anudan Yojana Branch / Talathi Office.",
+      "source": {
+        "source_id": "SRC-IGOAPSM-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "department.txt; How To Apply"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGOAPSM-MH-ELIGIBILITY-02",
+      "scheme_id": "IGOAPSM-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should be a resident of Maharashtra.",
+      "source": {
+        "source_id": "SRC-IGOAPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igoapsm",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGOAPSM-MH-ELIGIBILITY-03",
+      "scheme_id": "IGOAPSM-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should not be receiving pension benefits under any social security scheme.",
+      "source": {
+        "source_id": "SRC-IGOAPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igoapsm",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGOAPSM-MH-APPLICATION-02",
+      "scheme_id": "IGOAPSM-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1: The interested applicant should visit (during office hours) the Collector Office/Tahsildar/Talathi of your district, and request the hard copy of the prescribed format of the application form from the concerned authority.",
+      "source": {
+        "source_id": "SRC-IGOAPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igoapsm",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGOAPSM-MH-APPLICATION-03",
+      "scheme_id": "IGOAPSM-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 2: In the application form, fill in all the mandatory fields, paste the passport-sized photograph (signed across, if required), and attach copies of all the mandatory documents (self-attest, if required).",
+      "source": {
+        "source_id": "SRC-IGOAPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igoapsm",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGOAPSM-MH-APPLICATION-04",
+      "scheme_id": "IGOAPSM-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 3: Submit the duly filled and signed application form along with the documents, within the prescribed period (if any), to the concerned authority.",
+      "source": {
+        "source_id": "SRC-IGOAPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igoapsm",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGOAPSM-MH-APPLICATION-05",
+      "scheme_id": "IGOAPSM-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 4: Request a receipt or acknowledgement from the concerned authority to whom the application has been submitted. Ensure that the receipt contains essential details such as the date and time of submission, and a unique identification number (if applicable).",
+      "source": {
+        "source_id": "SRC-IGOAPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igoapsm",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGOAPSM-MH-APPLICATION-06",
+      "scheme_id": "IGOAPSM-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "NOTE: Ensure that the application is submitted within the prescribed period, if any.",
+      "source": {
+        "source_id": "SRC-IGOAPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igoapsm",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, note"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGOAPSM-MH-DOCUMENTS-01",
+      "scheme_id": "IGOAPSM-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme (Maharashtra)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "documents",
+      "text": "Aadhaar card of the applicant\nPassport-size photograph\nIdentity proof i.e. Voter ID Card, Driving License\nResidence Proof\nProof of age\nBelow Poverty Line (BPL) Card/related documents\nCaste certificate, if applicable\nAddress proof\nBank Passbook/Bank account details\nAny other documents as required",
+      "source": {
+        "source_id": "SRC-IGOAPSM-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/igoapsm",
+        "collected_at": "2026-11-05",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}
