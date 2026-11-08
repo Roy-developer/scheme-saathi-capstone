@@ -1,0 +1,599 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "PMAY-U-IN-BENEFIT-01",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Pradhan Mantri Awas Yojana - Urban 2.0 (PMAY-U 2.0) has been launched with an objective to provide pucca houses to 1 crore people of urban India.\nPMAY-U 2.0 will provide financial assistance to 1 crore families to construct, purchase or rent a house in urban areas over a period of 5 years.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 2, Preface"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-BENEFIT-02",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The Scheme will be implemented through following four verticals:\nBeneficiary Led Construction (BLC)\nAffordable Housing in Partnership (AHP)\nAffordable Rental Housing (ARH)\nInterest Subsidy Scheme (ISS)",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 6, Background"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-BENEFIT-03",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "EWS beneficiary to construct house on own land\nProvision of land patta/ rights to the landless by States/UTs\nGeo-tag the construction stages of the house by beneficiaries.\nRelease of instalment is linked to construction stage\nFree of cost statutory approvals, if needed\nUpgradation of Tenable Slums with housing and infrastructure",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 10, PMAY-U 2.0 Verticals, Beneficiary Led Construction (BLC)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-BENEFIT-04",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "EWS beneficiary to purchase/avail allotted houses in Apartment projects by public/ private sector agencies/ parastatal agencies\nRedeemable Housing Vouchers for purchase of houses in whitelisted private sector projects\nVarious State Incentives to public/private projects\nIn-Situ Slum Redevelopment of tenable Slums or Slum Resettlement",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 10, PMAY-U 2.0 Verticals, Affordable Housing in Partnership (AHP)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-BENEFIT-05",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Affordable & dignified rental living spaces for urban dwellers\nModel-1: Utilizing existing Government funded vacant houses by converting them into ARH under PPP mode or by public agencies.\nModel-2: Construct, Operate and Maintain rental housing by Private/Public Entities for urban poor, working women, employees of Industries, Industrial Estates, Institutions and other eligible EWS/LIG families.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 10, PMAY-U 2.0 Verticals, Affordable Rental Housing (ARH)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-BENEFIT-06",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Benefits of subsidy on home loans for EWS/LIG and MIG families\nMax. Loan value ₹25 lakh\nMax. House Value ₹35 lakh\nLoan subsidy of up to ₹1.80 lakh for EWS/LIG/MIG beneficiaries\n5-Yearly instalments",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 10, PMAY-U 2.0 Verticals, Interest Subsidy Scheme (ISS)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-BENEFICIARY-01",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "Special focus will be given to Safai Karmi, Street Vendors identified under PMSVANidhi Scheme and different artisans under Pradhan Mantri- Vishwakarma Scheme, Anganwadi workers, building and other construction workers, residents of slums/chawls and other groups identified during operation of PMAY-U 2.0.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 8, Eligibility Criteria"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-ELIGIBILITY-01",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Families belonging to EWS/LIG/MIG category, living in urban areas, having no pucca house anywhere in the country, are eligible to purchase or construct a house under PMAY-U 2.0. A beneficiary will be eligible for availing benefit under any one vertical of the scheme.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 8, Eligibility Criteria"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-ELIGIBILITY-02",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "EWS households are defined as households with an annual income of up to ₹3 lakh; LIG as households with an annual income from ₹3 lakh up to ₹6 lakh; and MIG as households with an annual income from ₹6 lakh up to ₹9 lakh. States/UTs shall have the flexibility to redefine the annual income criteria of EWS as per prevailing conditions with concurrence of MoHUA.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 8, Eligibility Criteria"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-ELIGIBILITY-03",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The beneficiary who has been allotted house under any of the housing scheme of Central Government, State/UT Government and Local Self Government in last 20 years in urban or rural areas, shall not be eligible to seek benefit under PMAY-U 2.0.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 8, Eligibility Criteria"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-ELIGIBILITY-04",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "A beneficiary family will comprise of husband, wife, unmarried sons and/or unmarried daughters.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 3, Things To Know, para 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-ELIGIBILITY-05",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "A 'Pucca' house is defined as an all-weather dwelling unit with roof and walls made up of sturdy, modern, and durable materials like burnt bricks, stones packed with cement or lime, cement concrete, timber, Galvanized Iron (GI) sheets, asbestos sheets, machine-made tiles etc.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 3, Things To Know, para 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-ELIGIBILITY-06",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Preference under the Scheme will be given to Widows, single women, Persons with Disabilities, Senior Citizens, Transgenders, persons belonging to Scheduled Castes/ Scheduled Tribes, Minorities and other weaker and vulnerable sections of the society.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 8, Eligibility Criteria"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-ELIGIBILITY-07",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "All eligible beneficiaries (including family members) should have an Aadhaar/ Aadhaar Virtual ID integrated with the details of beneficiaries.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 9, Eligibility Criteria"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-EXCLUSION-01",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "User would not be Eligible for the schemes in cases:\nAnnual Household Income is above ₹9,00,000\nIf the user owns a pucca house anywhere in India\nIf they have availed benefit under any Housing scheme of Central/State/UT government in past 20 years.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 19, Step 4 Eligibility for PMAY-U 2.0"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-EXCLUSION-02",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "The houses sanctioned under PMAY-U which got curtailed by Central Sanctioning and Monitoring Committee (CSMC) after 31.12.2023 due to any reason on the recommendation of States/UTs, shall not be sanctioned in PMAY-U 2.0 to those beneficiaries.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 9, Eligibility Criteria"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-01",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "A beneficiary meeting the eligibility criteria defined under the scheme may submit the application through Unified Web Portal of PMAY-U 2.0, Common Service Centre (CSC) or by visiting the concerned Urban Local Bodies/Municipalities they are residing in.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 3, Things To Know, para 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-02",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Interested beneficiary who wants to own a house under PMAY-U 2.0 can register herself/himself on the PMAY-U 2.0 website, wherein it is required to click on ‘Apply for PMAY-U 2.0’ tab.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 16, Applying for PMAY-U 2.0, Step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-03",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The system would successfully take the user to the Instruction of PMAY-U 2.0 page.\nThis page provides information about the four verticals under PMAY-U 2.0 along with annual income criteria for eligibility and permissible carpet area for each vertical.\nThe User is required to read and understand the instructions carefully, her/his eligibility criteria, the option to choose any one vertical out of the four verticals of PMAY-U 2,0 before availing the benefits.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 17, Step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-04",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Users are required keep the necessary documents ready before proceeding further.\nTo go to the next page, click on the Proceed button.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 18, Step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-05",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "After proceeding, the User needs to undergo the eligibility check for the scheme.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 19, Step 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-06",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Once the Eligibility check is completed, the user shall give consent for Aadhaar authentication.\nUsers must enter their Aadhaar Number and Name exactly as provided in the Aadhaar card.\nAn OTP will be generated on the mobile number registered with the Aadhaar card.\nUpon receiving the OTP, user shall enter the OTP and submit the same to complete the process.\nNote: A single Aadhar number can be used to fill only one form.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 20, Step 5 Aadhaar Authentication"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-07",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "In case of Married Female, Husband’s Aadhar details are mandatory.\nWidow: Please select Late from the dropdown menu.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 21, Step 6 Beneficiary Survey Form, Personal Details"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-08",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The system will auto-fill family member details, based on the information provided in Personal details. User can review these details, make edits, or add other family members information as required. In case of Married Male, please specify details of the wife in this section.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 22, Step 6 Beneficiary Survey Form, Details of Family Member"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-09",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The system will automatically fill the Household Category, pucca house ownership and Average Annual Household Income. Users are required to upload Income certificate (pdf file less than 200 kb), select years of stay in the town/city, and fill in the house ownership details, such as own/rent/no house. Then mention the type of house kutcha/semi-pucca/pucca; then select the type of roof from dropdown.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 23, Step 6 Beneficiary Survey Form, Household Details"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-10",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Note: For BLC projects, it is mandatory to upload the Land document for the construction site (pdf file less than 5 MB).",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 23, Step 6 Beneficiary Survey Form, BLC Address"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-11",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Users also need to enter their Present Address/Permanent Address and AHP Project Location details by entering the State, District and city details. They must mention if they have identified any AHP Project.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 28, Step 6 Beneficiary Survey Form, AHP Address"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-12",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "In the ISS Component, Users must provide Home Loan Details. If the User has already availed a Home Loan, select Yes and enter the required details.\nIn case the User has not yet availed for Home Loan, select No, select the State, and select five preferred PLIs. Click on save & continue.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 33, Step 6 Beneficiary Survey Form, ISS Home Loan Details"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-13",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Users must enter their active bank account number and IFSC code to generate Bank details.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 24, Step 6 Beneficiary Survey Form, Bank Details"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-14",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "After the User clicks on the Final Save, she/he will not be able make any modifications. The system will generate an Application ID Number. Once the User clicks on the OK button, the system will generate an acknowledgment form mentioning that the User’s application has been successfully forwarded to the concerned Urban Local Body for verification and processing as per the guidelines of the scheme.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 25, Submitting the Survey Form (BLC)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-15",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "On the final page, check the acknowledgment box to confirm the accuracy of the information provided and click on the Final Save button to submit the form.\nOnce the User clicks on the OK button, the system will generate an acknowledgment form mentioning that the application has been successfully forwarded to the concerned Primary Lending Institution i.e. Bank, Housing Finance Company etc., for verification and processing as per the guidelines of the scheme.\nUsers can click on Print button to either save the PDF of their application or print it.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 35, Submitting the Survey Form (ISS)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-APPLICATION-16",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "This section provides a step-by-step guide for applicants to log in to the Applicant Portal using their Aadhaar number.\nClick on Login\nClick on Applicant Login\nEnter the Aadhaar Number\nName as per Aadhar Number\nClick on Generate OTP\nEnter OTP and Click on Submit.\nThe system will display the application that is submitted by the User.\nClick on red Withdraw button under the Action\nYour application will be withdrawn.",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; pp. 36-37, Applicant Login and withdrawal"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMAY-U-IN-DOCUMENTS-01",
+      "scheme_id": "PMAY-U-IN",
+      "scheme_name": "Pradhan Mantri Awas Yojana - Urban (PMAY-U 2.0)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Applicant's Aadhaar details (Aadhaar number, name as per Aadhaar, date of birth).\nAadhaar details of family members (Aadhaar number, name as per Aadhaar, date of birth).\nActive bank account details of the applicant (account number, bank name, branch, IFSC code) linked with Aadhaar.\nIncome proof certificate\nCaste certificate (In case of SC, ST or OBC).\nLand document (In case of BLC vertical).",
+      "source": {
+        "source_id": "SRC-PMAY-U-IN-001",
+        "publisher": "Ministry of Housing and Urban Affairs",
+        "url": "https://pmaymis.gov.in/PMAYMIS2_2024/PDF/UserManual/BeneficairyApplication_for_SoP_27_12_24.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMAY-U 2.0 beneficiary application user manual; p. 18, Step 3 Documents Required (screenshot; read from page image)"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

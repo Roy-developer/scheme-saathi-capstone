@@ -1,0 +1,329 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "PMJJBY-IN-BENEFIT-01",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "PMJJBY is an insurance scheme offering life insurance cover for death due to any reason.\nIt is a one-year cover, renewable from year to year.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); Introduction"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-BENEFIT-02",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Rs. 2 lakh is payable on member’s death due to any cause.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); Benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-BENEFIT-03",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Rs. 436/- Per annum per member. However the premium may be revised based on annual claims experience.\nThe premium will be deducted from the account holder’s bank / Post office account through ‘auto debit’ facility in one instalment, as per the option given by the subscriber, at the time of enrolment under the scheme.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); Premium"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-BENEFIT-04",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "For those getting enrolled under PMJJBY for the first time during the middle of the policy period, payment of pro-rata premium is allowed as under;\nFor enrolment in June, July and August – Full annual premium of Rs.436/- is payable.\nFor enrolment in September, October, and November – pro rata premium of Rs. 342/- is payable.\nFor enrolment in December, January and February – pro rata premium of Rs. 228/- is payable.\nFor enrolment in March, April and May – pro rata premium of Rs. 114/- is payable.\nHowever, full year’s premium @ Rs 436/- is payable at the time of renewal under the scheme.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); FAQ, benefits and premium, pro-rata premium for first-time enrolment"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-BENEFIT-05",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "For subscribers enrolling for the first-time, risk starts from the date of auto-debit of premium. However, insurance cover shall not be available for death (other than due to accident) occurring during the first 30 days from the date of enrolment into the scheme (lien period) and in case of death (other than due to accident) during lien period, no claim would be admissible.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); FAQ, benefits and premium, lien period"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-BENEFIT-06",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The cover shall be for one-year period stretching from 1st June to 31st May of every year.\nDelayed enrolment for prospective cover is possible with payment of pro-rata premium.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); Enrolment period"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-ELIGIBILITY-01",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "All individual account holders of participating banks/ Post office in the age group of 18 to 50 years are eligible to join.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); Scope of coverage"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-ELIGIBILITY-02",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "In case of multiple bank / Post office accounts held by an individual in one or different banks/ Post office, the person is eligible to join the scheme through one bank/ Post office account only.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); Scope of coverage"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-ELIGIBILITY-03",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Individual bank/ Post office account holders of the participating banks/ Post office aged between 18 years (completed) and 50 years (age nearer birthday) who give their consent to join / enable auto-debit, as per the above modality, will be enrolled into the scheme.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); Eligibility Conditions"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-ELIGIBILITY-04",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "In case of a joint account, all holders of the said account can join the scheme provided they satisfy its eligibility criteria and pay the appropriate premium as described in reply to Q. 2 above.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); FAQ, joint accounts"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-ELIGIBILITY-05",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "All bank account holders other than institutional account holders are eligible for subscribing to PMJJBY scheme.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); FAQ, account types"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-ELIGIBILITY-06",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Any NRI having an eligible bank account with a bank branch located in India is eligible for purchase of PMJJBY cover subject to fulfilment of the terms and conditions relating to the scheme. However, in case a claim arises, the claim benefit will be paid to the beneficiary/ nominee only in Indian currency.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); FAQ, NRIs"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-EXCLUSION-01",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "The assurance on the life of the member shall terminate / be restricted accordingly on any of the following events:\nOn attaining age 55 years (age near birth day), subject to annual renewal up to that date (entry, however, will not be possible beyond the age of 50 years).\nClosure of account with the Bank or insufficiency of balance to keep the insurance in force.\nIn case a member is covered through more than one account and premium is received by insurance company inadvertently, insurance cover will be restricted to Rs. 2 Lakh and the premium paid for duplicate insurance(s) shall be liable to be forfeited.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); FAQ, when can the assurance on life of the member terminate"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-APPLICATION-01",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The cover shall be for one-year period stretching from 1st June to 31st May. At the time of enrolment, subscriber has to provide consent, to join / pay by auto-debit from the designated individual bank / Post office account, until further instructions, an amount of Rs.436/- (Rupees Four Hundred Thirty-Six only) per annum, or any amount as decided from time to time, which may be intimated immediately if and when revised, towards renewal of coverage under the scheme. Delayed enrolment / renewal subsequent to this date will be possible on payment of appropriate premium as described in Q.2 above, subject to changes in terms regarding insurance coverage.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); FAQ, enrolment period and modality"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-APPLICATION-02",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Yes, new eligible entrants can also join in future years on payment of premium through auto-debit. However, for such subscribers, insurance benefit shall not be available for death (due to any cause other than accident) occurring during the first 30 days from the date of enrolment into the scheme.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); FAQ, new entrants in later years"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-APPLICATION-03",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Individuals who exit the scheme at any point may re-join the scheme in future years by paying the appropriate premium as described in Q.2 above. However, for such subscribers, insurance benefit shall not be available for death (due to any cause other than accident) occurring during the first 30 days from the date of enrolment into the scheme",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmjjbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMJJBY page (saved HTML); FAQ, re-joining"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-APPLICATION-04",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 01: Download and take print of the “CONSENT-CUM-DECLARATION FORM” given in the link below: https://www.jansuraksha.gov.in/Files/PMJJBY/English/ApplicationForm.pdf#zoom=250",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-002",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.myscheme.gov.in/schemes/pmjjby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMJJBY-IN-APPLICATION-05",
+      "scheme_id": "PMJJBY-IN",
+      "scheme_name": "Pradhan Mantri Jeevan Jyoti Bima Yojana (PMJJBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 02: Duly fill and sign the application form, attach the self-attested copies of the required documents, and submit the case to the authorised official of Bank / Post Office. The official will return you the “ACKNOWLEDGEMENT SLIP CUM CERTIFICATE OF INSURANCE”.",
+      "source": {
+        "source_id": "SRC-PMJJBY-IN-002",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.myscheme.gov.in/schemes/pmjjby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 2"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

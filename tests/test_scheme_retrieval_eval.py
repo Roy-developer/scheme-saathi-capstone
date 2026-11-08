@@ -36,14 +36,14 @@ class FakeRetriever:
 def test_development_dataset_has_multilingual_and_cross_scheme_queries():
     evaluation_set = load_evaluation_set(EVAL_SET_PATH, CORPUS_PATH)
 
-    assert len(evaluation_set.queries) == 43
+    assert len(evaluation_set.queries) == 36
     assert evaluation_set.split == "development"
     assert evaluation_set.protected is False
-    assert len({query.query_id for query in evaluation_set.queries}) == 43
+    assert len({query.query_id for query in evaluation_set.queries}) == 36
     assert {
         language: sum(query.query_language == language for query in evaluation_set.queries)
         for language in ("en", "hi", "mr")
-    } == {"en": 33, "hi": 5, "mr": 5}
+    } == {"en": 31, "hi": 3, "mr": 2}
     assert sum(
         query.query_id.startswith("CROSS-")
         for query in evaluation_set.queries
@@ -58,6 +58,49 @@ def test_development_dataset_has_multilingual_and_cross_scheme_queries():
                 passage_schemes[passage_id]
                 for passage_id in query.relevant_passage_ids
             }) > 1
+
+
+ALL_SCHEMES_EVAL_PATH = (
+    PROJECT_ROOT / "data" / "schemes" / "retrieval_eval_all_schemes_dev.json"
+)
+
+
+def test_all_schemes_dataset_covers_every_scheme_not_in_the_original_set():
+    original = load_evaluation_set(EVAL_SET_PATH, CORPUS_PATH)
+    extended = load_evaluation_set(ALL_SCHEMES_EVAL_PATH, CORPUS_PATH)
+    scheme_by_passage = {
+        passage.passage_id: passage.scheme_id for passage in load_passages(CORPUS_PATH)
+    }
+
+    def schemes(evaluation_set):
+        return {
+            scheme_by_passage[passage_id]
+            for query in evaluation_set.queries
+            for passage_id in query.relevant_passage_ids
+        }
+
+    assert len(extended.queries) >= 30
+    assert {query.query_id for query in original.queries}.isdisjoint(
+        {query.query_id for query in extended.queries}
+    )
+    assert schemes(original) | schemes(extended) == set(scheme_by_passage.values())
+    assert sum(q.query_id.startswith("CROSS-") for q in extended.queries) >= 3
+
+
+def test_all_schemes_dataset_has_enough_queries_per_scheme():
+    extended = load_evaluation_set(ALL_SCHEMES_EVAL_PATH, CORPUS_PATH)
+    scheme_by_passage = {
+        passage.passage_id: passage.scheme_id for passage in load_passages(CORPUS_PATH)
+    }
+    counts: dict[str, int] = {}
+    for query in extended.queries:
+        if query.query_id.startswith("CROSS-"):
+            continue
+        scheme = scheme_by_passage[query.relevant_passage_ids[0]]
+        counts[scheme] = counts.get(scheme, 0) + 1
+
+    assert len(counts) == 40
+    assert min(counts.values()) >= 3
 
 
 def test_evaluator_reports_passage_recall_and_scheme_hit_rate():

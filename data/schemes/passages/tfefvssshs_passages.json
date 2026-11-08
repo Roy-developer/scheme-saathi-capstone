@@ -1,0 +1,167 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "TFEFVSSSHS-MH-BENEFICIARY-01",
+      "scheme_id": "TFEFVSSSHS-MH",
+      "scheme_name": "Tuition Fees and Examination Fees to VJNT/SBC Students Studying in High Schools",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "DNT and SBC Students studying in classes 9-12",
+      "source": {
+        "source_id": "SRC-TFEFVSSSHS-MH-001",
+        "publisher": "Department of Social Justice and Empowerment, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://www.dosje.gov.in/schemes-and-services/tuition-fees-and-examination-fees-for-vjnt-sbc-students-studying-in-high-schools/#about-the-scheme",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-22",
+        "locator": "DoSJE page: Tuition Fees and Examination Fees for VJNT/SBC Students studying in High Schools (saved HTML); About the Scheme"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TFEFVSSSHS-MH-ELIGIBILITY-01",
+      "scheme_id": "TFEFVSSSHS-MH",
+      "scheme_name": "Tuition Fees and Examination Fees to VJNT/SBC Students Studying in High Schools",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Student should belong to VJNT/SBC Category.",
+      "source": {
+        "source_id": "SRC-TFEFVSSSHS-MH-001",
+        "publisher": "Department of Social Justice and Empowerment, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://www.dosje.gov.in/schemes-and-services/tuition-fees-and-examination-fees-for-vjnt-sbc-students-studying-in-high-schools/#about-the-scheme",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-22",
+        "locator": "DoSJE page: Tuition Fees and Examination Fees for VJNT/SBC Students studying in High Schools (saved HTML); Eligibility, category"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TFEFVSSSHS-MH-ELIGIBILITY-02",
+      "scheme_id": "TFEFVSSSHS-MH",
+      "scheme_name": "Tuition Fees and Examination Fees to VJNT/SBC Students Studying in High Schools",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "He should be a student of a recognised High School.",
+      "source": {
+        "source_id": "SRC-TFEFVSSSHS-MH-001",
+        "publisher": "Department of Social Justice and Empowerment, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://www.dosje.gov.in/schemes-and-services/tuition-fees-and-examination-fees-for-vjnt-sbc-students-studying-in-high-schools/#about-the-scheme",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-22",
+        "locator": "DoSJE page: Tuition Fees and Examination Fees for VJNT/SBC Students studying in High Schools (saved HTML); Eligibility, school"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TFEFVSSSHS-MH-ELIGIBILITY-03",
+      "scheme_id": "TFEFVSSSHS-MH",
+      "scheme_name": "Tuition Fees and Examination Fees to VJNT/SBC Students Studying in High Schools",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "No limit of age or income.",
+      "source": {
+        "source_id": "SRC-TFEFVSSSHS-MH-001",
+        "publisher": "Department of Social Justice and Empowerment, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://www.dosje.gov.in/schemes-and-services/tuition-fees-and-examination-fees-for-vjnt-sbc-students-studying-in-high-schools/#about-the-scheme",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-22",
+        "locator": "DoSJE page: Tuition Fees and Examination Fees for VJNT/SBC Students studying in High Schools (saved HTML); Eligibility, age and income"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TFEFVSSSHS-MH-ELIGIBILITY-04",
+      "scheme_id": "TFEFVSSSHS-MH",
+      "scheme_name": "Tuition Fees and Examination Fees to VJNT/SBC Students Studying in High Schools",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "One’s failure is eligible. Twice failure is not eligible.",
+      "source": {
+        "source_id": "SRC-TFEFVSSSHS-MH-001",
+        "publisher": "Department of Social Justice and Empowerment, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://www.dosje.gov.in/schemes-and-services/tuition-fees-and-examination-fees-for-vjnt-sbc-students-studying-in-high-schools/#about-the-scheme",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-22",
+        "locator": "DoSJE page: Tuition Fees and Examination Fees for VJNT/SBC Students studying in High Schools (saved HTML); Eligibility, failures"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TFEFVSSSHS-MH-EXCLUSION-01",
+      "scheme_id": "TFEFVSSSHS-MH",
+      "scheme_name": "Tuition Fees and Examination Fees to VJNT/SBC Students Studying in High Schools",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "exclusion",
+      "text": "Students getting benefit of other scholarships are not eligible.",
+      "source": {
+        "source_id": "SRC-TFEFVSSSHS-MH-001",
+        "publisher": "Department of Social Justice and Empowerment, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://www.dosje.gov.in/schemes-and-services/tuition-fees-and-examination-fees-for-vjnt-sbc-students-studying-in-high-schools/#about-the-scheme",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-22",
+        "locator": "DoSJE page: Tuition Fees and Examination Fees for VJNT/SBC Students studying in High Schools (saved HTML); Eligibility, other scholarships"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TFEFVSSSHS-MH-BENEFIT-01",
+      "scheme_id": "TFEFVSSSHS-MH",
+      "scheme_name": "Tuition Fees and Examination Fees to VJNT/SBC Students Studying in High Schools",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Tuition Fees, Examination Fees, Lab Fees, Library Fees are paid for.",
+      "source": {
+        "source_id": "SRC-TFEFVSSSHS-MH-001",
+        "publisher": "Department of Social Justice and Empowerment, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://www.dosje.gov.in/schemes-and-services/tuition-fees-and-examination-fees-for-vjnt-sbc-students-studying-in-high-schools/#about-the-scheme",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-22",
+        "locator": "DoSJE page: Tuition Fees and Examination Fees for VJNT/SBC Students studying in High Schools (saved HTML); Benefits & Financial Assistance"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TFEFVSSSHS-MH-APPLICATION-01",
+      "scheme_id": "TFEFVSSSHS-MH",
+      "scheme_name": "Tuition Fees and Examination Fees to VJNT/SBC Students Studying in High Schools",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Proposal to be submitted by the Headmaster to the concerned block education officer to the district social welfare officer",
+      "source": {
+        "source_id": "SRC-TFEFVSSSHS-MH-001",
+        "publisher": "Department of Social Justice and Empowerment, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://www.dosje.gov.in/schemes-and-services/tuition-fees-and-examination-fees-for-vjnt-sbc-students-studying-in-high-schools/#about-the-scheme",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-22",
+        "locator": "DoSJE page: Tuition Fees and Examination Fees for VJNT/SBC Students studying in High Schools (saved HTML); Application Process"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TFEFVSSSHS-MH-APPLICATION-02",
+      "scheme_id": "TFEFVSSSHS-MH",
+      "scheme_name": "Tuition Fees and Examination Fees to VJNT/SBC Students Studying in High Schools",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "For Mumbai City, only proposals must be submitted to the Assistant Commissioner of Social Welfare, Mumbai City.",
+      "source": {
+        "source_id": "SRC-TFEFVSSSHS-MH-002",
+        "publisher": "Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/tfefvssshs",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

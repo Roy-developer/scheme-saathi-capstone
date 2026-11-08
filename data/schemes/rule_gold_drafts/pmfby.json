@@ -1,0 +1,27 @@
+{
+  "scheme_id": "PMFBY-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "PMFBY-IN-R01",
+      "kind": "eligibility",
+      "field": "owns_cultivable_land",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMFBY-IN-ELIGIBILITY-04",
+      "source_quote": "Farmers must possess a valid and authenticated land ownership certificate or a valid land tenure agreement.",
+      "needs_human_review": true,
+      "note": "The passage also allows a land tenure agreement, and ELIGIBILITY-03 covers tenant farmers and sharecroppers, so owns_cultivable_land eq true may wrongly exclude tenants."
+    }
+  ],
+  "unresolved": [
+    "CONFLICT: PMFBY-IN-ELIGIBILITY-03 includes tenant farmers and sharecroppers, while a strict ownership reading of PMFBY-IN-ELIGIBILITY-04 (land ownership certificate) would exclude them; the passage actually says 'ownership certificate or tenure agreement'. Rule R01 needs human review and may need a tenure-agreement field instead.",
+    "MISSING FIELD: has_valid_land_tenure_agreement.",
+    "MISSING FIELD: is_farmer / grows_notified_crop_in_notified_area (insurable interest).",
+    "MISSING FIELD: has_received_compensation_for_same_crop_loss (ELIGIBILITY-05).",
+    "MISSING FIELD: is_loanee_farmer (crop loan/KCC account) which decides compulsory versus voluntary enrolment."
+  ]
+}

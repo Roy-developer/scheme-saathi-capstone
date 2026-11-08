@@ -1,0 +1,71 @@
+{
+  "scheme_id": "APY-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "APY-IN-R01",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": null,
+      "source_passage_id": "APY-IN-ELIGIBILITY-01",
+      "source_quote": "The minimum age of joining APY is 18 years and maximum age is 40 years.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "APY-IN-R02",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 40,
+      "unit": null,
+      "source_passage_id": "APY-IN-ELIGIBILITY-01",
+      "source_quote": "The minimum age of joining APY is 18 years and maximum age is 40 years.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "APY-IN-R03",
+      "kind": "eligibility",
+      "field": "is_citizen_of_india",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "APY-IN-ELIGIBILITY-01",
+      "source_quote": "APY is open to all citizens of India who have a savings bank account.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "APY-IN-R04",
+      "kind": "eligibility",
+      "field": "has_savings_bank_account",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "APY-IN-ELIGIBILITY-01",
+      "source_quote": "APY is open to all citizens of India who have a savings bank account.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "APY-IN-R05",
+      "kind": "exclusion",
+      "field": "is_income_tax_payer",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "APY-IN-EXCLUSION-01",
+      "source_quote": "any citizen who is or has been an income-tax payer, is not eligible to join APY",
+      "needs_human_review": false,
+      "note": "Applies from 1 October 2022."
+    }
+  ],
+  "unresolved": [
+    "Age limits are stated as 18 and 40 years; whether the end values are included is not stated."
+  ]
+}

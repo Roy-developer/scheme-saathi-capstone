@@ -1,0 +1,455 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "PMSBY-IN-BENEFIT-01",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "PMSBY is an Accident Insurance Scheme offering accidental death and disability cover for death or disability on account of an accident.\nIt is a one-year cover, renewable from year to year.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); Introduction"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-BENEFIT-02",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Rs. 2 lakh is payable on member’s death due to accident.\nRs. 2 lakh is payable for Total and irrecoverable loss of both eyes or loss of use of both hands or feet or loss of sight of one eye and loss of use of hand or foot.\nRs. 1 lakh is payable for Total and irrecoverable loss of sight of one eye or loss of use of one hand or foot.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); Benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-BENEFIT-03",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Rs. 20/- per annum per member. However the premium may be revised based on annual claims experience.\nThe premium will be deducted from the account holder’s bank / Post office account through ‘auto debit’ facility in one instalment, as per the option given, at the time of enrolment under the scheme. However, in cases where auto debit takes place after 1st June, the cover shall commence from the date of auto debit of premium by Bank/ Post office.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); Premium"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-BENEFIT-04",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The cover shall be for one-year period stretching from 1st June to 31st May of every year.\nAny individual can join by providing consent for auto debit at the time of enrollment.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); Enrolment modality / period"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-BENEFIT-05",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Accident means a sudden, unforeseen and involuntary event caused by external, violent and visible means.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, accident definition"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-BENEFIT-06",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "What benefit will be payable if a person suffers partial disability without irrecoverable loss of sight of one eye or loss of use of one hand or foot? addremove\nNo benefit will be payable.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, partial disability"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-BENEFIT-07",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Is there any provision for reimbursement of hospitalisation expenses following accident resulting in death or disablement? addremove\nNo.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, hospitalisation expenses"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-BENEFIT-08",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "No. The insured/ nominee shall be eligible for one claim only.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, one claim only"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-ELIGIBILITY-01",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "All individual account holders of participating banks/ Post office in the age group of 18 to 70 years are entitled to join.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); Scope of coverage"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-ELIGIBILITY-02",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "In case of multiple bank / Post office accounts held by an individual in one or different banks/ Post office, the person is eligible to join the scheme through one bank/ Post office account only.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); Scope of coverage"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-ELIGIBILITY-03",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Individual bank/ Post office account holders of the participating banks/ Post office aged between 18 and 70 years who give their consent to join / enable auto-debit, as per the above modality, will be enrolled into the scheme.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); Eligibility Conditions"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-ELIGIBILITY-04",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "In case of a joint account, all holders of the said account can join the scheme provided they satisfy its eligibility criteria and pay the premium at the rate of Rs.20 per person per annum through auto-debit.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, joint accounts"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-ELIGIBILITY-05",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "All bank account holders other than institutional account holders are eligible for subscribing to PMSBY scheme.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, account types"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-ELIGIBILITY-06",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Any NRI having an eligible bank account with a bank branch located in India is eligible for purchase of PMSBY cover subject to fulfillment of the terms and conditions relating to the scheme. However, in case a claim arises, the claim benefit will be paid to the beneficiary/ nominee only in Indian currency.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, NRIs"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-EXCLUSION-01",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "Natural calamities being in the nature of accidents, any death / disability (as defined under PMSBY) resulting from such natural calamities is also covered under PMSBY. While death due to suicide is not covered, that from murder is covered.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, natural calamities, suicide and murder"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-EXCLUSION-02",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "The accident cover of the member shall terminate / be restricted accordingly on any of the following events:\nOn attaining 70 years or the end of the policy tenure of the subscriber already enrolled in the scheme.\nClosure of account with the Bank or insufficiency of balance to keep the insurance in force.\nIn case a member is covered through more than one account and premium is received by the insurance company inadvertently, insurance cover will be restricted to one account and the premium shall be liable to be forfeited.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, when can the accident cover assurance terminate"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-APPLICATION-01",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The cover shall be for one-year period stretching from 1st June to 31st May. At the time of enrolment, subscriber has to provide consent, to join / pay by auto-debit from the designated individual bank / Post office account, until further instructions, an amount of Rs.20/- (Rupees Twenty only) per annum, or any amount as decided from time to time, which may be intimated immediately if and when revised, towards renewal of coverage under the scheme. Delayed enrolment / renewal subsequent to this date will be possible on payment of annual premium.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, enrolment period and modality"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-APPLICATION-02",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Yes, new eligible entrants can also join in future years on payment of premium through auto-debit. However, risk cover would start from the date of auto debit of premium from the subscriber’s account.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, new entrants in later years"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-APPLICATION-03",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Individuals who exit the scheme at any point may re-join the scheme in future years by paying the annual premium, subject to conditions that may be laid down. However, risk cover would start from the date of auto debit of premium from the subscriber’s account.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, re-joining"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-APPLICATION-04",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "In case of death of the account holder/subscriber who enrolled in the scheme, claim can be filed by the nominee/appointee as per the enrolment form or by the legal heir/s in case nominee is pre-deceased.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, who can claim"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-APPLICATION-05",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Disability claim will be credited in the bank account of the insured bank account holder / subscriber. Death claim will be remitted to the bank account of the nominee / legal heir(s).",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, mode of payment of the claim amount"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-APPLICATION-06",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "In case of incidents like road, rail and similar vehicular accidents, drowning, death involving any crime etc, the accident should be reported to police. In case of incidents like snake bite, fall from tree etc, the cause should be supported by immediate hospital record.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.jansuraksha.in/pmsbyScheme",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "JanSuraksha PMSBY page (saved HTML); FAQ, reporting accidents to police"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-APPLICATION-07",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 01: In order to enrol in PMSBY offline, one can visit the bank branch where one has a savings account or the candidate can visit the official site: https://jansuraksha.gov.in/Forms-PMSBY.aspx to download the form.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-002",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.myscheme.gov.in/schemes/pmsby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-APPLICATION-08",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 02: After downloading the application form , candidate can fill in all the details and submit  them to the bank along with the  required documents.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-002",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.myscheme.gov.in/schemes/pmsby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMSBY-IN-APPLICATION-09",
+      "scheme_id": "PMSBY-IN",
+      "scheme_name": "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 03: Once it is successfully submitted , subscriber will get an Acknowledgement Slip Cum Certificate of Insurance.",
+      "source": {
+        "source_id": "SRC-PMSBY-IN-002",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.myscheme.gov.in/schemes/pmsby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 3"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

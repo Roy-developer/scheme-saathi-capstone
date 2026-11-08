@@ -1,0 +1,40 @@
+{
+  "scheme_id": "TFEFVS-MH",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "TFEFVS-MH-R01",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "gte",
+      "value": 100000,
+      "unit": "INR per year",
+      "source_passage_id": "TFEFVS-MH-ELIGIBILITY-02",
+      "source_quote": "whose parents' income is between ₹ 1,00,000 to ₹ 4,50,000",
+      "needs_human_review": true,
+      "note": "Lower bound of the parents' income band; whether the end values are included is not stated. Income is the parents' income, mapped to family income."
+    },
+    {
+      "rule_id": "TFEFVS-MH-R02",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 450000,
+      "unit": "INR per year",
+      "source_passage_id": "TFEFVS-MH-ELIGIBILITY-02",
+      "source_quote": "whose parents' income is between ₹ 1,00,000 to ₹ 4,50,000",
+      "needs_human_review": true,
+      "note": "Upper bound of the parents' income band; whether the end values are included is not stated."
+    }
+  ],
+  "unresolved": [
+    "MISSING FIELD: belongs to Vimukta Jatis & Nomadic Tribes (VJNT) category (SBC is also mentioned in the documents list).",
+    "MISSING FIELD: student of a recognised post-matric institution.",
+    "MISSING FIELD: number of failures (one failure allowed).",
+    "MISSING FIELD: covered under Government of India scholarship.",
+    "Passages say students 'not covered under the Government of India Scholarship' are eligible; it is unclear whether those covered are excluded.",
+    "The 1,00,000 lower income bound may exclude poorer families, which looks unusual; confirm with the official source."
+  ]
+}

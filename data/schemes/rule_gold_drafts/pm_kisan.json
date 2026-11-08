@@ -1,0 +1,47 @@
+{
+  "scheme_id": "PM-KISAN-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "PM-KISAN-IN-R01",
+      "kind": "eligibility",
+      "field": "owns_cultivable_land",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-ELIGIBILITY-01",
+      "source_quote": "who owns cultivable land as per land records of the concerned State/UT",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PM-KISAN-IN-R02",
+      "kind": "exclusion",
+      "field": "is_institutional_landholder",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "source_quote": "All Institutional Land holders",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PM-KISAN-IN-R03",
+      "kind": "exclusion",
+      "field": "is_income_tax_payer",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "source_quote": "All Persons who paid Income Tax in last assessment year.",
+      "needs_human_review": false,
+      "note": null
+    }
+  ],
+  "unresolved": [
+    "The current landholding cutoff and State/UT records are not verified (see docs/PMKISAN_RULE_REVIEW_2026-11-02.md); the NRI exclusion (PM-KISAN-IN-EXCLUSION-02) and the family-member exclusions (constitutional posts, serving or retired government employees, pensioners at Rs.10,000 or more, professionals) in PM-KISAN-IN-EXCLUSION-01 are not encoded."
+  ]
+}

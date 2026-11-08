@@ -1,0 +1,640 @@
+{
+  "dataset_version": "0.2.0",
+  "split": "development",
+  "protected": false,
+  "reranker_mode": "BM25 only: no vectors, no reranker (diagnostic baseline)",
+  "k": 5,
+  "query_count": 36,
+  "recall_at_k": 0.5092592592592592,
+  "scheme_hit_rate_at_k": 0.7222222222222222,
+  "recall_at_k_by_scheme": {
+    "IGNWPS-MH": 0.4710144927536232,
+    "PM-KISAN-IN": 0.5208333333333334
+  },
+  "recall_at_k_by_language": {
+    "en": 0.5913978494623655,
+    "hi": 0.0,
+    "mr": 0.0
+  },
+  "per_query": [
+    {
+      "query_id": "IGNWPS-DEV-001",
+      "query": "How much pension does the Maharashtra widow scheme pay each month?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPSM-MH-BENEFIT-03",
+        "IGNWPS-MH-BENEFIT-01",
+        "IGNDPSM-MH-BENEFIT-03",
+        "IGOAPSM-MH-BENEFIT-03",
+        "EPS-IN-BENEFIT-19"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPS-DEV-002",
+      "query": "What is the monthly amount for a beneficiary under Indira Gandhi National Widow Pension?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPS-MH-BENEFIT-01",
+        "IGNWPS-IN-BENEFICIARY-01",
+        "IGNWPSM-MH-BENEFIT-03",
+        "IGNWPS-MH-BENEFICIARY-01",
+        "EPS-IN-BENEFIT-17"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPS-DEV-003",
+      "query": "Is the widow pension benefit paid monthly or yearly?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "EPS-IN-BENEFIT-18",
+        "EPS-IN-BENEFIT-24",
+        "EPS-IN-BENEFIT-17",
+        "EPS-IN-BENEFIT-22",
+        "EPS-IN-BENEFIT-19"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": false
+    },
+    {
+      "query_id": "IGNWPS-DEV-004",
+      "query": "Can a widow aged 55 from a BPL household qualify for the Maharashtra pension?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-ELIGIBILITY-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGOAPSM-MH-ELIGIBILITY-01",
+        "IGNWPS-IN-ELIGIBILITY-02",
+        "IGNWPS-IN-BENEFICIARY-01",
+        "IGOAPSM-MH-BENEFIT-02",
+        "IGNWPSM-MH-ELIGIBILITY-03"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": false
+    },
+    {
+      "query_id": "IGNWPS-DEV-005",
+      "query": "What age range is stated for widows under IGNWPS in Maharashtra?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-ELIGIBILITY-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPS-IN-BENEFIT-01",
+        "IGNWPS-MH-BENEFICIARY-01",
+        "IGNWPS-IN-BENEFICIARY-01",
+        "IGNWPS-MH-ELIGIBILITY-01",
+        "IGNWPSM-MH-BENEFICIARY-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPS-DEV-006",
+      "query": "Does the Maharashtra widow pension passage require the family to be below the poverty line?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-ELIGIBILITY-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPSM-MH-ELIGIBILITY-01",
+        "IGNWPS-IN-ELIGIBILITY-02",
+        "IGNWPS-MH-ELIGIBILITY-01",
+        "IGNDPS-IN-ELIGIBILITY-06",
+        "IGNWPS-IN-EXCLUSION-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPS-DEV-007",
+      "query": "Which widows are described as beneficiaries of this scheme?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-BENEFICIARY-01"
+      ],
+      "retrieved_passage_ids": [
+        "PMJJBY-IN-ELIGIBILITY-04",
+        "NSWF-IN-BENEFICIARY-02",
+        "NSWF-IN-APPLICATION-01",
+        "IGNWPS-MH-BENEFICIARY-01",
+        "PMJJBY-IN-APPLICATION-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPS-DEV-008",
+      "query": "Does the scheme cover widows in all categories?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-BENEFICIARY-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPS-MH-BENEFICIARY-01",
+        "IGNWPSM-MH-BENEFICIARY-01",
+        "NFBSM-MH-BENEFICIARY-01",
+        "SBSSPS-MH-BENEFICIARY-01",
+        "TCE-SC-IN-BENEFICIARY-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPS-DEV-009",
+      "query": "Where can someone submit an application for the widow pension in Maharashtra?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-APPLICATION-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPSM-MH-APPLICATION-04",
+        "IGNWPS-IN-APPLICATION-05",
+        "IGNWPSM-MH-APPLICATION-01",
+        "IGNWPSM-MH-ELIGIBILITY-03",
+        "IGNWPSM-MH-APPLICATION-06"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": false
+    },
+    {
+      "query_id": "IGNWPS-DEV-010",
+      "query": "Can I apply at the Tehsildar office for this pension?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-APPLICATION-01"
+      ],
+      "retrieved_passage_ids": [
+        "SBSSPS-MH-APPLICATION-01",
+        "IGNWPS-MH-APPLICATION-01",
+        "IGNDPSM-MH-APPLICATION-01",
+        "IGNWPSM-MH-APPLICATION-01",
+        "IGOAPSM-MH-APPLICATION-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPS-DEV-011",
+      "query": "Is the Talathi office listed as an application location for IGNWPS?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-APPLICATION-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPS-MH-APPLICATION-01",
+        "AABYM-MH-APPLICATION-01",
+        "NFBSM-MH-APPLICATION-01",
+        "SBSSPS-MH-APPLICATION-01",
+        "IGNDPSM-MH-APPLICATION-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPS-DEV-012",
+      "query": "Which office handles applications through the Sanjay Gandhi Niradhar Anudan Yojana branch?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-APPLICATION-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPS-MH-APPLICATION-01",
+        "IGNDPSM-MH-APPLICATION-01",
+        "IGNWPSM-MH-APPLICATION-01",
+        "NFBSM-MH-APPLICATION-01",
+        "SBSSPS-MH-APPLICATION-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPS-DEV-013",
+      "query": "Find the Maharashtra scheme passage about below poverty line widows.",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-ELIGIBILITY-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNDPS-IN-ELIGIBILITY-06",
+        "IGNWPSM-MH-ELIGIBILITY-01",
+        "NSAP-IGNOAPS-IN-ELIGIBILITY-02",
+        "IGOAPSM-MH-ELIGIBILITY-01",
+        "IGNWPS-IN-ELIGIBILITY-02"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": false
+    },
+    {
+      "query_id": "IGNWPS-DEV-014",
+      "query": "For a widow aged 79, what does the cited Maharashtra eligibility text say?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-ELIGIBILITY-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGOAPSM-MH-BENEFIT-01",
+        "IGNWPS-IN-ELIGIBILITY-01",
+        "IGNWPSM-MH-ELIGIBILITY-01",
+        "IGOAPSM-MH-BENEFIT-02",
+        "IGNWPSM-MH-ELIGIBILITY-03"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": false
+    },
+    {
+      "query_id": "IGNWPS-DEV-015",
+      "query": "What pension support is available to widows under the Maharashtra IGNWPS?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-BENEFICIARY-01",
+        "IGNWPS-MH-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPS-IN-BENEFICIARY-01",
+        "IGNWPS-MH-BENEFICIARY-01",
+        "IGNWPS-IN-BENEFIT-01",
+        "IGNWPSM-MH-BENEFICIARY-01",
+        "IGNWPS-MH-BENEFIT-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PMKISAN-DEV-001",
+      "query": "How much annual support does PM-KISAN release to eligible farmers?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "PM-KISAN-IN-BENEFICIARY-01",
+        "PM-KISAN-IN-APPLICATION-02",
+        "PM-KISAN-IN-BENEFIT-02",
+        "NSMNY-MH-BENEFIT-07",
+        "NSMNY-MH-BENEFIT-05"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PMKISAN-DEV-002",
+      "query": "What yearly amount is stated in the PM Kisan operational guidelines?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "PM-KISAN-IN-BENEFIT-04",
+        "PM-KISAN-IN-APPLICATION-11",
+        "PMKMDY-IN-BENEFIT-04",
+        "PM-KISAN-IN-BENEFICIARY-01",
+        "PM-KISAN-IN-APPLICATION-09"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PMKISAN-DEV-003",
+      "query": "Does the central government send PM-KISAN money directly to farmers' bank accounts?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-BENEFIT-01",
+        "PM-KISAN-IN-BENEFIT-04"
+      ],
+      "retrieved_passage_ids": [
+        "PM-KISAN-IN-BENEFIT-01",
+        "PM-KISAN-IN-BENEFICIARY-01",
+        "PM-KISAN-IN-BENEFIT-04",
+        "PMKMDY-IN-BENEFIT-03",
+        "PM-KISAN-IN-APPLICATION-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PMKISAN-DEV-004",
+      "query": "How is PM-KISAN income support transferred to beneficiary accounts?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-BENEFIT-04"
+      ],
+      "retrieved_passage_ids": [
+        "PM-KISAN-IN-BENEFICIARY-01",
+        "PM-KISAN-IN-BENEFIT-01",
+        "PM-KISAN-IN-EXCLUSION-03",
+        "PM-KISAN-IN-BENEFIT-04",
+        "PM-KISAN-IN-APPLICATION-11"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PMKISAN-DEV-005",
+      "query": "What payment transfer mechanism is named for PM-KISAN?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-BENEFIT-04"
+      ],
+      "retrieved_passage_ids": [
+        "PM-KISAN-IN-BENEFIT-04",
+        "PM-KISAN-IN-APPLICATION-10",
+        "PM-KISAN-IN-ELIGIBILITY-04",
+        "PM-KISAN-IN-BENEFIT-03",
+        "PMKMDY-IN-BENEFIT-03"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PMKISAN-DEV-006",
+      "query": "Who identifies landholder farmer families for PM-KISAN benefits?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-BENEFIT-05",
+        "PM-KISAN-IN-ELIGIBILITY-01"
+      ],
+      "retrieved_passage_ids": [
+        "PM-KISAN-IN-ELIGIBILITY-01",
+        "PM-KISAN-IN-APPLICATION-02",
+        "PMKMDY-IN-ELIGIBILITY-02",
+        "PM-KISAN-IN-BENEFICIARY-01",
+        "PM-KISAN-IN-EXCLUSION-02"
+      ],
+      "recall_at_k": 0.5,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PMKISAN-DEV-007",
+      "query": "Are beneficiaries identified by State and Union Territory governments?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-BENEFIT-05"
+      ],
+      "retrieved_passage_ids": [
+        "PRE-ST-IN-BENEFICIARY-02",
+        "PM-KISAN-IN-EXCLUSION-03",
+        "PM-KISAN-IN-APPLICATION-04",
+        "PRE-ST-IN-ELIGIBILITY-01",
+        "NSWF-IN-BENEFICIARY-01"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PMKISAN-DEV-008",
+      "query": "Which land records are used to identify PM-KISAN beneficiaries?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-ELIGIBILITY-01"
+      ],
+      "retrieved_passage_ids": [
+        "PM-KISAN-IN-ELIGIBILITY-01",
+        "PM-KISAN-IN-ELIGIBILITY-02",
+        "PMKMDY-IN-ELIGIBILITY-04",
+        "PMKMDY-IN-BENEFIT-03",
+        "PMKMDY-IN-ELIGIBILITY-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PMKISAN-DEV-009",
+      "query": "What does the guideline say about cultivable land records for a farmer family?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-ELIGIBILITY-01"
+      ],
+      "retrieved_passage_ids": [
+        "PMKMDY-IN-ELIGIBILITY-02",
+        "PM-KISAN-IN-ELIGIBILITY-01",
+        "PM-KISAN-IN-ELIGIBILITY-05",
+        "PMFBY-IN-DOCUMENTS-01",
+        "PMKMDY-IN-ELIGIBILITY-04"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PMKISAN-DEV-010",
+      "query": "Are institutional landholders excluded from the PM-KISAN benefit?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-EXCLUSION-01"
+      ],
+      "retrieved_passage_ids": [
+        "PM-KISAN-IN-EXCLUSION-02",
+        "PM-KISAN-IN-APPLICATION-02",
+        "PM-KISAN-IN-BENEFIT-05",
+        "PM-KISAN-IN-APPLICATION-11",
+        "PM-KISAN-IN-APPLICATION-09"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PMKISAN-DEV-011",
+      "query": "Does the guidelines' exclusion list mention institutional land holders?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-EXCLUSION-01"
+      ],
+      "retrieved_passage_ids": [
+        "PMSBY-IN-ELIGIBILITY-05",
+        "PMJJBY-IN-ELIGIBILITY-05",
+        "PM-KISAN-IN-EXCLUSION-01",
+        "PMKMDY-IN-EXCLUSION-01",
+        "NSMNY-MH-EXCLUSION-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PMKISAN-DEV-012",
+      "query": "Is a person who paid income tax in the last assessment year listed as an exclusion?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-EXCLUSION-01"
+      ],
+      "retrieved_passage_ids": [
+        "APY-IN-EXCLUSION-01",
+        "PM-KISAN-IN-EXCLUSION-01",
+        "PM-KISAN-IN-EXCLUSION-02",
+        "NSMNY-MH-EXCLUSION-02",
+        "PMKMDY-IN-EXCLUSION-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PMKISAN-DEV-013",
+      "query": "What do the PM-KISAN guidelines say about income-tax payers?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-EXCLUSION-01"
+      ],
+      "retrieved_passage_ids": [
+        "PM-KISAN-IN-EXCLUSION-02",
+        "PM-KISAN-IN-BENEFICIARY-01",
+        "PM-KISAN-IN-APPLICATION-11",
+        "PM-KISAN-IN-APPLICATION-09",
+        "PM-KISAN-IN-APPLICATION-08"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPS-HI-DEV-001",
+      "query": "महाराष्ट्र में विधवा पेंशन की मासिक राशि कितनी है?",
+      "query_language": "hi",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "BFFL-MH-ELIGIBILITY-13",
+        "EACS-MH-DOCUMENTS-01",
+        "NSMNY-MH-ELIGIBILITY-02",
+        "BFFL-MH-ELIGIBILITY-10",
+        "NSMNY-MH-BENEFIT-02"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": false
+    },
+    {
+      "query_id": "IGNWPS-HI-DEV-002",
+      "query": "40 से 79 वर्ष की बीपीएल विधवा के लिए पात्रता क्या बताई गई है?",
+      "query_language": "hi",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-ELIGIBILITY-01"
+      ],
+      "retrieved_passage_ids": [
+        "BFFL-MH-APPLICATION-13",
+        "BFFL-MH-APPLICATION-11",
+        "BFFL-MH-DOCUMENTS-02",
+        "BFFL-MH-APPLICATION-10",
+        "EACS-MH-APPLICATION-02"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": false
+    },
+    {
+      "query_id": "IGNWPS-HI-DEV-003",
+      "query": "विधवा पेंशन के लिए आवेदन कहाँ जमा कर सकते हैं?",
+      "query_language": "hi",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-APPLICATION-01"
+      ],
+      "retrieved_passage_ids": [
+        "BFFL-MH-APPLICATION-10",
+        "EACS-MH-APPLICATION-02",
+        "BFFL-MH-DOCUMENTS-02",
+        "BFFL-MH-APPLICATION-12",
+        "BFFL-MH-APPLICATION-13"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": false
+    },
+    {
+      "query_id": "IGNWPS-MR-DEV-001",
+      "query": "महाराष्ट्रातील विधवा पेन्शनची दरमहा किती रक्कम दिली जाते?",
+      "query_language": "mr",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "BFFL-MH-BENEFIT-06",
+        "BFFL-MH-DOCUMENTS-02",
+        "BFFL-MH-BENEFICIARY-03",
+        "NSMNY-MH-BENEFIT-01",
+        "NSMNY-MH-ELIGIBILITY-02"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": false
+    },
+    {
+      "query_id": "IGNWPS-MR-DEV-002",
+      "query": "विधवा पेन्शनसाठी अर्ज कुठे करता येतो?",
+      "query_language": "mr",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-APPLICATION-01"
+      ],
+      "retrieved_passage_ids": [
+        "BFFL-MH-APPLICATION-13",
+        "BFFL-MH-BENEFICIARY-03",
+        "BFFL-MH-APPLICATION-12",
+        "BFFL-MH-BENEFIT-07",
+        "BFFL-MH-APPLICATION-04"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": false
+    },
+    {
+      "query_id": "CROSS-DEV-001",
+      "query": "Compare the monthly support for a widow in Maharashtra with annual PM-KISAN support.",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-BENEFIT-01",
+        "PM-KISAN-IN-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "PM-KISAN-IN-BENEFICIARY-01",
+        "PMKMDY-IN-BENEFIT-01",
+        "EPS-IN-BENEFIT-24",
+        "PM-KISAN-IN-APPLICATION-11",
+        "PRE-DIS-IN-BENEFIT-02"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "CROSS-DEV-002",
+      "query": "Which pilot scheme uses BPL widow and age criteria, and which uses cultivable land records?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-ELIGIBILITY-01",
+        "PM-KISAN-IN-ELIGIBILITY-01"
+      ],
+      "retrieved_passage_ids": [
+        "PMKMDY-IN-ELIGIBILITY-02",
+        "PM-KISAN-IN-ELIGIBILITY-01",
+        "NSMNY-MH-ELIGIBILITY-04",
+        "PM-KISAN-IN-ELIGIBILITY-05",
+        "IGNWPS-IN-DOCUMENTS-01"
+      ],
+      "recall_at_k": 0.5,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "CROSS-DEV-003",
+      "query": "How do the two schemes deliver money: monthly pension versus DBT to farmer bank accounts?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-BENEFIT-01",
+        "PM-KISAN-IN-BENEFIT-01",
+        "PM-KISAN-IN-BENEFIT-04"
+      ],
+      "retrieved_passage_ids": [
+        "PM-KISAN-IN-BENEFIT-04",
+        "POST-DIS-IN-APPLICATION-01",
+        "EPS-IN-BENEFIT-20",
+        "EPS-IN-BENEFIT-19",
+        "PMFBY-IN-APPLICATION-04"
+      ],
+      "recall_at_k": 0.3333333333333333,
+      "scheme_hit_at_k": true
+    }
+  ]
+}

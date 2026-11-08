@@ -1,0 +1,185 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "TMDVSO-MH-BENEFICIARY-01",
+      "scheme_id": "TMDVSO-MH",
+      "scheme_name": "Training of Motor Driving to VJNT, SBC and OBC",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "Beneficiaries: Eligible DNT/SBC/OBC community members who are eligble to drive as per Motor Vehicle Act",
+      "source": {
+        "source_id": "SRC-TMDVSO-MH-001",
+        "publisher": "Social Justice and Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.dosje.gov.in/schemes-and-services/training-of-motor-driving-to-vjnt-sbc-obcs/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; About the Scheme, Beneficiaries"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TMDVSO-MH-BENEFIT-01",
+      "scheme_id": "TMDVSO-MH",
+      "scheme_name": "Training of Motor Driving to VJNT, SBC and OBC",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "The scheme provides light and heavy motor driving, conductor training to the needy VJNT, OBC & SBC candidates. The training is given through private motor driving schools. The selected candidates are provided training with free lodging and boarding facility, License Fees etc.",
+      "source": {
+        "source_id": "SRC-TMDVSO-MH-001",
+        "publisher": "Social Justice and Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.dosje.gov.in/schemes-and-services/training-of-motor-driving-to-vjnt-sbc-obcs/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Benefits & Financial Assistance"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TMDVSO-MH-APPLICATION-01",
+      "scheme_id": "TMDVSO-MH",
+      "scheme_name": "Training of Motor Driving to VJNT, SBC and OBC",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Application to be Submitted to the Motor Driving School approved under the Scheme by the Government of Mahrashtra",
+      "source": {
+        "source_id": "SRC-TMDVSO-MH-001",
+        "publisher": "Social Justice and Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.dosje.gov.in/schemes-and-services/training-of-motor-driving-to-vjnt-sbc-obcs/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Application Process"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TMDVSO-MH-ELIGIBILITY-01",
+      "scheme_id": "TMDVSO-MH",
+      "scheme_name": "Training of Motor Driving to VJNT, SBC and OBC",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Applicant should belong to VJNT, OBC or SBC Category.",
+      "source": {
+        "source_id": "SRC-TMDVSO-MH-002",
+        "publisher": "Social Justice and Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/tmdvso",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TMDVSO-MH-ELIGIBILITY-02",
+      "scheme_id": "TMDVSO-MH",
+      "scheme_name": "Training of Motor Driving to VJNT, SBC and OBC",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Applicant should fulfil all the conditions of Age, Education, and fitness as per the Motor Vehicle Act.",
+      "source": {
+        "source_id": "SRC-TMDVSO-MH-002",
+        "publisher": "Social Justice and Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/tmdvso",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TMDVSO-MH-BENEFIT-02",
+      "scheme_id": "TMDVSO-MH",
+      "scheme_name": "Training of Motor Driving to VJNT, SBC and OBC",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Light Motor Driving Rs.4264/- for 40 Days.\nHeavy Motor Driving Rs.4960/- for 40 Days.\nConductor Rs.1728/- for 8 Days.",
+      "source": {
+        "source_id": "SRC-TMDVSO-MH-002",
+        "publisher": "Social Justice and Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/tmdvso",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Training costs"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TMDVSO-MH-BENEFIT-03",
+      "scheme_id": "TMDVSO-MH",
+      "scheme_name": "Training of Motor Driving to VJNT, SBC and OBC",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "As per the corrigendum dated 15 March 2012 Rs.100/- per student is paid for sending the license by post as particular fee & postage charges.",
+      "source": {
+        "source_id": "SRC-TMDVSO-MH-002",
+        "publisher": "Social Justice and Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/tmdvso",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Training costs, licence by post"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TMDVSO-MH-BENEFIT-04",
+      "scheme_id": "TMDVSO-MH",
+      "scheme_name": "Training of Motor Driving to VJNT, SBC and OBC",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "1)\tIf the trainee is not living at headquarters during the training period, the institution should pay Rs.300/-  for Driver and Rs.150/- for the Conductor trainee as a stipend.",
+      "source": {
+        "source_id": "SRC-TMDVSO-MH-002",
+        "publisher": "Social Justice and Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/tmdvso",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, stipend"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TMDVSO-MH-BENEFIT-05",
+      "scheme_id": "TMDVSO-MH",
+      "scheme_name": "Training of Motor Driving to VJNT, SBC and OBC",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "During the training period payment for reaching & coming back from the training institute, Medical checkups, photographs, learning and permanent licence, travelling licence, batch and provision of lodging and boarding are provided by the training institution.",
+      "source": {
+        "source_id": "SRC-TMDVSO-MH-002",
+        "publisher": "Social Justice and Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/tmdvso",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, costs paid by the training institution"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "TMDVSO-MH-DOCUMENTS-01",
+      "scheme_id": "TMDVSO-MH",
+      "scheme_name": "Training of Motor Driving to VJNT, SBC and OBC",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "documents",
+      "text": "Aadhaar Number.\nProof of Identity.\nProof of Age (Birth Certificate).\nProof of Address.\nDomicile Certificate of Maharashtra.\nCaste Certificate VJNT or SBC Community (duly signed by an authorized Revenue Officer, not below the rank of Tehsildar).\nMarksheet of the Latest Educational Qualification.\nBank Account Details.\nPassport-sized Photograph.",
+      "source": {
+        "source_id": "SRC-TMDVSO-MH-002",
+        "publisher": "Social Justice and Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/tmdvso",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "scheme_id": "NSIGSE-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "NSIGSE-IN-R01",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lt",
+      "value": 16,
+      "unit": null,
+      "source_passage_id": "NSIGSE-IN-ELIGIBILITY-02",
+      "source_quote": "the girl should be unmarried and should be below 16 years of age (as on 31st March) on joining class IX",
+      "needs_human_review": false,
+      "note": "Age is measured as on 31st March of the year of joining class IX, not today's age."
+    },
+    {
+      "rule_id": "NSIGSE-IN-R02",
+      "kind": "eligibility",
+      "field": "is_woman",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "NSIGSE-IN-ELIGIBILITY-02",
+      "source_quote": "To be eligible for the benefit under the scheme the girl should be unmarried",
+      "needs_human_review": true,
+      "note": "Scheme covers girls only; the profile field is_woman is used as the closest fact for a girl child."
+    }
+  ],
+  "unresolved": [
+    "MISSING FIELD: is_married / marital status (NSIGSE-IN-ELIGIBILITY-02 and EXCLUSION-01: girl must be unmarried, married girls excluded).",
+    "MISSING FIELD: caste or tribe category (SC/ST girls; KGBV passouts are covered regardless).",
+    "MISSING FIELD: is_student, education level (passed class VIII, enrolled in class IX) and school type (government/aided/local body covered; private unaided and Central Government schools excluded).",
+    "Age condition is 'below 16 as on 31st March on joining class IX', which is not the same as current age; the rule is a rough proxy."
+  ]
+}
