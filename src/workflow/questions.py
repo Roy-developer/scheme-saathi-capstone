@@ -358,6 +358,33 @@ def fact_confirmation(
 ) -> str:
     """Render a typed proposal for explicit confirmation in the chosen locale."""
 
+    return _confirmation_text(question_for(fact, locale), value, locale)
+
+
+def registered_fact_confirmation(
+    definition: FactDefinition,
+    value: bool | str,
+    locale: str = "en",
+) -> str:
+    """Render a proposal for a registry-backed fact for explicit confirmation."""
+
+    return _confirmation_text(registry_question_for(definition, locale), value, locale)
+
+
+def registered_confirmation_details(definition: FactDefinition) -> dict[str, object]:
+    """Build the yes/no answer widget used to confirm a proposed value."""
+
+    return {
+        "fact_id": definition.fact_id,
+        "value_type": "boolean",
+        "choices": [],
+        "confirming": True,
+    }
+
+
+def _confirmation_text(question: str, value: bool | str, locale: str) -> str:
+    """Ask whether a proposed value is what the person meant."""
+
     display = (
         ("हाँ" if value else "नहीं") if locale == "hi" and isinstance(value, bool)
         else ("होय" if value else "नाही")
@@ -368,18 +395,18 @@ def fact_confirmation(
     )
     if locale == "hi":
         return (
-            f'{question_for(fact, locale)} आपके उत्तर को "{display}" समझा। '
+            f'{question} आपके उत्तर को "{display}" समझा। '
             "क्या यह सही है? "
             '"हाँ" या "नहीं" में उत्तर दें।'
         )
     if locale == "mr":
         return (
-            f'{question_for(fact, locale)} तुमचे उत्तर "{display}" असे समजले. '
+            f'{question} तुमचे उत्तर "{display}" असे समजले. '
             "हे बरोबर आहे का? "
             '"होय" किंवा "नाही" असे उत्तर द्या.'
         )
     return (
-        f'{question_for(fact, locale)} I understood your answer as "{display}". '
+        f'{question} I understood your answer as "{display}". '
         "Is that correct? "
         "Please answer yes or no."
     )
@@ -490,6 +517,43 @@ def parse_interpreted_answer(
             error=DATE_HINTS.get(locale, DATE_HINTS["en"]),
         )
     return parse_answer(fact, value, locale)
+
+
+def parse_interpreted_registered_answer(
+    definition: FactDefinition, value: bool | str, locale: str = "en",
+) -> ParsedAnswer:
+    """Validate a model's proposal against a registered fact's type."""
+
+    if definition.value_type == "boolean" and isinstance(value, bool):
+        return ParsedAnswer(kind="value", value=definition.validate_value(value))
+    if definition.value_type == "date" and isinstance(value, str):
+        return parse_registered_answer(definition, value, locale)
+    return ParsedAnswer(kind="invalid", error=_registered_answer_hint(definition, locale))
+
+
+def parse_confirmation(reply: str, locale: str = "en") -> str:
+    """Read a reply to "is that correct?" as yes, no, unknown or unclear."""
+
+    text = _normalise(reply, locale)
+    if text in DONT_KNOW_WORDS or text in LOCALIZED_UNKNOWN_WORDS.get(locale, frozenset()):
+        return "unknown"
+    if text in YES_WORDS | LOCALIZED_YES_WORDS.get(locale, frozenset()):
+        return "yes"
+    if text in NO_WORDS | LOCALIZED_NO_WORDS.get(locale, frozenset()):
+        return "no"
+    return "unclear"
+
+
+def registered_direct_answer_question(
+    definition: FactDefinition, locale: str = "en",
+) -> str:
+    """Ask for a registered fact directly after a proposed value was declined."""
+
+    prompt = {
+        "hi": "ठीक है। कृपया सीधे उत्तर दें:",
+        "mr": "ठीक आहे. कृपया थेट उत्तर द्या:",
+    }.get(locale, "Okay. Please answer directly:")
+    return f"{prompt} {registry_question_for(definition, locale)}"
 
 
 def direct_answer_question(fact: str, locale: str = "en") -> str:

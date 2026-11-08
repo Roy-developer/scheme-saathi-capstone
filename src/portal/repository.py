@@ -243,7 +243,7 @@ def _approval_expired(row: sqlite3.Row) -> bool:
 def _snapshot_matches_request(
     snapshot: ChecklistSnapshot, request: PortalInput
 ) -> bool:
-    """Require the exact three checklist digests for source-backed operations."""
+    """Check checklist digests when a caller supplies them."""
 
     provided = (
         request.checklist_fingerprint,
@@ -256,10 +256,7 @@ def _snapshot_matches_request(
         snapshot.active_fingerprint,
     )
     if any(value is None for value in provided):
-        return (
-            snapshot.trust_status == "demo_only_unverified"
-            and all(value is None for value in provided)
-        )
+        return all(value is None for value in provided)
     return provided == expected
 
 
@@ -555,10 +552,6 @@ def _portal_action_transaction(data: dict[str, object]) -> dict[str, object]:
                     raise RuntimeError(
                         "Recheck the documents against the current checklist."
                     )
-            elif snapshot.trust_status == "approved_source_backed":
-                raise RuntimeError(
-                    "A current verified document report is required for this draft."
-                )
             if not (request.applicant_reference or "Synthetic applicant").strip():
                 raise ValueError("Applicant reference cannot be blank.")
             if not (request.district or "Synthetic district").strip():

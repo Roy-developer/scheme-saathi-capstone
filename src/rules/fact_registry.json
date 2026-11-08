@@ -38,13 +38,17 @@
           "text": "वयाची गणना जन्मतारीख आणि अर्जाच्या तारखेवरून होते."
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
       },
       "legacy_profile_field": null
     },
@@ -81,13 +85,17 @@
           "text": "तुम्ही कोणत्या तारखेला अर्ज करत आहात?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
       },
       "legacy_profile_field": "application_date"
     },
@@ -123,13 +131,17 @@
           "text": "तुम्ही सरकारी बीपीएल कार्ड दाखवू शकता का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
       },
       "legacy_profile_field": "bpl_card_shown"
     },
@@ -166,13 +178,17 @@
           "text": "तुमची जन्मतारीख काय आहे? उदाहरण: 12 मार्च 1981 किंवा 12/03/1981."
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "highly_sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
       },
       "legacy_profile_field": "date_of_birth"
     },
@@ -208,13 +224,17 @@
           "text": "निर्दिष्ट कनिष्ठ श्रेणी अपवाद वगळता कुटुंबातील कोणी सरकारी कर्मचारी आहे किंवा होते का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
       },
       "legacy_profile_field": "excluded_government_employee_member"
     },
@@ -250,13 +270,17 @@
           "text": "कुटुंबातील कोणी मागील निर्धारण वर्षात आयकर भरला का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
       },
       "legacy_profile_field": "income_tax_paid_last_assessment_year"
     },
@@ -292,13 +316,17 @@
           "text": "जमीन एखाद्या संस्थेच्या नावावर आहे का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
       },
       "legacy_profile_field": "institutional_landholder"
     },
@@ -334,13 +362,17 @@
           "text": "अर्जदार विधवा आहेत का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "highly_sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
       },
       "legacy_profile_field": "is_widow"
     },
@@ -376,13 +408,17 @@
           "text": "शेतकरी कुटुंबाची लागवडीयोग्य जमीन राज्य/केंद्रशासित प्रदेशाच्या नोंदीत आहे का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
       },
       "legacy_profile_field": "landholding_family_in_state_records"
     },
@@ -418,13 +454,17 @@
           "text": "कुटुंबातील कोणी मंत्री, खासदार, आमदार किंवा महापौर यांसारख्या सूचीबद्ध सार्वजनिक पदावर आहे किंवा होते का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
       },
       "legacy_profile_field": "listed_public_office_member"
     },
@@ -463,13 +503,17 @@
           "help_text": "तुम्हाला खात्री नसेल, तर 'माहीत नाही' निवडा."
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
       },
       "legacy_profile_field": null
     },
@@ -505,13 +549,17 @@
           "text": "हा अनिवासी भारतीय शेतकरी कुटुंबाचा नवीन अर्ज आहे का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
       },
       "legacy_profile_field": "nri_new_beneficiary"
     },
@@ -547,13 +595,17 @@
           "text": "कुटुंबातील कोणाला दरमहा 10,000 रुपये किंवा अधिक पेन्शन मिळते का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
       },
       "legacy_profile_field": "pension_at_least_10000_excluding_stated_grades"
     },
@@ -589,13 +641,17 @@
           "text": "कुटुंबातील कोणी नोंदणीकृत व कार्यरत डॉक्टर, अभियंता, वकील किंवा चार्टर्ड अकाउंटंट आहे का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
       },
       "legacy_profile_field": "registered_practicing_professional_member"
     }

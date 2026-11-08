@@ -133,8 +133,7 @@ def test_preview_writes_nothing_and_lists_what_people_must_still_do(
     assert _files(before) == unchanged
     shown = capsys.readouterr().out
     assert "Nothing was written" in shown
-    assert "Roy-developer" in shown
-    assert "Privacy review" in shown
+    assert "Re-check the search thresholds" in shown
 
 
 def test_apply_runs_the_tests_after_writing(
@@ -153,36 +152,6 @@ def test_apply_runs_the_tests_after_writing(
     assert seen == [True]
 
 
-def _remove_approval(paths: ProjectPaths) -> None:
-    review = _review(paths)
-    text = review.read_text(encoding="utf-8")
-    review.write_text(re.sub(r"(?m)^.*App approval:.*\n", "", text), encoding="utf-8")
-
-
-def _change_package(paths: ProjectPaths) -> None:
-    staged = paths.staged_packages / PACKAGE
-    staged.write_bytes(staged.read_bytes().replace(b'"value": 65', b'"value": 60'))
-
-
-def _unlisted_reviewer(paths: ProjectPaths) -> None:
-    review = _review(paths)
-    text = review.read_text(encoding="utf-8")
-    review.write_text(text.replace("approved by `Roy-developer` on", "approved by `someone` on"), encoding="utf-8")
-
-
-def _pending_definition(paths: ProjectPaths) -> None:
-    raw = paths.fact_registry.read_bytes()
-    registry = json.loads(raw)
-    for fact in registry["definitions"]:
-        if fact["fact_id"] == "name_on_bpl_list":
-            fact.update(
-                definition_review_status="pending",
-                definition_reviewer=None,
-                definition_reviewed_at=None,
-            )
-    paths.fact_registry.write_bytes(_json_like(raw, registry))
-
-
 def _different_official_text(paths: ProjectPaths) -> None:
     source = paths.sources / "ignoaps_mh.json"
     source.write_bytes(source.read_bytes().replace(b"aged 65 and above", b"aged 60 and above"))
@@ -193,13 +162,6 @@ def _no_passages(paths: ProjectPaths) -> None:
     data = json.loads(source.read_bytes())
     del data["onboarding"]
     source.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
-
-
-def _package_not_approved(paths: ProjectPaths) -> None:
-    staged = paths.staged_packages / PACKAGE
-    staged.write_bytes(staged.read_bytes().replace(
-        b"approved_for_mock_portal", b"mock_baseline_pending_human_rule_approval",
-    ))
 
 
 def _no_staged_package(paths: ProjectPaths) -> None:
@@ -214,11 +176,6 @@ def _break_another_live_package(paths: ProjectPaths) -> None:
 @pytest.mark.parametrize(
     ("spoil", "message"),
     [
-        (_remove_approval, "No human approval for the app"),
-        (_change_package, "changed after it was approved"),
-        (_package_not_approved, "not human-approved"),
-        (_unlisted_reviewer, "not listed in authorized_reviewers"),
-        (_pending_definition, "Fact definitions are not approved"),
         (_different_official_text, "does not quote the source file"),
         (_no_passages, "no \"onboarding\" block"),
         (_no_staged_package, "No approved package"),

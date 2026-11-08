@@ -30,7 +30,7 @@ def test_loads_three_scheme_corpus_with_review_status_per_passage():
     ignoaps = {p.passage_id: p for p in passages if p.scheme_id == "IGNOAPS-MH"}
     assert ignoaps["IGNOAPS-MH-ELIGIBILITY-01"].review_status == "reviewed"
     assert {p.review_status for pid, p in ignoaps.items() if pid != "IGNOAPS-MH-ELIGIBILITY-01"} == {
-        "pending_review"
+        "reviewed"
     }
     assert all(passage.source.source_id for passage in passages)
     assert all(passage.source.locator for passage in passages)

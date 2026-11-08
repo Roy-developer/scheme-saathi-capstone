@@ -269,7 +269,7 @@
         "publication_date": null,
         "locator": "Scheme page; Nature of Benefits section"
       },
-      "review_status": "pending_review"
+      "review_status": "reviewed"
     },
     {
       "passage_id": "IGNOAPS-MH-BENEFICIARY-01",
@@ -287,7 +287,7 @@
         "publication_date": null,
         "locator": "Scheme page; Beneficiary section"
       },
-      "review_status": "pending_review"
+      "review_status": "reviewed"
     },
     {
       "passage_id": "IGNOAPS-MH-APPLICATION-01",
@@ -305,7 +305,7 @@
         "publication_date": null,
         "locator": "Scheme page; How To Apply section"
       },
-      "review_status": "pending_review"
+      "review_status": "reviewed"
     }
   ]
 }

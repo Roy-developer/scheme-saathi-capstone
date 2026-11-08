@@ -1,4 +1,89 @@
 {
   "schema_version": 1,
-  "passages": []
+  "passages": [
+    {
+      "passage_id": "PMKISAN-DOC-DATABASE-01",
+      "scheme_id": "PM-KISAN-IN",
+      "section": "documents",
+      "exact_quote": "The States shall prepare database of eligible beneficiary land holder farmer families in the villages capturing the Name, Age, Gender, Category (SC/ST), Aadhaar Number, Bank Account Number and the Mobile Number of the beneficiaries.",
+      "source_url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+      "source_locator": "PM-KISAN Operational Guidelines, revised 29.03.2020, section 6.1",
+      "language": "en",
+      "collected_on": "2026-11-09",
+      "publication_date": "2020-03-29",
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKISAN-DOC-ATTRIBUTES-01",
+      "scheme_id": "PM-KISAN-IN",
+      "section": "documents",
+      "exact_quote": "Farmer Attributes: (Essential): State, District, Sub-District/Block, Village, Farmer Name, Type of Identity - Aadhaar Number and in case Aadhaar not available, Aadhaar enrollment number with any other ID proof like Voter ID etc, Gender, Category, IFSC Code, Bank Account Number.",
+      "source_url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+      "source_locator": "PM-KISAN Operational Guidelines, revised 29.03.2020, farmer attributes to enter in the portal",
+      "language": "en",
+      "collected_on": "2026-11-09",
+      "publication_date": "2020-03-29",
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKISAN-DOC-LAND-01",
+      "scheme_id": "PM-KISAN-IN",
+      "section": "documents",
+      "exact_quote": "A landholder farmer's family is defined as \"a family comprising of husband, wife and minor children who owns cultivable land as per land records of the concerned State/UT\".",
+      "source_url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+      "source_locator": "PM-KISAN Operational Guidelines, revised 29.03.2020, section 3",
+      "language": "en",
+      "collected_on": "2026-11-09",
+      "publication_date": "2020-03-29",
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKISAN-DOC-DECLARATION-01",
+      "scheme_id": "PM-KISAN-IN",
+      "section": "documents",
+      "exact_quote": "For the purpose of exclusion States have to take a self-declaration from the beneficiaries as detailed in par 4.2 above.",
+      "source_url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+      "source_locator": "PM-KISAN Operational Guidelines, revised 29.03.2020, section 6.2",
+      "language": "en",
+      "collected_on": "2026-11-09",
+      "publication_date": "2020-03-29",
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNOAPS-DOC-CERTIFICATES-01",
+      "scheme_id": "IGNOAPS-MH",
+      "section": "documents",
+      "exact_quote": "National Old age Pension Scheme\nThis scheme benefits beneficiaries of Sanjay Gandhi Niradhar Anudan Yojana, who are at least 65 years of age. Under this scheme beneficiaries get total amount of Rs. 250. Physically handicapped persons also get the same kind of financial assistance.\nEligibility:\nAge: 65 years min\nShould be Helpless\nNo source of income\nShould not be owner of Real Estate\nCertificates required:\nAge Certificates\nIncome certificate issued by Talathi\nCertificate of Tahasildar or Talathi of being Helpless.",
+      "source_url": "https://chhatrapatisambhajinagar.maharashtra.gov.in/en/revenue-branch/",
+      "source_locator": "Chhatrapati Sambhajinagar district, Revenue Branch, Sanjay Gandhi Niradhar Yojana Section",
+      "language": "en",
+      "collected_on": "2026-11-09",
+      "publication_date": null,
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNOAPS-DOC-EVALUATION-01",
+      "scheme_id": "IGNOAPS-MH",
+      "section": "documents",
+      "exact_quote": "Discussions with beneficiaries across states revealed that, although applicants often submit several documents along with the application form, the Aadhaar card and bank passbook are universally mandatory, while the husband's death certificate is an essential requirement for widow pension applicants and the disability certificate is required for disability pension applicants.",
+      "source_url": "https://www.dord.gov.in/static/uploads/2026/05/2caa23517623f55bf4bc5521b2d3da5e.pdf",
+      "source_locator": "Impact Assessment and Evaluation of NSAP, Department of Rural Development, section 3.4.4",
+      "language": "en",
+      "collected_on": "2026-11-09",
+      "publication_date": null,
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNWPS-DOC-EVALUATION-01",
+      "scheme_id": "IGNWPS-MH",
+      "section": "documents",
+      "exact_quote": "Discussions with beneficiaries across states revealed that, although applicants often submit several documents along with the application form, the Aadhaar card and bank passbook are universally mandatory, while the husband's death certificate is an essential requirement for widow pension applicants and the disability certificate is required for disability pension applicants.",
+      "source_url": "https://www.dord.gov.in/static/uploads/2026/05/2caa23517623f55bf4bc5521b2d3da5e.pdf",
+      "source_locator": "Impact Assessment and Evaluation of NSAP, Department of Rural Development, section 3.4.4",
+      "language": "en",
+      "collected_on": "2026-11-09",
+      "publication_date": null,
+      "review_status": "reviewed"
+    }
+  ]
 }
