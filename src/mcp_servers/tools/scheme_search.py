@@ -58,7 +58,6 @@ def register_tools(mcp: MCPServer) -> None:
 
     passage_file = PROJECT_ROOT / "data" / "schemes" / "passages.json"
     rerank_mode = os.getenv("SCHEME_SAATHI_RERANKER", "").casefold()
-    passages = load_passages(passage_file)
     retriever = HybridSchemeRetriever(
         passages,
         rerank=OpenRouterReranker() if rerank_mode == "openrouter" else None,

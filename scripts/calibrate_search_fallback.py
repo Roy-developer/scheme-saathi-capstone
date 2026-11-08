@@ -31,8 +31,12 @@ DATA = PROJECT_ROOT / "data" / "schemes"
 
 
 def load_questions() -> list[dict]:
-    passages = json.loads((DATA / "passages.json").read_text(encoding="utf-8"))["passages"]
-    scheme_of = {passage["passage_id"]: passage["scheme_id"] for passage in passages}
+    from src.api.scheme_search import load_passages
+
+    scheme_of = {
+        passage.passage_id: passage.scheme_id
+        for passage in load_passages(DATA / "passages")
+    }
     questions = []
     dev = json.loads((DATA / "retrieval_eval_dev.json").read_text(encoding="utf-8"))
     for item in dev["queries"]:
@@ -60,7 +64,7 @@ async def record(output: Path) -> None:
     )
     from src.workflow.intake import rewrite_scheme_query
 
-    passages = load_passages(DATA / "passages.json")
+    passages = load_passages(DATA / "passages")
     retriever = HybridSchemeRetriever(passages, rerank=OpenRouterReranker(), use_cross_encoder=False)
     rows = []
     for question in load_questions():

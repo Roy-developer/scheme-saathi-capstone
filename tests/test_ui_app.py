@@ -56,7 +56,8 @@ def test_evaluating_result_without_prepared_draft_does_not_raise() -> None:
         Path(__file__).resolve().parents[1]
         / "data"
         / "schemes"
-        / "passages.json"
+        / "passages"
+        / "ignwps_mh_passages.json"
     )[0].model_copy(update={"eligible_for_mock_flow": True})
 
     def fake_journey(request):
