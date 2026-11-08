@@ -8,7 +8,12 @@ import pytest
 
 from src.rule_extraction_reflexion import scheme_rules
 from src.rule_extraction_reflexion import extractor, reflexion
-from src.rule_extraction_reflexion.models import LessonText, RuleExtractionOutput
+from src.rule_extraction_reflexion.models import (
+    ApprovedLesson, LessonText, PlaybookSnapshot, RuleExtractionOutput,
+)
+from src.rule_extraction_reflexion.playbook import (
+    PLAYBOOK_NAMESPACE, SharedPlaybookError, load_playbook, playbook_hash,
+)
 
 
 def _fake_model_answers(monkeypatch, module, answers, prompts=None) -> None:
@@ -101,6 +106,7 @@ def test_paid_commands_send_nothing_without_yes(monkeypatch, capsys) -> None:
 
 def test_learn_review_freeze_then_evaluate_uses_the_lesson(monkeypatch, tmp_path) -> None:
     """The whole on-demand loop, run through the script's own commands."""
+    monkeypatch.setattr(scheme_rules, "PLAYBOOK_DIR", tmp_path / "playbooks")
     clause = "PMKISAN-GUIDELINES-2020-4.1(a)"
     cases_path = _cases_file(tmp_path, learn_clause=clause)
     store = tmp_path / "lessons.sqlite3"
@@ -236,3 +242,139 @@ def test_ignoaps_answer_key_comes_from_the_live_package_and_is_hash_checked(tmp_
     with pytest.raises(ValueError, match="Package hash mismatch"):
         scheme_rules.build_cases(path=path)
 
+
+def _lesson(lesson_id: str = "a" * 64) -> ApprovedLesson:
+    return ApprovedLesson(
+        lesson_id=lesson_id, instruction="For an exclusion, write fact eq false.",
+        when_to_apply="The clause says a group is not eligible.", tags=("exclusion_clause",),
+        reviewer_id="Roy-developer", review_reason="Correct and general.",
+    )
+
+
+def _snapshot(version: str = "1.0.0", lessons: tuple = ()) -> PlaybookSnapshot:
+    lessons = lessons or (_lesson(),)
+    return PlaybookSnapshot(version=version, lessons=lessons, content_hash=playbook_hash(version, lessons))
+
+
+def _store_playbook(path: Path, snapshot: PlaybookSnapshot) -> None:
+    async def write() -> None:
+        async with scheme_rules.AsyncSqliteStore.from_conn_string(str(path)) as store:
+            await store.setup()
+            await store.aput(PLAYBOOK_NAMESPACE, snapshot.version, snapshot.model_dump(mode="json"))
+
+    asyncio.run(write())
+
+
+def _load(path: Path, version: str, folder: Path) -> PlaybookSnapshot:
+    async def read() -> PlaybookSnapshot:
+        async with scheme_rules.AsyncSqliteStore.from_conn_string(str(path)) as store:
+            await store.setup()
+            return await load_playbook(store, version, folder)
+
+    return asyncio.run(read())
+
+
+@pytest.fixture
+def shared(monkeypatch, tmp_path) -> Path:
+    folder = tmp_path / "playbooks"
+    monkeypatch.setattr(scheme_rules, "PLAYBOOK_DIR", folder)
+    return folder
+
+
+def test_fresh_clone_with_an_empty_database_gets_the_shared_playbook(shared, tmp_path) -> None:
+    owner, teammate = tmp_path / "owner.sqlite3", tmp_path / "teammate.sqlite3"
+    _store_playbook(owner, _snapshot())
+
+    asyncio.run(scheme_rules.export("1.0.0", store_path=owner))
+    copied = _load(teammate, "1.0.0", shared)
+    assert copied == _snapshot().model_copy(update={"created_at": copied.created_at})
+
+    # It is now in the teammate's own database and no longer needs the file.
+    (shared / "1.0.0.json").unlink()
+    assert _load(teammate, "1.0.0", shared).content_hash == copied.content_hash
+
+
+def test_altered_shared_playbook_is_refused_and_not_stored(shared, tmp_path) -> None:
+    owner, teammate = tmp_path / "owner.sqlite3", tmp_path / "teammate.sqlite3"
+    _store_playbook(owner, _snapshot())
+    path = asyncio.run(scheme_rules.export("1.0.0", store_path=owner))
+    path.write_text(path.read_text(encoding="utf-8").replace("eq false", "eq true"), encoding="utf-8")
+
+    with pytest.raises(SharedPlaybookError, match="cannot be used"):
+        _load(teammate, "1.0.0", shared)
+
+    path.unlink()
+    with pytest.raises(SharedPlaybookError, match="Unknown playbook version"):
+        _load(teammate, "1.0.0", shared)
+
+
+def test_local_playbook_that_differs_from_the_shared_one_is_refused(shared, tmp_path) -> None:
+    owner, teammate = tmp_path / "owner.sqlite3", tmp_path / "teammate.sqlite3"
+    _store_playbook(owner, _snapshot())
+    asyncio.run(scheme_rules.export("1.0.0", store_path=owner))
+    _store_playbook(teammate, _snapshot(lessons=(_lesson("b" * 64),)))
+
+    with pytest.raises(SharedPlaybookError, match="not be comparable"):
+        _load(teammate, "1.0.0", shared)
+
+
+def test_export_never_changes_a_shared_version(shared, tmp_path) -> None:
+    first, second = tmp_path / "one.sqlite3", tmp_path / "two.sqlite3"
+    _store_playbook(first, _snapshot())
+    _store_playbook(second, _snapshot(lessons=(_lesson("b" * 64),)))
+    path = asyncio.run(scheme_rules.export("1.0.0", store_path=first))
+    original = path.read_bytes()
+
+    assert asyncio.run(scheme_rules.export("1.0.0", store_path=first)) == path
+    with pytest.raises(SharedPlaybookError, match="already shared"):
+        asyncio.run(scheme_rules.export("1.0.0", store_path=second))
+    assert path.read_bytes() == original
+
+
+def test_freeze_refuses_a_version_that_is_already_shared(shared, tmp_path) -> None:
+    owner = tmp_path / "owner.sqlite3"
+    _store_playbook(owner, _snapshot())
+    asyncio.run(scheme_rules.export("1.0.0", store_path=owner))
+
+    with pytest.raises(SharedPlaybookError, match="already shared"):
+        asyncio.run(scheme_rules.freeze("1.0.0", store_path=tmp_path / "teammate.sqlite3"))
+
+
+def test_new_version_with_base_keeps_lessons_approved_on_another_machine(
+    shared, tmp_path, monkeypatch,
+) -> None:
+    """Without --base, freeze reads only this person's database and drops them."""
+    owner, teammate = tmp_path / "owner.sqlite3", tmp_path / "teammate.sqlite3"
+    _store_playbook(owner, _snapshot())
+    asyncio.run(scheme_rules.export("1.0.0", store_path=owner))
+
+    cases_path = _cases_file(tmp_path, learn_clause="PMKISAN-GUIDELINES-2020-4.1(a)")
+    (learn_case,) = scheme_rules.build_cases("learn", path=cases_path)
+    _fake_model_answers(monkeypatch, extractor, [RuleExtractionOutput(
+        rules=(learn_case.expected_rules[0].model_copy(update={"value": True}),),
+    )])
+    _fake_model_answers(monkeypatch, reflexion, [LessonText(
+        instruction="A teammate's new lesson.", when_to_apply="Any exclusion clause.",
+    )])
+    (new_id,) = asyncio.run(scheme_rules.learn(
+        None, [learn_case], scheme_rules.load_registry(), store_path=teammate,
+    ))
+    asyncio.run(scheme_rules.review(
+        new_id, approve=True, reviewer="Roy-developer", reason="Good.",
+        authorized=lambda reviewer: True, store_path=teammate,
+    ))
+
+    assert asyncio.run(scheme_rules.freeze("1.1.0", base="1.0.0", store_path=teammate)) == 2
+    assert asyncio.run(scheme_rules.freeze("1.2.0", store_path=teammate)) == 1
+    assert {lesson.lesson_id for lesson in _load(teammate, "1.1.0", shared).lessons} == {"a" * 64, new_id}
+
+
+def test_the_committed_playbook_is_intact_and_carries_the_approved_lesson() -> None:
+    snapshot = PlaybookSnapshot.model_validate_json(
+        (scheme_rules.PLAYBOOK_DIR / "1.0.0.json").read_bytes()
+    )
+
+    assert snapshot.content_hash == playbook_hash("1.0.0", snapshot.lessons)
+    (lesson,) = snapshot.lessons
+    assert lesson.tags == ("exclusion_clause",)
+    assert "setting the value to false" in lesson.instruction

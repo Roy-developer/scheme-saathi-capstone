@@ -8,6 +8,7 @@ here re-implements prompts, checks or comparison.
     lessons   list stored lessons and their reviews (free)
     review    approve or reject one lesson (free)                -> review_lesson
     freeze    save approved lessons as a playbook version (free) -> freeze_playbook
+    export-playbook  write a frozen playbook to a file for git (free) -> export_playbook
     extract   draft rules for a NEW scheme with no approved rules (paid) -> extract_rules
     onboard   put a human-approved scheme into the app (free)    -> plan_onboarding
 
@@ -19,10 +20,15 @@ Examples (PowerShell, from the repo root):
     python -m src.rule_extraction_reflexion.scheme_rules lessons
     python -m src.rule_extraction_reflexion.scheme_rules review <lesson_id> --approve --reviewer Roy-developer --reason "..."
     python -m src.rule_extraction_reflexion.scheme_rules freeze 1.0.0
+    python -m src.rule_extraction_reflexion.scheme_rules export-playbook 1.0.0
+    python -m src.rule_extraction_reflexion.scheme_rules freeze 1.1.0 --base 1.0.0
     python -m src.rule_extraction_reflexion.scheme_rules extract data/schemes/rule_extraction_sources/ignoaps_mh.json --playbook 1.0.0 --yes
     python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --playbook 1.0.0 --runs 3 --yes
     python -m src.rule_extraction_reflexion.scheme_rules onboard IGNOAPS-MH                # shows every change, then:
     python -m src.rule_extraction_reflexion.scheme_rules onboard IGNOAPS-MH --yes
+
+Frozen playbooks are shared through data/schemes/playbooks/ and copied into the
+local store the first time they are used, so a fresh clone needs no database.
 
 Cases come from data/schemes/rule_extraction_cases_dev.json: one entry per
 approved clause, with its topic tags and split. Clause text, approved rules and
@@ -62,7 +68,8 @@ from src.rule_extraction_reflexion.models import (
 )
 from src.rule_extraction_reflexion.extractor import extract_rules
 from src.rule_extraction_reflexion.playbook import (
-    freeze_playbook, load_frozen_playbook, relevant_lessons,
+    SharedPlaybookError, export_playbook, freeze_playbook, load_frozen_playbook,
+    load_playbook, relevant_lessons,
 )
 from src.rule_extraction_reflexion.reflexion import run_reflexion_case
 
@@ -72,6 +79,7 @@ CASES_FILE = PROJECT_ROOT / "data" / "schemes" / "rule_extraction_cases_dev.json
 STORE_FILE = PROJECT_ROOT / "data" / "runtime" / "reflexion_lessons.sqlite3"
 REPORT_DIR = PROJECT_ROOT / "data" / "runtime" / "reflexion_reports"
 DRAFT_DIR = PROJECT_ROOT / "data" / "runtime" / "reflexion_drafts"
+PLAYBOOK_DIR = PROJECT_ROOT / "data" / "schemes" / "playbooks"
 SPLITS = ("learn", "check")
 
 
@@ -183,7 +191,7 @@ async def evaluate(
     if playbook_version:
         async with AsyncSqliteStore.from_conn_string(str(store_path)) as store:
             await store.setup()
-            playbook = await load_frozen_playbook(store, playbook_version)
+            playbook = await load_playbook(store, playbook_version, PLAYBOOK_DIR)
     rows = []
     for case in cases:
         for run in range(1, runs + 1):
@@ -275,14 +283,30 @@ async def review(
     return recorded.decision
 
 
-async def freeze(version: str, *, store_path: Path = STORE_FILE) -> int:
+async def freeze(version: str, *, base: str | None = None, store_path: Path = STORE_FILE) -> int:
+    if (PLAYBOOK_DIR / f"{version}.json").exists():
+        raise SharedPlaybookError(f"Playbook {version} is already shared; freeze a new version.")
     async with AsyncSqliteStore.from_conn_string(str(store_path)) as store:
         await store.setup()
-        snapshot = await freeze_playbook(store, version)
+        base_playbook = await load_playbook(store, base, PLAYBOOK_DIR) if base else None
+        snapshot = await freeze_playbook(store, version, base=base_playbook)
     print(f"playbook {snapshot.version}: {len(snapshot.lessons)} approved lesson(s), hash {snapshot.content_hash}")
     for lesson in snapshot.lessons:
         print(f"  [{', '.join(lesson.tags)}] {lesson.instruction}")
     return len(snapshot.lessons)
+
+
+async def export(version: str, *, store_path: Path = STORE_FILE) -> Path:
+    """Write a frozen playbook to the shared folder, ready to commit."""
+    async with AsyncSqliteStore.from_conn_string(str(store_path)) as store:
+        await store.setup()
+        try:
+            snapshot = await load_frozen_playbook(store, version)
+        except KeyError as error:
+            raise SharedPlaybookError(f"Playbook {version} is not frozen in the local store.") from error
+    path = export_playbook(snapshot, PLAYBOOK_DIR)
+    print(f"playbook {version}: {len(snapshot.lessons)} lesson(s), hash {snapshot.content_hash} -> {path}")
+    return path
 
 
 def build_source_cases(path: Path) -> tuple[dict, list[RuleExtractionCase]]:
@@ -321,7 +345,7 @@ async def extract(
     if playbook_version:
         async with AsyncSqliteStore.from_conn_string(str(store_path)) as store:
             await store.setup()
-            playbook = await load_frozen_playbook(store, playbook_version)
+            playbook = await load_playbook(store, playbook_version, PLAYBOOK_DIR)
     drafts = []
     for case in cases:
         used = relevant_lessons(playbook, case.topic_tags) if playbook else ()
@@ -429,6 +453,10 @@ def main(argv: list[str] | None = None) -> None:
 
     freeze_cmd = commands.add_parser("freeze", help="Save approved lessons as a playbook version.")
     freeze_cmd.add_argument("version", help="For example 1.0.0")
+    freeze_cmd.add_argument("--base", help="Earlier playbook whose lessons are kept.")
+
+    export_cmd = commands.add_parser("export-playbook", help="Write a frozen playbook to a file for git.")
+    export_cmd.add_argument("version", help="For example 1.0.0")
 
     extract_cmd = commands.add_parser("extract", help="Draft rules for a new scheme (paid; never policy).")
     extract_cmd.add_argument("source_file", type=Path, help="A file in data/schemes/rule_extraction_sources/")
@@ -469,7 +497,9 @@ def main(argv: list[str] | None = None) -> None:
             authorized=lambda reviewer_id: reviewer_id in reviewers,
         ))
     elif args.command == "freeze":
-        asyncio.run(freeze(args.version))
+        asyncio.run(freeze(args.version, base=args.base))
+    elif args.command == "export-playbook":
+        asyncio.run(export(args.version))
     elif args.command == "extract":
         source, cases = build_source_cases(args.source_file)
         if _confirm_paid(len(cases), args.yes):
@@ -486,4 +516,7 @@ def main(argv: list[str] | None = None) -> None:
 
 if __name__ == "__main__":
     sys.stdout.reconfigure(encoding="utf-8")
-    main()
+    try:
+        main()
+    except SharedPlaybookError as error:
+        raise SystemExit(f"Refused: {error}") from error

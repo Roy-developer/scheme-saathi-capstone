@@ -83,7 +83,8 @@ tags** (for example `exclusion_clause`).
 | `src/rule_extraction_reflexion/scheme_rules.py` | The on-demand commands | Yes |
 | `src/rule_extraction_reflexion/onboarding.py` | The logic behind `onboard`; the app never imports it | Yes |
 | `src/rule_extraction_reflexion/` | The package the commands call | Yes |
-| `data/runtime/reflexion_lessons.sqlite3` | Lessons, review decisions, frozen playbooks | No (git-ignored) |
+| `data/runtime/reflexion_lessons.sqlite3` | Each person's own lessons, review decisions and frozen playbooks. Created automatically | No (git-ignored) |
+| `data/schemes/playbooks/*.json` | Frozen playbooks shared with the team. Copied into the local database the first time they are used | Yes |
 | `data/runtime/reflexion_reports/*.json` | One report per `evaluate` run | No (git-ignored) |
 | `data/schemes/rule_extraction_sources/*.json` | Official text of a **new** scheme (no approved rules yet), for `extract`; its `onboarding` block holds the search passages | Yes |
 | `data/schemes/reflexion_packages/*.json` | Approved packages waiting to go into the app; `onboard` moves them. Empty when every scheme is live | Yes |
@@ -126,7 +127,7 @@ cost and send nothing until `--yes` is added.
 | 3 | **Split the clauses.** Mark each clause `learn` (lessons may come from it) or `check` (only measured, never learned from). Choose by hand, using the baseline, so both groups contain the kind of mistake being studied. Decide before step 4. | edit `"split"` in the cases file | Free |
 | 4 | **Learn.** For each `learn` clause the model writes rules; if they differ from the answer key it writes one lesson, saved as pending. | `learn --yes` | Yes |
 | 5 | **Review.** Read each pending lesson. Approve a clear, general one; reject vague ones and duplicates, with a reason. | `lessons`, then `review <id> --approve` or `--reject --reviewer <github-login from authorized_reviewers> --reason "..."` | Free |
-| 6 | **Freeze.** Seal the approved lessons into a numbered playbook. A version can be frozen only once; changes need a new version. | `freeze 1.0.0` | Free |
+| 6 | **Freeze and share.** Seal the approved lessons into a numbered playbook, then export it to a file and commit that file, so the team uses the same lessons. A version can be frozen only once; changes need a new version. To add to an existing playbook, use `--base`, or the new version keeps only the lessons approved in your own database. | `freeze 1.0.0`, then `export-playbook 1.0.0`, then commit `data/schemes/playbooks/1.0.0.json`. Later: `freeze 1.1.0 --base 1.0.0` | Free |
 | 7 | **Measure again on the check clauses**, with the playbook, and compare with their baseline from step 2. Because these clauses were never learned from, an improvement shows the lesson transfers. | `evaluate --split check --playbook 1.0.0 --runs 3 --yes` | Yes |
 | 8 | **Record the result** here (section "First experiment" below shows the format). | edit this guide | Free |
 
@@ -418,6 +419,11 @@ split, or review anything; it lists those under "Still for people". If tests
 fail after `--yes`, the files stay written, because a new scheme can break
 tests that hard-code the number of schemes or passages. It never commits.
 
+**A teammate on a fresh clone** needs no database: `extract --playbook 1.0.0`
+reads `data/schemes/playbooks/1.0.0.json`, checks its hash and copies it into
+their own local database. The run is refused if the file was altered, or if
+their local `1.0.0` holds different lessons.
+
 **All the commands in order**
 
 ```powershell
@@ -523,6 +529,7 @@ were found (2026-11-07). Code-level details and guard tests are in section 15.
 | 37 | Three wording problems on the result screen: the reason named the date of birth even when given, the internal name `name_on_bpl_list` was listed, and the chat showed "skip" | The reason was written for one case; the screen printed fact IDs; the chat stored the button's code | Neutral reason (hash re-pinned); missing facts now appear as their question in the person's language; the chat shows "I don't know" | `test_missing_fact_is_shown_as_its_question_not_its_internal_name`, `test_dont_know_appears_in_the_chat_as_the_person_chose_it` |
 | 38 | 34 test errors appeared after browser testing | A portal server left running on port 8765 was still in use | Stop all local servers before running the test suite | — |
 | 39 | Going live took edits to six files by hand, and a missed step only showed up as a loader error | The steps were mechanical but nothing automated them | Built `scheme_rules.py onboard`; a test undoes IGNOAPS on a copy and requires the command to recreate the hand-made files byte for byte | `tests/test_scheme_onboarding.py` |
+| 40 | A teammate could not use `--playbook 1.0.0` | Playbooks lived only in a git-ignored database on one laptop, so a fresh clone stopped with "Unknown playbook version" | Playbooks are exported to `data/schemes/playbooks/` and copied into the local database on first use; the hash check refuses an altered file; `freeze --base` keeps lessons approved elsewhere | `tests/test_scheme_rules.py` |
 ### Known open issues
 
 - **Rejected answers cannot teach.** An answer that fails the package's checks
@@ -532,10 +539,10 @@ were found (2026-11-07). Code-level details and guard tests are in section 15.
 - **Small sample:** 3 runs per clause, three schemes, one model; the 9/15 to
   15/15 (and 18/18 with IGNOAPS) result should be confirmed with more runs and
   more schemes, including a new scheme with exclusion clauses.
-- **Lessons are local:** `data/runtime/reflexion_lessons.sqlite3` is git-ignored,
-  so each machine has its own lessons and playbooks. Sharing playbooks across
-  the team (for example exporting a frozen playbook to a committed JSON file)
-  is not built.
+- **Lessons are local; playbooks are shared.**
+  `data/runtime/reflexion_lessons.sqlite3` is git-ignored, so pending lessons
+  and review history stay on one machine. Frozen playbooks are shared through
+  `data/schemes/playbooks/`.
 - **Structured-output method:** the extractor uses the library default
   (`json_schema`), which only some OpenRouter models support; intake uses
   `json_mode`. Switching models may need this decided.
@@ -1051,7 +1058,8 @@ commands, in order, are in the steps table in "Start here". What each one calls:
 | `learn` | `run_reflexion_case` on `learn` clauses only | up to 2 calls per case |
 | `lessons` | lists stored lessons and their reviews | free |
 | `review` | `review_lesson` (`--reviewer` must be a GitHub login listed in `authorized_reviewers`) | free |
-| `freeze` | `freeze_playbook` | free |
+| `freeze <version> [--base <version>]` | `freeze_playbook`; `--base` keeps an earlier playbook's lessons | free |
+| `export-playbook <version>` | `export_playbook`: writes the frozen playbook to `data/schemes/playbooks/` for git | free |
 | `extract <source file> [--playbook 1.0.0] --yes` | `extract_rules` with no answer key: drafts rules for a **new** scheme | 1 call per clause |
 | `onboard <SCHEME> [--yes] [--skip-tests]` | `plan_onboarding`, `apply_onboarding`: puts a human-approved scheme in the app | free |
 
@@ -1237,8 +1245,7 @@ validation in section 7.
 The current implementation is a library for controlled development, not a fully
 integrated production review workflow. Remaining work includes authenticated
 review integration, concurrency-safe writes, governed model/token/spend limits,
-a larger before/after sample than 3 runs per clause, and sharing playbooks
-across the team. See "Known open issues" in "Start here".
+and a larger before/after sample than 3 runs per clause. See "Known open issues" in "Start here".
 
 Approving a lesson approves extractor guidance only. It never approves or
 activates a government rule package. Human policy review remains separate.
