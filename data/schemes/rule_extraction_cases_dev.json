@@ -1,0 +1,43 @@
+{
+  "dataset_version": "0.3.0",
+  "purpose": "Development cases for rule-extraction Reflexion. Each case is one clause of an approved rule package; its text, rules and facts are read from the package at run time, so nothing here duplicates policy.",
+  "split_rules": "learn: lessons may be proposed from this clause. check: measured only, never learned from, so it stays valid for before/after comparison and demos. null: not yet assigned; learn refuses it. Assign a split before anything learns from a clause.",
+  "context_rules": "A clause in a list is shown to the model after the headings it sits under in the source, so the model sees what a person reading the document sees. Headings are copied word for word and are never compared or stored as rule evidence.",
+  "topic_tags": {
+    "inclusion_clause": "States who qualifies.",
+    "exclusion_clause": "States who is not eligible; the approved rule is usually fact eq false."
+  },
+  "reviewer_rules": "Any project team member may review lessons. Use your GitHub login after --reviewer.",
+  "authorized_reviewers": [
+    "Roy-developer",
+    "pavanipriyankavelisetty",
+    "balajikondalrayal",
+    "vivian-fernandes",
+    "NidhiShreeish",
+    "nikhilkrsde"
+  ],
+  "contexts": {
+    "PMKISAN-4.1-HEADING": {
+      "text": "4.1 The following categories of beneficiaries of higher economic status shall not be eligible for benefit under the scheme:",
+      "location": "Page 2, section 4.1",
+      "source_url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
+    },
+    "PMKISAN-4.1(b)-HEADING": {
+      "text": "(b) Farmer families in which one or more of its members belong to following categories :",
+      "location": "Page 2, section 4.1(b)",
+      "source_url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
+    }
+  },
+  "cases": [
+    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-3", "context": [], "topic_tags": ["inclusion_clause"], "split": "check"},
+    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-4.1(a)", "context": ["PMKISAN-4.1-HEADING"], "topic_tags": ["exclusion_clause"], "split": "learn"},
+    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(i)-(ii)", "context": ["PMKISAN-4.1-HEADING", "PMKISAN-4.1(b)-HEADING"], "topic_tags": ["exclusion_clause"], "split": "learn"},
+    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(iii)", "context": ["PMKISAN-4.1-HEADING", "PMKISAN-4.1(b)-HEADING"], "topic_tags": ["exclusion_clause"], "split": "learn"},
+    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(iv)", "context": ["PMKISAN-4.1-HEADING", "PMKISAN-4.1(b)-HEADING"], "topic_tags": ["exclusion_clause"], "split": "check"},
+    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(v)", "context": ["PMKISAN-4.1-HEADING", "PMKISAN-4.1(b)-HEADING"], "topic_tags": ["exclusion_clause"], "split": "check"},
+    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(vi)", "context": ["PMKISAN-4.1-HEADING", "PMKISAN-4.1(b)-HEADING"], "topic_tags": ["exclusion_clause"], "split": "check"},
+    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-4.1(c)", "context": ["PMKISAN-4.1-HEADING"], "topic_tags": ["exclusion_clause"], "split": "learn"},
+    {"package": "ignwps_mh.v1.json", "clause_id": "IGNWPS-MH-ELIGIBILITY-01", "context": [], "topic_tags": ["inclusion_clause"], "split": "check"},
+    {"package": "ignoaps_mh.v1.json", "package_sha256": "cd4652b8a7da119561eee6ee8a532b4059cca8b750c9d323d93c6a05c00a6549", "clause_id": "IGNOAPS-MH-ELIGIBILITY-01", "context": [], "topic_tags": ["inclusion_clause"], "split": "check"}
+  ]
+}

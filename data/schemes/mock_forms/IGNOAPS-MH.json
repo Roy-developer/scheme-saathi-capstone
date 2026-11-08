@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "scheme_id": "IGNOAPS-MH",
+  "form_version": "1.0.0",
+  "status": "demo_only",
+  "fields": [
+    {
+      "field_id": "date_of_birth",
+      "labels": {
+        "en": "Date of birth",
+        "hi": "जन्म तिथि",
+        "mr": "जन्मतारीख"
+      },
+      "value_type": "date",
+      "required": true,
+      "fact_id": "date_of_birth"
+    },
+    {
+      "field_id": "name_on_bpl_list",
+      "labels": {
+        "en": "Name on the BPL list",
+        "hi": "बीपीएल सूची में नाम",
+        "mr": "बीपीएल यादीत नाव"
+      },
+      "value_type": "boolean",
+      "required": true,
+      "fact_id": "name_on_bpl_list"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "scheme_id": "IGNOAPS-MH",
+  "checklist_version": "v1",
+  "requirements": [
+    {
+      "requirement_id": "identity_group",
+      "labels": {
+        "en": "Identity proof",
+        "hi": "पहचान प्रमाण",
+        "mr": "ओळख पुरावा"
+      },
+      "alternatives": [
+        {
+          "document_id": "identity_proof",
+          "labels": {
+            "en": "Identity proof (synthetic demo item)",
+            "hi": "पहचान प्रमाण (प्रदर्शन मद)",
+            "mr": "ओळख पुरावा (प्रात्यक्षिक बाब)"
+          }
+        }
+      ],
+      "condition": {
+        "kind": "unconditional"
+      },
+      "evidence_passage_ids": []
+    },
+    {
+      "requirement_id": "age_group",
+      "labels": {
+        "en": "Age proof",
+        "hi": "आयु प्रमाण",
+        "mr": "वयाचा पुरावा"
+      },
+      "alternatives": [
+        {
+          "document_id": "age_proof",
+          "labels": {
+            "en": "Age proof (synthetic demo item)",
+            "hi": "आयु प्रमाण (प्रदर्शन मद)",
+            "mr": "वयाचा पुरावा (प्रात्यक्षिक बाब)"
+          }
+        }
+      ],
+      "condition": {
+        "kind": "unconditional"
+      },
+      "evidence_passage_ids": []
+    },
+    {
+      "requirement_id": "bpl_list_group",
+      "labels": {
+        "en": "Proof of name on the BPL list",
+        "hi": "बीपीएल सूची में नाम का प्रमाण",
+        "mr": "बीपीएल यादीत नावाचा पुरावा"
+      },
+      "alternatives": [
+        {
+          "document_id": "bpl_list_proof",
+          "labels": {
+            "en": "Proof of name on the BPL list (synthetic demo item)",
+            "hi": "बीपीएल सूची में नाम का प्रमाण (प्रदर्शन मद)",
+            "mr": "बीपीएल यादीत नावाचा पुरावा (प्रात्यक्षिक बाब)"
+          }
+        }
+      ],
+      "condition": {
+        "kind": "unconditional"
+      },
+      "evidence_passage_ids": []
+    }
+  ],
+  "approval": {
+    "status": "demo_only",
+    "checklist_version": "v1"
+  }
+}

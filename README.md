@@ -75,11 +75,14 @@ cross-encoder. The tool returns evidence for retrieval-augmented answers; it
 does not generate an answer or determine eligibility.
 
 The versioned corpus is `data/schemes/passages.json`. It currently contains
-13 English passages across IGNWPS-MH and PM-KISAN-IN. Their `reviewed` status
+17 English passages across IGNWPS-MH, PM-KISAN-IN and IGNOAPS-MH. Their `reviewed` status
 was set per the user's human-review attestation; it is not legal or policy
 approval. The PM-KISAN source-currentness caveats are recorded in the review
 workbook. This remains a technical pilot, not the complete 40–60-scheme
 corpus, and retrieval does not determine eligibility.
+
+To add a scheme, from its official source through to the app, follow
+`docs/RULE_EXTRACTION_REFLEXION_CODE_WALKTHROUGH.md`, section "From official PDF to live app, end to end".
 
 The current pilot uses the OpenRouter `voyageai/voyage-4` multilingual
 embedding model. The deployed API uses OpenRouter's hosted

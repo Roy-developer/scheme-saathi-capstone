@@ -17,6 +17,7 @@ from uuid import UUID, uuid4
 
 import streamlit as st
 
+from src.rules.data_provider import RulePackageProvider
 from src.ui.api_client import (
     ApplicationApiError,
     JourneyApiError,
@@ -39,12 +40,16 @@ from src.workflow.agent_config import (
     MAX_CONVERSATION_TOOL_CALLS,
 )
 from src.workflow.journey import JourneyRequest, JourneyResponse
-from src.workflow.questions import parse_answer, question_for
+from src.workflow.questions import parse_answer, question_for, unknown_answer_label
 from src.workflow.discovery import discovery_message
 
 
 # The API rejects longer replies before the registry parser can validate them.
 MAX_JOURNEY_REPLY_LENGTH = 500
+# st.date_input allows only ten years either side of today unless told
+# otherwise, which rejected every old-age applicant's date of birth.
+REGISTERED_DATE_MIN = date(1900, 1, 1)
+REGISTERED_DATE_MAX = date(2100, 12, 31)
 
 
 COPY = {
@@ -1577,6 +1582,23 @@ def render_plan(plan_detail: dict | None, text: dict[str, str]) -> None:
             st.caption(plan_detail["replan_reason"])
 
 
+@st.cache_resource
+def fact_registry():
+    """Load the fact registry once; it holds the wording for each fact."""
+
+    return RulePackageProvider().registry
+
+
+def readable_missing_fields(fields: list[str], locale: str) -> str:
+    """Show each missing fact as its question; other labels stay as written."""
+
+    facts = {fact.fact_id: fact for fact in fact_registry().definitions}
+    return "; ".join(
+        facts[field].questions[locale].text if field in facts else field
+        for field in fields
+    )
+
+
 def render_verdict(
     result: dict,
     scheme_id: str,
@@ -1605,7 +1627,11 @@ def render_verdict(
         st.warning(result["notice"])
     if result["missing_fields"]:
         st.caption(
-            f'{text["missing"]}: {", ".join(result["missing_fields"])}'
+            f'{text["missing"]}: '
+            + readable_missing_fields(
+                result["missing_fields"],
+                st.session_state.get("journey_locale", "en"),
+            )
         )
         st.button(text["human"], disabled=True)
     if result.get("unresolved_checks"):
@@ -1655,11 +1681,7 @@ def registered_answer_input(
     fact_id = str(question["fact_id"])
     value_type = question["value_type"]
     key = f"registered_answer_{conversation_id}_{fact_id}"
-    unknown_label = {
-        "en": "I don't know",
-        "hi": "मुझे नहीं पता",
-        "mr": "माहित नाही",
-    }[locale]
+    unknown_label = unknown_answer_label(locale)
     if question.get("help_text"):
         st.caption(str(question["help_text"]))
     unit = question.get("unit")
@@ -1737,6 +1759,8 @@ def registered_answer_input(
             selected = st.date_input(
                 text["interview_reply"],
                 value=None,
+                min_value=REGISTERED_DATE_MIN,
+                max_value=REGISTERED_DATE_MAX,
                 disabled=is_unknown,
                 key=key,
             )
@@ -2422,7 +2446,8 @@ if st.session_state.selected_result and st.session_state.api_result:
 
     if verdict["missing_fields"]:
         st.warning(
-            f'{text["missing"]}: {", ".join(verdict["missing_fields"])}'
+            f'{text["missing"]}: '
+            + readable_missing_fields(verdict["missing_fields"], locale)
         )
         st.button(text["human"], disabled=True)
 

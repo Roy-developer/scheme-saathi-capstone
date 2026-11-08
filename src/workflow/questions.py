@@ -394,6 +394,12 @@ def localized_unknown_message(locale: str) -> str:
     }.get(locale, "Okay. We will leave this information unknown for now.")
 
 
+def unknown_answer_label(locale: str) -> str:
+    """Return the "I don't know" choice as the person sees it."""
+
+    return {"hi": "मुझे नहीं पता", "mr": "माहित नाही"}.get(locale, "I don't know")
+
+
 def _normalise(reply: str, locale: str = "en") -> str:
     """Lower-case a reply and drop extra spaces and trailing punctuation.
 

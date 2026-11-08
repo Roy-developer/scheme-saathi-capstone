@@ -206,7 +206,16 @@ def test_bm25_ranks_specific_passage_above_shared_scheme_metadata():
 
     results = retriever._bm25_search("below poverty line", tuple(passages))
 
-    assert results == ["IGNWPS-MH-ELIGIBILITY-01"]
+    # Both BPL eligibility clauses match; no shared scheme metadata does.
+    assert results == ["IGNWPS-MH-ELIGIBILITY-01", "IGNOAPS-MH-ELIGIBILITY-01"]
+
+
+def test_bm25_finds_the_old_age_pension_scheme():
+    passages = load_passages(PASSAGE_FILE)
+
+    results = build_retriever(passages)._bm25_search("old age pension", tuple(passages))
+
+    assert results and results[0].startswith("IGNOAPS-MH-")
 
 
 def test_bm25_does_not_return_passages_without_query_terms():
