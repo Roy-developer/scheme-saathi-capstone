@@ -2,6 +2,7 @@
 
 import asyncio
 from contextlib import AsyncExitStack, asynccontextmanager, suppress
+from datetime import date
 import logging
 import os
 import sys
@@ -62,6 +63,7 @@ from src.llm_client import DEFAULT_CHAT_MODEL, openrouter_chat_model
 from src.workflow.intake import IntakeAgentError
 from src.workflow.conversation_budget import BUDGET_NAMESPACE
 from src.workflow.journey import (
+    confirmed_answers,
     ApplicationTaskError,
     JourneyMessage,
     JourneyCorrection,
@@ -213,8 +215,8 @@ async def _application_state(
     request: Request,
     conversation_id: UUID,
     scheme_id: str,
-) -> tuple[dict, HouseholdProfile]:
-    """Require a saved, current eligible result and return its profile."""
+) -> tuple[dict, dict[str, object]]:
+    """Require a saved, current eligible result and return its confirmed answers."""
 
     try:
         current = await get_journey(request.app.state.journey_graph, conversation_id)
@@ -243,7 +245,7 @@ async def _application_state(
             detail="A completed profile is required for a mock application.",
         )
     try:
-        profile = HouseholdProfile.model_validate(profile_data or {})
+        profile = confirmed_answers(values)
     except Exception as error:
         logger.exception("Saved journey profile could not be validated")
         raise HTTPException(status_code=409, detail="The saved profile is invalid.") from error
@@ -486,7 +488,7 @@ def service_info() -> dict[str, str | bool]:
 )
 async def evaluate(
     scheme_id: str,
-    eligibility_request: HouseholdProfile,
+    eligibility_request: dict[str, object],
     http_request: Request,
 ) -> EligibilityResponse:
     """Evaluate any loaded scheme by calling the MCP rule-engine tool."""
@@ -494,13 +496,24 @@ async def evaluate(
     # Reject unknown scheme IDs before spending a tool call.
     if scheme_id not in http_request.app.state.rule_packages:
         raise HTTPException(status_code=404, detail="Unknown scheme")
-    # Send the validated profile through MCP and return the tool's verdict.
+    bundle = http_request.app.state.rule_bundles[scheme_id]
+    try:
+        if not set(eligibility_request) <= set(bundle.fact_ids):
+            raise ValueError("The request names a fact outside this scheme.")
+        answers = TypedFactStore.from_answers(
+            eligibility_request, http_request.app.state.fact_registry,
+        )
+    except (KeyError, TypeError, ValueError) as error:
+        raise HTTPException(
+            status_code=422, detail="Some answers are missing or invalid.",
+        ) from error
+    # Send the validated answers through MCP and return the tool's verdict.
     try:
         with observe_duration("evaluate"):
             result = await evaluate_eligibility(
                 http_request.app.state.mcp_client,
                 scheme_id,
-                eligibility_request,
+                answers,
             )
         record_evaluation(scheme_id, source="api")
         record_verdict(scheme_id, result.result)
@@ -526,7 +539,7 @@ async def _mark_changed_document_reports(
         {"configurable": {"thread_id": str(conversation_id)}}
     )
     values = snapshot.values
-    if not values.get("profile"):
+    if not (values.get("profile") or values.get("typed_facts")):
         return response.model_copy(update={
             "document_assessments": {
                 scheme_id: {
@@ -538,7 +551,7 @@ async def _mark_changed_document_reports(
             }
         })
     try:
-        profile = HouseholdProfile.model_validate(values.get("profile") or {})
+        profile = confirmed_answers(values)
     except ValueError:
         return response.model_copy(update={
             "document_assessments": {
@@ -573,15 +586,13 @@ async def _mark_changed_document_reports(
                 documents=prior.get("documents", {}),
                 profile_name=prior.get("profile_name"),
                 profile_date_of_birth=(
-                    profile.date_of_birth.isoformat()
-                    if profile.date_of_birth is not None
-                    else None
+                    profile.get("date_of_birth")
                 ),
                 document_metadata=prior.get("document_metadata", {}),
                 typed_facts=values.get("typed_facts"),
                 profile_conditions={
-                    "is_widow": profile.is_widow,
-                    "bpl_card_shown": profile.bpl_card_shown,
+                    "is_widow": profile.get("is_widow"),
+                    "bpl_card_shown": profile.get("bpl_card_shown"),
                 },
                 bundle_fingerprint=_bundle_fingerprint(request, scheme_id),
             )
@@ -815,9 +826,7 @@ async def assess_application_documents(
                 "documents": assessment.documents,
                 "profile_name": assessment.profile_name,
                 "profile_date_of_birth": (
-                    profile.date_of_birth.isoformat()
-                    if profile.date_of_birth is not None
-                    else None
+                    profile.get("date_of_birth")
                 ),
                 "document_metadata": {
                     document_id: metadata.model_dump(mode="json")
@@ -828,7 +837,7 @@ async def assess_application_documents(
         )
         _, result["form_preview"] = _confirmed_form_values(
             request, assessment.scheme_id, values.get("typed_facts"),
-            profile=profile.model_dump(mode="json"),
+            profile=profile,
         )
         return result
     except MCPToolError as error:
@@ -863,14 +872,14 @@ async def create_application_draft(
         draft_request.scheme_id,
         draft_request.documents,
         draft_request.profile_name,
-        profile.date_of_birth,
+        date.fromisoformat(profile["date_of_birth"]) if profile.get("date_of_birth") else None,
         document_metadata,
         assessment.get("checklist_fingerprint", ""),
         assessment.get("evidence_fingerprint", ""),
         assessment.get("active_fingerprint", ""),
         {
-            "is_widow": profile.is_widow,
-            "bpl_card_shown": profile.bpl_card_shown,
+            "is_widow": profile.get("is_widow"),
+            "bpl_card_shown": profile.get("bpl_card_shown"),
         },
         values.get("typed_facts"),
         _bundle_fingerprint(request, draft_request.scheme_id),
@@ -881,7 +890,7 @@ async def create_application_draft(
             draft_request.scheme_id,
             values.get("typed_facts"),
             draft_request.form_values,
-            profile.model_dump(mode="json"),
+            profile,
         )
     except ValueError as error:
         raise HTTPException(
@@ -916,9 +925,7 @@ async def create_application_draft(
                 "documents": draft_request.documents,
                 "profile_name": draft_request.profile_name,
                 "profile_date_of_birth": (
-                    profile.date_of_birth.isoformat()
-                    if profile.date_of_birth is not None
-                    else None
+                    profile.get("date_of_birth")
                 ),
                 "document_metadata": document_metadata,
                 "typed_facts": values.get("typed_facts"),
@@ -998,7 +1005,7 @@ async def edit_application_draft(
         package = request.app.state.rule_packages.get(record["scheme_id"])
         if (
             package is None
-            or record["draft"].get("profile") != profile.model_dump(mode="json")
+            or record["draft"].get("profile") != profile
             or record["draft"].get("rule_package_version") != package.package_version
             or record["draft"].get("bundle_fingerprint")
             != _bundle_fingerprint(request, record["scheme_id"])
@@ -1080,7 +1087,7 @@ async def update_application_approval(
                     status_code=409,
                     detail="The scheme form or bundle changed. Create and review a new draft.",
                 )
-            if draft.get("profile") != profile.model_dump(mode="json"):
+            if draft.get("profile") != profile:
                 raise HTTPException(
                     status_code=409,
                     detail="Your answers changed. Recheck eligibility and create a new draft.",
