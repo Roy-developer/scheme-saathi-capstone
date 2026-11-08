@@ -19,6 +19,10 @@ from src.api.scheme_search import (
 PASSAGE_DIR = Path(__file__).resolve().parents[1] / "data" / "schemes" / "passages"
 
 
+def passages_of(passages, scheme_id):
+    return [passage for passage in passages if passage.scheme_id == scheme_id]
+
+
 @pytest.fixture(scope="module")
 def corpus():
     return load_passages(PASSAGE_DIR)
@@ -59,7 +63,7 @@ def test_openrouter_embeddings_prefers_free_api_key(monkeypatch):
 
     monkeypatch.setenv("OPENROUTER_API_KEY_FREE", "free-key")
     monkeypatch.setenv("OPENROUTER_API_KEY", "default-key")
-    passages = load_passages(PASSAGE_FILE)
+    passages = load_passages(PASSAGE_DIR)
     embeddings = openrouter_embeddings(
         "free-key", "voyageai/voyage-4",
         http_client=httpx.Client(transport=httpx.MockTransport(handle)),
@@ -91,7 +95,7 @@ def test_embeddings_do_not_fall_back_to_chat_key(monkeypatch):
     monkeypatch.delenv("OPEN_ROUTER_FREE", raising=False)
     monkeypatch.setenv("OPENROUTER_API_KEY", "chat-key")
     retriever = HybridSchemeRetriever(
-        load_passages(PASSAGE_FILE), use_cross_encoder=False,
+        load_passages(PASSAGE_DIR), use_cross_encoder=False,
     )
 
     with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY_FREE"):
@@ -375,7 +379,11 @@ def _agreement_retriever(vector_first_scheme: str):
     """Reranker unsure (0.19); keyword search ranks PM-KISAN first for 'farmer';
     meaning search ranks ``vector_first_scheme`` first."""
 
-    passages = load_passages(PASSAGE_FILE)
+    # Two schemes only: with all 42, other farmer schemes also match "farmer".
+    passages = [
+        passage for passage in load_passages(PASSAGE_DIR)
+        if passage.scheme_id in {"PM-KISAN-IN", "IGNWPS-MH"}
+    ]
     ordered = sorted(passages, key=lambda passage: passage.scheme_id != vector_first_scheme)
     ids = [passage.passage_id for passage in ordered]
     return HybridSchemeRetriever(
