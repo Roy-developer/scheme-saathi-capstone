@@ -1,0 +1,275 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "SBSSPS-MH-ELIGIBILITY-01",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Eligible elderly individuals aged 65 and above, whose names are on the Below Poverty Line (BPL) list or whose annual income is less than ₹21,000, receive financial assistance of ₹1500 per month under the Shravanbal Seva State Pension Scheme.",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/shravan-bal-rajya-nivruttivetan-yojana/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Criteria"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "SBSSPS-MH-BENEFICIARY-01",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "All Categories",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/shravan-bal-rajya-nivruttivetan-yojana/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Beneficiary"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "SBSSPS-MH-BENEFIT-01",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Under this scheme, Rs. 1500 per month is given to each beneficiary.",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/shravan-bal-rajya-nivruttivetan-yojana/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "SBSSPS-MH-APPLICATION-01",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "The applicant can apply at the Collector’s Office / Tehsildar’s Office, Sanjay Gandhi Niradhar Anudan Yojana Branch / Talathi Office.",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/shravan-bal-rajya-nivruttivetan-yojana/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; How To Apply"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "SBSSPS-MH-ELIGIBILITY-02",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should be a citizen of India.",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/sbssps",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "SBSSPS-MH-ELIGIBILITY-03",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should be a domicile / permanent resident of the state of Maharashtra for at least 15 years.",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/sbssps",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "SBSSPS-MH-ELIGIBILITY-04",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should be destitute.",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/sbssps",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "SBSSPS-MH-APPLICATION-02",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1: Visit the Official Portal of Aaple Sarkar (Maha DBT). On the right pane (green), click \"New User? Register Here\". You will be directed to the Registration Page.",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/sbssps",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Registration, step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "SBSSPS-MH-APPLICATION-03",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 2: Verify your Email ID and Mobile Number using OTP and then create a Unique Username and Password. (You will also find the link to the Registration Manual on the top right of the page.)",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/sbssps",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Registration, step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "SBSSPS-MH-APPLICATION-04",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 3: At the bottom of the Registration Page, read the following declaration carefully:\n\"I declare that the above-mentioned information submitted by me is true and correct to my knowledge and belief. I hereby agree to be liable for legal consequences for any information found incorrect or false under section 200 of the Indian penal code 1960.\"\nSelect the \"I accept\" checkbox, and click \"Register\". Your Login Credentials will be shared over your registered Email ID and Mobile Number.",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/sbssps",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Registration, step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "SBSSPS-MH-APPLICATION-05",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1: Visit the Official Portal of Aaple Sarkar (Maha DBT). On the right pane (green), click \"Already Registered? Login Here\". Provide your Username and Password. Fill in the Captcha Code, Select your District from the dropdown menu, and click \"Login\".",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/sbssps",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Application, step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "SBSSPS-MH-APPLICATION-06",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 2: On the next page, in the left pane, click \"All Schemes\". From the dropdown menu, select the Department Name, and the name of the scheme that you seek to apply for. Click \"Apply\" against the concerned scheme.",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/sbssps",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Application, step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "SBSSPS-MH-APPLICATION-07",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 3: Fill in all the mandatory fields and upload the mandatory documents, and click \"Apply\". A popup message acknowledging the successful submission of the application will be displayed, along with the Application ID:\nThe Application ID will also be shared over your registered Email ID and Mobile Number. Save this Application ID for future reference and for checking the application status.",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/sbssps",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Application, step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "SBSSPS-MH-APPLICATION-08",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 4: You can also view the status of your applications (Under Scrutiny / Approved / Rejected / Fund Disbursed) using the \"My Applied Scheme History\" in the left pane.",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/sbssps",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Application, step 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "SBSSPS-MH-DOCUMENTS-01",
+      "scheme_id": "SBSSPS-MH",
+      "scheme_name": "Shravanbal Seva State Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "documents",
+      "text": "Aadhaar Card.\n2-Passport Sized Photograph (Signed Across).\nProof of Age.\nIncome Certificate / BPL Card of the Family (if applicable)\nResidential Certificate / Domicile Certificate of the State of Maharashtra.\nDetails of the Bank Account (Bank Name, Branch Name, Address, IFSC, etc).\nAny other document required by the District Social Welfare Office.",
+      "source": {
+        "source_id": "SRC-SBSSPS-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/sbssps",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "scheme_id": "PSGS-DIP-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "PSGS-DIP-IN-R01",
+      "kind": "eligibility",
+      "field": "is_woman",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PSGS-DIP-IN-BENEFICIARY-01",
+      "source_quote": "aimed at providing assistance for advancement of Girls pursuing technical education",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PSGS-DIP-IN-R02",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 800000,
+      "unit": "INR per year",
+      "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-01",
+      "source_quote": "Family income from all sources should not be more than Rs. 8 lakh per annum during the current financial year",
+      "needs_human_review": false,
+      "note": "Rs. 8 lakh = 800000; limit is inclusive ('not more than')."
+    }
+  ],
+  "unresolved": [
+    "MISSING FIELD: admitted to first year of diploma (or second year via lateral entry) in an AICTE approved institution.",
+    "MISSING FIELD: maximum two girl children per family.",
+    "MISSING FIELD: gap of not more than two years between qualifying examination and diploma admission.",
+    "MISSING FIELD: receives any other scholarship, stipend or salary during the course (exclusion, PSGS-DIP-IN-EXCLUSION-02).",
+    "MISSING FIELD: failed or dropped out in a subsequent year (exclusion, PSGS-DIP-IN-EXCLUSION-01)."
+  ]
+}

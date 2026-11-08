@@ -1,0 +1,14 @@
+{
+  "scheme_id": "TFEFVSSSHS-MH",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [],
+  "unresolved": [
+    "No rule could be expressed with the available fields: 'No limit of age or income' states no constraint.",
+    "MISSING FIELD: belongs to VJNT/SBC category.",
+    "MISSING FIELD: student in classes 9-12 of a recognised High School.",
+    "MISSING FIELD: number of failures (once allowed, twice not eligible).",
+    "MISSING FIELD: receives other scholarships (exclusion, TFEFVSSSHS-MH-EXCLUSION-01); is_receiving_other_pension covers pensions only."
+  ]
+}

@@ -1,0 +1,473 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "PMKMDY-IN-BENEFICIARY-01",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "The Government of India has introduced an old age pension scheme for all land holding Small and Marginal Farmers (SMFs) in the country, namely, the “Pradhan Mantri Kisan Maan-Dhan Yojana (PM-KMY)”, as a voluntary and contributory pension scheme for the entry age group of 18 to 40 years. The Scheme is effective from the 9th August, 2019.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 1, para 1 Scheme"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-BENEFIT-01",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The Pradhan Mantri Kisan Maan-Dhan Yojana (PM-KMY) provides for an assured monthly pension of Rs. 3000/- to all land holding Small and Marginal Farmers (SMFs), whether male or female, on their attaining the age of 60 years.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 1, para 2 Objective and Benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-ELIGIBILITY-01",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "All Small and Marginal Farmers (SMFs) in all States and Union Territories of the country, who are of the age of 18 years and above and upto the age of 40 years, and who do not fall within the purview of the exclusion criteria as mentioned in the guidelines, are eligible to avail the benefits of this Scheme by joining it.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 3, para 4 Eligibility"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-ELIGIBILITY-02",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "“Small and Marginal Farmer” or “SMF” means a farmer who owns cultivable land upto 2 hectare as per land records of the concerned State/UT”.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 2, para 3(p) Definitions"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-ELIGIBILITY-03",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "“Family” means, —\nwife, in the case of male eligible subscriber;\nhusband, in the case of a female eligible subscriber;",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 2, para 3(h) Definitions"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-EXCLUSION-01",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "The following categories of farmers have been brought under the exclusion criteria:\nSMFs covered under any other statuary social security schemes such as National Pension Scheme (NPS), Employees’ State Insurance Corporation scheme, Employees’ Fund Organization Scheme etc.\nFarmers who have opted for Pradhan Mantri Shram Yogi Maan Dhan Yojana (PM-SYM) administered by the Ministry of Labour & Employment\nFarmers who have opted for Pradhan Mantri Laghu Vyapari Maan-dhan Yojana (PM-LVM) administered by the Ministry of Labour & Employment\nFurther, the following categories of beneficiaries of higher economic status shall not be eligible for benefits under the scheme:\nAll Institutional Land holders; and\nFormer and present holders of constitutional posts\nFormer and present Ministers/ State Ministers and former/present Members of Lok Sabha/ Rajya Sabha/ State Legislative Assemblies/ State Legislative Councils,former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central/ State Government Ministries/ Offices/Departments and their field units, Central or State PSEs and Attached offices/ Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV/Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practice.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 3, para 5.1 Exclusions"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-EXCLUSION-02",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "For the purpose of exclusion State/UT Government can certify the eligibility of the beneficiary based on self declaration by the beneficiaries. In case beneficiary is not available /does not reside in the village, State/UT Governments may consider certification based on the declaration by other adult member of his/her family. In case of incorrect self declaration, beneficiary shall not be eligible for financial benefit under the Scheme.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 4, para 5.2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-BENEFIT-02",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The Central Government through the Department of Agriculture Cooperation and Farmers Welfare shall also contribute an equal amount as contributed by the eligible subscriber, to the pension Fund. Account of such co-contributions shall be maintained separately by the LIC and these co-contributions along with fund earnings from time to time shall be utilized for pension payment on the date of vesting. Co-contributions would not be paid to subscribers in case of pre-mature exits. In such a case, the co-contributions along with fund earnings will be transferred back to Pension Fund.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 4, para 6(vii) Key features, matching contribution"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-BENEFIT-03",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The SMFs shall have the option to allow payment of his/her voluntary contribution to the Scheme from the financial benefits received by them from the PM-KISAN Scheme, directly.\nThe eligible SMFs who are not beneficiaries of PM-Kisan or who have not given consent to allow payment from the benefit of PM-Kisan shall submit an enrolment-cum-auto-debit mandate form for giving their consent to auto-debit a bank account which is normally used by them for bank transactions;",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 4, para 6(iv)-(vi) Key features, PM-KISAN option"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-BENEFIT-04",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The monthly contributions will fall due on the same day every month as enrolment date. The beneficiaries may also chose an option to pay their contributions on quarterly, 4-monthly or half-yearly basis. Such contributions will fall due on the same day of such period as the date of enrollment;",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 4, para 6(ix) Key features, payment frequency"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-BENEFIT-05",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The amount of the monthly contribution shall range between Rs.55 to Rs.200 per month depending upon the age of entry of the farmers into the Scheme, as per the following contribution chart:",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 5, para 6(x) Key features, contribution"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-BENEFIT-06",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Entry age 18, superannuation age 60: member's contribution Rs.55, Government's contribution Rs.55, total contribution Rs.110\nEntry age 19, superannuation age 60: member's contribution Rs.58, Government's contribution Rs.58, total contribution Rs.116\nEntry age 20, superannuation age 60: member's contribution Rs.61, Government's contribution Rs.61, total contribution Rs.122\nEntry age 21, superannuation age 60: member's contribution Rs.64, Government's contribution Rs.64, total contribution Rs.128\nEntry age 22, superannuation age 60: member's contribution Rs.68, Government's contribution Rs.68, total contribution Rs.136\nEntry age 23, superannuation age 60: member's contribution Rs.72, Government's contribution Rs.72, total contribution Rs.144\nEntry age 24, superannuation age 60: member's contribution Rs.76, Government's contribution Rs.76, total contribution Rs.152\nEntry age 25, superannuation age 60: member's contribution Rs.80, Government's contribution Rs.80, total contribution Rs.160\nEntry age 26, superannuation age 60: member's contribution Rs.85, Government's contribution Rs.85, total contribution Rs.170\nEntry age 27, superannuation age 60: member's contribution Rs.90, Government's contribution Rs.90, total contribution Rs.180\nEntry age 28, superannuation age 60: member's contribution Rs.95, Government's contribution Rs.95, total contribution Rs.190\nEntry age 29, superannuation age 60: member's contribution Rs.100, Government's contribution Rs.100, total contribution Rs.200\nEntry age 30, superannuation age 60: member's contribution Rs.105, Government's contribution Rs.105, total contribution Rs.210\nEntry age 31, superannuation age 60: member's contribution Rs.110, Government's contribution Rs.110, total contribution Rs.220\nEntry age 32, superannuation age 60: member's contribution Rs.120, Government's contribution Rs.120, total contribution Rs.240\nEntry age 33, superannuation age 60: member's contribution Rs.130, Government's contribution Rs.130, total contribution Rs.260\nEntry age 34, superannuation age 60: member's contribution Rs.140, Government's contribution Rs.140, total contribution Rs.280\nEntry age 35, superannuation age 60: member's contribution Rs.150, Government's contribution Rs.150, total contribution Rs.300\nEntry age 36, superannuation age 60: member's contribution Rs.160, Government's contribution Rs.160, total contribution Rs.320\nEntry age 37, superannuation age 60: member's contribution Rs.170, Government's contribution Rs.170, total contribution Rs.340\nEntry age 38, superannuation age 60: member's contribution Rs.180, Government's contribution Rs.180, total contribution Rs.360\nEntry age 39, superannuation age 60: member's contribution Rs.190, Government's contribution Rs.190, total contribution Rs.380\nEntry age 40, superannuation age 60: member's contribution Rs.200, Government's contribution Rs.200, total contribution Rs.400",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 5, para 6(x) contribution chart (table; reformatted as one line per entry age)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-BENEFIT-07",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "In case of death of subscriber before vesting date, the spouse of subscriber shall have an option of continuing the scheme by payment of remaining contributions under the scheme, provided she/he is not already an SMF beneficiary of the Scheme. The rate of contribution and vesting date shall remain the same. Pension accruals will be calculated as if subscriber were to be alive on the vesting date. However, the same pension would be payable to the spouse. Upon death of spouse after vesting date, pension corpus would be transferred back to Pension Fund.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 5, para 6(xi)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-BENEFIT-08",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "In case of death of subscriber before vesting date, if the spouse does not exercise option of continuing under the scheme, then subscribers’ contributions along with fund interest earned or Savings Bank Interest whichever is higher would be payable to the spouse under the scheme.\nIn case of death of subscriber before vesting date, if there is no spouse, then subscribers’ contributions along with fund interest earned or Savings Bank Interest, whichever is higher, would be payable to the nominee/s under the scheme.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; pp. 5-6, para 6(xii)-(xiii)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-BENEFIT-09",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "If a subscriber dies after the date of vesting, his/her spouse shall be entitled to receive fifty per cent of the pension received by such eligible subscriber as Family Pension, provided she/he is not already an SMF beneficiary of the Scheme, and such family pension shall be applicable only to the spouse.\nAfter death of subscriber as well as of his/her spouse, the corpus i.e. total accumulated contributions made by the subscriber and the Government shall be credited back to the fund.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 6, para 6(xiv)-(xv)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-BENEFIT-10",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "If a beneficiary becomes ineligible for the Pension under PM-KMY, his account will be active but Government’s contribution (50%) shall be stopped. If beneficiary agrees to pay the entire amount of the contribution, he will be allowed to operate the account. At the age of 60, he shall be allowed to withdraw his contribution with an interest equivalent to the prevailing saving bank rates.\nThere is no provision for commutation of pension under any circumstances.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 11, para 9(f); para 10"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-EXCLUSION-03",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "If contributions remain unpaid for a period of six months, such account status would be changed to ‘dormant account’ and for dormant accounts demand would not be raised further.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; pp. 9-11, para 9 Default in paying contributions"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-APPLICATION-01",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The Eligible SMFs desirous of joining the scheme shall visit nearest Common Service Centre (CSC) along with his Aadhaar card and bank passbook or account details.\nThe Village Level Entrepreneur (VLE) present at the CSC shall complete the on-line registration process after taking details of Aadhaar number, name, date of birth, spouse and nominee particulars, mobile number (optional), address and a few other details.\nThe on-line registration process includes capturing of bank account particulars and completion of an auto-debit mandate to the bank account of the subscriber for debiting contribution amount to the subscriber’s bank account every month.\nThe subscriber will authenticate the data in on-line generated enrolment form by putting his / her signature.\nThe VLE will upload scanned copy of signed enrolment-cum-debit mandate form and thereafter enable his/her online payment of initial contribution and give him a receipt.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 6, para 6(xvi)-(xxiii) Key features, enrolment at CSC"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-APPLICATION-02",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Subsequent to this a pension card would be generated and given to subscriber as proof of pension account having been opened.\nThe CSCs would charge Rs.30/- per beneficiary’s enrolment for the above services.\nThe eligible beneficiaries may alternatively also enrol themselves by contacting physically the State Nodal Officers (SNOs) (or agencies designated by them) in their respective districts.\nThe eligible beneficiaries may alternatively also enrol themselves online through links provided on the appropriate web-sites.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 7, para 6(xxvi), 6(xxix)-(xxxi)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-APPLICATION-03",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "A Subscriber, who desires to change the bank details or any other details which are incorrect, will approach CSC or VLE along with PM-KMY number, Aadhaar Card. However, the Date of Birth of the Subscriber cannot be changed at any time.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/PM-KMY%20-%20Operational%20Guidelines.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PM-KMY Operational Guidelines; p. 7, para 6(xxxiii)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-ELIGIBILITY-04",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant’s name should appear in land records as on 01.08.2019.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmkmdy",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-ELIGIBILITY-05",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should possess an Aadhaar card.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmkmdy",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 5"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-ELIGIBILITY-06",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant should have a savings bank account or PM-KISAN account.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmkmdy",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 6"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-BENEFIT-11",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "If the subscriber becomes permanently disabled before the age of 60 years, the spouse can continue the scheme by paying contributions or exit by receiving the subscriber’s contribution with interest.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmkmdy",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, disablement benefit"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-BENEFIT-12",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "If the subscriber exits within 10 years, only the subscriber’s contribution will be refunded with savings bank interest.\nIf the subscriber exits after 10 years but before 60 years, the subscriber’s contribution will be refunded with accumulated interest or savings bank interest, whichever is higher.",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmkmdy",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, exit benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMKMDY-IN-DOCUMENTS-01",
+      "scheme_id": "PMKMDY-IN",
+      "scheme_name": "Pradhan Mantri Kisan Maandhan Yojana (PM-KMY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Aadhaar Card\nSavings Bank Account Number along with IFSC Code ( Bank Passbook or Cheque Leaf/book or copy of bank statement as evidence of bank account).",
+      "source": {
+        "source_id": "SRC-PMKMDY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmkmdy",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

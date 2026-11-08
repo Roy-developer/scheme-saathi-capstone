@@ -1,0 +1,60 @@
+{
+  "scheme_id": "BFFL-MH",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "BFFL-MH-R01",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "BFFL-MH-ELIGIBILITY-15",
+      "source_quote": "The beneficiary should be a permanent resident of Maharashtra State",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "BFFL-MH-R02",
+      "kind": "eligibility",
+      "field": "has_aadhaar",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "BFFL-MH-ELIGIBILITY-16",
+      "source_quote": "Farmer should have Aadhaar Card.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "BFFL-MH-R03",
+      "kind": "eligibility",
+      "field": "owns_land_in_own_name",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "BFFL-MH-ELIGIBILITY-03",
+      "source_quote": "शेतकऱ्यास स्वतःच्या नावावर ७/१२ असणे आवश्यक आहे.",
+      "needs_human_review": true,
+      "note": "Passage is in Marathi; joint-owner exception needs review."
+    },
+    {
+      "rule_id": "BFFL-MH-R04",
+      "kind": "exclusion",
+      "field": "is_institutional_landholder",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "BFFL-MH-EXCLUSION-01",
+      "source_quote": "संस्थात्मक लाभार्थांना देय नाही.",
+      "needs_human_review": true,
+      "note": "Passage is in Marathi."
+    }
+  ],
+  "unresolved": [
+    "Minimum and maximum plantation area differ by region (Konkan 0.10-10 ha, rest of Maharashtra 0.20-6 ha); needs a region fact.",
+    "Joint owners need the other owners' consent; a tenant's name on 7/12 needs the tenant's consent."
+  ]
+}

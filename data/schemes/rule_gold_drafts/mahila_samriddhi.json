@@ -1,0 +1,72 @@
+{
+  "scheme_id": "MSY-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "MSY-IN-R01",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": null,
+      "source_passage_id": "MSY-IN-ELIGIBILITY-02",
+      "source_quote": "Applicant must be between 18 to 55 years of age.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "MSY-IN-R02",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 55,
+      "unit": null,
+      "source_passage_id": "MSY-IN-ELIGIBILITY-02",
+      "source_quote": "Applicant must be between 18 to 55 years of age.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "MSY-IN-R03",
+      "kind": "eligibility",
+      "field": "is_woman",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "MSY-IN-ELIGIBILITY-03",
+      "source_quote": "Applicable to Women from low-income families",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "MSY-IN-R04",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lt",
+      "value": 300000,
+      "unit": null,
+      "source_passage_id": "MSY-IN-ELIGIBILITY-03",
+      "source_quote": "whose family income is less than Rupees three lakhs per annum",
+      "needs_human_review": true,
+      "note": "Target-group conflict; see unresolved."
+    },
+    {
+      "rule_id": "MSY-IN-R05",
+      "kind": "eligibility",
+      "field": "intends_to_start_business",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "MSY-IN-ELIGIBILITY-04",
+      "source_quote": "Applicable to Women looking to start their own business or engage in income-generating activities.",
+      "needs_human_review": false,
+      "note": null
+    }
+  ],
+  "unresolved": [
+    "CONFLICT: MSY-IN-ELIGIBILITY-01 describes Safai Karamchari / scavengers and dependants, while ELIGIBILITY-03 describes low-income and SC/ST/OBC women. A person must settle the target group.",
+    "The Rs 3 lakh family income limit is stated for the SC/ST/OBC and low-income group."
+  ]
+}

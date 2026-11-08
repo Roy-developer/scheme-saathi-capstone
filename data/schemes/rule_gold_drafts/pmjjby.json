@@ -1,0 +1,50 @@
+{
+  "scheme_id": "PMJJBY-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "PMJJBY-IN-R01",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": null,
+      "source_passage_id": "PMJJBY-IN-ELIGIBILITY-01",
+      "source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 50 years are eligible to join.",
+      "needs_human_review": false,
+      "note": "ELIGIBILITY-03 says 18 years completed."
+    },
+    {
+      "rule_id": "PMJJBY-IN-R02",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 50,
+      "unit": null,
+      "source_passage_id": "PMJJBY-IN-ELIGIBILITY-01",
+      "source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 50 years are eligible to join.",
+      "needs_human_review": false,
+      "note": "ELIGIBILITY-03 says 50 years (age nearer birthday)."
+    },
+    {
+      "rule_id": "PMJJBY-IN-R03",
+      "kind": "eligibility",
+      "field": "has_savings_bank_account",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMJJBY-IN-ELIGIBILITY-01",
+      "source_quote": "All individual account holders of participating banks/ Post office",
+      "needs_human_review": true,
+      "note": "Passage says bank or Post Office account holder; savings account is the closest profile field."
+    }
+  ],
+  "unresolved": [
+    "Age basis differs: ELIGIBILITY-03 says 18 years completed and 50 years (age nearer birthday); whether the end values are included is not stated.",
+    "MISSING FIELD: is_institutional_account_holder (ELIGIBILITY-05: institutional account holders are not eligible; is_institutional_landholder is about land, not accounts).",
+    "MISSING FIELD: has_auto_debit_consent (ELIGIBILITY-03) and whether the bank participates in the scheme.",
+    "Cover ends at age 55 (EXCLUSION-01); entry is not possible beyond 50. Not encoded as a rule."
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "scheme_id": "PMKMDY-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "PMKMDY-IN-R01",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": null,
+      "source_passage_id": "PMKMDY-IN-ELIGIBILITY-01",
+      "source_quote": "who are of the age of 18 years and above and upto the age of 40 years",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PMKMDY-IN-R02",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 40,
+      "unit": null,
+      "source_passage_id": "PMKMDY-IN-ELIGIBILITY-01",
+      "source_quote": "who are of the age of 18 years and above and upto the age of 40 years",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PMKMDY-IN-R03",
+      "kind": "eligibility",
+      "field": "owns_cultivable_land",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMKMDY-IN-ELIGIBILITY-02",
+      "source_quote": "a farmer who owns cultivable land upto 2 hectare",
+      "needs_human_review": false,
+      "note": "The 2 hectare ceiling is not captured; no land-area field."
+    },
+    {
+      "rule_id": "PMKMDY-IN-R04",
+      "kind": "eligibility",
+      "field": "has_aadhaar",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMKMDY-IN-ELIGIBILITY-05",
+      "source_quote": "The applicant should possess an Aadhaar card.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PMKMDY-IN-R05",
+      "kind": "eligibility",
+      "field": "has_savings_bank_account",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMKMDY-IN-ELIGIBILITY-06",
+      "source_quote": "The applicant should have a savings bank account or PM-KISAN account.",
+      "needs_human_review": true,
+      "note": "Passage allows a PM-KISAN account as an alternative."
+    },
+    {
+      "rule_id": "PMKMDY-IN-R06",
+      "kind": "exclusion",
+      "field": "is_institutional_landholder",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+      "source_quote": "All Institutional Land holders",
+      "needs_human_review": false,
+      "note": "Applicant is excluded when this is true."
+    },
+    {
+      "rule_id": "PMKMDY-IN-R07",
+      "kind": "exclusion",
+      "field": "is_income_tax_payer",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+      "source_quote": "All Persons who paid Income Tax in last assessment year.",
+      "needs_human_review": false,
+      "note": "Applicant is excluded when this is true."
+    }
+  ],
+  "unresolved": [
+    "MISSING FIELD: landholding size in hectares (Small and Marginal Farmer means up to 2 hectare per land records).",
+    "MISSING FIELD: name appears in land records as on 01.08.2019.",
+    "MISSING FIELD: covered under other social security schemes (NPS, ESIC, EPFO) or opted for PM-SYM / PM-LVM.",
+    "MISSING FIELD: holder of constitutional post, serving/retired government employee, or registered professional (doctor, engineer, lawyer, CA, architect)."
+  ]
+}

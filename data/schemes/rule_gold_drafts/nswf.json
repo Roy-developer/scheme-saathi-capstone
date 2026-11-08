@@ -1,0 +1,40 @@
+{
+  "scheme_id": "NSWF-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "NSWF-IN-R01",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lt",
+      "value": 60,
+      "unit": null,
+      "source_passage_id": "NSWF-IN-ELIGIBILITY-02",
+      "source_quote": "lives below poverty line and is below 60 years of age",
+      "needs_human_review": true,
+      "note": "Applies to the Saving-cum-Relief component (ELIGIBILITY-02 and -03)."
+    },
+    {
+      "rule_id": "NSWF-IN-R02",
+      "kind": "eligibility",
+      "field": "is_below_poverty_line",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "NSWF-IN-ELIGIBILITY-02",
+      "source_quote": "lives below poverty line and is below 60 years of age",
+      "needs_human_review": true,
+      "note": "Required for the Saving-cum-Relief component only; for housing, BPL is only a preference (ELIGIBILITY-01)."
+    }
+  ],
+  "unresolved": [
+    "CONFLICT: NSWF-IN-ELIGIBILITY-02 requires fishers to live below the poverty line for the saving-cum-relief component, while NSWF-IN-ELIGIBILITY-01 only gives preference to BPL fishers for housing. Rules R01 and R02 apply to one component only.",
+    "MISSING FIELD: is_active_fisher / full-time fisherman identified by the State.",
+    "MISSING FIELD: is_member_of_fishermen_cooperative_or_welfare_society.",
+    "MISSING FIELD: owns_mechanized_fishing_boat (ELIGIBILITY-03: must not own a mechanized fishing boat or beach landing craft).",
+    "MISSING FIELD: family_member_has_regular_employment_or_other_income_activity (ELIGIBILITY-02).",
+    "Eligibility depends on which component is applied for (saving-cum-relief, housing, group accident insurance); the profile has no field for component."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "scheme_id": "TMDVSO-MH",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [],
+  "unresolved": [
+    "No rule could be expressed with the available fields.",
+    "MISSING FIELD: belongs to VJNT, OBC or SBC category.",
+    "MISSING FIELD: meets age, education and fitness conditions of the Motor Vehicle Act (limits are not stated in the passages)."
+  ]
+}

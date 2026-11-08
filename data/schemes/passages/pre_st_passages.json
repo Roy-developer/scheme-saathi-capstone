@@ -1,0 +1,329 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "PRE-ST-IN-BENEFICIARY-01",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "To support ST children studying in classes IX and X so that the incidence of drop-out, especially in transition from elementary to secondary stage is minimized, and ST students can have a better chance of progressing to the post-matric stage of education.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 3, para 2 Objectives"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-BENEFICIARY-02",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "Scholarship under the Scheme will be available to ST students for studies in India and will be directly transferred to the account of the student. The scholarship will be awarded by the Government of the State/Union Territory to which the applicant belongs as per the terms of domicile decided by the State/UT.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 3, para 3.1 Scope"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Applicant student should belong to the Scheduled Tribe, so specified in relation to the State/Union Territory to which he/she actually belongs (Domicile State).\nThe student should be studying in a Government School or in a School recognized by Government or a Central/State Board of Secondary Education.\nThe family income of student from all sources should not exceed Rs. 2.5 lakh per annum.\nThe student should have a valid account in a Scheduled Bank, linked with Aadhaar and mobile number.\nThe student should not be getting any other scholarship.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 3, para 3.2 Conditions of Eligibility"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-ELIGIBILITY-02",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant student's family income from all sources should not exceed Rs.2,50,000/- (Rs. two lakh fifty thousand) per annum.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 3, para 3.3 Income Criteria"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-ELIGIBILITY-03",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "In case where both father and mother are working, the combined income of both of them from all sources shall be taken into account in computing total family income.\nIn case any other member of the family, other than father and mother, is an earning member, his or her income shall not be included in computing total family income.\nIn case only one parent is alive, the income of that parent shall be taken into account for considering total family income. If any other sibling or family member is an earning member, their income shall not be included in computing total family income.\nIn case of an orphan, supported by a guardian, income criteria shall not apply.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 4, para 3.3 Income Criteria, how family income is computed"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-ELIGIBILITY-04",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Note 1: Definition of Income - Income means gross income including income from all sources without any exemption and deductions available in the Income Tax Act.\nNote 2: Income certificate is required to be taken once only i.e. at the time of admission to class IX, which will be valid for class X also.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 4, para 3.3 Income Criteria, notes 1 and 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-BENEFIT-01",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The rates of scholarship and other grant will be as follows: Amount in Rs. Item Day Scholars Hostelers Monthly Annually Monthly Annually\nScholarship for 10 months 225 2250 525 5250\nBooks and ad hoc Grant 750 1000",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 4, para 3.4 Value of Scholarship"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-BENEFIT-02",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Additional Disability Allowance: -In addition to scholarship provided in Table-2 above, an additional grant of Rs. 800/- monthly (Rs. 9600 annually) will be given to the Divyangjan student who is hosteler and Rs.600/monthly (Rs 7200 annually) to a day scholar. The disability as defined under the Act has to be certified by a competent medical authority of the State Govt./UT Administration. The provisions of disability allowance will also apply to leprosy-cured and students having sickle cell anemia or Thalassemia, with the necessary certificate.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; pp. 4-5, para 3.4 Additional Disability Allowance"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-BENEFIT-03",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Scholarship will be payable for 10 months in an academic year. Additional Disability Allowance will be paid for all twelve months.\nThe award once made will continue subject to good conduct and regularity in attendance. It will be renewed for Class X after the student passes class IX.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 5, para 3.5 Duration and renewal of awards"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-BENEFIT-04",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "All States/UTs are required to develop an online platform for inviting online application and disbursement of scholarship through DBT mode into the bank account of student. The States/UTs can opt for National Scholarship Portal for inviting such applications.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 5, para 4 Selection of candidates"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-EXCLUSION-01",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "Scholarship for studying in any class will be available for only one year. If a student has to repeat a class, he/she would not get scholarship for the same class twice. The student can renew scholarship for the next class when he/she is promoted.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 3, para 3.2 (VI) Conditions of Eligibility"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-EXCLUSION-02",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "Any student found to have stated wrong facts or given misrepresented facts would become ineligible and will be liable to be debarred from the scheme.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 5, para 4 Selection of candidates"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-APPLICATION-01",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Candidates belonging to one State (Domicile State) but studying in other State will be awarded scholarships by the State to which they belong (domicile State) and will submit their applications to the competent authorities in their domicile State.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 5, para 4 Selection of candidates, domicile State"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-APPLICATION-02",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Bank account details (A/c Number, IFSC Code) given in applications need to be correct and the account should remain active (i.e. non-dormant). The account should be held in the name of student/parent and linked with Aadhaar and mobile to ensure timely DBT.\nThe mobile number provided in the application should be correct, active and should belong to the applicant or the parent.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; pp. 5-6, para 4 Selection of candidates, bank account and mobile number"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-APPLICATION-03",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The applicant should follow up with institutes for application verification before the deadline.\nThe applicant should rectify the error(s) and comply with the remarks made in the application, in case the application is marked as defective in State owned portal/NSP.\nThe applicant shall note that applications marked as rejected by the nodal officer during verification process will not be considered for further processing on NSP, in respect of those States which are on NSP.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 6, para 4 Selection of candidates, verification and defects"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-APPLICATION-04",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "State Governments/UT Administration will make all efforts to open the portal for inviting applications by 1stApril. The applicant should submit/upload the completed application to the prescribed authority before the last date prescribed for receipt of applications.\nRegistration for Students 1 April – 31st July 1 April– 31stJuly\nCompletion of verification of Institutes 31stAugust 31st August\nCompletion of verification by Institute/ State 30th September 30th September\nDisbursement of scholarship 31st October 31st October\nThe above-mentioned timelines are only suggestive.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 8, para 6 Announcement and timeline of the scheme"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-DOCUMENTS-01",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Aadhar Number\nDomicile certificate\nST certificate issued by competent authority of State.\nFamily Income Certificate.\nDisability certificate.\nScanned copy of the passport size photograph",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 7, para 5 Documents required"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-ST-IN-DOCUMENTS-02",
+      "scheme_id": "PRE-ST-IN",
+      "scheme_name": "Pre Matric Scholarship for Scheduled Tribe Students",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Note 1: - Self-declarations or affidavits of self-assessment of income shall not be acceptable and the State Governments shall make appropriate arrangements to notify a competent income-certificate issuing authority for this purpose.",
+      "source": {
+        "source_id": "SRC-PRE-ST-IN-001",
+        "publisher": "Ministry of Tribal Affairs, Government of India",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/guidelines-Pre-matric-ST.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Pre-Matric Scholarship for ST students guidelines 2021-22 to 2025-26; p. 7, para 5 Documents required, Note 1"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

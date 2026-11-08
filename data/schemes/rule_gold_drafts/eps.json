@@ -1,0 +1,48 @@
+{
+  "scheme_id": "EPS-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "EPS-IN-R01",
+      "kind": "eligibility",
+      "field": "eligible_service_years",
+      "operator": "gte",
+      "value": 10,
+      "unit": null,
+      "source_passage_id": "EPS-IN-BENEFIT-01",
+      "source_quote": "he has rendered eligible service of 10 years or more",
+      "needs_human_review": false,
+      "note": "Applies to monthly member's pension."
+    },
+    {
+      "rule_id": "EPS-IN-R02",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 50,
+      "unit": null,
+      "source_passage_id": "EPS-IN-BENEFIT-07",
+      "source_quote": "but not earlier than 50 years of age",
+      "needs_human_review": true,
+      "note": "Earliest age for early pension; superannuation pension is at 58."
+    },
+    {
+      "rule_id": "EPS-IN-R03",
+      "kind": "eligibility",
+      "field": "monthly_pay_inr",
+      "operator": "lte",
+      "value": 15000,
+      "unit": null,
+      "source_passage_id": "EPS-IN-ELIGIBILITY-02",
+      "source_quote": "whose pay on such date is less than or equal to fifteen thousand rupees",
+      "needs_human_review": true,
+      "note": "Wage ceiling applies to members joining on or after 16 November 1995."
+    }
+  ],
+  "unresolved": [
+    "Superannuation pension is at age 58; early pension is allowed from age 50 with a reduction. The rules below cover only the earliest age.",
+    "Membership depends on joining on or after 16 November 1995; the profile cannot yet hold that date."
+  ]
+}

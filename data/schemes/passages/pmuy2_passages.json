@@ -1,0 +1,185 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "PMUY2-IN-ELIGIBILITY-01",
+      "scheme_id": "PMUY2-IN",
+      "scheme_name": "Pradhan Mantri Ujjwala Yojana 2.0",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant must be a woman who has attained 18 years of age.",
+      "source": {
+        "source_id": "SRC-PMUY2-IN-001",
+        "publisher": "Ministry of Petroleum and Natural Gas",
+        "url": "https://www.pmuy.gov.in/ujjwala2.html",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility criteria, point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMUY2-IN-ELIGIBILITY-02",
+      "scheme_id": "PMUY2-IN",
+      "scheme_name": "Pradhan Mantri Ujjwala Yojana 2.0",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "There should be no other LPG connection from any Oil Marketing Company (OMC) within the same household.",
+      "source": {
+        "source_id": "SRC-PMUY2-IN-001",
+        "publisher": "Ministry of Petroleum and Natural Gas",
+        "url": "https://www.pmuy.gov.in/ujjwala2.html",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility criteria, point 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMUY2-IN-ELIGIBILITY-03",
+      "scheme_id": "PMUY2-IN",
+      "scheme_name": "Pradhan Mantri Ujjwala Yojana 2.0",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The adult woman must belong to a poor household based on submission of a deprivation declaration (as per prescribed format).",
+      "source": {
+        "source_id": "SRC-PMUY2-IN-001",
+        "publisher": "Ministry of Petroleum and Natural Gas",
+        "url": "https://www.pmuy.gov.in/ujjwala2.html",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility criteria, point 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMUY2-IN-DOCUMENTS-01",
+      "scheme_id": "PMUY2-IN",
+      "scheme_name": "Pradhan Mantri Ujjwala Yojana 2.0",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Know Your Customer (KYC) application form.\nProof of Identity (Aadhaar copy of Applicant)\nProof of Address (only in case Address in Aadhaar is different from currently residing address) (Self Declaration as per Annexure I for migrant applicants)\nRation Card issued by the State from which application is being made / other State Govt. document certifying family composition ((Self Declaration as per Annexure I for migrant applicants)\nAadhaar copy of Applicant and adult family members appearing in document at Sl. 4\nBank Account details (Passbook copy/Cancelled cheque)\nDeprivation Declaration",
+      "source": {
+        "source_id": "SRC-PMUY2-IN-001",
+        "publisher": "Ministry of Petroleum and Natural Gas",
+        "url": "https://www.pmuy.gov.in/ujjwala2.html",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Documents required"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMUY2-IN-APPLICATION-01",
+      "scheme_id": "PMUY2-IN",
+      "scheme_name": "Pradhan Mantri Ujjwala Yojana 2.0",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Applicants may apply to any distributor of her choice either by submitting application at the distributor or by submitting a request through Online Portal.",
+      "source": {
+        "source_id": "SRC-PMUY2-IN-001",
+        "publisher": "Ministry of Petroleum and Natural Gas",
+        "url": "https://www.pmuy.gov.in/ujjwala2.html",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; How to apply"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMUY2-IN-BENEFIT-01",
+      "scheme_id": "PMUY2-IN",
+      "scheme_name": "Pradhan Mantri Ujjwala Yojana 2.0",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Cash assistance for PMUY connections is provided by the Government of India - Rs. 1600 (for a connection 14.2kg cylinder/ Rs. 1150 for a 5 kg cylinder). The cash assistance covers:\nSecurity Deposit of Cylinder – Rs. 1250 for 14.2 kg cylinder/ Rs. 800 for 5 kg cylinder.\nPressure Regulator – Rs. 150.\nLPG Hose – Rs. 100.\nDomestic Gas Consumer Card – Rs. 25.\nInspection/ Installation/ Demonstration charges – Rs. 75.",
+      "source": {
+        "source_id": "SRC-PMUY2-IN-002",
+        "publisher": "Ministry of Petroleum and Natural Gas",
+        "url": "https://www.myscheme.gov.in/schemes/pmuy2",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, cash assistance"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMUY2-IN-BENEFIT-02",
+      "scheme_id": "PMUY2-IN",
+      "scheme_name": "Pradhan Mantri Ujjwala Yojana 2.0",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Additionally, All PMUY beneficiaries will be provided with first LPG refill and Stove (hotplate) both free of cost along with their deposit-free connection by the Oil Marketing Companies (OMCs).",
+      "source": {
+        "source_id": "SRC-PMUY2-IN-002",
+        "publisher": "Ministry of Petroleum and Natural Gas",
+        "url": "https://www.myscheme.gov.in/schemes/pmuy2",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, free first refill and stove"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMUY2-IN-ELIGIBILITY-04",
+      "scheme_id": "PMUY2-IN",
+      "scheme_name": "Pradhan Mantri Ujjwala Yojana 2.0",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "1. Adult women belong to any of the following categories.\nSC Households\nST Households\nPradhan Mantri Awas Yojana (Gramin)\nMost Backward Classes\nAntyodaya Anna Yojana (AAY)\nTea and Ex-Tea Garden tribes\nForest Dwellers\nPeople residing on Islands and River Islands\nSECC Households (AHL TIN)\nPoor Household as per 14-point declaration",
+      "source": {
+        "source_id": "SRC-PMUY2-IN-002",
+        "publisher": "Ministry of Petroleum and Natural Gas",
+        "url": "https://www.myscheme.gov.in/schemes/pmuy2",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 1 categories"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMUY2-IN-APPLICATION-02",
+      "scheme_id": "PMUY2-IN",
+      "scheme_name": "Pradhan Mantri Ujjwala Yojana 2.0",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1: You can download Forms from the official website (given below) or get them from the nearest LPG distributor.",
+      "source": {
+        "source_id": "SRC-PMUY2-IN-002",
+        "publisher": "Ministry of Petroleum and Natural Gas",
+        "url": "https://www.myscheme.gov.in/schemes/pmuy2",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMUY2-IN-APPLICATION-03",
+      "scheme_id": "PMUY2-IN",
+      "scheme_name": "Pradhan Mantri Ujjwala Yojana 2.0",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 2: Fill out the application form with the required information, including personal details, bank account information, and LPG distributor preference.",
+      "source": {
+        "source_id": "SRC-PMUY2-IN-002",
+        "publisher": "Ministry of Petroleum and Natural Gas",
+        "url": "https://www.myscheme.gov.in/schemes/pmuy2",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, step 2"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

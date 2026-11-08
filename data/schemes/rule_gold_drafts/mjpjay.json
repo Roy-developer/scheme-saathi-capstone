@@ -1,0 +1,23 @@
+{
+  "scheme_id": "MJPJAY-MH",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "MJPJAY-MH-R01",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "MJPJAY-MH-ELIGIBILITY-01",
+      "source_quote": "comprehensive, cashless healthcare for the entire population of Maharashtra",
+      "needs_human_review": true,
+      "note": "Category D covers accident victims from outside Maharashtra, so residence is not always required."
+    }
+  ],
+  "unresolved": [
+    "Coverage categories A-E depend on ration-card colour, institution, or accident location; these need facts the profile cannot yet hold."
+  ]
+}
