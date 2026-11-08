@@ -20,7 +20,11 @@ class SchemeBundle(StrictDataModel):
 
     scheme_id: str = Field(min_length=1, max_length=80)
     bundle_version: str = Field(min_length=1, max_length=40)
-    activation_state: Literal["legacy_compatibility", "development_only"]
+    # legacy_compatibility: the two original pilots, pinned in code.
+    # development_only: test bundles; refused by the live loader.
+    # approved: a reviewed scheme; the loader checks the review records
+    # (human-approved package, approved fact definitions) instead of code pins.
+    activation_state: Literal["legacy_compatibility", "development_only", "approved"]
     package_file: str = Field(min_length=1, max_length=120)
     package_version: str = Field(min_length=1, max_length=40)
     package_sha256: str

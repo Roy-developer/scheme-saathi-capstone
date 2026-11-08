@@ -234,6 +234,78 @@
         "locator": "Official homepage notice: eKYC message"
       },
       "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNOAPS-MH-ELIGIBILITY-01",
+      "scheme_id": "IGNOAPS-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Eligible elderly individuals aged 65 and above, whose names are on the Below Poverty Line (BPL) list, receive monthly financial assistance under the Indira Gandhi National Old Age Pension Scheme.",
+      "source": {
+        "source_id": "SRC-IGNOAPS-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Scheme page; Eligibility Criteria section"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNOAPS-MH-BENEFIT-01",
+      "scheme_id": "IGNOAPS-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "From the central government: ₹200 per month for eligible elderly individuals aged 65 to 79 years. ₹500 per month for eligible elderly individuals aged 80 years and above. From the state government under the Shravanbal Seva State Pension Scheme: ₹1300 per month for eligible elderly individuals aged 65 to 79 years. ₹1000 per month for eligible elderly individuals aged 80 years and above.",
+      "source": {
+        "source_id": "SRC-IGNOAPS-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Scheme page; Nature of Benefits section"
+      },
+      "review_status": "pending_review"
+    },
+    {
+      "passage_id": "IGNOAPS-MH-BENEFICIARY-01",
+      "scheme_id": "IGNOAPS-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "All Categories",
+      "source": {
+        "source_id": "SRC-IGNOAPS-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Scheme page; Beneficiary section"
+      },
+      "review_status": "pending_review"
+    },
+    {
+      "passage_id": "IGNOAPS-MH-APPLICATION-01",
+      "scheme_id": "IGNOAPS-MH",
+      "scheme_name": "Indira Gandhi National Old Age Pension Scheme",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "The applicant can apply at the Collector’s Office / Tehsildar’s Office, Sanjay Gandhi Niradhar Anudan Yojana Branch / Talathi Office.",
+      "source": {
+        "source_id": "SRC-IGNOAPS-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Scheme page; How To Apply section"
+      },
+      "review_status": "pending_review"
     }
   ]
 }

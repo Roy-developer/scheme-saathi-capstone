@@ -1,0 +1,55 @@
+{
+  "package_version": "1.0.0",
+  "scheme_id": "IGNOAPS-MH",
+  "approval_status": "approved_for_mock_portal",
+  "reviewer_name": "Roy-developer",
+  "reviewed_at": "2026-11-08",
+  "approval_scope": "synthetic_mock_portal_only",
+  "source": {
+    "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+    "source_url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+    "collected_at": "2026-11-08",
+    "official_eligibility_text": "Eligible elderly individuals aged 65 and above, whose names are on the Below Poverty Line (BPL) list, receive monthly financial assistance under the Indira Gandhi National Old Age Pension Scheme.",
+    "publication_date_status": "not_confirmed"
+  },
+  "required_facts": [
+    "date_of_birth",
+    "application_date",
+    "name_on_bpl_list"
+  ],
+  "age_as_of": "application_date",
+  "age_boundaries_inclusive": true,
+  "documents_status": "not_verified",
+  "reasons": {
+    "eligible": "All reviewed mock conditions are met: aged 65 or above on the application date, and the applicant's name is on the BPL list.",
+    "not_eligible": "One or more required mock scheme conditions are not met.",
+    "need_more_information": "Some details are still needed before this mock check can be completed."
+  },
+  "notice": "This mock result uses the eligibility criteria published by the Maharashtra Social Justice department (page last updated 29.04.2025). It is not a government decision; BPL-list status and other records are not verified.",
+  "unresolved_checks": [
+    "Central NSAP guideline age threshold (60) versus the Maharashtra page (65)",
+    "Whether Indian citizenship is a condition",
+    "Whether non-receipt of any other pension is a condition"
+  ],
+  "rules": [
+    {
+      "rule_id": "IGNOAPS-MH-AGE-MIN-01",
+      "field": "age",
+      "operator": "gte",
+      "value": 65,
+      "unit": "years",
+      "source_clause_id": "IGNOAPS-MH-ELIGIBILITY-01",
+      "source_text": "Eligible elderly individuals aged 65 and above, whose names are on the Below Poverty Line (BPL) list, receive monthly financial assistance under the Indira Gandhi National Old Age Pension Scheme.",
+      "source_location": "Eligibility Criteria section"
+    },
+    {
+      "rule_id": "IGNOAPS-MH-BPL-LIST-01",
+      "field": "name_on_bpl_list",
+      "operator": "eq",
+      "value": true,
+      "source_clause_id": "IGNOAPS-MH-ELIGIBILITY-01",
+      "source_text": "Eligible elderly individuals aged 65 and above, whose names are on the Below Poverty Line (BPL) list, receive monthly financial assistance under the Indira Gandhi National Old Age Pension Scheme.",
+      "source_location": "Eligibility Criteria section"
+    }
+  ]
+}

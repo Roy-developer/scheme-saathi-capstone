@@ -106,6 +106,8 @@ def _write_synthetic_bundle(
     activation_state: str = "development_only",
     scheme_id: str = "SYNTHETIC-SCHOLARSHIP-TEST",
     create_only: bool = False,
+    package_approved: bool = False,
+    definitions_approved: bool = False,
 ) -> tuple[RulePackageProvider | None, RulePackage]:
     """Write a data-only bundle outside the real scheme catalogue."""
 
@@ -119,6 +121,13 @@ def _write_synthetic_bundle(
             _fact("course_type", "choice", choices=["science", "arts"]),
         ],
     }
+    if definitions_approved:
+        for definition in registry_data["definitions"]:
+            definition.update({
+                "definition_review_status": "approved",
+                "definition_reviewer": "Offline test reviewer",
+                "definition_reviewed_at": "2026-11-08",
+            })
     registry_bytes = (
         json.dumps(registry_data, ensure_ascii=False, indent=2) + "\n"
     ).encode("utf-8")
@@ -126,7 +135,10 @@ def _write_synthetic_bundle(
     package_data = {
         "package_version": "1.0.0",
         "scheme_id": scheme_id,
-        "approval_status": "mock_baseline_pending_human_rule_approval",
+        "approval_status": (
+            "approved_for_mock_portal" if package_approved
+            else "mock_baseline_pending_human_rule_approval"
+        ),
         "reviewer_name": "Offline synthetic test fixture; no policy review",
         "reviewed_at": "2026-11-04",
         "approval_scope": "synthetic_mock_portal_only",
@@ -493,6 +505,38 @@ def test_decimal_answer_keeps_precision_through_journey_interrupt_and_checkpoint
     asyncio.run(scenario())
 
 
+def test_dont_know_appears_in_the_chat_as_the_person_chose_it(tmp_path: Path) -> None:
+    """The answer buttons send "skip"; the conversation must not show that code."""
+
+    provider, package = _write_synthetic_bundle(tmp_path)
+    packages = {package.scheme_id: package}
+
+    async def evaluate(_client, scheme_id, store):
+        return evaluate_registered_profile(
+            scheme_id, store, packages, provider.bundles, provider.registry,
+        )
+
+    async def scenario() -> None:
+        graph = build_journey_graph(
+            object(),
+            packages,
+            eligibility_tool=evaluate,
+            checkpointer=MemorySaver(),
+            fact_registry=provider.registry,
+            rule_bundles=provider.bundles,
+        )
+        started = await run_journey(
+            graph, JourneyRequest(action="interview", scheme_id=package.scheme_id),
+        )
+        reply = await resume_journey(graph, started.conversation_id, "skip")
+        said = [turn["content"] for turn in reply.conversation if turn["role"] == "user"]
+
+        assert "I don't know" in said
+        assert "skip" not in said
+
+    asyncio.run(scenario())
+
+
 def test_choice_fact_rejects_values_outside_its_finite_set(
     tmp_path: Path,
 ) -> None:
@@ -735,12 +779,21 @@ def test_registry_question_parser_is_strict_and_localized(
     assert registered_question_details(display_note, "en")["max_length"] == 20
 
 
+@pytest.mark.parametrize("activation_state", ["development_only", "approved"])
 def test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure(
-    tmp_path: Path,
+    tmp_path: Path, activation_state: str,
 ) -> None:
-    """A pending synthetic bundle asks localized questions and resumes typed facts."""
+    """A synthetic bundle asks localized registry questions and resumes typed facts.
 
-    provider, package = _write_synthetic_bundle(tmp_path)
+    Runs for a development bundle and for an "approved" one: approved schemes
+    use the registry question path, not the old pilot path.
+    """
+
+    approved = activation_state == "approved"
+    provider, package = _write_synthetic_bundle(
+        tmp_path, activation_state=activation_state,
+        package_approved=approved, definitions_approved=approved,
+    )
     checkpointer = MemorySaver()
 
     class Planner(FakeChatModel):
@@ -1672,3 +1725,87 @@ def test_every_registry_question_is_readable_in_every_language():
     for fact in registry["definitions"]:
         for locale, question in fact.get("questions", {}).items():
             assert "??" not in question["text"], (fact["fact_id"], locale)
+
+
+def test_every_packaged_rule_carries_its_exact_source_clause():
+    """Every rule records its official text, where it is, and the fact's unit.
+
+    IGNWPS once kept its one eligibility sentence only at package level, while
+    PM-KISAN kept text on each rule; the evidence panel then showed an internal
+    clause ID as the location. Rule-extraction cases are also built per rule.
+    """
+
+    package_dir = Path(__file__).resolve().parents[1] / "src" / "rules" / "packages"
+    registry = FactRegistry.model_validate_json(
+        (package_dir.parent / "fact_registry.json").read_bytes()
+    )
+    packages = sorted(package_dir.glob("*.json"))
+    assert packages
+    for path in packages:
+        package = RulePackage.model_validate_json(path.read_bytes())
+        for rule in package.rules:
+            assert rule.source_text and rule.source_text.strip(), (path.name, rule.rule_id)
+            assert rule.source_location and rule.source_location.strip(), (path.name, rule.rule_id)
+            # IGNWPS age rules once had no unit and relied on a legacy exception.
+            # As in the loader, units count only for number facts; a yes/no
+            # fact may describe an amount ("pension of at least Rs 10,000").
+            definition = registry.get(rule.field)
+            numeric = definition.value_type in {"integer", "decimal"}
+            expected_unit = definition.unit if numeric else None
+            assert rule.unit == expected_unit, (path.name, rule.rule_id)
+
+
+# --- "approved" activation: a reviewed new scheme goes live through its records ---
+
+
+def test_approved_bundle_goes_live_when_package_and_definitions_are_approved(
+    tmp_path: Path,
+) -> None:
+    """The default (live) loader accepts it; questions and privacy may be pending."""
+    _write_synthetic_bundle(
+        tmp_path, activation_state="approved", create_only=True,
+        package_approved=True, definitions_approved=True,
+    )
+
+    provider = RulePackageProvider(tmp_path / "packages")
+
+    assert "SYNTHETIC-SCHOLARSHIP-TEST" in provider.packages
+    assert provider.bundles["SYNTHETIC-SCHOLARSHIP-TEST"].activation_state == "approved"
+
+
+def test_approved_bundle_is_refused_without_a_human_approved_package(
+    tmp_path: Path,
+) -> None:
+    _write_synthetic_bundle(
+        tmp_path, activation_state="approved", create_only=True,
+        package_approved=False, definitions_approved=True,
+    )
+
+    with pytest.raises(ValueError, match="human-approved rule package"):
+        RulePackageProvider(tmp_path / "packages")
+
+
+def test_approved_bundle_is_refused_while_a_fact_definition_is_pending(
+    tmp_path: Path,
+) -> None:
+    _write_synthetic_bundle(
+        tmp_path, activation_state="approved", create_only=True,
+        package_approved=True, definitions_approved=False,
+    )
+
+    with pytest.raises(ValueError, match="approved fact definitions"):
+        RulePackageProvider(tmp_path / "packages")
+
+
+def test_development_only_bundle_is_still_refused_even_when_approved_records_exist(
+    tmp_path: Path,
+) -> None:
+    """Approved records do not turn a development bundle on; only the state does."""
+    _write_synthetic_bundle(
+        tmp_path, activation_state="development_only", create_only=True,
+        package_approved=True, definitions_approved=True,
+    )
+
+    with pytest.raises(ValueError, match="Development-only bundles"):
+        RulePackageProvider(tmp_path / "packages")
+

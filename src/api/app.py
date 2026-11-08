@@ -1,6 +1,7 @@
 """FastAPI entry point for Scheme Saathi."""
 
-from contextlib import AsyncExitStack, asynccontextmanager
+import asyncio
+from contextlib import AsyncExitStack, asynccontextmanager, suppress
 import logging
 import os
 import sys
@@ -22,6 +23,7 @@ from src.config import (
     portal_database_path,
     test_rule_package_directory,
 )
+from src.api.database_backup import DatabaseBackups
 from src.api.portal_service import start_portal_service, stop_portal_service
 from src.api.eligibility import EligibilityResponse
 from src.api.applications import (
@@ -309,6 +311,12 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
             str(PROJECT_ROOT / "data" / "runtime" / "journey.sqlite3"),
         )
     )
+    # Bring back saved databases before anything opens them.
+    backups = DatabaseBackups.from_environment(
+        (checkpoint_path, portal_database_path())
+    )
+    if backups is not None:
+        await asyncio.to_thread(backups.restore)
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     checkpoint_connection = await aiosqlite.connect(checkpoint_path)
     checkpointer = AsyncSqliteSaver(checkpoint_connection)
@@ -326,6 +334,9 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         "mock-portal": "src.mcp_servers.mock_portal_server",
     }
     portal_process = None
+    backup_task = (
+        asyncio.create_task(backups.save_regularly()) if backups is not None else None
+    )
     try:
         portal_db_path = portal_database_path()
         portal_process = start_portal_service(portal_db_path)
@@ -408,10 +419,16 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         logger.exception("Failed to connect to the Saathi MCP services")
         raise
     finally:
+        if backup_task is not None:
+            backup_task.cancel()
+            with suppress(asyncio.CancelledError):
+                await backup_task
         if portal_process is not None:
             stop_portal_service(portal_process)
         await checkpoint_connection.close()
         await store_connection.close()
+        if backups is not None:
+            await asyncio.to_thread(backups.save)
 
 
 app = FastAPI(

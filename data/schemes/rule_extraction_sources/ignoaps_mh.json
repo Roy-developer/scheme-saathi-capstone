@@ -1,0 +1,64 @@
+{
+  "scheme_id": "IGNOAPS-MH",
+  "scheme_name": "Indira Gandhi National Old Age Pension Scheme - Maharashtra",
+  "status": "source_text_for_drafting_only",
+  "note": "Input for src/rule_extraction_reflexion/scheme_rules.py extract. The text is copied word for word from the official page and was confirmed by the reviewer on 2026-11-08. There are no approved rules yet; anything extracted from this file is a draft for human review, never policy.",
+  "source": {
+    "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+    "source_url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+    "retrieved": "2026-11-08",
+    "page_last_updated": "29.04.2025"
+  },
+  "reviewer_decisions": {
+    "reviewer": "Roy-developer",
+    "date": "2026-11-08",
+    "bpl_fact": "Use name_on_bpl_list (\"names are on the BPL list\"), not bpl_card_shown: the official text mentions no card. A 'no' answer means not eligible; 'don't know' stays unknown.",
+    "age_as_of": "application_date (as for IGNWPS). '65 and above' includes 65.",
+    "note": "For the future IGNOAPS rule package (age_as_of, age_boundaries_inclusive). These are reviewer policy, not extracted from the text."
+  },
+  "onboarding": {
+    "scheme_name": "Indira Gandhi National Old Age Pension Scheme",
+    "jurisdiction": "IN-MH",
+    "source_id": "SRC-IGNOAPS-MH-001",
+    "publication_date": null,
+    "passages": [
+      {
+        "passage_id": "IGNOAPS-MH-ELIGIBILITY-01",
+        "section": "eligibility",
+        "text": "Eligible elderly individuals aged 65 and above, whose names are on the Below Poverty Line (BPL) list, receive monthly financial assistance under the Indira Gandhi National Old Age Pension Scheme.",
+        "locator": "Scheme page; Eligibility Criteria section",
+        "review_status": "reviewed"
+      },
+      {
+        "passage_id": "IGNOAPS-MH-BENEFIT-01",
+        "section": "benefit",
+        "text": "From the central government: ₹200 per month for eligible elderly individuals aged 65 to 79 years. ₹500 per month for eligible elderly individuals aged 80 years and above. From the state government under the Shravanbal Seva State Pension Scheme: ₹1300 per month for eligible elderly individuals aged 65 to 79 years. ₹1000 per month for eligible elderly individuals aged 80 years and above.",
+        "locator": "Scheme page; Nature of Benefits section",
+        "review_status": "pending_review"
+      },
+      {
+        "passage_id": "IGNOAPS-MH-BENEFICIARY-01",
+        "section": "beneficiary",
+        "text": "All Categories",
+        "locator": "Scheme page; Beneficiary section",
+        "review_status": "pending_review"
+      },
+      {
+        "passage_id": "IGNOAPS-MH-APPLICATION-01",
+        "section": "application",
+        "text": "The applicant can apply at the Collector’s Office / Tehsildar’s Office, Sanjay Gandhi Niradhar Anudan Yojana Branch / Talathi Office.",
+        "locator": "Scheme page; How To Apply section",
+        "review_status": "pending_review"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "clause_id": "IGNOAPS-MH-ELIGIBILITY-01",
+      "text": "Eligible elderly individuals aged 65 and above, whose names are on the Below Poverty Line (BPL) list, receive monthly financial assistance under the Indira Gandhi National Old Age Pension Scheme.",
+      "location": "Eligibility Criteria section",
+      "allowed_fact_ids": ["age", "name_on_bpl_list"],
+      "topic_tags": ["inclusion_clause"]
+    }
+  ]
+}

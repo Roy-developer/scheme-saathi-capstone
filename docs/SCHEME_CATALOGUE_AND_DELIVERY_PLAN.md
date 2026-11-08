@@ -212,6 +212,9 @@ policy authority.
 
 ### Preparing a scheme for data-only onboarding
 
+> **Update 2026-11-08:** for the working process, by hand and with the `onboard`
+> command, see `docs/RULE_EXTRACTION_REFLEXION_CODE_WALKTHROUGH.md`, section "From official PDF to live app, end to end".
+
 **New planning requirement, not implemented or approved data.** A prepared
 dataset must contain more than passages. For each scheme, Roles 1–4 prepare
 and review a compatible bundle containing:

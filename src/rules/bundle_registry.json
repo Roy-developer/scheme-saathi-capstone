@@ -7,9 +7,9 @@
       "activation_state": "legacy_compatibility",
       "package_file": "ignwps_mh.v1.json",
       "package_version": "1.0.0",
-      "package_sha256": "d74284819f122d827a9913405dc69907d687868a93b298679c3a46f6840bea45",
+      "package_sha256": "224bf03585d9bb6bc41a64765c890dd84ea36c6006b0907065d9ded8bd5b2c65",
       "registry_version": "1.0.0",
-      "registry_sha256": "babc9941a4018a459add5aabb97fdef98bbfd652f3ff456df67ec9f2e787c12a",
+      "registry_sha256": "ea6e46784c0ba3f8fab0a6d42f240d75ec05371456bd2f20b347bd2a8564fbd1",
       "fact_ids": [
         "age",
         "application_date",
@@ -37,7 +37,7 @@
       "package_version": "1.0.0",
       "package_sha256": "3e7b14c676a21a878ef5c11a0e2d2fd8e202ff50c40318299d9d644ab20cb4a7",
       "registry_version": "1.0.0",
-      "registry_sha256": "babc9941a4018a459add5aabb97fdef98bbfd652f3ff456df67ec9f2e787c12a",
+      "registry_sha256": "ea6e46784c0ba3f8fab0a6d42f240d75ec05371456bd2f20b347bd2a8564fbd1",
       "fact_ids": [
         "excluded_government_employee_member",
         "income_tax_paid_last_assessment_year",
@@ -67,6 +67,31 @@
         "PMKISAN-GUIDELINES-2020-4.1(b)(v)",
         "PMKISAN-GUIDELINES-2020-4.1(b)(vi)",
         "PMKISAN-GUIDELINES-2020-4.1(c)"
+      ],
+      "checklist_version": null,
+      "mock_form_version": null
+    },
+    {
+      "scheme_id": "IGNOAPS-MH",
+      "bundle_version": "1.0.0",
+      "activation_state": "approved",
+      "package_file": "ignoaps_mh.v1.json",
+      "package_version": "1.0.0",
+      "package_sha256": "cd4652b8a7da119561eee6ee8a532b4059cca8b750c9d323d93c6a05c00a6549",
+      "registry_version": "1.0.0",
+      "registry_sha256": "ea6e46784c0ba3f8fab0a6d42f240d75ec05371456bd2f20b347bd2a8564fbd1",
+      "fact_ids": [
+        "age",
+        "application_date",
+        "date_of_birth",
+        "name_on_bpl_list"
+      ],
+      "legacy_profile_mapping": {
+        "date_of_birth": "date_of_birth",
+        "application_date": "application_date"
+      },
+      "source_clause_ids": [
+        "IGNOAPS-MH-ELIGIBILITY-01"
       ],
       "checklist_version": null,
       "mock_form_version": null

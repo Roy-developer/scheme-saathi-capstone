@@ -129,7 +129,7 @@ code; the app does not read or authenticate documents, perform OCR, or claim
 that the demo checklist is an official requirements source. A discrepancy
 requires correction and recheck or human referral before a draft can proceed.
 
-The two pilot checklists are read through one versioned, typed file-backed
+The scheme checklists are read through one versioned, typed file-backed
 loader shared by both checklist MCP tools. Current files are explicitly
 demo-only, while source-backed use remains fail-closed until reviewed evidence
 and a human approval record match the exact checklist and evidence content
