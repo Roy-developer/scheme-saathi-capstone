@@ -1,0 +1,9 @@
+# Rule packages are pinned by the SHA-256 of their exact bytes
+# (src/rules/bundle_registry.json and src/rules/data_provider.py).
+# Store them byte-for-byte so every checkout (Windows or Linux CI) has the
+# reviewed bytes; line-ending conversion would change the hash.
+src/rules/packages/*.json -text
+src/rules/fact_registry.json -text
+# Test fixtures pinned the same way (tests/fixtures/phase4/bundle_registry.json).
+tests/fixtures/phase4/packages/*.json -text
+tests/fixtures/phase4/fact_registry.json -text

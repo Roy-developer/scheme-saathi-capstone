@@ -1,9 +1,14 @@
 """Deterministic eligibility engine shared by every synthetic mock scheme."""
 
+from collections.abc import Mapping
+from functools import lru_cache
+import json
+from pathlib import Path
 from typing import Literal
 
 from pydantic import Field
 
+from src.rules.facts import FactRegistry, FactState, TypedFactStore
 from src.rules.models import HouseholdProfile, Rule, RulePackage
 from src.ui.models import StrictModel
 
@@ -32,35 +37,89 @@ class EligibilityResponse(StrictModel):
     unresolved_checks: list[str] = Field(default_factory=list)
 
 
-def _rule_is_met(rule: Rule, value: bool | int) -> bool:
-    """Return True when a known fact value satisfies one rule.
+@lru_cache(maxsize=1)
+def _default_registry() -> FactRegistry:
+    """Load the packaged registry for legacy in-process evaluator callers."""
 
-    Example: rule ``age gte 40`` with value 50 returns True.
-    The caller must handle unknown (None) values before calling this.
-    """
+    path = Path(__file__).parents[1] / "rules" / "fact_registry.json"
+    return FactRegistry.model_validate(json.loads(path.read_text(encoding="utf-8")))
 
-    # "eq": equal to. Used for yes/no facts, e.g. is_widow == True.
+
+def _legacy_fact_store(
+    profile: HouseholdProfile,
+    registry: FactRegistry,
+    mapping: Mapping[str, str] | None,
+) -> TypedFactStore:
+    """Translate legacy profile fields through explicit registered mappings."""
+
+    field_mapping = (
+        dict(mapping)
+        if mapping is not None
+        else {
+            definition.fact_id: definition.legacy_profile_field
+            for definition in registry.definitions
+            if definition.legacy_profile_field is not None
+        }
+    )
+    values = profile.model_dump(mode="python")
+    facts: dict[str, FactState] = {}
+    for fact_id, profile_field in field_mapping.items():
+        if profile_field not in values:
+            raise ValueError(f"Unknown legacy profile field: {profile_field}")
+        definition = registry.get(fact_id)
+        value = values[profile_field]
+        if value is None:
+            facts[fact_id] = FactState(
+                status="unknown",
+                definition_version=definition.version,
+            )
+        else:
+            facts[fact_id] = FactState(
+                status="known",
+                value=value,
+                definition_version=definition.version,
+                provenance="user_reported",
+            )
+    return TypedFactStore(
+        registry_version=registry.registry_version,
+        facts=facts,
+    ).validate_against(registry)
+
+
+def _rule_is_met(rule: Rule, value: object, registry: FactRegistry) -> bool:
+    """Compare one known value using its registered type and supported operator."""
+
+    definition = registry.get(rule.field)
+    expected = definition.validate_value(rule.value)
     if rule.operator == "eq":
-        return value == rule.value
-    # "gte": greater than or equal to. Used for a minimum age (age >= 40).
+        return value == expected
     if rule.operator == "gte":
-        return value >= rule.value
-    # "lte": less than or equal to. Used for a maximum age (age <= 79).
-    # The Rule model only allows these three operators.
-    return value <= rule.value
+        return value >= expected  # type: ignore[operator]
+    return value <= expected  # type: ignore[operator]
 
 
 def evaluate_mock_eligibility(
-    profile: HouseholdProfile,
+    profile: HouseholdProfile | TypedFactStore,
     package: RulePackage,
+    registry: FactRegistry | None = None,
+    legacy_profile_mapping: Mapping[str, str] | None = None,
 ) -> EligibilityResponse:
-    """Evaluate every rule in a package without an LLM.
+    """Evaluate every rule through the same registry-validated fact store.
 
     Verdict order: any failed rule gives ``not_eligible``; otherwise any
     unknown fact (or a rule marked ``need_more_information``) gives
     ``need_more_information``; otherwise ``eligible``.
+
+    Legacy callers are adapted through explicit registry field mappings;
+    registry-based callers supply a versioned ``TypedFactStore`` directly.
     """
 
+    active_registry = registry or _default_registry()
+    store = (
+        _legacy_fact_store(profile, active_registry, legacy_profile_mapping)
+        if isinstance(profile, HouseholdProfile)
+        else profile.validate_against(active_registry)
+    )
     # Every rule ends up in one of three groups:
     #   passed     -> not stored; nothing to report
     #   failed     -> the person clearly does not qualify
@@ -79,8 +138,7 @@ def evaluate_mock_eligibility(
 
     # Step 1: check every rule and sort it into a group.
     for rule in package.rules:
-        # fact_value("age") calculates age; other names read the field.
-        value = profile.fact_value(rule.field)
+        value = store.value(rule.field, active_registry)
 
         if value is None:
             # Case A: the fact is unknown, so we cannot check this rule yet.
@@ -93,11 +151,10 @@ def evaluate_mock_eligibility(
                 if rule.missing_field_label
                 else [
                     fact
-                    for fact in rule.input_facts
-                    if profile.fact_value(fact) is None
+                    for fact in store.missing_inputs(rule.field, active_registry)
                 ]
             )
-        elif not _rule_is_met(rule, value):
+        elif not _rule_is_met(rule, value, active_registry):
             # Case B: the fact is known and the rule is not met.
             if rule.if_not_met == "not_eligible":
                 # Normal rule: a "no" means the person does not qualify.
@@ -134,7 +191,14 @@ def evaluate_mock_eligibility(
         # Read the reason text for this verdict from the package,
         # e.g. package.reasons.not_eligible.
         reason=getattr(package.reasons, result),
-        age_on_application_date=profile.age,
+        age_on_application_date=(
+            store.value("age", active_registry)
+            if any(
+                definition.fact_id == "age"
+                for definition in active_registry.definitions
+            )
+            else None
+        ),
         missing_fields=missing_fields,
         deciding_rule_ids=[rule.rule_id for rule in deciding_rules],
         evidence=[

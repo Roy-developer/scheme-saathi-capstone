@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "bundles": [
+    {
+      "scheme_id": "TEST-SCHOLARSHIP",
+      "bundle_version": "1.0.0",
+      "activation_state": "development_only",
+      "package_file": "synthetic_scholarship.v1.json",
+      "package_version": "1.0.0",
+      "package_sha256": "4154446249e47a390d48e77db8661576ff3bf7a602a7004b1d1fd4094a265fb2",
+      "registry_version": "9.0.0",
+      "registry_sha256": "ecc845b1dca1fd0ca19663ddf93ecb3c4e0e64e32dde9cc70a0ccf4102273e4b",
+      "fact_ids": ["exam_marks", "exam_stream", "guardian_consent", "exam_ratio"],
+      "legacy_profile_mapping": {},
+      "source_clause_ids": [
+        "SYNTH-SCHOLARSHIP-MARKS",
+        "SYNTH-SCHOLARSHIP-STREAM"
+      ],
+      "checklist_version": null,
+      "mock_form_version": "1.0.0"
+    }
+  ]
+}

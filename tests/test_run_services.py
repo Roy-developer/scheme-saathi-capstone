@@ -27,3 +27,20 @@ def test_ui_and_combined_service_commands() -> None:
     assert "streamlit" in ui[0]
     assert ui[0] in combined
     assert len(combined) == 2
+
+
+def test_docker_image_copies_every_scheme_data_path_the_app_reads() -> None:
+    """The image once left out mock_forms, so drafts failed only in Azure."""
+
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    dockerfile = (root / "Dockerfile").read_text(encoding="utf-8")
+    for path in (
+        "data/schemes/passages.json",
+        "data/schemes/document_checklists",
+        "data/schemes/document_evidence.json",
+        "data/schemes/mock_forms",
+    ):
+        assert (root / path).exists(), path
+        assert f"COPY {path} ./{path}" in dockerfile, f"Dockerfile does not copy {path}"

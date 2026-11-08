@@ -47,7 +47,16 @@ def test_startup_logs_loaded_package_details(caplog: pytest.LogCaptureFixture) -
     # Startup should report the rules package loaded before serving requests.
     assert "IGNWPS-MH v1.0.0 (4 rules)" in caplog.text
     # The API should also log that its MCP client connected successfully.
-    assert "Connected to the local Saathi MCP server" in caplog.text
+    assert "Connected to four purpose-specific MCP services" in caplog.text
+
+
+def test_api_routes_through_four_discovered_mcp_services(client: TestClient) -> None:
+    assert client.app.state.mcp_services == (
+        "rule-engine",
+        "schemes-kb",
+        "doc-check",
+        "mock-portal",
+    )
 
 
 def test_multi_candidate_evaluate_returns_distinct_verdicts(client):
@@ -117,6 +126,36 @@ def test_correction_endpoint_rejects_unanswered_or_invalid_facts(client):
     )
     assert missing.status_code == 422
     assert invalid.status_code == 422
+
+
+@pytest.mark.parametrize("locale", ["en", "hi", "mr"])
+def test_single_scheme_unknown_correction_can_be_restored_with_localized_stale_notice(client, locale):
+    started = client.post("/api/v1/journey", json={
+        "action": "evaluate", "scheme_id": "IGNWPS-MH",
+        "profile": request_payload(), "locale": locale,
+    })
+    conversation_id = started.json()["conversation_id"]
+    corrected = client.post(
+        f"/api/v1/journey/{conversation_id}/corrections",
+        json={"fact_name": "bpl_card_shown", "answer": "don't know"},
+    )
+    assert corrected.status_code == 200
+    result = corrected.json()
+    assert result["eligibility_result"]["result"] == "need_more_information"
+    assert result["dependency_version"] == 1
+    assert "bpl_card_shown" not in result["known_fact_names"]
+    assert "bpl_card_shown" in result["correctable_fact_names"]
+    assert result["discovery_notices"] == ["correction_invalidated"]
+    assert result["discovery_messages"]
+    if locale != "en":
+        assert "Answers changed" not in result["discovery_messages"][0]
+    restored = client.post(
+        f"/api/v1/journey/{conversation_id}/corrections",
+        json={"fact_name": "bpl_card_shown", "answer": "yes"},
+    )
+    assert restored.status_code == 200
+    assert restored.json()["eligibility_result"]["result"] == "eligible"
+    assert restored.json()["dependency_version"] == 2
 
 
 def test_health_endpoint(client: TestClient) -> None:
