@@ -220,6 +220,16 @@ services do not communicate through `localhost`. Configure OpenRouter
 credentials only as backend Container App secrets. Never bake `.env` into the
 image.
 
+The backend scales to zero, which erases the container's disk. To keep
+conversations and mock-portal drafts, set `SCHEME_SAATHI_BACKUP_DIR` on the
+backend app to the mounted Azure file share (`/mnt/saathi-runtime`). The live
+SQLite databases stay on the container's disk, because their WAL mode does not
+work over a network share. Complete copies are saved to the share every five
+minutes (`SCHEME_SAATHI_BACKUP_INTERVAL_SECONDS`) and at shutdown, and restored
+at startup. A crash can lose changes since the last copy. Run only one backend
+replica while this is in use. Do not point `SCHEME_SAATHI_CHECKPOINT_DB` or
+`SCHEME_SAATHI_PORTAL_DB` at the share.
+
 The API health check is at `http://127.0.0.1:8000/health`; interactive API
 documentation is at `http://127.0.0.1:8000/docs`. Run the test suite with
 `python -m pytest -q`.
