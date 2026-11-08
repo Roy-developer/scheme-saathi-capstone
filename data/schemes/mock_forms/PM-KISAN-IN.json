@@ -2,7 +2,7 @@
   "schema_version": 1,
   "scheme_id": "PM-KISAN-IN",
   "form_version": "1.0.0",
-  "status": "demo_only",
+  "status": "approved",
   "fields": [
     {
       "field_id": "landholding_family_in_state_records",

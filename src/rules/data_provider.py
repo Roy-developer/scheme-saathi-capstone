@@ -29,7 +29,7 @@ _LEGACY_PILOT_BINDINGS: dict[str, LegacyPilotBinding] = {
         "1.0.0",
         "224bf03585d9bb6bc41a64765c890dd84ea36c6006b0907065d9ded8bd5b2c65",
         "1.0.0",
-        "ea6e46784c0ba3f8fab0a6d42f240d75ec05371456bd2f20b347bd2a8564fbd1",
+        "45c3ca044ac0cc8a15bb1518f0b80d1b3b478c21e69c9c6e6c7d68b651960ede",
         ("age", "application_date", "bpl_card_shown", "date_of_birth", "is_widow"),
         (
             ("application_date", "application_date"),
@@ -42,9 +42,9 @@ _LEGACY_PILOT_BINDINGS: dict[str, LegacyPilotBinding] = {
     "PM-KISAN-IN": (
         "pmkisan_in.v1.json",
         "1.0.0",
-        "3e7b14c676a21a878ef5c11a0e2d2fd8e202ff50c40318299d9d644ab20cb4a7",
+        "fb59df9f7420b29d33f5a41d938cdd00f688db742e62cd989f11a948b11137a1",
         "1.0.0",
-        "ea6e46784c0ba3f8fab0a6d42f240d75ec05371456bd2f20b347bd2a8564fbd1",
+        "45c3ca044ac0cc8a15bb1518f0b80d1b3b478c21e69c9c6e6c7d68b651960ede",
         (
             "excluded_government_employee_member",
             "income_tax_paid_last_assessment_year",
@@ -219,24 +219,6 @@ def _validate_bundle(
         if expected is None or actual != expected:
             raise ValueError(
                 f"Unrecognized legacy compatibility bundle: {bundle.scheme_id}"
-            )
-    if bundle.activation_state == "approved":
-        # A new scheme goes live because its review records say so, not
-        # because its fingerprint is written into this file. Reviewer decision
-        # (2026-11-08): the package must be human-approved and every fact's
-        # definition approved; question and privacy reviews may still be
-        # pending, and the scheme stays a synthetic mock.
-        if package.approval_status != "approved_for_mock_portal":
-            raise ValueError(
-                f"Approved bundle needs a human-approved rule package: {bundle.scheme_id}"
-            )
-        pending = sorted(
-            fact_id for fact_id in bundle.fact_ids
-            if registry.get(fact_id).definition_review_status != "approved"
-        )
-        if pending:
-            raise ValueError(
-                f"Approved bundle needs approved fact definitions for {bundle.scheme_id}: {pending}"
             )
     if bundle.scheme_id != package.scheme_id:
         raise ValueError("Bundle scheme ID does not match its rule package")

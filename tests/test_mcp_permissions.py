@@ -144,8 +144,8 @@ def test_every_inventory_tool_succeeds_via_mcp_and_http_portal(monkeypatch) -> N
                 "is_widow": True, "bpl_card_shown": True,
             }
             documents = {
-                "identity_proof": "available", "age_proof": "available",
-                "widow_status_proof": "available", "bpl_proof": "available",
+                "identity_proof": "available", "bank_account_proof": "available",
+                "widow_status_proof": "available",
             }
             for service_name, server in servers.items():
                 async with Client(server) as client:

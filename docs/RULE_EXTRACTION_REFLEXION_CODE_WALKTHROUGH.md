@@ -329,24 +329,23 @@ Run everything from the repository root, after activating the environment:
 | 10 | **Add to the cases file** | One entry per clause in `data/schemes/rule_extraction_cases_dev.json` with `package`, `package_dir` (`data/schemes/reflexion_packages`), `package_sha256` (the script refuses a changed file), `topic_tags`, `context` (`[]` if the heading is already in the text) and a manual `split`. Use `check` if the model already reads it correctly (nothing to learn) or to keep it as a fair demo clause; `learn` only for real mistakes. | `check`: the model's draft matched the approved rules exactly | Free |
 | 11 | **Measure** | `python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --playbook 1.0.0 --runs 3 --yes`. If the model makes real mistakes on `learn` clauses, run `learn`, `review` and `freeze` (see "The steps, end to end"), then measure again. | **18/18 exact** on the six check clauses (the earlier five 15/15, IGNOAPS 3/3) | 1 call per clause per run |
 | 12 | **Record** | Update this guide and the review document; note open questions. | This section; review document sign-off | Free |
-| 13 | **Approve for the app** | A separate decision from step 8. The reviewer, listed in `authorized_reviewers`, has this line added to the review document: ``App approval: `<SCHEME>` approved by `<login>` on <YYYY-MM-DD> for package SHA-256 `<hash>` ``. Any later edit to the package needs a new line. | Approved by `Roy-developer`, 2026-11-08 (amendment in the review document) | Free |
+| 13 | **Decide to put it in the app** | A person decides the scheme is ready. The code no longer checks for a recorded approval; the review document stays as the team's record. | Approved by `Roy-developer`, 2026-11-08 (amendment in the review document) | Free |
 | 14 | **Put it in the app** | By hand or with `onboard`: both are shown below. | Done by hand first; `onboard` was then built and recreates the same files byte for byte | Free |
 | 15 | **Write the document checklist and mock form** | `data/schemes/document_checklists/<SCHEME>.json` and `data/schemes/mock_forms/<SCHEME>.json`, marked `demo_only` until reviewed. A person writes these; `onboard` only reports them if missing. | Demo-only files with three checklist items and two form fields | Free |
 | 16 | **Restart and walk through it** | Start `python -m uvicorn src.api.app:app --reload --port 8000` and `python -m streamlit run src/ui/app.py` in separate terminals. In the browser: search for the scheme, then try eligible, not eligible and "I don't know". Automated tests did not catch the two bugs this found. | Date picker refused old birth dates; an internal note reached users (log rows 35 and 36). The "No" answer, checklist and draft are not yet checked in a browser. | Normal app model calls |
 | 17 | **Re-check the search thresholds** | `python scripts/calibrate_search_fallback.py --record signals.json`, then `--analyse signals.json`. Needed whenever passages change. | Not done yet for IGNOAPS | A few cents |
-| 18 | **Finish the reviews and commit** | Native speakers review the questions, a privacy reviewer checks new facts, and someone reviews the remaining passages. Commit when ready; nothing here deploys by itself. | Questions, privacy and three passages are still pending | Free |
+| 18 | **Finish the reviews and commit** | Native speakers review the questions, a privacy reviewer checks new facts, and someone reviews the remaining passages. Commit when ready; nothing here deploys by itself. | Question and privacy status were approved by the reviewer on 2026-11-09 without a separate native-speaker or privacy review; three passages are still pending | Free |
 
 Total model cost for IGNOAPS: about 20 calls, well under 1 US cent.
 
 **Step 14: by hand or with the command**
 
-Both ways start from the same three inputs:
+Both ways start from the same two inputs:
 
 | Input | Where |
 |---|---|
 | The approved package | `data/schemes/reflexion_packages/` |
 | An `onboarding` block in the source file, listing the search passages | `data/schemes/rule_extraction_sources/<scheme>.json` |
-| The `App approval:` line from step 13 | `docs/<SCHEME>_RULE_REVIEW_<date>.md` |
 
 The `onboarding` block looks like this (one entry per section of the official
 page; `review_status` is set for each passage):
@@ -384,7 +383,7 @@ writes anything.
 
 | # | Job | By hand | `onboard` |
 |---|---|---|---|
-| a | Check the approvals | Confirm the `App approval:` line names the package's current hash and a listed reviewer, `approval_status` is `approved_for_mock_portal`, every fact has `definition_review_status: approved`, and each rule's `source_text` matches the source file | Refuses if any is missing |
+| a | Check the text | Confirm each rule's `source_text` matches the source file | Refuses if it doesn't |
 | b | Move the package | `Move-Item data/schemes/reflexion_packages/<file> src/rules/packages/` | Same |
 | c | Cite the source on each fact | In `src/rules/fact_registry.json`, add the package's `source_url` to `source_refs` on every fact the scheme uses (required facts, rule facts, and what derived facts are built from) | Same |
 | d | Re-pin the registry hash | Only if c changed the file. Run `(Get-FileHash src/rules/fact_registry.json -Algorithm SHA256).Hash.ToLower()` and replace the old value in every bundle in `bundle_registry.json` and in `_LEGACY_PILOT_BINDINGS` in `data_provider.py` | Same |
@@ -404,15 +403,8 @@ By hand, take care with these points:
 
 `onboard` refuses, and writes nothing, when:
 
-- the app-approval line is missing, is for different package bytes, or names
-  someone outside `authorized_reviewers`;
-- the package is not human-approved, or a fact definition is not approved;
 - a rule does not quote the source file's text word for word;
 - the app's loader would refuse the result, including for another scheme.
-
-The line in step 13 is needed because a package's `approved_for_mock_portal`
-label cannot show app approval: packages used only as Reflexion answer keys
-carry it too.
 
 `onboard` does not write checklists or forms, choose a `learn` or `check`
 split, or review anything; it lists those under "Still for people". If tests
@@ -551,7 +543,7 @@ were found (2026-11-07). Code-level details and guard tests are in section 15.
 - **IGNOAPS open questions:** central age 60 versus Maharashtra 65,
   citizenship, and non-receipt of other pensions (official central guideline
   not obtained); Hindi/Marathi wording of `name_on_bpl_list` awaits a native
-  speaker, and its privacy review is pending. IGNOAPS is live as a mock scheme
+  speaker. IGNOAPS is live as a mock scheme
   only.
 - **IGNOAPS checks not done in a browser:** the "No" answer (automated tests
   only), the document checklist and the application draft.

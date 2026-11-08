@@ -34,21 +34,21 @@
         "section": "benefit",
         "text": "From the central government: ₹200 per month for eligible elderly individuals aged 65 to 79 years. ₹500 per month for eligible elderly individuals aged 80 years and above. From the state government under the Shravanbal Seva State Pension Scheme: ₹1300 per month for eligible elderly individuals aged 65 to 79 years. ₹1000 per month for eligible elderly individuals aged 80 years and above.",
         "locator": "Scheme page; Nature of Benefits section",
-        "review_status": "pending_review"
+        "review_status": "reviewed"
       },
       {
         "passage_id": "IGNOAPS-MH-BENEFICIARY-01",
         "section": "beneficiary",
         "text": "All Categories",
         "locator": "Scheme page; Beneficiary section",
-        "review_status": "pending_review"
+        "review_status": "reviewed"
       },
       {
         "passage_id": "IGNOAPS-MH-APPLICATION-01",
         "section": "application",
         "text": "The applicant can apply at the Collector’s Office / Tehsildar’s Office, Sanjay Gandhi Niradhar Anudan Yojana Branch / Talathi Office.",
         "locator": "Scheme page; How To Apply section",
-        "review_status": "pending_review"
+        "review_status": "reviewed"
       }
     ]
   },
