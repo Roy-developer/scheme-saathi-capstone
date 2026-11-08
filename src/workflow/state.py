@@ -29,12 +29,23 @@ VerdictResult = Literal[
     "tool_error",
 ]
 HistoryEventType = Literal["tool_retry", "tool_failed", "answer_corrected"]
+ApplicationOperation = Literal[
+    "check_documents", "create_draft", "edit_draft", "approve", "reject",
+    "submit", "delete_journey",
+]
 
 
 class ContractModel(BaseModel):
     """Reject undeclared fields so agents cannot pass unexpected data."""
 
     model_config = ConfigDict(extra="forbid")
+
+
+class ApplicationTask(ContractModel):
+    """A backend-only task; callers cannot select an arbitrary MCP tool."""
+
+    operation: ApplicationOperation
+    arguments: dict[str, Any] = Field(default_factory=dict)
 
 
 class PlanStep(ContractModel):

@@ -2,12 +2,13 @@ import json
 from io import BytesIO
 from pathlib import Path
 
+import httpx
 import pytest
 
 from src.api import scheme_search as scheme_search_module
+from src.llm_client import openrouter_embeddings
 from src.api.scheme_search import (
     HybridSchemeRetriever,
-    OpenRouterEmbeddings,
     OpenRouterReranker,
     decompose_query,
     load_passages,
@@ -41,43 +42,60 @@ def build_retriever(passages):
     )
 
 
-def passages_of(corpus, scheme_id):
-    return [passage for passage in corpus if passage.scheme_id == scheme_id]
-
-
-# --- OpenRouter clients -----------------------------------------------------
-
-
 def test_openrouter_embeddings_prefers_free_api_key(monkeypatch):
     requests = []
 
-    def fake_urlopen(request, timeout):
+    def handle(request: httpx.Request) -> httpx.Response:
         requests.append(request)
-        return BytesIO(
-            json.dumps(
-                {"data": [{"index": 0, "embedding": [0.1, 0.2]}]}
-            ).encode()
-        )
+        texts = json.loads(request.content)["input"]
+        # Same 2-D vector for every text: enough for Qdrant to return results.
+        return httpx.Response(200, json={
+            "object": "list", "model": "fake",
+            "data": [
+                {"object": "embedding", "index": index, "embedding": [1.0, 0.0]}
+                for index, _ in enumerate(texts)
+            ],
+        })
 
     monkeypatch.setenv("OPENROUTER_API_KEY_FREE", "free-key")
     monkeypatch.setenv("OPENROUTER_API_KEY", "default-key")
-    monkeypatch.setattr(
-        scheme_search_module.urllib.request, "urlopen", fake_urlopen
+    passages = load_passages(PASSAGE_FILE)
+    embeddings = openrouter_embeddings(
+        "free-key", "voyageai/voyage-4",
+        http_client=httpx.Client(transport=httpx.MockTransport(handle)),
+    )
+    retriever = HybridSchemeRetriever(
+        passages, embeddings=embeddings, use_cross_encoder=False,
     )
 
-    vectors = OpenRouterEmbeddings().embed(["test passage"])
+    rankings = retriever._vector_search_many(
+        ("widow pension", "widow"), passages,
+    )
 
-    assert vectors == [[0.1, 0.2]]
-    assert requests[0].get_header("Authorization") == "Bearer free-key"
+    assert len(rankings) == 2
+    assert set(rankings[0]) <= {passage.passage_id for passage in passages}
+    assert rankings[0]
+    assert requests[-1].url == "https://openrouter.ai/api/v1/embeddings"
+    assert requests[-1].headers["Authorization"] == "Bearer free-key"
+    assert json.loads(requests[-1].content) == {
+        "model": "voyageai/voyage-4", "input": ["widow pension", "widow"],
+        "encoding_format": "float",
+    }
+    before = len(requests)
+    retriever._vector_search_many(("widow",), passages)
+    assert len(requests) == before + 1, "the passage index is built only once"
 
 
 def test_embeddings_do_not_fall_back_to_chat_key(monkeypatch):
     monkeypatch.delenv("OPENROUTER_API_KEY_FREE", raising=False)
     monkeypatch.delenv("OPEN_ROUTER_FREE", raising=False)
     monkeypatch.setenv("OPENROUTER_API_KEY", "chat-key")
+    retriever = HybridSchemeRetriever(
+        load_passages(PASSAGE_FILE), use_cross_encoder=False,
+    )
 
     with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY_FREE"):
-        OpenRouterEmbeddings()
+        retriever._vector_search_many(("widow",), retriever.passages)
 
 
 def test_openrouter_reranker_returns_scores_in_document_order(
@@ -347,4 +365,49 @@ def test_search_can_skip_cross_encoder_and_keep_fused_order(monkeypatch, corpus)
         ],
     )
 
-    assert retriever.search("pension") == expected_retriever.search("pension")
+    results = retriever.search("where do I apply")
+    expected = expected_retriever.search("where do I apply")
+
+    assert results == expected
+
+
+def _agreement_retriever(vector_first_scheme: str):
+    """Reranker unsure (0.19); keyword search ranks PM-KISAN first for 'farmer';
+    meaning search ranks ``vector_first_scheme`` first."""
+
+    passages = load_passages(PASSAGE_FILE)
+    ordered = sorted(passages, key=lambda passage: passage.scheme_id != vector_first_scheme)
+    ids = [passage.passage_id for passage in ordered]
+    return HybridSchemeRetriever(
+        passages,
+        vector_search=lambda query, candidates, limit: ids[:limit],
+        rerank=lambda query, candidates: [
+            0.19 if passage.passage_id == "PM-KISAN-IN-BENEFIT-01" else 0.05
+            for passage in candidates
+        ],
+    )
+
+
+def test_agreement_keeps_a_near_miss_when_both_searches_rank_its_scheme_first():
+    retriever = _agreement_retriever("PM-KISAN-IN")
+    arguments = dict(limit=5, min_score=0.3, fallback_min_score=0.2)
+
+    # Today's rule alone: 0.19 is under the 0.2 fallback, so nothing is shown.
+    assert retriever.search("small farmer money support", **arguments) == ()
+    # Both searches rank PM-KISAN first and 0.19 >= 0.12: the passage is shown.
+    results = retriever.search(
+        "small farmer money support", **arguments, agreement_min_score=0.12,
+    )
+    assert [passage.passage_id for passage in results] == ["PM-KISAN-IN-BENEFIT-01"]
+    # Below the agreement floor, agreement alone is not enough.
+    assert retriever.search(
+        "small farmer money support", **arguments, agreement_min_score=0.195,
+    ) == ()
+
+
+def test_agreement_needs_both_searches_to_rank_the_same_scheme_first():
+    retriever = _agreement_retriever("IGNWPS-MH")
+    assert retriever.search(
+        "small farmer money support",
+        limit=5, min_score=0.3, fallback_min_score=0.2, agreement_min_score=0.12,
+    ) == ()

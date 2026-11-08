@@ -15,6 +15,24 @@ This guide says the cohort's separate guidelines control dates, team rules and m
 
 ## Executive understanding
 
+**Architecture interpretation rechecked against the original PDF on
+2026-11-03** (source SHA-256 unchanged). Pages 2–3 explicitly require ReAct
+within specialists; named deterministic graph nodes and typed handoffs alone
+are not the complete L10/L11 implementation. Deterministic eligibility and
+approval enforcement remain mandatory. Page 3 requires at least three
+FastMCP servers; pages 7–8 name four Scheme Saathi services, including document
+extraction/comparison and a separate mock portal. Four modules on one shared
+server are not four services. Numeric budgets, approval expiry duration and
+evaluation thresholds need team decisions; model choices in the stack table
+are defaults, not proof of implementation.
+
+The local `Scheme_Saathi_Roles_and_Work_Plan.pdf` additionally specifies expiring,
+one-use approval authorization. This is attributed to that team guide rather
+than presented as an exact expiry interval from the source PDF.
+The [reconciled architecture](END_TO_END_IMPLEMENTATION_PLAN.md) and
+[single six-phase schedule](PHASE_WISE_IMPLEMENTATION_PLAN.md) now distinguish
+the deployed baseline from missing requirements and acceptance evidence.
+
 The capstone is not simply a chatbot with several agents. It asks a six-person team to build and evaluate one honest, working end-to-end system that brings together retrieval, typed tools over MCP, orchestration and planning, memory, multiple agents, a reviewed improvement loop, evaluation, human approval, security, observability and deployment. Teams should build the minimum bar across the system first, then invest deeply in the two project-specific signature challenges. The guide explicitly prefers two or three areas done well over shallow coverage of ten (pp. 1, 3).
 
 For **Scheme Saathi**, the system helps a citizen and/or Common Services Centre (CSC) operator identify potentially relevant government schemes, explain evidence-based eligibility in Hindi, Marathi or English, check documents, and prepare an application. Deterministic, tested code—not the LLM—decides eligibility. A human approves the exact form before any external-world change. The two signature challenges are (A) extracting rules from scheme prose into reviewed, clause-linked JSON and measuring extraction accuracy; and (B) asking the fewest useful questions in three languages while preserving the same verdict for the same persona (pp. 7–8).

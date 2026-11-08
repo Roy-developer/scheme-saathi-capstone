@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "scheme_id": "TEST-SCHOLARSHIP",
+  "form_version": "1.0.0",
+  "status": "demo_only",
+  "fields": [
+    {
+      "field_id": "exam_marks",
+      "labels": {
+        "en": "Synthetic exam marks",
+        "hi": "कृत्रिम परीक्षा अंक",
+        "mr": "कृत्रिम परीक्षा गुण"
+      },
+      "value_type": "integer",
+      "required": true,
+      "fact_id": "exam_marks",
+      "minimum": 0,
+      "maximum": 100
+    },
+    {
+      "field_id": "exam_stream",
+      "labels": {
+        "en": "Synthetic exam stream",
+        "hi": "कृत्रिम परीक्षा धारा",
+        "mr": "कृत्रिम परीक्षा शाखा"
+      },
+      "value_type": "choice",
+      "required": true,
+      "fact_id": "exam_stream",
+      "choices": ["science", "arts"]
+    },
+    {
+      "field_id": "student_identifier",
+      "labels": {
+        "en": "Synthetic student identifier",
+        "hi": "कृत्रिम विद्यार्थी पहचान संख्या",
+        "mr": "कृत्रिम विद्यार्थी ओळख क्रमांक"
+      },
+      "value_type": "text",
+      "required": true,
+      "extra_input": true,
+      "max_length": 24
+    },
+    {
+      "field_id": "exam_ratio",
+      "labels": {
+        "en": "Exact synthetic examination ratio",
+        "hi": "कृत्रिम परीक्षा का सटीक अनुपात",
+        "mr": "कृत्रिम परीक्षेचे अचूक प्रमाण"
+      },
+      "value_type": "decimal",
+      "required": true,
+      "fact_id": "exam_ratio",
+      "minimum": 0,
+      "maximum": 1
+    }
+  ]
+}

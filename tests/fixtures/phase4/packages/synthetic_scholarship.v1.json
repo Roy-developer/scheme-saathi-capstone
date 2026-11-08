@@ -1,0 +1,54 @@
+{
+  "package_version": "1.0.0",
+  "scheme_id": "TEST-SCHOLARSHIP",
+  "approval_status": "mock_baseline_pending_human_rule_approval",
+  "reviewer_name": "synthetic test fixture",
+  "reviewed_at": "2026-11-04",
+  "approval_scope": "synthetic_mock_portal_only",
+  "source": {
+    "publisher": "Synthetic test data",
+    "source_url": "https://example.test/synthetic-scholarship",
+    "collected_at": "2026-11-04",
+    "official_eligibility_text": "Synthetic-only test rules; not policy.",
+    "publication_date_status": "not_confirmed",
+    "revised_as_of": null
+  },
+  "required_facts": ["exam_marks", "exam_stream", "guardian_consent", "exam_ratio"],
+  "age_as_of": null,
+  "age_boundaries_inclusive": null,
+  "bpl_confirmation": null,
+  "documents_status": "not_verified",
+  "reasons": {
+    "eligible": "Synthetic test rules matched.",
+    "not_eligible": "Synthetic test rules did not match.",
+    "need_more_information": "Synthetic test information is incomplete."
+  },
+  "notice": "Synthetic development fixture only.",
+  "unresolved_checks": [],
+  "rules": [
+    {
+      "rule_id": "synthetic_marks_minimum",
+      "field": "exam_marks",
+      "operator": "gte",
+      "value": 50,
+      "unit": "marks",
+      "source_clause_id": "SYNTH-SCHOLARSHIP-MARKS",
+      "source_text": "Synthetic test rule only.",
+      "source_location": "fixture",
+      "if_not_met": "not_eligible",
+      "missing_field_label": null
+    },
+    {
+      "rule_id": "synthetic_science_stream",
+      "field": "exam_stream",
+      "operator": "eq",
+      "value": "science",
+      "unit": null,
+      "source_clause_id": "SYNTH-SCHOLARSHIP-STREAM",
+      "source_text": "Synthetic test rule only.",
+      "source_location": "fixture",
+      "if_not_met": "not_eligible",
+      "missing_field_label": null
+    }
+  ]
+}

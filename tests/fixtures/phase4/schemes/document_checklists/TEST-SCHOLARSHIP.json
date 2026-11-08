@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "scheme_id": "TEST-SCHOLARSHIP",
+  "checklist_version": "v1",
+  "requirements": [
+    {
+      "requirement_id": "identity_group",
+      "labels": {
+        "en": "Synthetic student identity",
+        "hi": "कृत्रिम विद्यार्थी पहचान",
+        "mr": "कृत्रिम विद्यार्थी ओळख"
+      },
+      "alternatives": [
+        {
+          "document_id": "student_card",
+          "labels": {
+            "en": "Synthetic student card",
+            "hi": "कृत्रिम विद्यार्थी कार्ड",
+            "mr": "कृत्रिम विद्यार्थी कार्ड"
+          }
+        },
+        {
+          "document_id": "school_letter",
+          "labels": {
+            "en": "Synthetic school letter",
+            "hi": "कृत्रिम विद्यालय पत्र",
+            "mr": "कृत्रिम शाळेचे पत्र"
+          }
+        }
+      ],
+      "condition": {
+        "kind": "registered_fact",
+        "fact_id": "exam_ratio",
+        "operator": "gte",
+        "value": "0.12345678901234567"
+      },
+      "evidence_passage_ids": []
+    },
+    {
+      "requirement_id": "marks_group",
+      "labels": {
+        "en": "Synthetic exam record",
+        "hi": "कृत्रिम परीक्षा रिकॉर्ड",
+        "mr": "कृत्रिम परीक्षा नोंद"
+      },
+      "alternatives": [
+        {
+          "document_id": "exam_record",
+          "labels": {
+            "en": "Synthetic exam record",
+            "hi": "कृत्रिम परीक्षा रिकॉर्ड",
+            "mr": "कृत्रिम परीक्षा नोंद"
+          }
+        }
+      ],
+      "condition": {
+        "kind": "registered_fact",
+        "fact_id": "exam_marks",
+        "operator": "gte",
+        "value": 70
+      },
+      "evidence_passage_ids": []
+    },
+    {
+      "requirement_id": "guardian_group",
+      "labels": {
+        "en": "Synthetic guardian confirmation",
+        "hi": "कृत्रिम अभिभावक पुष्टि",
+        "mr": "कृत्रिम पालक पुष्टी"
+      },
+      "alternatives": [
+        {
+          "document_id": "guardian_confirmation",
+          "labels": {
+            "en": "Synthetic guardian confirmation",
+            "hi": "कृत्रिम अभिभावक पुष्टि",
+            "mr": "कृत्रिम पालक पुष्टी"
+          }
+        }
+      ],
+      "condition": {
+        "kind": "registered_fact",
+        "fact_id": "guardian_consent",
+        "operator": "eq",
+        "value": true
+      },
+      "evidence_passage_ids": []
+    }
+  ],
+  "approval": {
+    "status": "demo_only",
+    "checklist_version": "v1"
+  }
+}

@@ -1,929 +1,857 @@
-# Phase 3 code walkthrough: one conversation, several scheme results
+# Phase 3 code walkthrough: one conversation, several schemes, safe re-checks
 
-This guide follows the current code from search to a shared interview, then
-through rule checks, plan history, corrections and the screen. It explains
-the data changes as well as the happy path. Read it beside the code; the
-Python excerpts below are actual source excerpts unless labelled otherwise.
+This guide follows the **current** Phase 3 code. It starts with a search
+result, then follows one family through bounded re-searching, a shared
+interview, a rule-engine check for each scheme, a corrected answer, the
+stale-draft screen and the saved budget. Since the data-driven registry work,
+the interview can also be driven by **versioned data files** instead of
+fixed Python fields (new section 4B). Read it beside the code. Symbols were
+checked against the working tree on 2026-11-04; `journey.py` has moved a lot,
+so references to it use function names only. Search for the name.
 
-Start with [Phase 1](PHASE1_CODE_WALKTHROUGH.md) for profiles, rule packages
-and the deterministic engine, then [Phase 2](PHASE2_CODE_WALKTHROUGH.md) for
-the supervisor, chat and checkpoint. Those guides describe their own phases:
-Phase 3 adds optional LLM answer reading, so Phase 2's statement that the
-interview uses no LLM is no longer true for unsupported free text.
-
-Plan: [Phase-wise implementation plan](PHASE_WISE_IMPLEMENTATION_PLAN.md),
-section **Phase 3 — Multi-scheme and replan**.
+Start with [Phase 1](PHASE1_CODE_WALKTHROUGH.md) for profiles, the fact
+registry, rule packages and the deterministic engine, then
+[Phase 2](PHASE2_CODE_WALKTHROUGH.md) for the supervisor, typed questions and
+checkpoint. Plan:
+[Phase-wise implementation plan](PHASE_WISE_IMPLEMENTATION_PLAN.md), section
+**Phase 3 — Multi-scheme and replan**.
 
 > **Scope and safety.** This is a synthetic pilot, not a government
-> eligibility or approval service. `eligible` means that the supplied facts
-> meet the current mock rule package. It does not verify documents, resolve
-> all policy questions or authorize a benefit. Search finds candidates,
-> not eligibility. A model may propose an answer; only the deterministic
-> rule engine produces an eligibility result.
+> eligibility or approval service. `eligible` means the supplied facts meet
+> the current *mock* rule package; it does not verify documents or authorise
+> a benefit. Search finds candidates, never eligibility. A model may propose
+> a fact or choose among typed actions; **only the deterministic rule engine
+> produces a verdict**, and a person approves each exact draft. Every example
+> below is synthetic.
+
+> **Verification status (separate records; read each for what it covers).**
+> 1. *Earlier fixed-field Phase 3 (historical).* An independent review of the
+>    original fixed-profile work and a 301-test full run (170.91 s) are in
+>    [CONTRIBUTIONS](CONTRIBUTIONS.md). They predate the registry revision.
+> 2. *Registry revision, builder record.* The "Revised Phase 3
+>    implementation" row reports shared registry intake, typed corrections,
+>    explicit legacy bridges and the persistent review latch. It reports the
+>    run reached 350 passed / 1 failed on an unmocked UI request, which was
+>    then mocked; a single final green run was **not** claimed there.
+> 3. *Registry revision, review follow-up.* A separate independent review
+>    reported three medium bugs (a novel bundle with a legacy mapping took the
+>    fixed path; an invalid combined date consumed the only interview pause;
+>    registry intake skipped discovery). The follow-up row reports all three
+>    fixed with independent reproductions closed, **37 registry tests
+>    passing**, a **130-test** targeted selection, a single serial full run of
+>    **401 passed in 219.49 s**, passing `compileall` and `git diff --check`,
+>    and unchanged pilot rule-package hashes. Streamlit/Pydantic serialisation
+>    warnings (740 observed) were seen; they are not hidden, and are not a
+>    failure.
 >
-> The main Phase 3 flow is implemented. Two important plan promises are
-> narrower in the current code: new facts do **not** automatically discover
-> more schemes, and the LLM-attempt list is reset on correction/restart, so
-> its bound is **not conversation-wide**. Sections 7–8 explain this precisely.
+> All of this is automated and offline. **Still open:** independent review of
+> *this* guide; a manual browser session; native-speaker Hindi/Marathi review;
+> native Python 3.12 CI; source and privacy approval of the registry
+> metadata (still pending, not approved); a live-model run; and a real
+> process-kill or multi-worker test. Phase 3 made no paid call and no model
+> extracts registry facts.
 
 ---
 
-## 1. What changes from Phase 2?
+## 1. What changed since the previous version of this guide
 
-Imagine a person who may need both widow pension and farmer support. One
-conversation should collect their facts, but checking one scheme must not
-overwrite the other scheme's result.
+The earlier text said new facts never discover schemes and that model-attempt
+limits reset on correction. Both statements are now wrong.
 
-| Question | Phase 3 answer |
+| Earlier claim | Current behaviour |
 |---|---|
-| Three passages mention two schemes. How many candidates? | Two distinct scheme IDs; keep all three passages |
-| Where are results kept? | A summary map and a full-result map, keyed by scheme ID |
-| Who asks questions? | One intake step, using one shared `HouseholdProfile` |
-| Which fact comes next? | The missing fact useful to the most undecided candidate packages |
-| Who checks eligibility? | The existing MCP tool and deterministic engine, once per supported candidate, with at most one retry |
-| Who writes plan-change reasons? | Python code, using the saved result and deciding rule IDs |
-| What if a tool fails? | An explicit error, not an invented rejection |
-| What if an answer changes? | Clear current results, reopen intake if needed, recheck all candidates |
-| What if plain code cannot read a reply? | One model attempt per fact in the current attempt-list lifetime; validate and confirm a proposed value |
+| New facts do not search for more schemes | A *confirmed* widow/landholding fact or a changed age triggers a bounded re-search (section 6) |
+| The "LLM attempt" list resets on correction or restart | Search attempts, model calls and per-fact interpretation attempts are saved **before** they are used and survive correction and restart (section 12) |
+| Corrections recheck schemes only | A correction also makes every unsubmitted draft stale and un-approved, forever (section 11) |
+| The model only reads free text | A model may also pick *typed actions* in the eligibility step; it still cannot write a verdict (section 9) |
+| The UI shows results | The UI also shows coverage notices, overflow IDs, budget counters and stale-draft warnings (section 13) |
+| Questions come from fixed Python fields (`HouseholdProfile`) | Questions for non-pilot bundles come from a versioned **fact registry** whose review metadata is pending; the two pilots keep their fixed fields through an explicit bridge (section 4B) |
+| Stale only after a person correction, rule or document change | Also after any change to a fact definition, bundle or rule content: a persistent **review latch** (section 4B.6) |
 
-### The whole path
+## 2. Plain words first
+
+- **Candidate:** a scheme worth checking. Not a yes.
+- **Confirmed fact:** a profile answer the person gave or confirmed. A model's
+  guess is only a *proposal* until the person says yes.
+- **Hint:** a short search phrase built from confirmed facts, such as
+  "widow pension". It helps retrieval; it is never a rule.
+- **Rediscovery:** running one more search because confirmed facts changed.
+- **Information only:** the scheme has no loaded rule package, so the engine
+  has nothing to run. The person gets information, not a decision.
+- **Observation:** a small, safe summary of a rule-engine result (scheme ID,
+  result word, missing-fact names, deciding rule IDs). No applicant values.
+- **Specialist loop:** a model picks one of a few typed buttons; code checks
+  each button press before running anything.
+- **Reservation:** writing "this call is used" to disk *before* making the
+  call, so a crash cannot give the call back.
+- **Stale draft:** a saved application draft whose answers, rules or
+  documents have since changed. It can never be approved or submitted again.
+- **Monotonic:** only goes up. Version numbers never roll back, and a stale
+  mark is never cleared.
+- **Fact registry:** a versioned data file (`src\rules\fact_registry.json`)
+  whose fact and question review metadata is currently pending. It defines
+  each fact once: its ID, meaning, who it is about (person or family), type,
+  unit, time period, limits and questions in three languages.
+- **Bundle:** a manifest (`src\rules\bundle_registry.json`) that pins one
+  scheme's rule package and the registry by version and SHA-256 hash.
+- **Legacy bridge:** an explicit list in a bundle saying "registry fact X is
+  the old profile field Y". Only listed facts cross over.
+- **Review latch:** a saved flag that, once set, refuses old answers and
+  results until a person starts a new, reconfirmed conversation.
+
+## 3. The whole path
 
 ```text
-Streamlit screen                         src\ui\app.py
-  -> HTTP client                         src\ui\api_client.py
-  -> FastAPI route                       src\api\app.py
-  -> journey graph                       src\workflow\journey.py
-       supervisor -> intake -> ask_user [pause]
-                         ^         |
-                         +-- reply-+
-       intake done -> supervisor
-          -> eligibility(candidate A) -> supervisor
-          -> eligibility(candidate B) -> supervisor -> END
-                 |
-                 -> MCP adapter -> MCP tool -> deterministic engine
-
-Every graph step can be checkpointed; GET reads the saved state.
-Search is a separate request: supervisor -> intake -> search -> supervisor.
+Streamlit screen                  src\ui\app.py  (api_client.py is the only HTTP caller)
+  -> FastAPI route                src\api\app.py   (loads registry + bundles once, in lifespan)
+  -> journey graph                src\workflow\journey.py
+       supervisor -> intake -> (ask_user pause) -> intake
+                      |  which questions?  (section 4B)
+                      |    registered bundle  -> registered_intake_result  (typed facts, registry questions)
+                      |    legacy pilot only  -> fixed HouseholdProfile questions
+                      |  confirmed facts changed? -> bounded search (discovery.py, shared by both)
+                      v
+       supervisor -> eligibility(candidate A) -> supervisor -> ... -> END
+                          |
+                          +-> optional typed-action loop (eligibility_agent.py; legacy path only)
+                          +-> MCP rule-engine tool -> deterministic engine (typed fact store)
+  portal approvals          src\portal\repository.py (separate SQLite database)
+  saved budget              src\workflow\conversation_budget.py (LangGraph Store, namespace ("budget",))
+  review latch              _check_registry_dependencies (journey.py) -> portal stale marks
 ```
 
-The interview is shared; final candidate checks are **sequential**, not
-parallel. Intake already uses the local engine to avoid pointless questions.
-The later eligibility step still calls the MCP rule engine to obtain each
-full result and its evidence.
+Checks run one candidate after another, not in parallel. Budget reservations
+and the approval/stale marks live outside the question path, so both question
+paths use the same ones.
 
-### Developer navigation / read order
+### Read order
 
-Use this order if you are rebuilding the feature from the inside out.
-
-| Read | File | Responsibility and connection |
+| Read | File | Why |
 |---|---|---|
-| 1 | `src\rules\models.py`, `src\api\eligibility.py` | Existing profile and rules; explain `None`, derived age and verdict precedence |
-| 2 | `src\workflow\state.py` | Typed plans, handoffs, summaries and history items |
-| 3 | `src\workflow\question_picker.py` | Pure functions; local engine decides which schemes still need facts |
-| 4 | `src\workflow\questions.py` | Fixed questions, direct parsing and fact-specific model-proposal parsing |
-| 5 | `src\workflow\intake.py` | External query rewriting and structured answer interpretation; does not decide eligibility |
-| 6 | `src\workflow\supervisor.py` | Build and advance the plan without I/O |
-| 7 | `src\workflow\journey.py` | Wire nodes, state updates, pauses, retries, history and corrections together |
-| 8 | `src\workflow\eligibility.py`, `src\workflow\scheme_search.py` | MCP callers; validate tool output and raise `MCPToolError` on failure |
-| 9 | `src\api\app.py` | Load packages/checkpointer, expose start/resume/correction/read routes |
-| 10 | `src\ui\api_client.py`, `src\ui\app.py` | HTTP requests, screen state, results, history and refresh restoration |
-
-Useful words:
-
-- **Candidate:** a scheme to consider, not a positive eligibility decision.
-- **Map:** a dictionary indexed by scheme ID, such as
-  `eligibility_results["IGNWPS-MH"]`.
-- **Handoff:** a typed report or work assignment through the supervisor.
-- **Interrupt:** a graph pause waiting for a reply.
-- **Reducer:** the rule LangGraph uses to combine an update with saved state.
-  Most fields replace the old value; some history lists append instead.
-- **Replan:** here, a code-written plan/version update. It is not an
-  autonomous LLM planner.
+| 1 | `src\rules\models.py`, `src\api\eligibility.py` | Profile (`None` means unknown) and verdict words |
+| 1b | `src\rules\facts.py`, `bundles.py`, `data_provider.py` | Fact definitions, typed store, bundle pins, load-time checks |
+| 2 | `src\workflow\state.py` | Plan, handoff, `CandidateVerdict`, history events |
+| 3 | `src\workflow\discovery.py` | Hints, limits, de-duplication, status messages in three languages |
+| 4 | `src\workflow\question_picker.py` | Which missing fact helps most schemes (`pick_shared_fact`, `pick_shared_registered_fact`) |
+| 4b | `src\workflow\questions.py` | `registry_question_for`, `registered_question_details`, `parse_registered_answer` |
+| 5 | `src\workflow\agent_config.py`, `agent_runtime.py`, `agent_middleware.py` | Limits, and `run_agent` (LangChain `create_agent` + Saathi's budget and trace middleware) |
+| 6 | `src\workflow\eligibility_agent.py` | The eligibility specialist (`run_eligibility_specialist`, line 58) |
+| 7 | `src\workflow\conversation_budget.py` | Saved reservations |
+| 8 | `src\workflow\journey.py` | Nodes, correction, serialisation, portal approval storage |
+| 9 | `src\mcp_servers\service_routing.py` | Which caller may use which tool |
+| 10 | `src\portal\repository.py` | Approval, stale marks, receipts |
+| 11 | `src\api\app.py`, `src\ui\app.py` | Routes, notices and stale-draft screen |
 
 ---
 
-## 2. One synthetic person to follow
+## 4. One synthetic family to follow
 
-We will follow **Kamla**, born **30 October 1976**, with the application date
-fixed to **30 October 2026** (age 50). Use synthetic facts only.
+**Meera** (synthetic) was born 1 January 1986; the application date is fixed
+at 1 January 2026, so her age is 40. Her household facts are supplied as
+confirmed answers: she is a widow, can show a BPL card, and the family is
+*not* on state landholding records; every exclusion question is "no". This
+mirrors the `PROFILE` used by `tests\test_phase3_agents.py` (line 31).
 
-Suppose search returns these passages, in order:
+The conversation starts with one candidate from an earlier search:
+`IGNWPS-MH` (widow pension). Two other IDs appear later:
+`INFORMATION-ONLY` (a made-up scheme with no rule package) and `PM-KISAN-IN`
+(farmer support).
 
-1. A widow pension passage (`IGNWPS-MH`).
-2. A farmer support passage (`PM-KISAN-IN`).
-3. Another widow pension passage.
-
-That yields two candidates, in that order. For the interview example,
-prefill `income_tax_paid_last_assessment_year=True`: Kamla has already
-reported that a family member covered by the rule paid income tax.
-This prefill is supplied explicitly to the API; **search does not extract
-and save it from her query**.
-
-With that fact, PM-KISAN is already ruled out by the mock exclusion rule.
-Intake therefore asks only widow-pension questions:
-
-| Input / event | State change | Output |
+| Step | What happens | Result |
 |---|---|---|
-| Start interview with two IDs and the tax fact | Save candidates/profile; default application date if absent | Ask `is_widow` |
-| “My husband passed away last year.” | Direct parser cannot read it; a confident model may propose `True` | Ask Kamla to confirm; do **not** save widow fact yet |
-| “yes” to the confirmation | Save `is_widow=True` after validation | Ask date of birth |
-| “30/10/1976” | Save ISO date `1976-10-30`; derived age is 50 | Ask whether she can show the BPL card |
-| “yes” | Save `bpl_card_shown=True`; no useful blanks remain | Run the two final candidate checks |
-| Widow check completes | Save its full result and summary | Mock `eligible`; plan 1 → 2 |
-| Farmer check completes | Save its independent result and summary | Mock `not_eligible`, `PMKISAN-INCOME-TAX-01`; plan 2 → 3 |
+| 1 | Confirmed widow fact + age 40 give hint "widow pension age 40"; one search runs | Search returns `IGNWPS-MH` twice and `INFORMATION-ONLY` |
+| 2 | De-duplicate and merge | Candidates: `IGNWPS-MH`, `INFORMATION-ONLY` |
+| 3 | Nothing left to ask; check each candidate | `IGNWPS-MH` eligible; `INFORMATION-ONLY` information only |
+| 4 | Meera corrects "family on landholding records" to **yes** | Hint now also says "farmer family landholding"; second search finds `PM-KISAN-IN` |
+| 5 | Re-check everything | `PM-KISAN-IN` eligible; two full results, three summaries |
+| 6 | Any approved draft from before step 4 | Stale and un-approved |
 
-The free-text row is a **possible confirmed interpretation**, not a guarantee
-that a live model will understand that sentence. Uncertainty or failure takes
-the direct-answer path explained in section 8.
-
-Later Kamla corrects the tax answer to “no”. That removes one exclusion,
-but does **not** prove PM-KISAN eligibility. The graph must ask the still
-unknown farmer facts, then run both candidates again (section 7).
+Steps 1–5 are the scenario of `test_confirmed_correction_discovers_deduplicated_new_and_information_only_candidates`
+(tests\test_phase3_agents.py, line 196). The age-40 hint comes from
+`test_discovery_uses_supported_inputs_without_inferred_state_or_gender`
+(line 174).
 
 ---
 
-## 3. Store candidates separately from passages and results
+## 4B. Data-driven questions: the fact registry and bundles
 
-### 3.1 Search groups IDs, not evidence
+Until now, every question came from a fixed Python model. Now a scheme can
+bring its own facts as **data**, and the same journey, API and screen handle
+it without a new code branch per fact. This section is the reconciliation
+between the two worlds. Everything here describes code that exists; it is not
+a promise of future form generation.
 
-Find `scheme_search_tool` inside `build_journey_graph` in
-`src\workflow\journey.py`:
+### 4B.1 What is data and what is still code
 
-```python
-candidate_scheme_ids = list(
-    dict.fromkeys(passage.scheme_id for passage in passages)
-)
-```
-
-`dict.fromkeys` keeps each ID's first occurrence. Our three passages produce
-`["IGNWPS-MH", "PM-KISAN-IN"]`. The node separately stores every passage's
-JSON, so deduplicating candidates does not discard source text or citations.
-
-The default `_search_with_mcp` requests `SEARCH_PASSAGE_LIMIT`, currently
-20. Twenty **passages** need not mean twenty **schemes**: many passages can
-belong to one scheme. The returned message explicitly says search may not
-find every relevant scheme. Ranking, thresholds and a single-best-passage
-fallback can narrow results; that fallback does not establish multi-scheme
-coverage.
-
-### 3.2 Validate an explicit candidate request
-
-`JourneyRequest` accepts `candidate_scheme_ids` for `interview` or
-`evaluate`. Its field has `max_length=MAX_CANDIDATE_SCHEMES` (20), and
-`validate_candidates`:
-
-1. Rejects candidate lists on `search`.
-2. Rejects using `scheme_id` and a nonempty candidate list together.
-3. Rejects blank IDs, strips surrounding whitespace and deduplicates,
-   preserving order.
-
-The length check applies to the submitted list **before** deduplication:
-21 entries are invalid even if some repeat. The API does not silently keep
-only the first 20. Unknown nonblank IDs are allowed as candidates; they
-become information-only if there is no loaded rule package.
-
-A nonempty explicit list selects `multi_scheme=True`, even when it contains
-only one ID. An empty list does not start a zero-candidate multi-scheme run;
-without `scheme_id`, intake asks the caller to choose a scheme.
-
-### 3.3 Why two maps and one legacy field?
-
-`JourneyState` in `journey.py` stores plain JSON so the checkpointer can save
-it. `JourneyResponse` rebuilds typed models for the API.
-
-| Field | Contents | Why it exists |
-|---|---|---|
-| `candidate_scheme_ids` | Ordered unique IDs | The work list |
-| `candidate_verdicts` | `CandidateVerdict` per ID | Small summary, including information-only and tool-error outcomes |
-| `eligibility_results` | Full `EligibilityResponse` per successful rule-tool call | Reasons, deciding rules, evidence, notices, missing fields and unresolved checks |
-| `eligibility_result` | One full result or `None` | Compatibility with the old single-scheme flow |
-
-In `state.py`, `CandidateVerdict` has `scheme_id`, `result`,
-`missing_fields` and `deciding_rule_ids`. A summary is not a substitute for
-the full evidence-bearing response.
-
-After a successful check, `eligibility_agent` returns this map update:
-
-```python
-"eligibility_results": {
-    **state.get("eligibility_results", {}),
-    result.scheme_id: result.model_dump(mode="json"),
-},
-```
-
-Read `**` as “copy existing entries first”. Then save this scheme's entry.
-Without that copy, the next node update would replace the whole map and
-lose Kamla's widow result. Checking the same ID again replaces its entry.
-The summary map is merged in the same way.
-
-During checking, the legacy field holds the latest successful result.
-At multi-scheme completion, the supervisor explicitly sets it to `None`:
-there is no single overall eligibility verdict. A normal `scheme_id`
-request retains its old single-result behavior and also fills the maps.
-
-### 3.4 Missing package is not failed eligibility
-
-In a multi-scheme run, an unsupported candidate reaches
-`eligibility_agent`, which stores `result="information_only"` in the
-summary map, without calling the tool or inventing a full result.
-Intake excludes such candidates from question picking.
-
-The old single-scheme path stops at intake with `information_only`. The
-location differs, but neither path guesses eligibility.
-
-### 3.5 New request versus refresh
-
-`run_journey` starts again from `START`. It resets current candidates,
-result maps, legacy result, passages, profile and pending interview fields.
-Thus an old widow verdict is not attached to Kamla's next search.
-
-`get_journey` only reads the checkpoint and calls `_to_response`; it does not
-start another search or rule check. Missing new fields in an older saved
-state use empty defaults.
-
-**Important reducer detail:** these state declarations append:
-
-```python
-plan_change_history: Annotated[list[dict[str, Any]], add]
-journey_history: Annotated[list[dict[str, Any]], add]
-```
-
-`handoffs` and `conversation` append too. Passing `[]` for these fields in
-`run_journey` does **not** erase saved history: old list + empty list is
-still the old list. Reusing an ID clears the result maps but retains these
-histories, even though a new request starts plan numbering at 1. Do not
-describe this as a fresh audit trail. Use a new conversation ID for a
-separate thread; deleting the saved thread is a different API operation.
-
----
-
-## 4. Pick one useful question for all undecided schemes
-
-### 4.1 The actual algorithm
-
-Open `pick_shared_fact` in `src\workflow\question_picker.py`. After creating
-`counts = Counter()`, it does:
-
-```python
-for package in packages:
-    verdict = evaluate_mock_eligibility(profile, package)
-    if verdict.result != "need_more_information":
-        continue
-    facts = dict.fromkeys(
-        fact for rule in package.rules for fact in rule.input_facts
-        if getattr(profile, fact) is None and fact not in skipped_facts
-    )
-    counts.update(facts.keys())
-return max(counts, key=counts.get) if counts else None
-```
-
-Step by step:
-
-1. Evaluate each package against the **current shared profile**, locally.
-   A decided scheme contributes no more questions. This decision does not
-   depend on whether its final MCP result has already been stored.
-2. Walk the remaining package's rules in file order. `rule.input_facts`
-   expands derived `age` into `date_of_birth` and `application_date`.
-3. Keep only unknown (`None`), unskipped profile fields.
-4. Deduplicate within that package before counting. Two age rules must not
-   give date of birth two votes from the same scheme.
-5. Pick the largest count. Equal counts keep first insertion order:
-   candidate order, then rule order, then input-fact order.
-6. If no eligible-to-ask fact remains, return `None`; intake can finish.
-
-**“Most useful” here means highest count**, not information gain, cost
-optimization or an LLM judgment.
-
-### 4.2 A small counting example
-
-The picker test uses a synthetic second package built from the widow
-package's BPL rule. It is not another supported government scheme.
-
-| Missing fact | Widow package | Synthetic BPL-only package | Total |
-|---|---:|---:|---:|
-| `is_widow` | 1 | 0 | 1 |
-| `date_of_birth` | 1, despite two age rules | 0 | 1 |
-| `bpl_card_shown` | 1 | 1 | 2 |
-
-BPL wins. If BPL is skipped, widow status wins the remaining tie because
-its rule appears first.
-
-The two real pilot packages do not both require date of birth. Do not use
-them to claim a measured cross-scheme DOB-sharing benefit. The algorithm
-supports sharing identical fields; the focused synthetic-package test
-demonstrates the counting behavior.
-
-Only identical **meaning and scope** may share a field. Similar wording
-does not make personal income and family income the same fact. This picker
-matches field names; it does not understand or reconcile policy semantics.
-
-### 4.3 Apply this to Kamla
-
-With the tax fact `True`, the local engine already says PM-KISAN is
-`not_eligible`. Its land and other exclusion questions contribute no votes.
-The widow package remains undecided, so intake asks widow status, birth date
-and BPL, in that order. After every accepted answer it runs the picker again.
-
-The engine gives failed exclusion/eligibility rules precedence over unknown
-facts. That is why unknown farmer facts do not stop the tax exclusion from
-deciding the mock result.
-
-| Answer state | Picker treatment |
+| Data (versioned files; review still pending) | Code (tested, unchanged by scheme) |
 |---|---|
-| `None`, not skipped | May ask |
-| `False` (“no”) | Known answer; do not ask again |
-| “I don't know” | Leave value unknown; add field to `skipped_facts` |
-| All remaining blanks skipped | Stop asking; final result may need more information |
-| BPL card answered “no” | Known `False`; do not repeat it, but the proof rule still needs `government_bpl_card` |
-| Scheme already eligible/not eligible | Skip all its questions |
+| Fact meaning, scope (person/family), type, unit, period, limits | The parser that reads an answer by type |
+| Questions and choice labels in English, Hindi, Marathi | The rule engine and operators |
+| Which facts and rule package a scheme bundle uses, with hashes | The supervisor, budgets, approval and stale marks |
+| Rules (`<scheme>.vN.json`) | Typed store validation (`TypedFactStore.validate_against`) |
 
-There are 12 stored profile fields (10 booleans and two dates). Intake
-normally fills the application date with `today()`, leaving at most 11
-initial unanswered fields. Invalid replies can repeat a question; “ask
-once” means reuse accepted facts and do not loop on skipped unknowns, not
-that every raw message must advance the interview.
+The golden rule is unchanged: a model never decides eligibility. At load
+time `RulePackageProvider` checks each rule against its fact (operator, type,
+unit, choices) and each bundle against its package and registry hash
+(`_validate_rule`, `_validate_bundle` in `data_provider.py`). A mismatch stops
+start-up.
+
+### 4B.2 Which path a scheme takes
+
+`uses_registered_questions(scheme_id)` (inside the graph builder in
+`journey.py`) answers: does this scheme have a loaded bundle whose
+`activation_state` is **not** `legacy_compatibility`? Only the two compatibility
+pilots (`IGNWPS-MH`, `PM-KISAN-IN`) are `legacy_compatibility`, and the loader
+accepts that label only when every pin (file, version, hash, fact IDs,
+mapping, source clauses) matches a built-in table
+(`_LEGACY_PILOT_BINDINGS`). A new bundle cannot claim it
+(`test_novel_pending_bundle_cannot_masquerade_as_legacy_compatibility`).
+
+Earlier code asked a different question: "does this bundle have a legacy
+mapping?" That was a bug: a novel bundle with a mapping fell back to the
+fixed path and never asked its novel fact. The independent review found it;
+now the choice depends on activation state, never on the mapping
+(`test_development_bundle_with_legacy_bridge_still_asks_and_corrects_novel_fact`).
+
+In a **mixed** conversation (one pilot plus one registered bundle) the whole
+candidate list uses the registered path, because `any(...)` of the candidates
+is registered. The pilot still works: its answers cross the explicit bridge
+(4B.4). Development-only bundles load only when a test explicitly asks for it
+(`allow_development`); a production start-up refuses them.
+
+### 4B.3 Sharing one question: when two schemes may share a fact
+
+`pick_shared_registered_fact` (`question_picker.py`) runs the engine for each
+candidate, keeps those still `need_more_information`, counts each missing
+fact **ID** once per scheme, and returns the ID needed by most. Ties follow
+candidate, rule and derived-input order. Declined ("I don't know") facts are
+skipped so the chat cannot loop.
+
+Sharing is by **identical ID in one pinned registry**, never by similar
+labels. An ID fixes meaning, scope, unit and period together. So two schemes
+that both need `exam_marks` (a person, percent) ask once. A scheme needing a
+*family current-period* income and one needing a *personal prior-period*
+income use different IDs and ask separately even if the English labels match
+(proved with the synthetic bundles in
+`test_data_only_multischeme_discovery_sharing_and_typed_correction_through_http`,
+`tests\test_fact_registry.py:1044`). Different compatibility means different
+ID; there is no fuzzy matching.
+
+### 4B.4 Explicit legacy bridges
+
+A pilot's old fields (for example `is_widow`) map to registry IDs through
+`legacy_profile_mapping` in its bundle. In `registered_intake_result` the
+bridge works in both directions, and only for listed facts:
+
+- Incoming legacy profile fields are copied into the typed store if the
+  fact is not there yet. If a typed value already exists and differs, the
+  code raises "Use a correction to replace a saved answer". A field with no
+  mapping is rejected ("Legacy fields require explicit bundle mappings").
+- A legacy field the person skipped becomes a *declined* typed fact.
+- Known typed facts that have mappings are copied back into a
+  `HouseholdProfile`. This bridged profile feeds discovery hints and the
+  pilot rules. Novel facts stay only in the typed store.
+
+Cross-field checks (such as a date of birth that makes an impossible age)
+also run on the mapped fields (`validate_registered_store`).
+
+### 4B.5 One answer, parsed before the graph moves
+
+`resume_journey` parses a registered reply **before** touching the graph,
+using `parse_registered_answer` (`questions.py`): yes/no, integers, exact
+decimals, dates, choice codes or labels, short text, or an unknown phrase. It
+then builds the whole proposed store and checks every constraint
+(`_replace_registered_fact` + `validate_registered_store`). Only a validated
+value goes into the checkpoint, as a typed payload; decimals are written as
+`{"$decimal": "text"}` and restored with `Decimal`, so precision from Phase 2
+survives restarts (`test_decimal_answer_keeps_precision_through_journey_interrupt_and_checkpoint`).
+The raw reply is only stored in a masked form (`mask_sensitive_text`).
+
+**Fix from the review.** A combined date check used to run after the pause was
+consumed, so one impossible birth date left the person with no question to
+answer. Now a failing check (a "complete validation") turns the reply into an
+`invalid` answer, which re-asks the same question with a localised hint and
+no saved change. It is retryable (`test_combined_date_answer_reasks_safely_and_invalid_correction_never_writes`,
+`tests\test_fact_registry.py:1476`).
+
+### 4B.6 Pinning, and the review latch
+
+Three pins stop an old answer from quietly meaning something new:
+
+1. **Definition pin.** Every stored fact records its `definition_version`.
+   `TypedFactStore.from_wire(...)` and `validate_against` fail if the loaded
+   definition differs, instead of reading the old value in new terms.
+2. **Scope/bundle pin.** `registry_dependencies()` hashes the *content* of the
+   registry, every bundle and every rule package (not just version numbers).
+   Review status, scope, unit, period, rule text and bundle content are all
+   in the hash.
+3. **Portal pin.** `bind_rules` sends the hash of the package and the registry
+   dependency to the portal, so an unsubmitted draft depends on it too.
+
+`_check_registry_dependencies` runs at the start of every journey entry
+(`resume_journey`, `correct_journey_answer`, `run_application_task`, new
+requests). If the saved hash differs, or typed facts exist from before pins
+were stored, it **sets the latch**: it persists `dependency_review_required`
+*first*, then revokes unsubmitted approvals, clears visible results and
+returns a safe message in the person's language ("human review and
+reconfirmation in a new conversation are required"). Saved *answers* are kept,
+but never silently reused. Changing the files back (A to B to A) does **not**
+clear the latch
+(`test_dependency_changes_require_review_without_erasing_answers_or_restoring_a_to_b_to_a`,
+line 1168). The review itself is a human step; the code only refuses.
+
+### 4B.7 Correction in the registry world
+
+`correct_journey_answer` accepts a typed fact that is already known or
+declined. It parses with `parse_registered_answer`, builds a proposed store,
+checks the whole store, and **only then** calls `_begin_profile_change`. So an
+invalid correction (for example a date that makes the age impossible) returns
+422 and changes nothing: facts, dependency version and budget counters stay as
+they were (`test_combined_date_answer_reasks_safely_and_invalid_correction_never_writes`).
+After a valid correction the typed store is the truth and intake rebuilds the
+bridge. A correction **always** revokes unsubmitted approvals, even when the
+verdict is still `eligible` and even for A to B to A, because the approval was
+for the exact form built from the old answers (section 11). The real-portal
+case is `test_typed_corrections_and_changed_definitions_revoke_real_pilot_approval_after_restart`
+(line 1268).
+
+### 4B.8 Discovery is shared, and filters are not invented
+
+`discover_candidates` is one function used by the legacy interview *and*
+`registered_intake_result`. It keeps its signatures, the counters, the
+four-attempt limit (`MAX_DISCOVERY_CALLS`) and durable restart behaviour. The
+review's third bug was that the registry path returned early and never
+searched. Now, in registry mode:
+
+- Hints come only from the bridged profile, so only the supported hint
+  facts (widow, landholding, age) can cause a search.
+- A registry fact with no supported hint does not search at all.
+- A new rule-package scheme is "found" only if retrieval returns its ID. A
+  package existing in the loader does not prove a person will find or
+  qualify for it.
+- A candidate with no loaded package stays information only.
+
+`test_registry_and_legacy_intake_share_bounded_confirmed_fact_discovery`
+(`tests\test_fact_registry.py:1564`) checks this for the legacy, initial
+registry and newly discovered registry cases: supported hints only, no
+invented filters, an unrelated correction does not search again, a restart
+keeps the count, and search exhaustion is durable.
+
+### 4B.9 What a model can and cannot see
+
+The registry path does not call a model. Registry intake skips free-text
+interpretation, and `eligibility_agent` sets the specialist model to `None`
+when the scheme is registered (a code comment says registry review metadata
+is not permission to disclose applicant-derived verdicts or missing-fact
+names to a model). The test
+`test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure`
+(line 738) uses a spy planner model and checks that a synthetic answer typed
+in the conversation never appears in what the model was shown. That is one
+tested instance of the rule, not a proof for every path. The privacy metadata
+in the registry is still **pending**, not approved. Legacy-only conversations
+keep the Phase 2/3 bounded models described in sections 8 and 9.
+
+### 4B.10 Screen and API
+
+The API returns a `question_definition` (type, unit, bounds, choices with
+localised labels, help text) built by `registered_question_details`. The UI
+picks a widget from it in `src\ui\app.py` (the registered answer renderer):
+radio for yes/no, number input for integers, exact **text** for decimals (no
+float), date, choice and text widgets, and an "I don't know" control. Strings
+and labels exist in English, Hindi and Marathi. Generic corrections show
+registry labels (from `fact_questions`). `api_client.py` is still the only
+caller; no raw server error is shown
+(`test_registry_question_metadata_flows_through_journey_http_api`, line 905).
+
+### 4B.11 A synthetic mixed example
+
+The tests create a made-up scholarship bundle (`exam_marks`, a percent
+score of a person, and a `course_type` choice) through data files only, with
+no new Python branch. Search results are **injected** by the test (labelled
+"injected-..." passages), because real corpus retrieval for this fake
+scheme does not exist. The flow: injected search finds the scheme; the
+person is asked `exam_marks` once, even though a pilot is also a candidate;
+verdicts come from the MCP evaluator core; a decimal correction and a
+restart still work. This proves the plumbing, **not** that a real new scheme
+can be added in a day. The synthetic bundles are development-only and need
+explicit test injection.
+
+### 4B.12 What is not built
+
+- The generic Phase 4 form/document flow for a registry-only scheme. The
+  journey asks questions and gets a verdict; it does not build a generic
+  form.
+- A browser check that a data-only scheme works end to end in the UI (the
+  receipt proof for a data-only scheme belongs to Phase 4).
+- Approved registry review metadata. Fact, question and privacy review
+  status in the files is `pending`.
+- Production activation of any new bundle. Loading is refused.
+
+The honest summary: Phase 3 needs **no new code branch per new fact** for
+intake, sharing, correction, discovery and invalidation. The *entire* data-only
+path through the UI, with a receipt, is still unproven and belongs to Phase 4.
 
 ---
 
-## 5. Turn answers into state, then hand work back to the supervisor
+## 5. Search gives candidates, not decisions
 
-### 5.1 Intake prepares the shared profile
+Two places turn passages into candidate IDs.
 
-Inside `intake_agent` in `journey.py`:
+1. **A plain search request** (`scheme_search_tool`, `journey.py`) retries
+   once, groups passages by scheme ID in retrieval order, and caps the list at
+   20 (`merge_candidates`, discovery.py:138). Extra IDs are not dropped
+   quietly: they go to `unprocessed_candidate_ids` with a `candidate_limit`
+   notice.
+2. **Rediscovery inside an interview** (section 6) merges new IDs into the
+   candidate list that already exists.
 
-- `evaluate` needs a supplied profile; missing data returns
-  `need_information` and required fact names.
-- `interview` can start empty and defaults a missing application date.
-- Both validate `HouseholdProfile`: reject undeclared fields and impossible
-  date combinations, such as birth after application or age above 125.
-- A multi-scheme interview builds `packages` in candidate order, including
-  only IDs present in `rule_packages`.
+`JourneyRequest` (`journey.py`) accepts at most 20 candidate IDs and rejects
+blank ones. A scheme ID with no loaded rule package is not an error: the
+eligibility step marks it `information_only` without calling the engine
+(`eligibility_agent` in `journey.py`).
 
-The accepted value is merged into a **new validated profile**, rather than
-mutating one unchecked field:
+## 6. Confirmed hints trigger bounded rediscovery
 
-```python
-profile = HouseholdProfile.model_validate(
-    {
-        **profile.model_dump(mode="json"),
-        pending_fact: parsed.value,
-    }
-)
-```
+Only three kinds of fact shape a search, and only in code you can read:
 
-This is the direct-answer branch. Dates are serialized as ISO strings when
-the profile is saved to graph state. The model-assisted branch has extra
-validation and confirmation, described in section 8.
+- `is_widow` being **true** adds "widow pension".
+- `landholding_family_in_state_records` being **true** adds "farmer family
+  landholding" (`RELEVANT_FACT_TERMS`, discovery.py:14).
+- A known age appends "age N" when at least one of the above is present.
 
-### 5.2 Pause is not completion
+A fact that is false or unknown adds nothing (`discovery_query`,
+discovery.py:120). The search gets only a query string, the **selected UI
+language** and a limit of 20 (`discovery_input`, discovery.py:107). The
+profile has no state or gender, and retrieval has no age filter, so none is
+invented from widow status. The reference test checks that an empty profile
+gives an empty query.
 
-If a next fact exists, intake returns `status="awaiting_answer"`,
-`pending_fact`, `question`, the updated profile and skip/attempt lists.
-`route_after_intake` routes to `ask_user`, not to the supervisor.
+### When does it fire?
 
-In `ask_user`:
+Inside the interview step (`discover_candidates`, `journey.py`, called by both
+the legacy interview and `registered_intake_result`):
 
-```python
-reply = interrupt(
-    {"question": state["question"], "fact": state["pending_fact"]}
-)
-```
+1. Build a **signature** of the three inputs (`discovery_signature`,
+   discovery.py:129). It includes false/unknown states, so a correction *to*
+   no or *to* unknown also changes it, but it carries no personal values
+   beyond these hint facts and age.
+2. Search only if the signature differs from the saved one **and** the query
+   is not empty.
+3. Search happens *before* the next question is picked, so a newly found
+   scheme can influence that question.
 
-The checkpointer preserves this pause. `resume_journey` first checks
-`snapshot.interrupts`, then uses `Command(resume=message)` to continue.
-The reply becomes `pending_answer` and a user conversation turn.
-Intake reads it and either asks again or picks the next fact.
+A model reading a free-text description may propose the two discovery facts,
+but nothing is searched until the person confirms them
+(`test_new_discovery_fact_from_description_is_not_searched_until_confirmed`,
+line 378).
 
-When nothing useful remains, intake reports
-`ready_for_eligibility` through `_report_to_supervisor`. An unknown fact
-does not block this forever: the final engine result can honestly be
-`need_more_information`.
+Meera's age is derived from her date of birth, so a conversation that learns
+"widow" first and the date of birth later searches **twice**: once for
+"widow pension", then for "widow pension age 40". This is deliberate: each
+change is a new signature. The hard limit below stops it from running away.
 
-### 5.3 The plan and typed handoffs
+### The trace after a search
 
-`build_initial_plan` in `supervisor.py` creates:
+Every search produces one `DiscoveryEvent` (discovery.py:29): a code, the
+number of search calls used, the IDs that were **added**, and IDs left
+**unprocessed**. Codes: `candidates_added`, `search_completed`, `tool_retry`,
+`tool_error`, `budget_exhausted`, `candidate_limit`, `correction_invalidated`.
+Events carry IDs and counts only, never answers.
 
-```text
-intake                             in_progress
-eligibility:IGNWPS-MH              pending
-eligibility:PM-KISAN-IN            pending
-```
+When new IDs appear, the plan is rebuilt with a version one higher and the
+reason "Confirmed facts added retrieved candidates." (`discover_candidates`).
+A later fix covers one more entry path: a profile that arrives already
+confirmed, together with a free-text description that proposes no new facts,
+used to skip this step. Now the first look at that profile has no saved
+signature, so it searches once, and the regression test checks the exact
+query "widow pension age 40" and an information-only result with no verdict
+(`test_complete_confirmed_profile_still_discovers_when_description_adds_no_facts`,
+test_phase3_agents.py:335).
 
-This is an explanatory rendering of the plan, not Python.
-Distinct `step_id` values matter: both later steps have specialist
-`eligibility`, but they are different pieces of work.
+## 7. De-duplicate, add, information only, limit
 
-`Handoff` in `state.py` only allows supervisor-to-specialist or
-specialist-to-supervisor messages. Specialists do not call each other.
-On the next assignment, the graph supervisor puts the step's `scheme_id`
-in state before invoking `eligibility_agent`.
+Using the family above and the test-based cases:
 
-`advance_plan` deep-copies the plan, finds the in-progress step for the
-reporting specialist, marks its outcome, then starts the next pending step.
-For eligibility, even `not_eligible`, `need_more_information` and
-`information_only` mean the **check finished**, so its step is `done`.
-`done` does not mean approved or eligible.
+- **De-duplicate.** Two passages of `IGNWPS-MH` become one ID; both passages
+  stay as evidence. `merge_candidates` keeps first-seen order.
+- **Additions.** In step 4, only `PM-KISAN-IN` is "added"; the event's
+  `candidate_ids` is exactly that.
+- **Information only.** `INFORMATION-ONLY` is a candidate with a summary of
+  `information_only` but **no** entry in the full-result map. The test checks
+  `eligibility_results` has just the two rule-backed schemes.
+- **Limit.** At most 20 candidates are checked. When 25 are retrieved, the
+  extra five are listed as unprocessed and warned about. A later relevant
+  correction keeps earlier overflow IDs and adds new ones; none of them ever
+  gets a verdict
+  (`test_rediscovery_overflow_remains_explicit_across_later_relevant_corrections`,
+  line 305).
+- **No new facts, no new search.** An unrelated correction (same hint
+  signature) leaves the search count at two (same test as step 4).
+- **Failure.** If the search fails twice, the existing candidate is still
+  checked and still gets its rule-engine verdict; the person sees a referral
+  message ("ask a CSC operator"), and no scheme is invented
+  (`test_discovery_failure_keeps_existing_candidate_and_refers_without_fake_verdict`,
+  line 283).
 
-### 5.4 Record why a candidate check moved the plan on
+### The hard search limit
 
-After each multi-scheme eligibility report, the graph supervisor reads
-that candidate's saved summary and chooses a reason in Python:
-
-- `eligible`: meets the current mock rules;
-- `not_eligible`: ruled out, with actual deciding rule IDs;
-- `need_more_information`: still needs the listed information;
-- `information_only`: no reviewed rule package, so no decision;
-- `tool_error`: could not check after two attempts, so no decision.
-
-It creates a plan at `previous_plan.version + 1` and appends a `PlanChange`
-containing `from_version`, `to_version`, `scheme_id`, `result`,
-`deciding_rule_ids` and `reason`. `PlanChange` rejects anything other than
-one version increment. `Plan` requires a reason on versions above 1.
-
-For Kamla the farmer note contains `PMKISAN-INCOME-TAX-01`; it is copied from
-the engine result, not guessed by a model. Versions 1 → 2 → 3 record the
-two completed checks. The final candidate also gets a change entry even
-though the fixed reason text says “continuing with the next candidate”.
-
-**Timing matters:** the picker stops a ruled-out scheme's questions during
-intake. The visible candidate `PlanChange` is recorded **later**, after its
-final eligibility step, not immediately on every answer. This is orderly
-sequential plan advancement, not dynamic search or an LLM rebuilding the
-work list.
-
-At the end, multi-scheme status is `completed`, the legacy result is
-`None`, and `missing_fields` combines the summaries' missing labels.
-`completed` means processing finished; inspect each summary for the outcome.
-There may still be missing information, unsupported schemes or tool errors.
+`MAX_DISCOVERY_CALLS` is 4 per conversation (discovery.py:8) and counts every
+attempt, including retries. The fifth request answers `tool_error` with a
+`budget_exhausted` notice without calling search
+(`test_discovery_limits_are_explicit_and_search_budget_survives_same_id_restart`,
+line 255). Section 12 explains why a crash cannot reset this.
 
 ---
 
-## 6. Retry tools, but never turn an error into a verdict
+## 8. Shared facts: one question for many schemes
 
-Both `scheme_search_tool` and `eligibility_agent` use two attempts:
+`pick_shared_fact` (question_picker.py) is the fixed-profile picker; registered
+conversations use `pick_shared_registered_fact` instead (section 4B.3). Both
+ask the rule engine which
+candidates are still undecided, count each missing fact once per scheme, and
+return the fact helping the most schemes; ties keep candidate and rule
+order. A fact the person answered "I don't know" is skipped, so the chat
+cannot loop. A scheme already decided (eligible or not eligible) no longer
+asks questions.
 
-```python
-for attempt in (1, 2):
-    try:
-        result = await eligibility_tool(client, scheme_id, profile)
-        break
-    except MCPToolError:
-```
+The model's role in the **legacy** intake is unchanged from Phase 2 and stays
+small. If the
+plain parser cannot read a reply, a model may propose a value; the person
+must confirm it before it is saved. Each fact gets **one** such model attempt
+for the whole conversation: it is recorded before the call and survives a
+restart (`test_interpretation_attempt_reserved_before_crash_is_not_repeated`,
+line 430). Replies are masked for identifiers before any model sees them
+(`mask_sensitive_text`, agent_runtime.py:223). The Phase 2 safeguards carry
+over to registered facts unchanged: decimals stay exact (`Decimal`, never
+float), and replies are masked before being stored. Registered conversations
+make no model attempt at all.
 
-This is the opening of the actual eligibility retry block; the exception
-body records the events below. There is no unbounded retry loop or backoff.
-The MCP adapters wrap call failures, error responses and invalid structured
-output in `MCPToolError`.
+## 9. The eligibility specialist: a model chooses, code and the engine decide
 
-| Event | Saved note / result | What happens next |
+`eligibility_agent` (`journey.py`) does the following for each candidate:
+
+1. Record which rule version the draft depends on (`bind_rules`). A changed
+   rule package **or registry dependency** makes drafts for that scheme stale.
+2. Skip the engine for schemes with no package (`information_only`).
+3. Call `run_eligibility_specialist` (eligibility_agent.py:58) with a wrapped
+   rule check that **retries the tool once** and records `tool_retry` /
+   `tool_failed` history notes (`checked_verdict`, `journey.py`).
+
+For a **registered** scheme the model is not used: `eligibility_agent` passes
+no model provider, so the specialist runs the same wrapped rule check
+directly (section 4B.9). The button table below describes the legacy-only
+path.
+
+Inside the specialist, with a model configured, the model receives only the
+assigned `scheme_id` as applicant-specific context and can press four typed
+buttons:
+
+| Button | Allowed when | What it does |
 |---|---|---|
-| First MCP attempt fails | `JourneyHistoryEvent(event_type="tool_retry", attempt=1)` | Retry once |
-| Retry succeeds | Keep retry note and full result | Normal supervisor advancement |
-| Eligibility retry fails | `tool_failed`, attempt 2; summary `tool_error`; no full result | Mark step `failed`; continue independent candidates |
-| Search retry fails | `tool_failed`, attempt 2; no passages/candidates; status `tool_error` | Stop search with an unavailable message |
+| `check_candidate` | the scheme ID is the one assigned, and not yet checked | Runs the rule check once; returns an observation |
+| `handoff_verdict` | an observation exists | Ends the loop; the engine's result is returned |
+| `request_clarification` | the observation lists missing facts | Ends the loop; the missing facts are returned |
+| `refer_for_help` | the check was attempted and failed | Ends the loop with **no** verdict |
 
-`JourneyHistoryEvent` also carries the relevant `scheme_id` where
-applicable and a code-written reason. Raw tool error details are not copied
-into these public history reasons.
+The observation holds the scheme ID, a result word, missing-fact names and
+deciding rule IDs. The test confirms no date of birth appears in it
+(test_phase3_agents.py:60). The run is limited to three model calls
+(`max_steps=3`). A wrong scheme ID, a tool name the agent wasn't given, extra
+fields such as a `verdict`, an early handoff, or a malformed tool result never
+run the rule tool
+(`test_eligibility_denied_or_malformed_choices_never_call_rule_tool`, line 100).
+An unknown tool or bad arguments are answered with an error and the model may
+try again within its three calls; a refused task check ends the run. A model
+can never write or edit a result. The full guard list is in
+[HOOKS_WALKTHROUGH.md](HOOKS_WALKTHROUGH.md).
 
-The continuation exception lives in `advance_plan`: an eligibility
-`tool_error` starts the next pending candidate. Other unsuccessful
-specialist reports stop the dependent plan and mark pending steps skipped.
+Two honest limits:
 
-A final multi-scheme response can therefore be `completed` while one
-candidate has `tool_error`. Its message warns that some tools failed; the
-UI must not present the error summary as a full eligibility result.
-With 20 supported candidates, one checking pass makes at most 40 eligibility
-tool attempts. Corrections can start further passes.
+- If the model **could not be asked** (conversation budget used up, or the
+  model request failed), the specialist runs the plain rule check once without
+  the model (`recover_authorized_action`, counted against the tool budget) and
+  reports `deterministic_fallback`. The verdict still comes only from the rule
+  engine.
+- If the model **was asked but didn't finish** (it used its three calls, or a
+  task check refused its choice), the specialist returns *no* result and the
+  journey records `tool_error` for that candidate. No verdict is invented.
+- With **no** model configured (including in tests), the specialist skips the
+  loop and calls the same rule check directly, labelled `deterministic`.
+  This is the default path.
 
-**Do not generalize this retry policy to every failure.** Search-query
-rewriting happens before the search tool; an `IntakeAgentError` there is
-handled as HTTP 502 by the start route, not retried by this tool loop.
-Free-text reader failure instead falls back to a direct question. Arbitrary
-programming errors are not promised to receive the MCP retry behavior.
+## 10. The deterministic engine decides, and the plan explains
 
----
+The result goes into three places: a short summary per scheme, a full result
+per rule-backed scheme, and a one-line plan note written by code (for
+example "ruled out by the mock rules (rule IDs)") in the supervisor
+(`journey.py`). A tool that fails twice is recorded as `tool_error` for that
+candidate; the others still run, and the final message says some candidates
+could not be checked. `completed` therefore does not mean "everyone is
+eligible" — read each scheme's own result.
 
-## 7. Correct a known answer and remove stale current results
+## 11. A corrected answer revokes approval, monotonically
 
-### 7.1 Entry and validation
+Say Meera had an approved draft for `IGNWPS-MH`, then corrects an answer.
+`correct_journey_answer` (`journey.py`) does this in a fixed order:
 
-`correct_journey_answer` in `journey.py` loads the saved thread.
-It requires a nonempty multi-scheme state, but does not require the graph
-to be paused. A completed multi-scheme run can be corrected; the legacy
-single-scheme flow cannot use this endpoint.
+1. Accept only a fact that was answered or explicitly skipped; parse the new
+   value or "don't know". Registered conversations parse with the fact's
+   registry definition and check the **whole** proposed store first (section
+   4B.7). Bad input is a 422 from the API, and nothing has been written yet.
+2. `_begin_profile_change` (`journey.py`) writes a new profile version
+   and a "blocked" flag to the graph's saved state **and**, in a `finally`
+   block, to the portal. In the portal (`_portal_action_transaction`,
+   repository.py:396, run by `_portal_action` under the checklist publication
+   lock) one transaction increments the version, sets blocked,
+   and marks every **unsubmitted** draft of this conversation stale with its
+   approval cleared (`_revoke_unsubmitted_approvals`, repository.py:356).
+3. Re-run the interview with the new profile; this may search again (section
+   6) and always rechecks all candidates, restoring only matched facts.
+4. `reconcile_profile` unblocks writes if the version matches.
 
-`JourneyCorrection` accepts a known `FactName` and an answer string of
-1–500 characters. The function additionally requires:
+While blocked, portal writes fail with "Profile reconciliation is required
+before writes", and the journey refuses application tasks the same way
+(`run_application_task`, `journey.py`). A stale draft can never be approved, edited, rejected
+or submitted again; the portal says "Dependencies changed. Create and
+approve a fresh draft" (repository.py:807), and nothing in `src` ever sets
+`stale` back to zero.
 
-1. The chosen profile field is already non-`None`.
-2. `parse_answer` returns a concrete value, not unknown/invalid.
-3. The whole updated `HouseholdProfile` is valid.
+The key test is `test_approved_draft_correction_always_revokes_saved_approval`
+(tests\test_application_tools.py:940). For one-scheme and many-scheme
+conversations it checks four cases:
 
-Corrections use the direct parser only: no LLM proposal or confirmation.
-You cannot use this operation to change a never-answered/skipped unknown,
-or replace a known answer with “I don't know”. `known_fact_names` comes
-from non-`None` profile fields, including the defaulted application date;
-it is not restricted to values confirmed through the LLM.
+| Case | After the correction | Approval of the old draft |
+|---|---|---|
+| Same value again ("still eligible"), or a changed date of birth | `eligible` | Revoked; version 1 |
+| `is_widow` -> no | `not_eligible` | Revoked |
+| "I don't know" | `need_more_information` | Revoked |
+| **A-B-A**: restore the original answer | `eligible`, version 2 | Old draft stays stale; only a new draft can be approved |
 
-### 7.2 What gets restarted?
+So a correction never has a "no-op" shortcut, and restoring an answer does not
+restore approval. **Why:** an approval belongs to one exact form built from
+the answers at that moment. Even if the verdict is still `eligible`, the
+person has changed what the form was built from, so they must look at and
+approve the new form. And A to B to A returns to the old *answer*, not to the
+old *approval*: nothing in `src` sets a stale draft back to current. The same
+holds for registered facts, and, through the review latch, for a changed fact
+definition or bundle (section 4B.6). This differs from starting a **new request** with an
+unchanged profile: `run_journey` revokes only when the profile actually
+differs (`profile_changed` in `run_journey`).
 
-The function merges the correction into the saved profile and starts a
-new `interview` plan on the same thread with:
+Related safeguards: a rule-package change or a document-report change also
+marks that scheme's unsubmitted drafts stale, and version counters only move
+forward (`test_monotonic_rule_and_document_changes_never_revive_approval_and_keep_receipts`,
+tests\test_application_tools.py:1079). If the checkpoint, the portal
+transition or the recheck fails, writes stay closed
+(`test_correction_persistence_failure_blocks_old_submission`, line 989).
+A submit that arrives during the correction waits for it, then fails
+(`test_concurrent_submission_cannot_slip_between_invalidation_and_checkpoint`,
+line 1037). The wait works through a per-conversation lock
+(`_serialize_journey`, `journey.py`), which protects one API process; the
+tests do not prove behaviour across several worker processes.
 
-- the **same candidates** and corrected profile;
-- empty `candidate_verdicts`, `eligibility_results` and legacy result;
-- cleared pending question/confirmation state;
-- existing skipped fields, except the corrected field;
-- starting version equal to the old plan version + 1;
-- an appended `answer_corrected` event with fact name, version and reason.
+## 12. Budgets survive crashes and restarts
 
-It rechecks **every candidate**, not just a computed dependency subset.
-This is simple and avoids keeping stale results, but can repeat unaffected
-MCP work. The old plan-change/history entries remain as historical notes,
-not current verdicts. The correction event does not store the old/new
-answer values; that is a property of this event, not of all stored state.
+Two kinds of limits exist (agent_config.py:7–17):
 
-### 7.3 Continue Kamla's story
-
-After the original plan ends at version 3, send:
-
-```json
-{"fact_name": "income_tax_paid_last_assessment_year", "answer": "no"}
-```
-
-The new plan starts at version 4. Widow facts are unchanged and already
-sufficient. PM-KISAN is no longer excluded by tax, so intake now asks about
-land and the still-unknown other exclusions in package order. If Kamla
-answers land “yes” and the remaining exclusions “no”, its mock result can
-become `eligible`. If she skips a fact, it can remain
-`need_more_information`; “no tax” alone is not enough.
-
-After intake, the widow check produces plan 4 → 5 and the farmer check
-plan 5 → 6. The correction restart 3 → 4 is explained by
-`JourneyHistoryEvent`, not a candidate `PlanChange`.
-
-### 7.4 Limits the implementation still has
-
-- Correcting farmland does **not** search for, append or remove schemes.
-  The plan requirement “a new fact opens a scheme → add a step” is not
-  implemented automatically. Start a deliberate new search/request to
-  discover a different candidate set.
-- The correction initializer contains `llm_attempted_facts` twice: first a
-  copy of the saved list, then `[]`. Python uses the later value, so
-  correction resets the list. `run_journey` also resets it on a new request.
-  Therefore the intended “one LLM interpretation per fact per conversation”
-  guarantee does not hold across these restarts. This guide documents the
-  discrepancy; it does not change runtime code.
-- Existing skipped unknowns remain skipped after correction. The graph can
-  reopen newly useful **unskipped** questions, but does not force skipped
-  facts to be asked again.
-- The API accepts corrections during a multi-scheme interview, but the
-  current UI returns early while `awaiting_answer`, so its correction
-  controls appear only after that waiting state ends.
-
----
-
-## 8. Read free text without letting the model decide facts silently
-
-There are two different model jobs in `src\workflow\intake.py`:
-
-| Function | Input | Output | Used when |
-|---|---|---|---|
-| `rewrite_scheme_query` | Search query | A concise search query | Search intake, before retrieval |
-| `interpret_free_text_answer` | Current fact, fixed question, raw reply | `AnswerInterpretation` | Interview direct parsing fails and this fact has no recorded model attempt |
-
-The answer reader does not receive the whole profile or rule results.
-That limits its context; it does not mean the service stores no answers.
-
-### 8.1 First try plain code
-
-`parse_answer` in `questions.py` normalizes spacing, case, trailing
-punctuation and curly apostrophes. It recognizes yes/no words, explicit
-unknowns such as `idk`/`skip`, and listed date formats.
-
-```text
-is_widow + "YES."          -> value True
-date_of_birth + 30/10/1976 -> date value
-is_widow + "not sure"      -> unknown, not False
-is_widow + "maybe"         -> invalid
-```
-
-This is explanatory input/output notation. No model is needed for the
-first three examples. A parsed but impossible date fails **profile**
-validation and gets a direct correction hint; the reader is not called
-merely because a syntactically valid answer conflicts with the profile.
-
-### 8.2 Structured output is only the first check
-
-`AnswerInterpretation` permits:
-
-```python
-kind: Literal["value", "unknown", "uncertain"]
-value: StrictBool | StrictStr | None = None
-confidence: float = Field(ge=0, le=1)
-```
-
-It rejects extra fields and requires a non-`None` value if and only if
-`kind=="value"`. The external request asks for a strict JSON schema. The
-local model validates the returned content again.
-
-The prompt tells the model to treat the reply as data, ignore instructions
-inside it and not infer unstated facts. This is an instruction and layered
-validation, **not proof of prompt-injection immunity or correct meaning**.
-
-`_read_free_text_answer` requires `OPENROUTER_API_KEY`, uses
-`OPENROUTER_CHAT_MODEL` (default `openai/gpt-4o-mini`), temperature 0 and
-a 30-second HTTP timeout. The async wrapper runs it with
-`asyncio.to_thread`. Missing configuration, HTTP/transport failure or invalid
-model output becomes `IntakeAgentError`.
-
-### 8.3 Follow the proposal through the graph
-
-When direct parsing is invalid, intake records the fact in
-`llm_attempted_facts` **before** invoking the reader. A failed attempt still
-counts. The graph then applies these gates:
-
-1. Require `confidence >= 0.85` for a usable value or explicit unknown.
-   Confidence is model-reported, not a measured probability of correctness.
-2. For a value, call `parse_interpreted_answer` to check the fact's type.
-   A boolean fact needs a real boolean; `"yes"` as a string is rejected.
-   A date fact needs a string accepted by the direct date parser.
-3. Validate a hypothetical merged `HouseholdProfile`. A well-typed but
-   impossible birth date is still invalid.
-4. Save the proposal in `pending_interpreted_value`, set
-   `pending_confirmation=True` and ask:
-   `I understood your answer as "yes". Is that correct? Please answer yes or no.`
-   The actual profile is **not** updated yet.
-5. On explicit confirmation, parse the proposal and validate the merged
-   profile again, then save it and pick the next question.
-
-This explains Kamla's two-message widow answer: her sentence proposes a
-value; her “yes” authorizes saving that value.
-
-| Reader / confirmation outcome | State behavior |
+| Limit | Value |
 |---|---|
-| High-confidence, valid value | Pause for confirmation; not a saved fact yet |
-| Confirmation “yes” | Revalidate and save proposed value |
-| Confirmation “no” | Discard proposal; ask original question with direct-answer hint |
-| Other confirmation, including unknown | Keep proposal; ask for explicit yes/no; no second model call |
-| High-confidence `unknown` | Leave fact `None`, mark skipped, move on without a value-confirmation prompt |
-| `uncertain`, low confidence or wrong fact type | No proposed fact saved; repeat fixed question with hint |
-| Invalid structured response or `IntakeAgentError` | Same direct-question fallback |
-| Another unsupported reply for an attempted fact | Direct-question fallback, not another model call |
+| Search attempts per conversation | 4 |
+| Candidates checked | 20 |
+| Model calls / agent steps / tool actions | 8 / 12 / 24 |
+| Tokens (estimated input plus reserved output) | 12 000; at most 512 output tokens per call |
+| Steps per model run | 3 |
 
-The fixed questions are still from `QUESTIONS`; the model does not rewrite
-them. No LLM writes the final eligibility result, plan or plan-change reason.
+`ConversationBudget` (conversation_budget.py:24) keeps counters in the
+LangGraph `Store` (namespace `("budget",)`, key = conversation ID), separate
+from the interview's checkpoint, so it cannot disturb a paused question. In
+production the store is an `AsyncSqliteStore` in the same SQLite file. `_serialize_journey` loads it at the start of every request. Before
+a search, a model call, or a fact-interpretation attempt, the new counter value
+is **saved first** (`reserve_counters`, conversation_budget.py:77). If saving
+fails, the external call is not made
+(`test_budget_checkpoint_failure_prevents_model_dispatch`, line 683).
+Afterwards `durable_counters` takes the larger of the graph value and the
+saved value (`durable_counters`, conversation_budget.py:62), so:
 
-### 8.4 What is actually bounded?
+- a search that crashed after dispatch still counts
+  (`test_failed_node_search_reservation_survives_sqlite_process_restart`,
+  line 440; it reopens a SQLite file, so it is a restart simulation, not a
+  real process kill);
+- a model call reserved before a crash is not refunded
+  (`test_model_call_reservation_survives_node_crash_and_sqlite_restart`,
+  line 636);
+- the same conversation ID cannot buy a fresh allowance by restarting or
+  correcting (`run_journey` and `correct_journey_answer` both copy these
+  counters forward).
 
-Within an uninterrupted interview's attempt-list lifetime, each of the 12
-profile facts can trigger at most one reader call. Direct answers, unknowns
-recognized by code, confirmations and declined proposals do not trigger
-additional reader calls. With the application date already filled, a fresh
-empty interview normally has at most 11 facts needing answers.
+The reserved output is conservative: a call is charged 512 output tokens up
+front and adjusted afterwards. With a real model, the shared allowance covers
+planning, interpretation and every candidate's check run, so a long list of
+candidates can run out of model allowance. The remaining candidates are then
+checked by the rule engine without the model, as long as the tool budget (24)
+lasts; after that they end as `tool_error` rather than guessed results. This conclusion is derived from the
+constants above and the loop code, not from a dedicated test.
 
-The external reader itself has no retry loop. User messages/clarifications
-are not globally capped, and the correction/restart reset in section 7
-allows more reader calls later on the same conversation ID. Do not describe
-12 as a lifetime conversation-wide call cap. Query rewriting and retrieval
-model calls are separate from this answer-reader bound.
+## 13. The screen: stale drafts and honest coverage
 
----
+The UI never runs the graph. `save_journey` (ui\app.py:664) copies the API
+reply into session state. If the dependency version changed, or a
+`correction_invalidated` notice arrived, it **clears the cached drafts** so
+the next load asks the portal again (ui\app.py:672–677). A stale draft shows a
+translated warning and no approve or submit buttons (ui\app.py:1406). The notice
+renderer (`render_discovery_notices`, ui\app.py:853) shows each notice code,
+the added IDs from events, and the unprocessed IDs. Text comes from
+`discovery_message` in English, Hindi and Marathi. The budget expander
+(`render_agent_observability`, ui\app.py:740) shows counters against the
+limits, never prompts.
 
-## 9. Trace the HTTP request into the screen and back
+`test_single_scheme_correction_reloads_stale_draft_and_removes_submit_controls`
+(tests\test_ui_app.py:781) checks the stale reload using Streamlit's
+`AppTest` with mocked API calls and an English assertion;
+`test_discovery_coverage_and_referral_notices_are_localized` (line 902)
+checks Hindi coverage notices. Neither is a real browser or a native-speaker
+review.
 
-### 9.1 API routes and stored state
+## 14. Errors and receipts
 
-`src\api\app.py` loads rule packages at startup, opens
-`AsyncSqliteSaver`, and builds the graph with the MCP client. The default
-checkpoint database is `data\runtime\journey.sqlite3`; override it with
-`SCHEME_SAATHI_CHECKPOINT_DB`.
-
-| Route | Request / function | Important behavior |
-|---|---|---|
-| `POST /api/v1/journey` | `JourneyRequest` → `run_journey` | Start search, evaluate or interview; malformed request gets 422 |
-| `POST /api/v1/journey/{conversation_id}/messages` | `JourneyMessage` → `resume_journey` | 1–500 characters; 409 if no saved interrupt is waiting |
-| `POST /api/v1/journey/{conversation_id}/corrections` | `JourneyCorrection` → `correct_journey_answer` | 409 if no multi-scheme state; 422 for invalid/unknown-valued correction |
-| `GET /api/v1/journey/{conversation_id}` | `get_journey` | Read current saved response; unknown thread is 404 |
-| `DELETE /api/v1/journey/{conversation_id}` | Checkpointer `adelete_thread` | Delete that thread's saved checkpoints; success is 204 |
-
-Here is Kamla's **example request body**, sent to the start route. Fixing
-the application date keeps the example independent of today; she supplies
-her birth date later in the chat:
-
-```json
-{
-  "action": "interview",
-  "candidate_scheme_ids": ["IGNWPS-MH", "PM-KISAN-IN"],
-  "profile": {
-    "application_date": "2026-10-30",
-    "income_tax_paid_last_assessment_year": true
-  }
-}
-```
-
-Use the returned `conversation_id` in later message/correction paths.
-A message body is `{"message":"yes"}`; it answers the **currently pending**
-question, which may be a confirmation rather than the original fact.
-
-The final response includes these relationships (**illustrative shortened
-JSON shape**, not a complete response or complete full-result objects):
-
-```json
-{
-  "status": "completed",
-  "eligibility_result": null,
-  "candidate_scheme_ids": ["IGNWPS-MH", "PM-KISAN-IN"],
-  "candidate_verdicts": {
-    "IGNWPS-MH": {"scheme_id": "IGNWPS-MH", "result": "eligible"},
-    "PM-KISAN-IN": {
-      "scheme_id": "PM-KISAN-IN",
-      "result": "not_eligible",
-      "deciding_rule_ids": ["PMKISAN-INCOME-TAX-01"]
-    }
-  },
-  "eligibility_results": {
-    "IGNWPS-MH": {"result": "eligible"},
-    "PM-KISAN-IN": {"result": "not_eligible"}
-  }
-}
-```
-
-Real full results also contain reasons, evidence and other required fields.
-`_to_response` supplies `question`/`pending_fact` only while awaiting an
-answer, plus typed history and `known_fact_names` for correction choices.
-
-### 9.2 The screen does not run the graph
-
-In `src\ui\api_client.py`, each helper makes one HTTP request and validates
-the reply as `JourneyResponse`. Start, message and correction requests have
-60-second client timeouts; GET uses 10 seconds. HTTP/transport/response-shape
-errors become `JourneyApiError`; the UI is not guaranteed an end-to-end
-latency below these limits.
-
-Follow these functions in `src\ui\app.py`:
-
-1. **Search-screen block:** sends `JourneyRequest(action="search", ...)`.
-   It groups passage IDs into `scheme_names` by first occurrence, still
-   showing the selected scheme's individual passages and source links.
-2. **`start_candidate_interview`:** “Check all found schemes” sends those
-   distinct IDs in one interview request. It reuses the current conversation
-   ID when present. It does not prefill a profile from the search text.
-3. **`save_journey`:** copies the response into `st.session_state`: plan,
-   messages, question, status, both result maps, both histories and known
-   fact names. Streamlit reruns the script after interactions, so ordinary
-   local variables would not be enough.
-4. **`render_candidate_interview`:** draws the plan, “Why the plan changed”,
-   retry/failure/correction notes and conversation. While awaiting an
-   answer it offers `st.chat_input`; send → save response → `st.rerun()`.
-5. **Result panels:** each summary gets an expander. A full result goes to
-   `render_verdict`, which shows the reason, missing fields, policy notices,
-   unresolved checks and deciding-rule source links. A `tool_error` without
-   a full result gets an error; an information-only summary gets an
-   information notice.
-6. **Corrections:** after waiting ends, nonempty `known_fact_names` enables
-   a fact selector and answer input. Save calls the correction API, replaces
-   screen state with its response, and reruns. If more facts are needed,
-   the screen goes back to the shared chat.
-
-The old single-scheme “Continue to the synthetic eligibility demo” entry
-remains. It is not the same as checking all search candidates.
-
-### 9.3 Refresh reads; it does not repeat the interview
-
-`remember_in_url` writes `conversation=<uuid>` plus either `scheme=<id>` or
-comma-separated `schemes=<ids>`. It does not put answer values in the URL.
-
-On a fresh page session, the restoration block checks the UUID and candidate
-count/single-scheme choice, then calls `get_journey_state` once. If a saved
-response exists, `save_journey` restores the pending question, history and
-results. Invalid or unavailable restoration clears the URL. The client
-turns a GET 404 into `None`; other API failures raise an error that this
-restoration block also handles by not restoring.
-
-This is API-backed restoration, not proof of manual browser testing.
-Checkpoints contain the profile, raw conversation turns, pending proposals
-and histories. Avoiding answer values in URLs or correction events does
-**not** mean answers are never stored, never sent to the configured model,
-or protected by a demonstrated access-control/privacy system.
+- **Search/rule tool failure:** retried once, then recorded; the person gets a
+  short translated notice, not a stack trace. API routes answer 502 "A journey
+  tool is unavailable" for tool errors, 409 when a conversation is not
+  waiting or has no confirmed answers, and 422 for invalid corrections
+  (`journey_correction`, src\api\app.py:682; tool errors go through `_tool_failure`).
+- **Draft actions:** before approving or submitting, the API compares the
+  draft's saved profile and rule version with the current ones and answers
+  409 ("Your answers changed...", "Scheme rules changed...")
+  (`update_application_approval`, src\api\app.py:965).
+  The portal then checks the exact revision and fingerprint, then approval,
+  then submits.
+- **Receipts:** submitting an approved, current draft stores one receipt ID;
+  submitting the same draft again returns the **same** receipt (portal tests:
+  `test_approval_revocation_and_fresh_exact_approval_survive_sqlite_restart`,
+  test_phase3_agents.py:561). A submitted draft is history, not stale: later corrections do not
+  remove its receipt (`test_monotonic_...` above). Meanwhile, the older
+  approved-but-unsubmitted draft cannot be revived, and a fresh draft needs a
+  fresh approval of its new fingerprint.
+- **Forget:** deleting a conversation removes its graph checkpoints and portal
+  data, as before, and its budget record in the LangGraph `Store`.
 
 ---
 
-## 10. Tests: what to read and what each establishes
+## 15. Tests and what each one establishes
 
-Tests replace external calls where possible. Graph tests use `MemorySaver`,
-fixed dates and fake readers/tools; some fake eligibility tools call the
-real local engine. API tests start the API and local MCP server. UI tests
-use Streamlit `AppTest` with mocked API helpers, not a manually driven
-browser.
+Mainly `tests\test_phase3_agents.py` (16 test functions). Everything runs
+offline with fake models, fake search, and the local engine.
 
-| File / useful test | Evidence to look for |
+| Test (line) | Establishes |
 |---|---|
-| `tests\test_question_picker.py` → `test_shared_picker_counts_each_fact_once_per_scheme` | Synthetic BPL sharing wins; duplicate age rules do not double-count; skipped fact and stable tie behavior |
-| `tests\test_journey_graph.py` → `test_candidate_schemes_are_unique_and_new_search_clears_old_results` | Three passages become two candidates; evidence remains; old result maps clear; reload preserves new IDs |
-| Same → `test_shared_interview_continues_after_one_scheme_is_ruled_out` | Tax-prefilled scenario like Kamla; only three widow questions; distinct results, information-only extra candidate, version changes and reload |
-| Same → `test_shared_interview_unknown_answers_terminate_and_keep_each_missing_list` | Unknowns do not loop; both schemes retain honest missing-information results |
-| Same → `test_tool_retry_and_final_failure_are_recorded_without_fake_verdict`, `test_search_retry_and_failure_are_recorded` | Two attempts, explicit errors, continued candidate checking and safe public failure reasons |
-| Same → `test_correcting_answer_rechecks_schemes_and_records_no_answer_value` | Current results recomputed, version increases, correction note/reload; does not prove a lifetime LLM cap |
-| Same → `test_free_text_interpretation_requires_confirmation_before_saving`, `test_declined_interpretation_reasks_for_a_direct_answer` | Proposed fact absent until confirmed; unclear confirmation/decline handling |
-| Same → `test_answer_reader_failure_uses_plain_code_question`, `test_clear_free_text_unknown_skips_the_fact_without_inventing_a_value` | Reader failure and model-reported unknown paths |
-| `tests\test_questions.py` → `test_interpreted_answers_must_match_the_fact_type` | Wrong-type proposals are rejected by the parser |
-| `tests\test_intake_agent.py` | Structured request and response validation, including bad confidence, extra fields and inconsistent unknown/value |
-| `tests\test_supervisor.py`, `tests\test_workflow_state.py` | Plan advancement/copy behavior, required replan reason, valid supervisor handoffs |
-| `tests\test_api_eligibility.py` → multi-candidate and correction tests | HTTP contract, full results through local MCP, validation failures |
-| `tests\test_ui_app.py` → `test_check_all_found_schemes_starts_one_shared_chat` | Shared start body, candidate URL, visible history and correction submission with mocked API |
-| Same → refresh tests | GET restoration and forgotten-thread URL cleanup in AppTest |
+| `test_eligibility_specialist_chooses_handoff_from_observation` (60) | A model chose by observation; the engine's result returned; observation hides birth date |
+| `test_eligibility_denied_or_malformed_choices_never_call_rule_tool` (100) | Six bad decisions never reach the rule tool |
+| `test_eligibility_exhausted_budget_and_wrong_tool_output_do_not_invent_verdict` (122) | No verdict on budget stop or wrong-shaped tool output |
+| `test_eligibility_observation_selects_clarification_or_safe_referral` (242) | Missing facts lead to clarification; tool failure leads to referral without a verdict |
+| `test_discovery_uses_supported_inputs_...` (274) | Query/language/limit only; no invented state or gender |
+| `test_confirmed_correction_discovers_...` (296) | Dedupe, addition, information only, no search on unrelated change |
+| `test_complete_confirmed_profile_still_discovers_when_description_adds_no_facts` (335) | A fully confirmed profile sent with a description that adds no facts still searches once ("widow pension age 40"), adds an information-only candidate, and gives it no verdict |
+| `test_discovery_limits_are_explicit_...` (355) | Four searches, 20 candidates, overflow shown |
+| `test_discovery_failure_keeps_existing_candidate_...` (383) | Failed search does not erase a verdict |
+| `test_rediscovery_overflow_remains_explicit_...` (405) | Overflow persists across corrections |
+| `test_failed_node_search_reservation_survives_...` (440) | Search count survives crashes |
+| `test_new_discovery_fact_from_description_is_not_searched_until_confirmed` (478) | Proposal is not a confirmed fact |
+| `test_interpretation_attempt_reserved_before_crash_is_not_repeated` (531) | One interpretation attempt per fact |
+| `test_approval_revocation_and_fresh_exact_approval_survive_sqlite_restart` (561) | Approval revoked; fresh exact approval; same receipt twice |
+| `test_model_call_reservation_survives_...` (636), `test_budget_checkpoint_failure_prevents_model_dispatch` (683) | Model reservations and the "save first" rule |
 
-The tests are useful evidence for these individual behaviors, not proof that
-all policy semantics, every catalogue scheme, every failure mode or every
-browser interaction is validated.
+Other files cover the portal transitions (`tests\test_application_tools.py`,
+lines 940, 989, 1037, 1079), the correction API
+(`tests\test_api_eligibility.py`, line 77, 112, 132), tool permissions
+(`tests\test_mcp_permissions.py`), and the UI (`tests\test_ui_app.py`).
 
-### Focused commands (Windows, repository root)
+### Registry tests (`tests\test_fact_registry.py`)
 
-The repository has `.venv`; do not use the older `..\venv` path from prior
-notes. These are **developer validation commands**, not claims that they
-were rerun for this documentation-only edit.
+The review follow-up reports 37 registry tests passing. This guide did not
+rerun them; the table lists the ones that matter for Phase 3.
+
+| Test (line) | Establishes |
+|---|---|
+| `test_novel_pending_bundle_cannot_masquerade_as_legacy_compatibility` (571) | Only the exact pinned pilots can use the legacy label |
+| `test_explicit_development_loader_accepts_pending_synthetic_bundle` (592) | Synthetic bundle loads only on explicit request |
+| `test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure` (738) | Typed questions, resume, and a spy model not shown an answer |
+| `test_unknown_registry_fact_is_not_reasked_and_saved_definitions_fail_closed` (840) | Unknown stays declined; changed definition cannot reinterpret saved facts |
+| `test_registry_question_metadata_flows_through_journey_http_api` (905) | API sends widget metadata; validation errors; refresh |
+| `test_data_only_multischeme_discovery_sharing_and_typed_correction_through_http` (1044) | Injected search, shared question once, separate scope/period IDs, typed correction (not real retrieval) |
+| `test_dependency_changes_require_review_without_erasing_answers_or_restoring_a_to_b_to_a` (1169) | Content/review change latches; answers kept; A to B to A stays refused |
+| `test_typed_corrections_and_changed_definitions_revoke_real_pilot_approval_after_restart` (1269) | Real offline portal and reopened SQLite: approval revoked even when still eligible |
+| `test_development_bundle_with_legacy_bridge_still_asks_and_corrects_novel_fact` (1422) | Review bug 1 closed |
+| `test_combined_date_answer_reasks_safely_and_invalid_correction_never_writes` (1476) | Review bug 2 closed; invalid correction leaves facts, dependency and budget unchanged |
+| `test_registry_and_legacy_intake_share_bounded_confirmed_fact_discovery` (1564) | Review bug 3 closed; shared bounded discovery |
+
+Phase 1–2 parser, choice, decimal and provider tests in the same file (lines
+236–737) cover the typed foundation this guide relies on.
+
+### Why the test setup is safe (and what it does not prove)
+
+`tests\conftest.py` runs before any application import (lines 12–28). It sets
+`SCHEME_SAATHI_DISABLE_DOTENV=1` so `src\config.py` skips `.env` (config.py:69),
+sets `SCHEME_SAATHI_DISABLE_CROSS_ENCODER=1`, removes the four known
+credential variables from the process environment, and points the checkpoint
+and portal databases at unique project-local files that are deleted when the
+session ends (lines 21–28 and 100–107). Tests also supply fake model, search and rule
+tools (the `fake_openrouter` fixture answers chat requests in process), and `test_phase3_agents.py` uses its own unique `.phase3-*` SQLite files.
+
+This is meant to keep tests free of saved credentials, `.env` values and
+demonstration data. It **does not** install a network block, so the suite
+alone does not prove that no network call is possible. The independent
+verifier's separate pre-app probe reported network access blocked, but that
+probe is not part of the repository's test run.
+
+### Commands (repository root, Windows)
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider tests\test_question_picker.py tests\test_questions.py tests\test_intake_agent.py tests\test_supervisor.py tests\test_workflow_state.py tests\test_journey_graph.py
+.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider tests\test_phase3_agents.py tests\test_fact_registry.py
+.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider tests\test_application_tools.py tests\test_api_eligibility.py tests\test_ui_app.py
+.\.venv\Scripts\python.exe -m compileall -q src
 ```
 
-For the API/UI boundary:
+A full `pytest -q` is the final check for a code change. Use temporary
+databases only; never point a test at `data\runtime`.
 
-```powershell
-.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider tests\test_api_eligibility.py tests\test_ui_app.py
-```
+## 16. What Phase 3 does not claim
 
-The supplied verified baseline before this rewrite is **177 passing tests**.
-A full suite, when needed for a code change, is:
+- Not every suitable scheme is found: four searches, 20 candidates, no age or
+  gender retrieval filter, and retrieval quality is a separate question. The
+  earlier BM25-only diagnostics (43 dev queries, two schemes) are not
+  evidence for Phase 3 and were not rerun.
+- `eligible` is a mock-rule result, not a government decision.
+- Correction rechecks all candidates, not a minimal subset.
+- No generated search summary, no document-authenticity check, and no real
+  submission; Phase 4 specialists are not part of this guide.
+- No live paid model, no manual browser test, no native-language review, and
+  no multi-process or real process-kill proof for budgets or approvals.
+- Registry questions and privacy metadata are **pending**, not approved by a
+  human reviewer. No production activation of a new bundle.
+- The data-only scheme is proven only through injected synthetic search and
+  the MCP evaluator core, not through real corpus retrieval, a browser or a
+  receipt. The generic Phase 4 form for a registry-only scheme is not built.
+- Search hints still cover only widow, landholding and age. A new fact does
+  not widen retrieval; no filter is invented.
+- Pydantic/Streamlit serialisation warnings (740 observed in the full run) are
+  visible output, not hidden, and are not shown to be harmless beyond "no
+  test failed".
 
-```powershell
-.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider
-```
+## 17. Remaining factual doubts
 
-There is no dedicated documentation test command in the current project
-configuration/CI. For this documentation-only change, check source/test
-references, excerpts, local links and:
-
-```powershell
-git diff --check
-```
-
----
-
-## 11. Keep implementation, smoke tests and retrieval quality separate
-
-These are different kinds of evidence:
-
-| Evidence available before this rewrite | What it establishes | What it does not establish |
-|---|---|---|
-| 177 passing automated tests | Tested code behavior at the recorded baseline | Production readiness, policy correctness or browser-manual validation |
-| A successful live-chat smoke with synthetic two-scheme facts | Configured reader could propose/confirm an answer and the flow returned separate deterministic results | Reliability for all natural-language replies, live hybrid retrieval quality or real government decisions |
-| BM25-only diagnostic: 43 development queries, 13 reviewed passages, two schemes | Local lexical-retrieval behavior on that tiny development set | Configured live hybrid/vector/reranked performance or catalogue-wide candidate coverage |
-
-The supplied BM25-only diagnostic measured:
-
-- Passage recall@5: **0.7558**.
-- Scheme-hit rate@5: **0.7907**.
-- Recall@5 by query language: English **0.9545**, Hindi **0.2**, Marathi **0**.
-
-The set includes three cross-scheme queries. In
-`scripts\evaluate_scheme_retrieval.py`, scheme hit means **at least one**
-relevant scheme appears, not that every relevant scheme was found.
-Recall is the mean fraction of labelled relevant passages retrieved per
-query. Neither metric is eligibility accuracy.
-
-The free embedding key was not configured for the current diagnostic;
-no live hybrid retrieval evaluation was performed for this Phase 3 check.
-Do not silently substitute the different, older fused-retrieval numbers in
-[the retrieval backlog](RETRIEVAL_IMPROVEMENT_BACKLOG.md) for these BM25-only
-numbers. That backlog also records provisional multilingual/cross-scheme
-labels needing bilingual/domain review.
-
-Be careful reproducing experiments: the evaluator's `--skip-reranker`
-option disables reranking, **not vectors**. It is not a BM25-only switch.
-This walkthrough does not ask you to run any external/paid model call.
-
-### What Phase 3 does not claim
-
-- Not every suitable scheme is retrieved; only the supplied/discovered,
-  bounded candidate list is processed.
-- The journey search wrapper supplies the query and passage limit; it does
-  not expose the separate search adapter's jurisdiction/language filters
-  through `JourneyRequest`.
-- A newly learned fact does not automatically search/add schemes.
-- Correction rechecks all candidates, not a minimal affected subset.
-- LLM call limits are not conversation-wide across correction/restart.
-- History reducers do not erase old events when updated with `[]`.
-- `completed` does not mean all candidates are eligible or successfully
-  evaluated; check each candidate's summary and full result/error.
-- There is no LLM planner, generated search-answer summary, document
-  authenticity check or application submission in this shared interview.
-- There is no new browser-manual validation or blanket privacy guarantee
-  behind this documentation update.
-
-To improve retrieval claims, first expand the reviewed corpus and validate
-query labels, then evaluate the exact configured retrieval path. To improve
-the two runtime gaps identified here, change and test the implementation in
-a separate code task; do not fix them by writing stronger documentation.
+1. The status text `deterministic_fallback` covers two cases: the rule check
+   ran without the model, or (after an unfinished model run) nothing ran
+   (section 9). The trace tells them apart; the label does not.
+2. Deleting a conversation (`forget_journey`, src\api\app.py:1045) deletes the
+   conversation thread **and** the budget record in the Store
+   (`test_api_applications.py` checks the Store item is gone).
+3. Multi-candidate budget exhaustion with a real model is derived from
+   constants (section 12), not exercised by a test.
+4. The registry-revision counts (37 / 130 / 401, 740 warnings) come from the
+   builder's follow-up record in CONTRIBUTIONS. This guide was written from
+   code reading and has no independent review yet; it did not rerun tests.
+5. The review latch needs a human to review and start a new conversation.
+   There is no automatic migration, and no UI flow for the reviewer.
+6. A mixed conversation with a pilot and a novel bundle puts the whole list on
+   the registered path, so legacy model help is off for the pilot too. This
+   follows from `any(...)` in the code; I did not find a test that names it.

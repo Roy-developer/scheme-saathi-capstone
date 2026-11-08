@@ -15,21 +15,29 @@ requires-python = ">=3.11"
 dependencies = [
   "aiosqlite>=0.20,<1",
   "fastapi>=0.115,<1",
+  # Cross-process lock for checklist publication (is_singleton needs 3.13+).
+  "filelock>=3.13,<5",
+  # OpenRouter chat calls go through the OpenAI SDK (src/llm_client.py).
+  "openai>=3,<4",
+  "httpx>=0.28,<1",
   "pydantic>=2.8,<3",
   "streamlit>=1.40,<2",
   "uvicorn[standard]>=0.32,<1",
   # Install the MCP SDK at runtime because the API and MCP server both use it.
   "mcp>=2,<3",
-  "langgraph>=0.2,<1",
-  "langgraph-checkpoint-sqlite>=2,<4",
+  # LangChain v1 agents and middleware require LangGraph 1.x.
+  "langgraph>=1.2,<2",
+  "langgraph-checkpoint-sqlite>=2,<5",
+  "langchain>=1.4,<2",
+  "langchain-openai>=1.7,<2",
   "python-dotenv>=1,<2",
   "qdrant-client[fastembed]>=1.14,<2",
+  "langchain-qdrant>=1.1,<2",
   "rank-bm25>=0.2.2,<1",
 ]
 
 [project.optional-dependencies]
 dev = [
-  "httpx>=0.28,<1",
   "openpyxl>=3.1,<4",
   "pytest>=8.3,<9",
 ]
@@ -42,5 +50,5 @@ where = ["."]
 include = ["src*"]
 
 [tool.setuptools.package-data]
-"src.rules" = ["packages/*.json"]
+"src.rules" = ["packages/*.json", "fact_registry.json", "bundle_registry.json"]
 "src.ui" = ["fixtures/*.json"]
