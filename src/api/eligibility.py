@@ -8,7 +8,7 @@ from typing import Literal
 
 from pydantic import Field
 
-from src.rules.facts import FactRegistry, FactState, TypedFactStore
+from src.rules.facts import FactRegistry, FactState, HouseholdProfile
 from src.rules.models import Rule, RulePackage
 from src.ui.models import StrictModel
 
@@ -59,7 +59,7 @@ def _rule_is_met(rule: Rule, value: object, registry: FactRegistry) -> bool:
 
 
 def evaluate_mock_eligibility(
-    profile: TypedFactStore,
+    profile: HouseholdProfile,
     package: RulePackage,
     registry: FactRegistry | None = None,
 ) -> EligibilityResponse:

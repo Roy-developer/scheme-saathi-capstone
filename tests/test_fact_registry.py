@@ -20,7 +20,7 @@ from src.api.scheme_search import SchemePassage
 from src.mcp_servers.tools.eligibility import evaluate_registered_profile
 from src.mcp_servers.tools import applications, documents
 from src.rules.data_provider import RulePackageProvider
-from src.rules.facts import FactDefinition, FactRegistry, FactState, TypedFactStore
+from src.rules.facts import FactDefinition, FactRegistry, FactState, HouseholdProfile
 from src.rules.models import RulePackage
 from fake_chat_model import FakeChatModel, ModelDecision
 from src.workflow.errors import MCPToolError
@@ -222,7 +222,7 @@ def _store(
     marks: object | None,
     course: str = "science",
     status: str = "known",
-) -> TypedFactStore:
+) -> HouseholdProfile:
     """Build a test fact store with explicitly versioned values."""
 
     facts: dict[str, FactState] = {
@@ -240,7 +240,7 @@ def _store(
             definition_version="1.0.0",
             provenance="user_reported" if status == "known" else None,
         )
-    return TypedFactStore(registry_version="1.0.0", facts=facts)
+    return HouseholdProfile(registry_version="1.0.0", facts=facts)
 
 
 def test_new_numeric_and_choice_facts_evaluate_through_mcp_core(
@@ -251,7 +251,7 @@ def test_new_numeric_and_choice_facts_evaluate_through_mcp_core(
     provider, package = _write_synthetic_bundle(tmp_path)
     bundle = provider.get_bundle(package.scheme_id)
 
-    def evaluate(store: TypedFactStore):
+    def evaluate(store: HouseholdProfile):
         return evaluate_registered_profile(
             package.scheme_id,
             store,
@@ -309,7 +309,7 @@ def test_decimal_checkpoint_roundtrip_preserves_verdict_boundary(
         for rule in package.rules
     ]
     precision_package = package.model_copy(update={"rules": rules})
-    store = TypedFactStore(
+    store = HouseholdProfile(
         registry_version=provider.registry.registry_version,
         facts={
             "exam_marks": FactState(
@@ -338,8 +338,8 @@ def test_decimal_checkpoint_roundtrip_preserves_verdict_boundary(
     assert wire["facts"]["exam_marks"]["value"] == {
         "$decimal": "0.12345678901234567"
     }
-    mcp_decoded = TypedFactStore.model_validate(wire)
-    restored = TypedFactStore.from_wire(mcp_decoded.model_dump(), provider.registry)
+    mcp_decoded = HouseholdProfile.model_validate(wire)
+    restored = HouseholdProfile.from_wire(mcp_decoded.model_dump(), provider.registry)
     after = evaluate_registered_profile(
         package.scheme_id,
         restored,
@@ -365,7 +365,7 @@ def test_decimal_checkpoint_roundtrip_preserves_verdict_boundary(
         },
     }
     with pytest.raises(ValueError, match="require a numeric value"):
-        TypedFactStore.from_wire(invalid_wire, provider.registry)
+        HouseholdProfile.from_wire(invalid_wire, provider.registry)
 
 
 def test_decimal_answer_keeps_precision_through_journey_interrupt_and_checkpoint(
@@ -1098,7 +1098,7 @@ def test_data_only_multischeme_discovery_sharing_and_typed_correction_through_ht
 
     async def evaluate(_client, scheme_id, store):
         evaluations.append(scheme_id)
-        assert isinstance(store, TypedFactStore)
+        assert isinstance(store, HouseholdProfile)
         return evaluate_registered_profile(
             scheme_id, store, provider.packages, provider.bundles, provider.registry
         )
@@ -1449,7 +1449,7 @@ def test_development_bundle_with_legacy_bridge_still_asks_and_corrects_novel_fac
     seen = []
 
     async def evaluate(_client, candidate, store):
-        assert isinstance(store, TypedFactStore)
+        assert isinstance(store, HouseholdProfile)
         seen.append(store.to_wire(provider.registry))
         return evaluate_registered_profile(
             candidate, store, provider.packages, provider.bundles, provider.registry
