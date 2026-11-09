@@ -21,7 +21,7 @@
     "IGNWPS-IN": 1.0,
     "IGNWPS-MH": 0.0,
     "IGNWPSM-MH": 0.625,
-    "IGOAPSM-MH": 1.0,
+    "IGNOAPS-MH": 1.0,
     "IPMWCD-IN": 0.875,
     "MJPJAY-MH": 0.875,
     "MSY-IN": 0.5,
@@ -598,8 +598,8 @@
         "IGNWPS-IN-BENEFIT-02"
       ],
       "retrieved_passage_ids": [
-        "IGOAPSM-MH-BENEFIT-01",
-        "IGOAPSM-MH-BENEFIT-02",
+        "IGNOAPS-MH-BENEFIT-01",
+        "IGNOAPS-MH-BENEFIT-02",
         "IGNDPS-IN-BENEFIT-02",
         "IGNWPS-IN-BENEFIT-02",
         "IGNWPSM-MH-BENEFIT-01"
@@ -669,7 +669,7 @@
       "retrieved_passage_ids": [
         "IGNWPSM-MH-ELIGIBILITY-04",
         "IGNDPSM-MH-ELIGIBILITY-05",
-        "IGOAPSM-MH-ELIGIBILITY-03",
+        "IGNOAPS-MH-ELIGIBILITY-03",
         "IGNWPS-IN-BENEFICIARY-01",
         "IGNWPSM-MH-ELIGIBILITY-03"
       ],
@@ -685,7 +685,7 @@
       ],
       "retrieved_passage_ids": [
         "IGNWPSM-MH-DOCUMENTS-01",
-        "IGOAPSM-MH-DOCUMENTS-01",
+        "IGNOAPS-MH-DOCUMENTS-01",
         "IGNWPS-IN-DOCUMENTS-01",
         "NFBSM-MH-DOCUMENTS-01",
         "IGNDPSM-MH-DOCUMENTS-01"
@@ -694,14 +694,14 @@
       "scheme_hit_at_k": true
     },
     {
-      "query_id": "IGOAPSM-ALL-001",
+      "query_id": "IGNOAPS-ALL-001",
       "query": "What old age pension does the Maharashtra state add under Shravanbal Seva?",
       "query_language": "en",
       "relevant_passage_ids": [
-        "IGOAPSM-MH-BENEFIT-02"
+        "IGNOAPS-MH-BENEFIT-02"
       ],
       "retrieved_passage_ids": [
-        "IGOAPSM-MH-BENEFIT-02",
+        "IGNOAPS-MH-BENEFIT-02",
         "SBSSPS-MH-ELIGIBILITY-03",
         "SBSSPS-MH-ELIGIBILITY-01",
         "SBSSPS-MH-ELIGIBILITY-04",
@@ -711,34 +711,34 @@
       "scheme_hit_at_k": true
     },
     {
-      "query_id": "IGOAPSM-ALL-002",
+      "query_id": "IGNOAPS-ALL-002",
       "query": "What age and poverty criteria apply to the old age pension in Maharashtra?",
       "query_language": "en",
       "relevant_passage_ids": [
-        "IGOAPSM-MH-ELIGIBILITY-01"
+        "IGNOAPS-MH-ELIGIBILITY-01"
       ],
       "retrieved_passage_ids": [
         "NSAP-IGNOAPS-IN-BENEFICIARY-01",
-        "IGOAPSM-MH-ELIGIBILITY-01",
+        "IGNOAPS-MH-ELIGIBILITY-01",
         "NSAP-IGNOAPS-IN-ELIGIBILITY-02",
         "NSAP-IGNOAPS-IN-APPLICATION-04",
-        "IGOAPSM-MH-APPLICATION-01"
+        "IGNOAPS-MH-APPLICATION-01"
       ],
       "recall_at_k": 1.0,
       "scheme_hit_at_k": true
     },
     {
-      "query_id": "IGOAPSM-ALL-003",
+      "query_id": "IGNOAPS-ALL-003",
       "query": "How much central old age pension is paid to people aged 80 and above in Maharashtra?",
       "query_language": "en",
       "relevant_passage_ids": [
-        "IGOAPSM-MH-BENEFIT-01"
+        "IGNOAPS-MH-BENEFIT-01"
       ],
       "retrieved_passage_ids": [
-        "IGOAPSM-MH-BENEFIT-01",
-        "IGOAPSM-MH-BENEFIT-02",
+        "IGNOAPS-MH-BENEFIT-01",
+        "IGNOAPS-MH-BENEFIT-02",
         "IGNDPS-IN-BENEFIT-02",
-        "IGOAPSM-MH-ELIGIBILITY-01",
+        "IGNOAPS-MH-ELIGIBILITY-01",
         "NSAP-IGNOAPS-IN-BENEFICIARY-01"
       ],
       "recall_at_k": 1.0,
@@ -1081,7 +1081,7 @@
       "retrieved_passage_ids": [
         "NSAP-IGNOAPS-IN-BENEFICIARY-01",
         "NSAP-IGNOAPS-IN-ELIGIBILITY-03",
-        "IGOAPSM-MH-ELIGIBILITY-01",
+        "IGNOAPS-MH-ELIGIBILITY-01",
         "SBSSPS-MH-ELIGIBILITY-01",
         "APY-IN-BENEFIT-01"
       ],
@@ -1099,7 +1099,7 @@
       "retrieved_passage_ids": [
         "APY-IN-ELIGIBILITY-02",
         "APY-IN-BENEFIT-01",
-        "IGOAPSM-MH-BENEFIT-01",
+        "IGNOAPS-MH-BENEFIT-01",
         "APY-IN-ELIGIBILITY-01",
         "NSAP-IGNOAPS-IN-ELIGIBILITY-03"
       ],
@@ -1146,11 +1146,11 @@
       "query": "pension for poor elderly people below poverty line",
       "query_language": "en",
       "relevant_passage_ids": [
-        "IGOAPSM-MH-ELIGIBILITY-01",
+        "IGNOAPS-MH-ELIGIBILITY-01",
         "NSAP-IGNOAPS-IN-BENEFICIARY-01"
       ],
       "retrieved_passage_ids": [
-        "IGOAPSM-MH-ELIGIBILITY-01",
+        "IGNOAPS-MH-ELIGIBILITY-01",
         "SBSSPS-MH-ELIGIBILITY-01",
         "IGNDPS-IN-ELIGIBILITY-06",
         "NSAP-IGNOAPS-IN-ELIGIBILITY-02",
@@ -1743,9 +1743,9 @@
         "PMKMDY-IN-ELIGIBILITY-01"
       ],
       "retrieved_passage_ids": [
-        "IGOAPSM-MH-ELIGIBILITY-02",
+        "IGNOAPS-MH-ELIGIBILITY-02",
         "PMKMDY-IN-BENEFICIARY-01",
-        "IGOAPSM-MH-ELIGIBILITY-03",
+        "IGNOAPS-MH-ELIGIBILITY-03",
         "NSAP-IGNOAPS-IN-ELIGIBILITY-01",
         "NSAP-IGNOAPS-IN-ELIGIBILITY-03"
       ],
@@ -2353,8 +2353,8 @@
         "SBSSPS-MH-BENEFIT-01"
       ],
       "retrieved_passage_ids": [
-        "IGOAPSM-MH-ELIGIBILITY-01",
-        "IGOAPSM-MH-BENEFIT-02",
+        "IGNOAPS-MH-ELIGIBILITY-01",
+        "IGNOAPS-MH-BENEFIT-02",
         "NSAP-IGNOAPS-IN-BENEFIT-01",
         "SBSSPS-MH-ELIGIBILITY-04",
         "EPS-IN-BENEFIT-19"
@@ -2370,11 +2370,11 @@
         "SBSSPS-MH-ELIGIBILITY-01"
       ],
       "retrieved_passage_ids": [
-        "IGOAPSM-MH-BENEFIT-02",
+        "IGNOAPS-MH-BENEFIT-02",
         "SBSSPS-MH-ELIGIBILITY-01",
-        "IGOAPSM-MH-BENEFIT-01",
+        "IGNOAPS-MH-BENEFIT-01",
         "SBSSPS-MH-APPLICATION-01",
-        "IGOAPSM-MH-ELIGIBILITY-01"
+        "IGNOAPS-MH-ELIGIBILITY-01"
       ],
       "recall_at_k": 1.0,
       "scheme_hit_at_k": true
@@ -2389,9 +2389,9 @@
       ],
       "retrieved_passage_ids": [
         "NSAP-IGNOAPS-IN-APPLICATION-05",
-        "IGOAPSM-MH-APPLICATION-04",
+        "IGNOAPS-MH-APPLICATION-04",
         "NSAP-IGNOAPS-IN-APPLICATION-02",
-        "IGOAPSM-MH-BENEFIT-02",
+        "IGNOAPS-MH-BENEFIT-02",
         "NSAP-IGNOAPS-IN-APPLICATION-03"
       ],
       "recall_at_k": 0.0,
@@ -2408,7 +2408,7 @@
         "SBSSPS-MH-DOCUMENTS-01",
         "IGNDPSM-MH-APPLICATION-03",
         "IGNWPSM-MH-APPLICATION-03",
-        "IGOAPSM-MH-APPLICATION-03",
+        "IGNOAPS-MH-APPLICATION-03",
         "AABYM-MH-APPLICATION-03"
       ],
       "recall_at_k": 1.0,
