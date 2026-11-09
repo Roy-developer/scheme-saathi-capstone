@@ -1,0 +1,37 @@
+{
+  "experiment_id": "E3",
+  "title": "Did the Reflexion lessons help?",
+  "status": "playbook_ready_paid_runs_pending",
+  "description": "Compare extraction exact-match rates on development check-split cases before and after frozen playbook 1.0.0. Include lesson-generation cost and any regressing case. Held-out extraction cases remain Role-5-only and are not in this repo.",
+  "controls": {
+    "playbook_path": "data/schemes/playbooks/1.0.0.json",
+    "playbook_version": "1.0.0",
+    "playbook_hash": "a60303d5a255b5abef4dfd896c8dae0bba6c16488cea4b8de0157c2f69ee1401",
+    "lesson_source": "development learn-split clauses only",
+    "measurement_set": "data/schemes/rule_extraction_cases_dev.json split=check",
+    "eval_set": "development_check_until_held_out_authorized"
+  },
+  "approved_lessons": [
+    {
+      "lesson_id": "3dae54216ec572a646f95287aec6b113f1d088c8f147032f690651dd542f1e32",
+      "tags": ["exclusion_clause"],
+      "reviewer_id": "Roy-developer",
+      "summary": "Excluded groups must be written as fact eq false, not true."
+    }
+  ],
+  "metrics": [
+    "exact_match_count_before",
+    "exact_match_count_after",
+    "improved_case_ids",
+    "regressed_case_ids",
+    "lesson_generation_cost",
+    "rejected_lesson_example"
+  ],
+  "commands": {
+    "inventory": "python scripts/evaluate_reflexion_playbook_dev.py",
+    "before": "python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --runs 3 --yes",
+    "after": "python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --playbook 1.0.0 --runs 3 --yes",
+    "compare": "python scripts/evaluate_reflexion_playbook_dev.py --before <before.json> --after <after.json>"
+  },
+  "blocker": "Paid OpenRouter evaluate runs and a protected held-out extraction set are still required for the final E3 claim. The current exclusion lesson will not apply to inclusion_clause check cases (IGNWPS/IGNOAPS)."
+}

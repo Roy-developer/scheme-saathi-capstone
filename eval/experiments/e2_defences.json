@@ -1,0 +1,20 @@
+{
+  "experiment_id": "E2",
+  "title": "Do the defences work?",
+  "status": "config_stub_not_runnable",
+  "description": "Run with defences off and on against the red-team suite and clean cases. Report attack success and legitimate-work false blocks.",
+  "controls": {
+    "defence_modes": ["off", "on"],
+    "attack_suite": "eval/red_team/attacks_v0.json",
+    "clean_set": "eval/development/personas_v1.json",
+    "isolation": "synthetic_evaluation_only_not_live_deployment"
+  },
+  "metrics": [
+    "attack_success_rate",
+    "false_block_rate",
+    "policy_violations",
+    "cost_per_case",
+    "errors_timeouts"
+  ],
+  "blocker": "Needs complete guardrails and a 30+ attack suite; attacks must not be authored by the defender alone."
+}
