@@ -160,7 +160,6 @@ class FactDefinition(StrictDataModel):
     question_reviewer: str | None = Field(default=None, max_length=150)
     questions_reviewed_at: date | None = None
     privacy: PrivacyPolicy
-    legacy_profile_field: str | None = Field(default=None, max_length=80)
 
     @model_validator(mode="before")
     @classmethod
@@ -275,10 +274,6 @@ class FactDefinition(StrictDataModel):
                 raise ValueError("Unsupported derived fact definition")
         elif self.derivation is not None:
             raise ValueError("A derivation requires declared input facts")
-        if self.legacy_profile_field is not None and not FACT_ID_PATTERN.fullmatch(
-            self.legacy_profile_field
-        ):
-            raise ValueError("Invalid legacy profile field")
         return self
 
     def validate_value(self, value: object) -> object:
@@ -347,13 +342,6 @@ class FactRegistry(StrictDataModel):
         if len(ids) != len(set(ids)):
             raise ValueError("Fact registry IDs must be unique")
         by_id = {definition.fact_id: definition for definition in self.definitions}
-        legacy_fields = [
-            item.legacy_profile_field
-            for item in self.definitions
-            if item.legacy_profile_field is not None
-        ]
-        if len(legacy_fields) != len(set(legacy_fields)):
-            raise ValueError("Legacy profile mappings must be unambiguous")
         for definition in self.definitions:
             for input_id in definition.derived_from:
                 if input_id not in by_id:

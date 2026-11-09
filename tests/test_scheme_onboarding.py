@@ -64,9 +64,6 @@ def before(live_copy: ProjectPaths) -> ProjectPaths:
     for bundle in bundles["bundles"]:
         bundle["registry_sha256"] = old_sha
     paths.bundle_registry.write_bytes(_json_like(bundles_raw, bundles))
-    paths.data_provider.write_bytes(
-        paths.data_provider.read_bytes().replace(new_sha.encode(), old_sha.encode())
-    )
 
     corpus_raw = paths.passages.read_bytes()
     corpus = json.loads(corpus_raw)
@@ -105,7 +102,6 @@ def test_onboard_rebuilds_the_hand_made_ignoaps_files_exactly(before: ProjectPat
         f"src/rules/packages/{PACKAGE}",
         "src/rules/bundle_registry.json",
         "src/rules/fact_registry.json",
-        "src/rules/data_provider.py",
         "data/schemes/passages.json",
         "data/schemes/rule_extraction_cases_dev.json",
     ):

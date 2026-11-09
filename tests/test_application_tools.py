@@ -1,5 +1,6 @@
 """Verify the synthetic document checklist and mock-portal approval gate."""
 
+import copy
 import asyncio
 import json
 import multiprocessing
@@ -839,9 +840,9 @@ def test_application_agent_rechecks_rules_before_writing(application_graph):
         journey_id = await _start_application_journey(graph)
         config = {"configurable": {"thread_id": str(journey_id)}}
         snapshot = await graph.aget_state(config)
-        await graph.aupdate_state(
-            config, {"profile": {**snapshot.values["profile"], "is_widow": False}}
-        )
+        typed = copy.deepcopy(snapshot.values["typed_facts"])
+        typed["facts"]["is_widow"]["value"] = False
+        await graph.aupdate_state(config, {"typed_facts": typed})
         with pytest.raises(ApplicationTaskError, match="no longer eligible"):
             await run_application_task(
                 graph, journey_id, "create_draft", _document_report()

@@ -1,4 +1,4 @@
-"""Localized questions for profile facts and deterministic answer reading."""
+"""Deterministic reading of answers to registered fact questions."""
 
 from dataclasses import dataclass
 from datetime import date, datetime
@@ -7,81 +7,8 @@ import re
 from typing import Literal
 
 from src.rules.facts import FactDefinition, FactRegistry
-from src.rules.models import BOOL_FACTS
 
 
-# One question per HouseholdProfile field. The picker returns a field name,
-# and intake looks up its question here.
-QUESTIONS: dict[str, str] = {
-    "date_of_birth": (
-        "What is your date of birth? For example 12 March 1981 or "
-        "12/03/1981."
-    ),
-    "application_date": (
-        "On what date are you applying? For example 30 October 2026."
-    ),
-    "is_widow": "Are you a widow?",
-    "bpl_card_shown": "Can you show a government BPL (Below Poverty Line) card?",
-    "landholding_family_in_state_records": (
-        "Does the farmer family have cultivable land in State/UT records?"
-    ),
-    "institutional_landholder": "Is the land held by an institution?",
-    "listed_public_office_member": (
-        "Does a family member hold or has held a listed public office, "
-        "such as minister, MP, MLA or mayor?"
-    ),
-    "excluded_government_employee_member": (
-        "Is a family member a serving or retired government employee "
-        "(other than the stated lower-grade exceptions)?"
-    ),
-    "pension_at_least_10000_excluding_stated_grades": (
-        "Does a family member receive a pension of Rs. 10,000 or more "
-        "per month?"
-    ),
-    "income_tax_paid_last_assessment_year": (
-        "Did a family member pay income tax in the last assessment year?"
-    ),
-    "registered_practicing_professional_member": (
-        "Is a family member a registered, practicing professional, such as "
-        "a doctor, engineer, lawyer or chartered accountant?"
-    ),
-    "nri_new_beneficiary": (
-        "Is this a new application from a farmer family that is NRI "
-        "(Non-Resident Indian)?"
-    ),
-}
-LOCALIZED_QUESTIONS: dict[str, dict[str, str]] = {
-    "hi": {
-        "date_of_birth": "आपकी जन्मतिथि क्या है? उदाहरण: 12 मार्च 1981 या 12/03/1981।",
-        "application_date": "आप किस तारीख को आवेदन कर रहे हैं?",
-        "is_widow": "क्या आवेदक विधवा हैं?",
-        "bpl_card_shown": "क्या आप सरकारी बीपीएल कार्ड दिखा सकते हैं?",
-        "landholding_family_in_state_records": "क्या किसान परिवार की खेती योग्य भूमि राज्य/केंद्रशासित प्रदेश के रिकॉर्ड में दर्ज है?",
-        "institutional_landholder": "क्या भूमि किसी संस्था के नाम पर है?",
-        "listed_public_office_member": "क्या परिवार का कोई सदस्य मंत्री, सांसद, विधायक या महापौर जैसे सूचीबद्ध पद पर है या रहा है?",
-        "excluded_government_employee_member": "क्या परिवार का कोई सदस्य निर्दिष्ट निम्न-श्रेणी अपवादों को छोड़कर सरकारी कर्मचारी है या रहा है?",
-        "pension_at_least_10000_excluding_stated_grades": "क्या परिवार के किसी सदस्य को हर महीने 10,000 रुपये या अधिक पेंशन मिलती है?",
-        "income_tax_paid_last_assessment_year": "क्या परिवार के किसी सदस्य ने पिछले आकलन वर्ष में आयकर दिया?",
-        "registered_practicing_professional_member": "क्या परिवार का कोई सदस्य पंजीकृत और कार्यरत डॉक्टर, इंजीनियर, वकील या चार्टर्ड अकाउंटेंट है?",
-        "nri_new_beneficiary": "क्या यह एनआरआई किसान परिवार का नया आवेदन है?",
-    },
-    "mr": {
-        "date_of_birth": "तुमची जन्मतारीख काय आहे? उदाहरण: 12 मार्च 1981 किंवा 12/03/1981.",
-        "application_date": "तुम्ही कोणत्या तारखेला अर्ज करत आहात?",
-        "is_widow": "अर्जदार विधवा आहेत का?",
-        "bpl_card_shown": "तुम्ही सरकारी बीपीएल कार्ड दाखवू शकता का?",
-        "landholding_family_in_state_records": "शेतकरी कुटुंबाची लागवडीयोग्य जमीन राज्य/केंद्रशासित प्रदेशाच्या नोंदीत आहे का?",
-        "institutional_landholder": "जमीन एखाद्या संस्थेच्या नावावर आहे का?",
-        "listed_public_office_member": "कुटुंबातील कोणी मंत्री, खासदार, आमदार किंवा महापौर यांसारख्या सूचीबद्ध सार्वजनिक पदावर आहे किंवा होते का?",
-        "excluded_government_employee_member": "निर्दिष्ट कनिष्ठ श्रेणी अपवाद वगळता कुटुंबातील कोणी सरकारी कर्मचारी आहे किंवा होते का?",
-        "pension_at_least_10000_excluding_stated_grades": "कुटुंबातील कोणाला दरमहा 10,000 रुपये किंवा अधिक पेन्शन मिळते का?",
-        "income_tax_paid_last_assessment_year": "कुटुंबातील कोणी मागील निर्धारण वर्षात आयकर भरला का?",
-        "registered_practicing_professional_member": "कुटुंबातील कोणी नोंदणीकृत व कार्यरत डॉक्टर, अभियंता, वकील किंवा चार्टर्ड अकाउंटंट आहे का?",
-        "nri_new_beneficiary": "हा अनिवासी भारतीय शेतकरी कुटुंबाचा नवीन अर्ज आहे का?",
-    },
-}
-
-# Hint added before a question when the reply could not be understood.
 YES_NO_HINTS = {
     "en": 'Please answer "yes", "no" or "I don\'t know".',
     "hi": 'कृपया "हाँ", "नहीं" या "मुझे नहीं पता" में उत्तर दें।',
@@ -176,14 +103,6 @@ class ParsedAnswer:
     kind: Literal["value", "unknown", "invalid"]
     value: object | None = None
     error: str | None = None
-
-
-def question_for(fact: str, locale: str = "en") -> str:
-    """Return the question to ask for a profile fact."""
-
-    if locale in LOCALIZED_QUESTIONS:
-        return LOCALIZED_QUESTIONS[locale][fact]
-    return QUESTIONS[fact]
 
 
 def registry_question_for(
@@ -351,16 +270,6 @@ def _bound_label(bound: str, locale: str) -> str:
     return labels[bound].get(locale, labels[bound]["en"])
 
 
-def fact_confirmation(
-    fact: str,
-    value: bool | str,
-    locale: str = "en",
-) -> str:
-    """Render a typed proposal for explicit confirmation in the chosen locale."""
-
-    return _confirmation_text(question_for(fact, locale), value, locale)
-
-
 def registered_fact_confirmation(
     definition: FactDefinition,
     value: bool | str,
@@ -460,65 +369,6 @@ def _parse_date(text: str) -> date | None:
     return None
 
 
-def parse_answer(fact: str, reply: str, locale: str = "en") -> ParsedAnswer:
-    """Turn a chat reply into a value for ``fact``.
-
-    Examples:
-        parse_answer("is_widow", "Yes")              -> value True
-        parse_answer("is_widow", "not sure")         -> unknown
-        parse_answer("is_widow", "maybe")            -> invalid
-        parse_answer("date_of_birth", "12/03/1981")  -> value 1981-03-12
-    """
-
-    text = _normalise(reply, locale)
-
-    # "I don't know" works for every kind of question.
-    if (
-        text in DONT_KNOW_WORDS
-        or text in LOCALIZED_UNKNOWN_WORDS.get(locale, frozenset())
-    ):
-        return ParsedAnswer(kind="unknown")
-
-    if fact in BOOL_FACTS:
-        if text in YES_WORDS | LOCALIZED_YES_WORDS.get(locale, frozenset()):
-            return ParsedAnswer(kind="value", value=True)
-        if text in NO_WORDS | LOCALIZED_NO_WORDS.get(locale, frozenset()):
-            return ParsedAnswer(kind="value", value=False)
-        return ParsedAnswer(
-            kind="invalid",
-            error=YES_NO_HINTS.get(locale, YES_NO_HINTS["en"]),
-        )
-
-    # The only non-yes/no facts are dates.
-    parsed_date = _parse_date(text)
-    if parsed_date is None:
-        return ParsedAnswer(
-            kind="invalid",
-            error=DATE_HINTS.get(locale, DATE_HINTS["en"]),
-        )
-    return ParsedAnswer(kind="value", value=parsed_date)
-
-
-def parse_interpreted_answer(
-    fact: str, value: bool | str, locale: str = "en"
-) -> ParsedAnswer:
-    """Validate an LLM proposal against the expected type for a profile fact."""
-
-    if fact in BOOL_FACTS:
-        if not isinstance(value, bool):
-            return ParsedAnswer(
-                kind="invalid",
-                error=YES_NO_HINTS.get(locale, YES_NO_HINTS["en"]),
-            )
-        return ParsedAnswer(kind="value", value=value)
-    if not isinstance(value, str):
-        return ParsedAnswer(
-            kind="invalid",
-            error=DATE_HINTS.get(locale, DATE_HINTS["en"]),
-        )
-    return parse_answer(fact, value, locale)
-
-
 def parse_interpreted_registered_answer(
     definition: FactDefinition, value: bool | str, locale: str = "en",
 ) -> ParsedAnswer:
@@ -554,19 +404,6 @@ def registered_direct_answer_question(
         "mr": "ठीक आहे. कृपया थेट उत्तर द्या:",
     }.get(locale, "Okay. Please answer directly:")
     return f"{prompt} {registry_question_for(definition, locale)}"
-
-
-def direct_answer_question(fact: str, locale: str = "en") -> str:
-    """Ask for a fact directly after the person declined a proposed value."""
-
-    prompt = {
-        "hi": "ठीक है। कृपया सीधे उत्तर दें:",
-        "mr": "ठीक आहे. कृपया थेट उत्तर द्या:",
-    }.get(locale, "Okay. Please answer directly:")
-    return (
-        f"{prompt} {question_for(fact, locale)} "
-        f"{parse_answer(fact, '', locale).error or ''}"
-    ).strip()
 
 
 def confirm_yes_or_no_question(locale: str = "en") -> str:

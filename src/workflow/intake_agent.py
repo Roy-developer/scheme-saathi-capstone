@@ -9,7 +9,6 @@ from pydantic import Field, StrictBool, StrictStr
 
 from src.mcp_servers.service_routing import ToolActor
 from src.rules.facts import FactRegistry, TypedFactStore
-from src.rules.models import HouseholdProfile
 from src.workflow.agent_runtime import (
     AgentActionError,
     AgentSchema,
@@ -17,10 +16,7 @@ from src.workflow.agent_runtime import (
     observation,
     run_agent,
 )
-from src.workflow.questions import (
-    parse_interpreted_answer,
-    parse_interpreted_registered_answer,
-)
+from src.workflow.questions import parse_interpreted_registered_answer
 
 
 class ReadFactsArguments(AgentSchema):
@@ -72,41 +68,6 @@ def _wire_value(value: object) -> object:
     """Return a proposal value in the form saved with the question."""
 
     return value.isoformat() if hasattr(value, "isoformat") else value
-
-
-async def propose_initial_profile_facts(
-    provider: BaseChatModel | None,
-    client: object,
-    actor: ToolActor,
-    journey_id: str,
-    scheme_id: str,
-    description: str,
-    profile: HouseholdProfile,
-    package_facts: tuple[str, ...],
-    locale: Literal["en", "hi", "mr"],
-    budget: Mapping[str, int] | None,
-    discovery_facts: tuple[str, ...] = (),
-) -> tuple[list[dict[str, object]], dict[str, int], list[dict[str, object]], str]:
-    """Interpret a description as proposals for ``HouseholdProfile`` fields."""
-
-    profile_values = profile.model_dump(mode="python")
-
-    def checked(fact_name: str, value: bool | str) -> object | None:
-        parsed = parse_interpreted_answer(fact_name, value, locale)
-        if parsed.kind != "value" or parsed.value is None:
-            return None
-        try:
-            HouseholdProfile.model_validate({**profile_values, fact_name: parsed.value})
-        except (ValueError, TypeError):
-            return None
-        return _wire_value(parsed.value)
-
-    return await _propose_facts(
-        provider, client, actor, scheme_id, description, package_facts, locale, budget,
-        discovery_facts,
-        is_confirmed=lambda fact_name: profile_values.get(fact_name) is not None,
-        checked=checked,
-    )
 
 
 async def propose_initial_registered_facts(
