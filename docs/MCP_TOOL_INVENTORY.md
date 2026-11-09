@@ -319,7 +319,7 @@ The portal is a small separate website that stands in for a government applicati
 
 ### Current status
 
-- The two pilot files under `data/schemes/document_checklists/` are currently **explicitly demo-only**.
+- The files under `data/schemes/document_checklists/` are currently **explicitly demo-only**.
 - The **document evidence corpus is empty.**
 - Using a checklist as "source-backed" (trusted) requires **human approval of the exact file contents**. Until that exists, the system **fails closed** and doesn't treat the checklists as trusted.
 

@@ -53,6 +53,10 @@ in the [Phase-wise implementation plan](PHASE_WISE_IMPLEMENTATION_PLAN.md).
 > they are not verified official requirements. The two pilot rule-package
 > pins in `src/rules/bundle_registry.json` are unchanged, and the fact
 > definitions, questions and privacy text are still **pending human review**.
+> *Update 2026-11-07:* the IGNWPS package pin changed (reviewer-approved evidence
+> and unit amendment), and all 13 fact **definitions** are now approved
+> (reviewer `Roy-developer`; registry re-pinned). Questions and privacy text
+> remain pending.
 > No novel scheme is approved or activated for normal use. A mock receipt is
 > not a government submission, benefit approval or payment.
 

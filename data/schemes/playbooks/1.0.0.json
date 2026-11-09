@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "lessons": [
+    {
+      "lesson_id": "3dae54216ec572a646f95287aec6b113f1d088c8f147032f690651dd542f1e32",
+      "instruction": "When a clause specifies categories of individuals who are ineligible, ensure the rule reflects that these individuals are not qualified by setting the value to false, rather than true.",
+      "when_to_apply": "Any clause that lists specific categories of individuals or groups who do not qualify for a benefit or scheme.",
+      "tags": [
+        "exclusion_clause"
+      ],
+      "reviewer_id": "Roy-developer",
+      "review_reason": "Clear and general: an excluded group is written as false, not true."
+    }
+  ],
+  "content_hash": "a60303d5a255b5abef4dfd896c8dae0bba6c16488cea4b8de0157c2f69ee1401",
+  "created_at": "2026-11-07T17:35:01.669970Z"
+}

@@ -740,7 +740,11 @@ bad data. The MCP services use one cached provider each.
 | `legacy_compatibility` | The two already-deployed pilot bundles, and nothing else |
 | `development_only` | A bundle for tests; refused unless the caller passes `allow_development=True` |
 
-There is **no "approved" state yet**. Because `legacy_compatibility` permits a
+> **Update 2026-11-08:** a third state, `approved`, now exists. It requires a
+> human-approved rule package and approved definitions for every fact in the
+> bundle. `IGNOAPS-MH` is the first scheme to use it.
+
+At the time of Phase 1 there was **no "approved" state**. Because `legacy_compatibility` permits a
 small legacy exception (such as the unit-less age rule), a bundle cannot just
 *write* that label
 on itself. `data_provider.py` keeps a table, `_LEGACY_PILOT_BINDINGS`, that
@@ -827,6 +831,9 @@ refused, and that is correct.
 
 ### What a future approved scheme will need
 
+> **Update 2026-11-08:** the `approved` state and an `onboard` command now exist.
+> For the current process, see `docs/RULE_EXTRACTION_REFLEXION_CODE_WALKTHROUGH.md`, section "From official PDF to live app, end to end".
+
 Not built yet: a reviewed, approved activation state and a publish step
 (Phase 6), with human review of the facts, questions and privacy notes. When it
 exists it will be a **new** state, added deliberately. It will not reuse the
@@ -838,6 +845,10 @@ exists it will be a **new** state, added deliberately. It will not reuse the
   `question_review_status` and privacy `review_status` set to `pending`. That
   is **not** human policy approval, and it is **not** permission to collect or
   disclose a new field.
+  *Update 2026-11-07:* all 13 fact **definitions** are now approved
+  (`definition_review_status: approved`, reviewer `Roy-developer`). Questions
+  and privacy text are still `pending`. The registry hash was re-pinned in
+  `src/rules/bundle_registry.json` and `src/rules/data_provider.py`.
 - **No dynamic questions or screens.** The registry holds question copy in
   three languages, but the intake, question picker, chat and UI are still the
   fixed Phase 1/2 flow. Asking for new facts is Phase 2.

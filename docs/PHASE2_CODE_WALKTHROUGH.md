@@ -1251,7 +1251,8 @@ How it is loaded matters:
 - `SchemeBundle.activation_state` accepts only `legacy_compatibility` or
   `development_only`. There is no value for "approved novel bundle" yet. A novel
   bundle cannot claim `legacy_compatibility`, because `_validate_bundle` compares
-  it to the exact pinned files and hashes of the two pilots.
+  it to the exact pinned files and hashes of the two pilots. (Update 2026-11-08:
+  an `approved` state now exists; see `_validate_bundle`.)
 
 So this is a **proof of the mechanism** through the real journey graph, real
 `TestClient` HTTP routes, an in-memory LangGraph checkpointer (`MemorySaver`) and
@@ -1958,8 +1959,8 @@ declaration.
   wording. Numeric minimum/maximum labels are localized, but have not received
   independent language review.
 - **Source, privacy and policy review** of any new fact, and an **approved
-  novel bundle** state. Today a new bundle can only be `development_only` and
-  is refused by the normal loader.
+  novel bundle** state. (Update 2026-11-08: the `approved` state now exists and
+  `IGNOAPS-MH` uses it; question and privacy reviews are still pending.)
 - **Manual browser and visual check** of the number, decimal, date, choice and
   text widgets.
 - **Model help for registry facts**: not built; it needs an approved privacy

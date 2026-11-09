@@ -105,6 +105,7 @@ from src.workflow.document_agent import (
     run_document_specialist,
 )
 from src.workflow.questions import (
+    unknown_answer_label,
     ParsedAnswer,
     confirm_yes_or_no_question,
     direct_answer_question,
@@ -2742,7 +2743,12 @@ async def resume_journey(
             answer["error"] = parsed.error
         resume_payload: object = {
             "answer": answer,
-            "safe_text": mask_sensitive_text(message),
+            # The buttons send the code "skip"; the chat shows what was chosen.
+            "safe_text": (
+                unknown_answer_label(saved.get("locale", "en"))
+                if parsed.kind == "unknown"
+                else mask_sensitive_text(message)
+            ),
         }
     else:
         resume_payload = mask_sensitive_text(message)

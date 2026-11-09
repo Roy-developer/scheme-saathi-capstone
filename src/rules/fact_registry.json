@@ -7,9 +7,12 @@
       "version": "1.0.0",
       "meaning": "Completed age in years on the application date.",
       "source_refs": [
-        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/"
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "person",
       "value_type": "integer",
       "unit": "years",
@@ -50,9 +53,12 @@
       "version": "1.0.0",
       "meaning": "On what date are you applying? For example 30 October 2026.",
       "source_refs": [
-        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/"
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "person",
       "value_type": "date",
       "unit": null,
@@ -92,7 +98,9 @@
       "source_refs": [
         "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -130,9 +138,12 @@
       "version": "1.0.0",
       "meaning": "What is your date of birth? For example 12 March 1981 or 12/03/1981.",
       "source_refs": [
-        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/"
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "person",
       "value_type": "date",
       "unit": null,
@@ -172,7 +183,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -212,7 +225,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -252,7 +267,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -292,7 +309,9 @@
       "source_refs": [
         "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "person",
       "value_type": "boolean",
       "unit": null,
@@ -332,7 +351,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -372,7 +393,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -406,13 +429,60 @@
       "legacy_profile_field": "listed_public_office_member"
     },
     {
+      "fact_id": "name_on_bpl_list",
+      "version": "1.0.0",
+      "meaning": "Is the applicant's name on the government Below Poverty Line (BPL) list?",
+      "source_refs": [
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/"
+      ],
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-08",
+      "scope": "person",
+      "value_type": "boolean",
+      "unit": null,
+      "period": null,
+      "minimum": null,
+      "maximum": null,
+      "choices": [],
+      "max_length": null,
+      "display_only": false,
+      "derived_from": [],
+      "derivation": null,
+      "questions": {
+        "en": {
+          "text": "Is your name on the government BPL (Below Poverty Line) list?",
+          "help_text": "If you are not sure, answer 'don't know'."
+        },
+        "hi": {
+          "text": "क्या आपका नाम सरकारी बीपीएल (गरीबी रेखा से नीचे) सूची में है?",
+          "help_text": "अगर आपको पक्का नहीं पता, तो 'पता नहीं' चुनें।"
+        },
+        "mr": {
+          "text": "तुमचे नाव सरकारी बीपीएल (दारिद्र्यरेषेखालील) यादीत आहे का?",
+          "help_text": "तुम्हाला खात्री नसेल, तर 'माहीत नाही' निवडा."
+        }
+      },
+      "question_review_status": "pending",
+      "privacy": {
+        "policy_id": "synthetic-mock-minimum-data",
+        "version": "1.0.0",
+        "purpose": "Use only to evaluate the synthetic mock scheme rules.",
+        "sensitivity": "sensitive",
+        "review_status": "pending"
+      },
+      "legacy_profile_field": null
+    },
+    {
       "fact_id": "nri_new_beneficiary",
       "version": "1.0.0",
       "meaning": "Is this a new application from a farmer family that is NRI (Non-Resident Indian)?",
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -452,7 +522,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": "INR",
@@ -492,7 +564,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
