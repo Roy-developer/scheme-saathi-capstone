@@ -7,7 +7,7 @@ from typing import Literal
 
 from pydantic import Field, model_validator
 
-from src.rules.facts import FactRegistry, StrictDataModel, TypedFactStore
+from src.rules.facts import FactRegistry, StrictDataModel, HouseholdProfile
 
 
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
@@ -132,7 +132,7 @@ def document_fact_allowlist(
 def document_fact_values(
     scheme_id: str,
     registry: FactRegistry,
-    store: TypedFactStore,
+    store: HouseholdProfile,
     bundle: SchemeBundle | None = None,
 ) -> dict[str, object | None]:
     """Resolve only authorized raw and derived document facts from a trusted store.

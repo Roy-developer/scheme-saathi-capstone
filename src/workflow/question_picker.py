@@ -8,12 +8,12 @@ from collections import Counter
 from collections.abc import Sequence
 
 from src.api.eligibility import evaluate_mock_eligibility
-from src.rules.facts import FactRegistry, TypedFactStore
+from src.rules.facts import FactRegistry, HouseholdProfile
 from src.rules.models import RulePackage
 
 
 def pick_next_registered_fact(
-    store: TypedFactStore,
+    store: HouseholdProfile,
     package: RulePackage,
     registry: FactRegistry,
     skipped_facts: frozenset[str] = frozenset(),
@@ -31,7 +31,7 @@ def pick_next_registered_fact(
 
 
 def pick_shared_registered_fact(
-    store: TypedFactStore,
+    store: HouseholdProfile,
     packages: Sequence[RulePackage],
     registry: FactRegistry,
     skipped_facts: frozenset[str] = frozenset(),

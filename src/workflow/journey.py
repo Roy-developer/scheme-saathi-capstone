@@ -55,7 +55,7 @@ from src.rules.bundles import SchemeBundle
 from src.rules.bundles import bundle_fingerprint
 from src.rules.facts import (
     FactDefinition,
-    FactRegistry, FactState, TypedFactStore, decode_wire_value, encode_wire_value,
+    FactRegistry, FactState, HouseholdProfile, decode_wire_value, encode_wire_value,
 )
 from src.mcp_servers.rule_data import get_active_rule_data
 from src.rules.models import RulePackage
@@ -430,7 +430,7 @@ MODE_ACKNOWLEDGEMENTS: dict[str, dict[str, str]] = {
 async def _evaluate_with_mcp(
     client: Client,
     scheme_id: str,
-    profile: TypedFactStore,
+    profile: HouseholdProfile,
 ) -> EligibilityResponse:
     """Default eligibility tool: ask the MCP server's rule engine."""
 
@@ -489,7 +489,7 @@ def build_journey_graph(
         [Client, str], Awaitable[list[SchemePassage]]
     ] = _search_with_mcp,
     eligibility_tool: Callable[
-        [Client, str, TypedFactStore],
+        [Client, str, HouseholdProfile],
         Awaitable[EligibilityResponse],
     ] = _evaluate_with_mcp,
     query_rewriter: Callable[[str], Awaitable[str]] = rewrite_scheme_query,
@@ -618,21 +618,21 @@ def build_journey_graph(
              "dependency_version": state.get("dependency_version", 0)},
         )
 
-    def restore_typed_store(data: object) -> TypedFactStore:
+    def restore_typed_store(data: object) -> HouseholdProfile:
         """Restore checkpoint JSON without allowing JSON strings to coerce types."""
 
         if fact_registry is None:
             raise ValueError("A fact registry is required for typed intake")
         if not isinstance(data, dict):
-            return TypedFactStore(
+            return HouseholdProfile(
              registry_version=fact_registry.registry_version, facts={}
             )
-        return TypedFactStore.from_wire(data, fact_registry)
+        return HouseholdProfile.from_wire(data, fact_registry)
 
     def validate_registered_store(
-        store: TypedFactStore,
+        store: HouseholdProfile,
         candidate_ids: list[str],
-    ) -> TypedFactStore:
+    ) -> HouseholdProfile:
         """Check a proposed store; cross-fact checks live in the store itself."""
 
         return store.validate_against(fact_registry)
@@ -754,7 +754,7 @@ def build_journey_graph(
         store = None
         if not invalid:
             try:
-                store = TypedFactStore.from_answers(
+                store = HouseholdProfile.from_answers(
                     {fact_id: value for fact_id, value in answers.items() if fact_id in allowed},
                     fact_registry,
                 )
@@ -790,7 +790,7 @@ def build_journey_graph(
         """Return whether one supplied answer fits its registered fact."""
 
         try:
-            TypedFactStore.from_answers({fact_id: value}, fact_registry)
+            HouseholdProfile.from_answers({fact_id: value}, fact_registry)
         except (KeyError, TypeError, ValueError):
             return False
         return True
@@ -818,7 +818,7 @@ def build_journey_graph(
             facts = dict(store.facts)
             # Answers sent with the request; later steps use the store alone.
             if state.get("profile") and not state.get("typed_facts"):
-                supplied = TypedFactStore.from_answers(state["profile"], fact_registry)
+                supplied = HouseholdProfile.from_answers(state["profile"], fact_registry)
                 # A household's answers can cover more than these schemes use;
                 # keeping them lets a later correction discover other schemes.
                 for fact_id, fact in supplied.facts.items():
@@ -851,7 +851,7 @@ def build_journey_graph(
         # People apply "today"; asking them for it would be odd.
         if "application_date" in allowed_facts and "application_date" not in store.facts:
             application_date = fact_registry.get("application_date")
-            store = TypedFactStore(
+            store = HouseholdProfile(
                 registry_version=fact_registry.registry_version,
                 facts={**store.facts, "application_date": FactState(
                     status="known",
@@ -938,7 +938,7 @@ def build_journey_graph(
 
         def with_fact(fact_id: str, fact_state: FactState) -> None:
             nonlocal store
-            store = TypedFactStore(
+            store = HouseholdProfile(
                 registry_version=fact_registry.registry_version,
                 facts={**store.facts, fact_id: fact_state},
             ).validate_against(fact_registry)
@@ -2272,12 +2272,12 @@ async def _begin_profile_change(
 
 
 def _replace_registered_fact(
-    store: TypedFactStore,
+    store: HouseholdProfile,
     registry: FactRegistry,
     fact_id: str,
     value: object,
     status: Literal["known", "declined"],
-) -> TypedFactStore:
+) -> HouseholdProfile:
     """Validate a proposed answer together with all previously confirmed facts."""
 
     facts = dict(store.facts)
@@ -2287,7 +2287,7 @@ def _replace_registered_fact(
         provenance="user_reported" if status == "known" else None,
         definition_version=registry.get(fact_id).version,
     )
-    return TypedFactStore(
+    return HouseholdProfile(
         registry_version=store.registry_version, facts=facts
     ).validate_against(registry)
 
@@ -2554,7 +2554,7 @@ async def resume_journey(
     if not confirming and parsed.kind in {"value", "unknown"}:
         try:
             proposed = _replace_registered_fact(
-                TypedFactStore.from_wire(saved.get("typed_facts"), registry),
+                HouseholdProfile.from_wire(saved.get("typed_facts"), registry),
                 registry, pending_fact, parsed.value,
                 "known" if parsed.kind == "value" else "declined",
             )
@@ -2622,7 +2622,7 @@ async def correct_journey_answer(
     locale = values.get("locale", "en")
     registry = getattr(graph, "fact_registry", None)
     typed_data = values.get("typed_facts")
-    store = TypedFactStore.from_wire(typed_data, registry)
+    store = HouseholdProfile.from_wire(typed_data, registry)
     saved_fact = store.facts.get(correction.fact_name)
     if saved_fact is None or saved_fact.status not in {"known", "declined"}:
         raise ValueError("Only a previously answered fact can be corrected")

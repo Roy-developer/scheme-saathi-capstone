@@ -8,7 +8,7 @@ from langchain_core.tools import tool
 from pydantic import Field, StrictBool, StrictStr
 
 from src.mcp_servers.service_routing import ToolActor
-from src.rules.facts import FactRegistry, TypedFactStore
+from src.rules.facts import FactRegistry, HouseholdProfile
 from src.workflow.agent_runtime import (
     AgentActionError,
     AgentSchema,
@@ -76,7 +76,7 @@ async def propose_initial_registered_facts(
     actor: ToolActor,
     scheme_id: str,
     description: str,
-    store: TypedFactStore,
+    store: HouseholdProfile,
     registry: FactRegistry,
     package_facts: tuple[str, ...],
     locale: Literal["en", "hi", "mr"],

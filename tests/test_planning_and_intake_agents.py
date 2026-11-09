@@ -16,15 +16,15 @@ from pydantic import Field
 from src.api.eligibility import EligibilityResponse, evaluate_mock_eligibility
 from src.rules.data_provider import RulePackageProvider
 from src.rules.data_provider import RulePackageProvider
-from src.rules.facts import TypedFactStore
+from src.rules.facts import HouseholdProfile
 
 _REGISTRY = RulePackageProvider().registry
 
 
-def HouseholdProfile(**facts) -> TypedFactStore:
+def household_profile(**facts) -> HouseholdProfile:
     """Confirmed answers for a test, keyed by fact ID."""
 
-    return TypedFactStore.from_answers(facts, _REGISTRY)
+    return HouseholdProfile.from_answers(facts, _REGISTRY)
 from fake_chat_model import FakeChatModel, ModelDecision
 from langchain_core.tools import tool
 from src.workflow.agent_runtime import (
@@ -375,7 +375,7 @@ def test_react_intake_observes_allowed_tool_then_confirms_each_fact(caplog):
 
         journey = await resume_journey(graph, journey.conversation_id, "yes")
         expected = evaluate_mock_eligibility(
-            HouseholdProfile(
+            household_profile(
                 date_of_birth=date(1984, 5, 1),
                 application_date=date(2026, 11, 4),
                 is_widow=True,
@@ -1050,7 +1050,7 @@ def test_intake_reads_required_facts_from_the_real_rule_engine_server():
         async with Client(rule_engine_server) as client:
             return await propose_initial_registered_facts(
                 provider, client, "intake", "IGNWPS-MH", "I am a widow.",
-                HouseholdProfile(), _REGISTRY, package.required_facts, "en", None,
+                household_profile(), _REGISTRY, package.required_facts, "en", None,
             )
 
     _proposals, _budget, trace, status = asyncio.run(scenario())
