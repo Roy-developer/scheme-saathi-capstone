@@ -28,7 +28,7 @@
         "IGNWPSM-MH-BENEFIT-03",
         "IGNWPS-MH-BENEFIT-01",
         "IGNDPSM-MH-BENEFIT-03",
-        "IGOAPSM-MH-BENEFIT-03",
+        "IGNOAPS-MH-BENEFIT-03",
         "EPS-IN-BENEFIT-19"
       ],
       "recall_at_k": 1.0,
@@ -76,10 +76,10 @@
         "IGNWPS-MH-ELIGIBILITY-01"
       ],
       "retrieved_passage_ids": [
-        "IGOAPSM-MH-ELIGIBILITY-01",
+        "IGNOAPS-MH-ELIGIBILITY-01",
         "IGNWPS-IN-ELIGIBILITY-02",
         "IGNWPS-IN-BENEFICIARY-01",
-        "IGOAPSM-MH-BENEFIT-02",
+        "IGNOAPS-MH-BENEFIT-02",
         "IGNWPSM-MH-ELIGIBILITY-03"
       ],
       "recall_at_k": 0.0,
@@ -182,7 +182,7 @@
         "IGNWPS-MH-APPLICATION-01",
         "IGNDPSM-MH-APPLICATION-01",
         "IGNWPSM-MH-APPLICATION-01",
-        "IGOAPSM-MH-APPLICATION-01"
+        "IGNOAPS-MH-APPLICATION-01"
       ],
       "recall_at_k": 1.0,
       "scheme_hit_at_k": true
@@ -232,7 +232,7 @@
         "IGNDPS-IN-ELIGIBILITY-06",
         "IGNWPSM-MH-ELIGIBILITY-01",
         "NSAP-IGNOAPS-IN-ELIGIBILITY-02",
-        "IGOAPSM-MH-ELIGIBILITY-01",
+        "IGNOAPS-MH-ELIGIBILITY-01",
         "IGNWPS-IN-ELIGIBILITY-02"
       ],
       "recall_at_k": 0.0,
@@ -246,10 +246,10 @@
         "IGNWPS-MH-ELIGIBILITY-01"
       ],
       "retrieved_passage_ids": [
-        "IGOAPSM-MH-BENEFIT-01",
+        "IGNOAPS-MH-BENEFIT-01",
         "IGNWPS-IN-ELIGIBILITY-01",
         "IGNWPSM-MH-ELIGIBILITY-01",
-        "IGOAPSM-MH-BENEFIT-02",
+        "IGNOAPS-MH-BENEFIT-02",
         "IGNWPSM-MH-ELIGIBILITY-03"
       ],
       "recall_at_k": 0.0,

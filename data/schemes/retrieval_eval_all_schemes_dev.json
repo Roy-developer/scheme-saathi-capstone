@@ -273,24 +273,24 @@
       ]
     },
     {
-      "query_id": "IGOAPSM-ALL-001",
+      "query_id": "IGNOAPS-ALL-001",
       "query": "What old age pension does the Maharashtra state add under Shravanbal Seva?",
       "relevant_passage_ids": [
-        "IGOAPSM-MH-BENEFIT-02"
+        "IGNOAPS-MH-BENEFIT-02"
       ]
     },
     {
-      "query_id": "IGOAPSM-ALL-002",
+      "query_id": "IGNOAPS-ALL-002",
       "query": "What age and poverty criteria apply to the old age pension in Maharashtra?",
       "relevant_passage_ids": [
-        "IGOAPSM-MH-ELIGIBILITY-01"
+        "IGNOAPS-MH-ELIGIBILITY-01"
       ]
     },
     {
-      "query_id": "IGOAPSM-ALL-003",
+      "query_id": "IGNOAPS-ALL-003",
       "query": "How much central old age pension is paid to people aged 80 and above in Maharashtra?",
       "relevant_passage_ids": [
-        "IGOAPSM-MH-BENEFIT-01"
+        "IGNOAPS-MH-BENEFIT-01"
       ]
     },
     {
@@ -464,7 +464,7 @@
       "query_id": "CROSS-ALL-002",
       "query": "pension for poor elderly people below poverty line",
       "relevant_passage_ids": [
-        "IGOAPSM-MH-ELIGIBILITY-01",
+        "IGNOAPS-MH-ELIGIBILITY-01",
         "NSAP-IGNOAPS-IN-BENEFICIARY-01"
       ]
     },
