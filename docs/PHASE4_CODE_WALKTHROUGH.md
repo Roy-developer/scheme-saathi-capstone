@@ -1,5 +1,11 @@
 # Phase 4 code walkthrough: documents, an exact draft and a human decision
 
+> **Update 2026-11-09:** the legacy path described in this guide has been removed.
+> IGNWPS and PM-KISAN now use the registry path like every other scheme, so
+> `HouseholdProfile`, `legacy_compatibility`, `legacy_profile_mapping` and the
+> pinned pilot list no longer exist. Sections below are kept as the history of
+> how the project got here.
+
 This guide explains the **current local Phase 4 code** in plain English. It
 starts after eligibility, follows a synthetic document checklist into a saved
 draft, and shows why approving one exact draft must never approve a different

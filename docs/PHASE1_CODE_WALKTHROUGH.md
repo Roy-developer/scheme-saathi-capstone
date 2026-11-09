@@ -1,5 +1,11 @@
 # Phase 1 code walkthrough: one path for every scheme
 
+> **Update 2026-11-09:** the legacy path described in this guide has been removed.
+> IGNWPS and PM-KISAN now use the registry path like every other scheme, so
+> `HouseholdProfile`, `legacy_compatibility`, `legacy_profile_mapping` and the
+> pinned pilot list no longer exist. Sections below are kept as the history of
+> how the project got here.
+
 This guide explains what Phase 1 built, in plain English. It is written for a
 new developer who has not seen this code before. It follows one request from
 the screen to the rule engine and back. It also lists every edge case Phase 1

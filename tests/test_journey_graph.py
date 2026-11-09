@@ -700,7 +700,7 @@ def test_impossible_date_is_rejected_and_asked_again():
 
     assert responses[2].pending_fact == "date_of_birth"
     assert "date of birth cannot be after application date" in (
-        responses[2].question
+        responses[2].question.lower()
     )
 
 

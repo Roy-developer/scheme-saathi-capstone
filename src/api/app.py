@@ -40,7 +40,6 @@ from src.api.scheme_search import SchemePassage
 from src.documents.forms import build_form_fields, load_mock_form_snapshot
 from src.rules.facts import TypedFactStore
 from src.rules.bundles import bundle_fingerprint
-from src.rules.models import HouseholdProfile
 # This adapter calls the MCP tool and translates failures for the API layer.
 from src.observability.metrics import (
     metrics_response,
@@ -138,10 +137,8 @@ def _confirmed_form_values(
     if typed_facts is None:
         bundle = request.app.state.rule_bundles.get(scheme_id)
         facts = {}
-        for fact_id, profile_field in (
-            bundle.legacy_profile_mapping.items() if bundle else ()
-        ):
-            value = (profile or {}).get(profile_field)
+        for fact_id in (bundle.fact_ids if bundle else ()):
+            value = (profile or {}).get(fact_id)
             facts[fact_id] = (
                 request.app.state.fact_registry.get(fact_id).validate_value(value)
                 if value is not None
@@ -498,10 +495,15 @@ async def evaluate(
         raise HTTPException(status_code=404, detail="Unknown scheme")
     bundle = http_request.app.state.rule_bundles[scheme_id]
     try:
-        if not set(eligibility_request) <= set(bundle.fact_ids):
-            raise ValueError("The request names a fact outside this scheme.")
-        answers = TypedFactStore.from_answers(
+        TypedFactStore.from_answers(
             eligibility_request, http_request.app.state.fact_registry,
+        )
+        answers = TypedFactStore.from_answers(
+            {
+                fact_id: value for fact_id, value in eligibility_request.items()
+                if fact_id in bundle.fact_ids
+            },
+            http_request.app.state.fact_registry,
         )
     except (KeyError, TypeError, ValueError) as error:
         raise HTTPException(

@@ -1,5 +1,11 @@
 # Phase 2 code walkthrough: a supervisor and a chat that asks questions
 
+> **Update 2026-11-09:** the legacy path described in this guide has been removed.
+> IGNWPS and PM-KISAN now use the registry path like every other scheme, so
+> `HouseholdProfile`, `legacy_compatibility`, `legacy_profile_mapping` and the
+> pinned pilot list no longer exist. Sections below are kept as the history of
+> how the project got here.
+
 This guide explains what Phase 2 built, in plain English. It is written for a
 new developer who has not seen this code before, and who might want to build
 Phase 2 again from scratch. It follows one conversation from the chat box to

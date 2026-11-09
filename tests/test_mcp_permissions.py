@@ -19,6 +19,8 @@ from src.mcp_servers.schemes_kb_server import mcp as kb_server
 from src.mcp_servers.service_routing import SERVICE_TOOLS, ServiceClientRouter
 from src.mcp_servers.tools import applications
 from src.portal.app import app as portal_app
+from src.rules.data_provider import RulePackageProvider
+from src.rules.facts import TypedFactStore
 from src.workflow.errors import MCPToolError
 
 
@@ -158,7 +160,10 @@ def test_every_inventory_tool_succeeds_via_mcp_and_http_portal(monkeypatch) -> N
 
                     if service_name == "rule-engine":
                         verdict = await invoke("evaluate_eligibility", {
-                            "scheme_id": "IGNWPS-MH", "profile": profile,
+                            "scheme_id": "IGNWPS-MH",
+                            "profile": TypedFactStore.from_answers(
+                                profile, RulePackageProvider().registry,
+                            ).to_wire(),
                         })
                         assert verdict["result"] == "eligible"
                         await invoke("required_facts", {"scheme_id": "IGNWPS-MH"})

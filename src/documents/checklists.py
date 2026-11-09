@@ -176,10 +176,7 @@ class DocumentChecklist(StrictModel):
                         bundle = get_active_rule_data().get_bundle(self.scheme_id)
                     except KeyError as error:
                         raise ValueError("Checklist requires an active scheme bundle.") from error
-                if not any(
-                    fact_id in allowed and field == condition.field
-                    for fact_id, field in bundle.legacy_profile_mapping.items()
-                ):
+                if condition.field not in allowed:
                     raise ValueError("Checklist condition is outside its scheme bundle.")
                 continue
             if not isinstance(condition, RegisteredFactCondition):
