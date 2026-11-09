@@ -83,6 +83,10 @@ from src.workflow.conversation_budget import (
     CURRENT_BUDGET, ConversationBudget, attempted_facts as durable_attempted_facts,
     durable_counters, reserve_counters, reserve_fact,
 )
+from src.workflow.household_memory import (
+    load_household,
+    normalize_return_code,
+)
 from src.workflow.intake import (
     AnswerInterpretation,
     IntakeAgentError,
@@ -116,6 +120,7 @@ from src.workflow.questions import (
     parse_registered_answer,
     registered_question_details,
     registry_question_for,
+    UNCLEAR_REPLY_PREFIX,
 )
 from src.workflow.scheme_search import search_scheme_passages
 from src.workflow.state import (
@@ -138,6 +143,7 @@ from src.workflow.supervisor import (
 
 ANSWER_INTERPRETATION_CONFIDENCE = 0.85
 MAX_CANDIDATE_SCHEMES = 20
+MAX_INTERPRETER_CONTEXT = 3
 SEARCH_PASSAGE_LIMIT = MAX_CANDIDATE_SCHEMES
 
 
@@ -173,6 +179,7 @@ class JourneyRequest(BaseModel):
     # CSC-assisted sessions require an explicit declaration that the citizen
     # is present; an operator cannot supply this confirmation on their behalf.
     citizen_present: bool = False
+    return_code: str | None = None
     # A visible request limit; do not silently discard excess candidates.
     candidate_scheme_ids: list[str] = Field(
         default_factory=list,
@@ -313,6 +320,8 @@ class JourneyState(TypedDict, total=False):
     pending_confirmation_source: str
     pending_interpreted_value: bool | str | None
     llm_attempted_facts: list[str]
+    interpreter_context: list[str]
+    return_code: str | None
     profile_proposals: list[dict[str, Any]]
     initial_description_processed: bool
     agent_budget: dict[str, int]
@@ -389,6 +398,7 @@ class JourneyResponse(BaseModel):
     discovery_notices: list[str] = Field(default_factory=list)
     discovery_events: list[DiscoveryEvent] = Field(default_factory=list)
     discovery_messages: list[str] = Field(default_factory=list)
+    return_code: str | None = None
     search_calls: int = 0
     unprocessed_candidate_ids: list[str] = Field(default_factory=list)
 
@@ -869,6 +879,7 @@ def build_journey_graph(
         trace_events: list[dict[str, Any]] = []
         react_status = state.get("react_status", "deterministic")
         attempted = durable_attempted_facts(state.get("llm_attempted_facts") or [])
+        interp_ctx: list[str] = list(state.get("interpreter_context") or [])
         proposals = list(state.get("profile_proposals") or [])
 
         def progress() -> dict[str, Any]:
@@ -879,6 +890,7 @@ def build_journey_graph(
                 "typed_facts": store.to_wire(fact_registry),
                 "skipped_facts": sorted(skipped),
                 "llm_attempted_facts": sorted(attempted),
+                "interpreter_context": interp_ctx[-MAX_INTERPRETER_CONTEXT:],
                 "profile_proposals": proposals,
                 "profile_description": None,
                 "initial_description_processed": True,
@@ -982,6 +994,8 @@ def build_journey_graph(
                 ),
             )
             trace_events.extend(description_trace)
+            if react_status == "model_assisted":
+                interp_ctx.append(f"description: {description}")
 
         pending_fact = state.get("pending_fact")
         pending_registered_answer = state.get("pending_registered_answer")
@@ -1053,7 +1067,14 @@ def build_journey_graph(
                             ),
                             input_text=f"{pending_fact}\n{question}\n{reply}",
                             budget=agent_budget,
-                            callback=lambda: answer_interpreter(pending_fact, question, reply),
+                            callback=lambda: (
+                                answer_interpreter(
+                                    pending_fact, question, reply,
+                                    prior_exchanges=interp_ctx[-MAX_INTERPRETER_CONTEXT:],
+                                )
+                                if answer_interpreter is interpret_free_text_answer
+                                else answer_interpreter(pending_fact, question, reply)
+                            ),
                             failure_type=IntakeAgentError,
                         )
                         trace_events.extend(call_trace)
@@ -1061,6 +1082,7 @@ def build_journey_graph(
                             "model_assisted" if call_status == "model_assisted"
                             else "deterministic_fallback"
                         )
+                        interp_ctx.append(f"Q({pending_fact}): {question} → {reply}")
                     confident = (
                         interpretation is not None
                         and interpretation.confidence >= ANSWER_INTERPRETATION_CONFIDENCE
@@ -1090,12 +1112,13 @@ def build_journey_graph(
                                     "answer_interpretation",
                                 )
                 if pending_fact not in skipped:
+                    prefix = UNCLEAR_REPLY_PREFIX.get(locale, UNCLEAR_REPLY_PREFIX["en"])
                     error = str(pending_registered_answer.get(
                         "error", "Please provide an answer in the registered format.",
                     ))
                     return ask_directly(
                         definition,
-                        f"{error} {registry_question_for(definition, locale)}",
+                        f"{prefix} {error} {registry_question_for(definition, locale)}",
                     )
             elif answer_kind == "unknown":
                 record_not_known(definition)
@@ -2228,6 +2251,7 @@ def _to_response(
             discovery_message(code, values.get("locale", "en"))
             for code in values.get("discovery_notices", [])
         ],
+        return_code=values.get("return_code"),
         search_calls=values.get("search_calls", 0),
         unprocessed_candidate_ids=values.get("unprocessed_candidate_ids", []),
     )
@@ -2429,6 +2453,21 @@ async def run_journey(
             graph, config, request.conversation_id, dependency_version,
         )
     prior_budget = durable_counters(saved_values.get("agent_budget", {}))
+    # Household memory: pre-fill facts from a return code when this
+    # conversation has no facts of its own yet.
+    return_code = saved_values.get("return_code") or request.return_code
+    typed_facts_seed = saved_values.get("typed_facts")
+    if (
+        request.return_code
+        and not typed_facts_seed
+        and request.action == "interview"
+    ):
+        household = await load_household(
+            graph.store, request.return_code, graph.fact_registry,
+        )
+        if household is not None:
+            typed_facts_seed = household.to_wire(graph.fact_registry)
+            return_code = normalize_return_code(request.return_code)
     initial_state: JourneyState = {
         "action": request.action,
         "application_task": None,
@@ -2447,7 +2486,7 @@ async def run_journey(
         "scheme_id": request.scheme_id or "",
         "multi_scheme": bool(request.candidate_scheme_ids),
         "profile": request.profile,
-        "typed_facts": saved_values.get("typed_facts"),
+        "typed_facts": typed_facts_seed,
         "registry_intake": True,
         "registry_dependencies": graph.registry_dependencies(),
         "dependency_review_required": False,
@@ -2475,6 +2514,9 @@ async def run_journey(
         "llm_attempted_facts": list(
             saved_values.get("llm_attempted_facts", [])
         ),
+        "interpreter_context": list(
+            saved_values.get("interpreter_context", [])
+        )[:MAX_INTERPRETER_CONTEXT],
         "profile_proposals": [],
         "initial_description_processed": False,
         "agent_budget": {
@@ -2498,6 +2540,7 @@ async def run_journey(
         "unprocessed_candidate_ids": saved_values.get("unprocessed_candidate_ids", []),
         "dependency_version": dependency_version,
         "dependency_blocked": profile_changed,
+        "return_code": return_code,
         "skipped_facts": list(saved_values.get("skipped_facts", [])),
         "conversation": [],
     }
@@ -2684,6 +2727,10 @@ async def correct_journey_answer(
         "llm_attempted_facts": list(
             values.get("llm_attempted_facts", [])
         ),
+        "interpreter_context": list(
+            values.get("interpreter_context", [])
+        )[:MAX_INTERPRETER_CONTEXT],
+        "return_code": values.get("return_code"),
         "agent_budget": durable_counters(values.get("agent_budget", {})),
         "search_calls": durable_counters({
             "search_calls": values.get("search_calls", 0),

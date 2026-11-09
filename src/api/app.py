@@ -61,6 +61,14 @@ from src.workflow.application_gate import (
 from src.llm_client import DEFAULT_CHAT_MODEL, openrouter_chat_model
 from src.workflow.intake import IntakeAgentError
 from src.workflow.conversation_budget import BUDGET_NAMESPACE
+from src.workflow.household_memory import (
+    HOUSEHOLD_NAMESPACE,
+    generate_return_code,
+    load_household,
+    load_household_locale,
+    normalize_return_code,
+    save_household,
+)
 from src.workflow.journey import (
     confirmed_answers,
     ApplicationTaskError,
@@ -1155,3 +1163,102 @@ async def forget_journey(conversation_id: str, request: Request) -> None:
             "Could not clear mock application data",
         ) from error
     await request.app.state.journey_checkpointer.adelete_thread(conversation_id)
+
+
+# -- Household memory endpoints -----------------------------------------------
+
+
+@app.get("/api/v1/household/{return_code}", tags=["household"])
+async def get_household(return_code: str, request: Request) -> dict:
+    """Load a saved household profile by its return code.
+
+    Returns the saved typed facts as a wire dict, or 404 when the code is
+    unknown or the saved profile cannot be restored against the current
+    registry.
+    """
+
+    try:
+        code = normalize_return_code(return_code)
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    registry = request.app.state.fact_registry
+    store = request.app.state.journey_store
+    profile = await load_household(store, code, registry)
+    if profile is None:
+        raise HTTPException(status_code=404, detail="Unknown return code.")
+    locale = await load_household_locale(store, code)
+    return {
+        "return_code": code,
+        "typed_facts": profile.to_wire(registry),
+        "locale": locale or "en",
+    }
+
+
+@app.post("/api/v1/household", tags=["household"])
+async def save_household_profile(
+    body: dict,
+    request: Request,
+) -> dict:
+    """Save or update a household profile under a return code.
+
+    Body:
+        return_code (optional): Reuse an existing code; generates one when absent.
+        conversation_id: The conversation whose typed_facts to save.
+    """
+
+    conversation_id = body.get("conversation_id")
+    if not conversation_id:
+        raise HTTPException(status_code=422, detail="conversation_id is required.")
+    try:
+        UUID(conversation_id)
+    except (ValueError, TypeError) as error:
+        raise HTTPException(
+            status_code=422, detail="conversation_id must be a UUID.",
+        ) from error
+
+    graph = request.app.state.journey_graph
+    config = {"configurable": {"thread_id": conversation_id}}
+    snapshot = await graph.aget_state(config)
+    values = snapshot.values or {}
+    typed_data = values.get("typed_facts")
+    if not typed_data:
+        raise HTTPException(
+            status_code=404,
+            detail="No profile facts found in this conversation.",
+        )
+    registry = request.app.state.fact_registry
+    try:
+        profile = HouseholdProfile.from_wire(typed_data, registry)
+    except (KeyError, TypeError, ValueError) as error:
+        raise HTTPException(
+            status_code=422, detail="Saved facts could not be validated.",
+        ) from error
+
+    raw_code = body.get("return_code")
+    if raw_code:
+        try:
+            code = normalize_return_code(raw_code)
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+    else:
+        code = generate_return_code()
+
+    locale = values.get("locale", "en")
+    store = request.app.state.journey_store
+    await save_household(store, code, profile, registry, locale)
+    return {"return_code": code}
+
+
+@app.delete("/api/v1/household/{return_code}", status_code=204, tags=["household"])
+async def forget_household(return_code: str, request: Request) -> None:
+    """Delete a household's saved profile."""
+
+    try:
+        code = normalize_return_code(return_code)
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    store = request.app.state.journey_store
+    existing = await store.aget(HOUSEHOLD_NAMESPACE, code)
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Unknown return code.")
+    await store.adelete(HOUSEHOLD_NAMESPACE, code)
