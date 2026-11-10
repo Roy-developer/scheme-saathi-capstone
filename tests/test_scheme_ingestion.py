@@ -9,14 +9,8 @@ import pytest
 from src.api.scheme_search import PassageCorpus, load_passages
 
 
-def test_loads_three_scheme_corpus_with_review_status_per_passage():
-    """The two pilots' 13 human-reviewed passages, plus IGNOAPS (added 2026-11-08).
-
-    Only IGNOAPS's eligibility sentence is marked reviewed (the reviewer
-    confirmed it word for word); its other passages are pending review.
-    """
-    project_root = Path(__file__).parents[1]
-    passage_file = project_root / "data" / "schemes" / "passages.json"
+PASSAGE_DIR = Path(__file__).resolve().parents[1] / "data" / "schemes" / "passages"
+PASSAGE_FILES = sorted(PASSAGE_DIR.glob("*.json"))
 
 # One entry per scheme file: file name -> (scheme_id, jurisdiction).
 EXPECTED_SCHEMES = {
@@ -64,23 +58,59 @@ EXPECTED_SCHEMES = {
     "wmcl_passages.json": ("WMCL-IN", "IN"),
 }
 
-    assert len(passages) == 17
+
+def test_legacy_single_corpus_file_is_gone():
+    assert not (PASSAGE_DIR.parent / "passages.json").exists()
+
+
+def test_every_expected_scheme_file_is_present():
+    assert {path.name for path in PASSAGE_FILES} == set(EXPECTED_SCHEMES)
+
+
+@pytest.mark.parametrize("path", PASSAGE_FILES, ids=lambda path: path.name)
+def test_each_file_is_a_valid_single_scheme_corpus(path):
+    corpus = PassageCorpus.model_validate(
+        json.loads(path.read_text(encoding="utf-8"))
+    )
+    scheme_id, jurisdiction = EXPECTED_SCHEMES[path.name]
+
+    assert corpus.passages
+    assert {passage.scheme_id for passage in corpus.passages} == {scheme_id}
+    assert {passage.jurisdiction for passage in corpus.passages} == {jurisdiction}
+    assert len({passage.scheme_name for passage in corpus.passages}) == 1
+    assert {passage.review_status for passage in corpus.passages} == {"reviewed"}
+
+
+@pytest.mark.parametrize("path", PASSAGE_FILES, ids=lambda path: path.name)
+def test_each_passage_has_id_prefix_text_and_citation(path):
+    for passage in load_passages(path):
+        assert passage.passage_id.startswith(passage.scheme_id)
+        assert passage.text.strip()
+        assert str(passage.source.url).startswith("https://")
+        assert passage.source.source_id
+        assert passage.source.publisher
+        assert passage.source.locator
+
+
+@pytest.mark.parametrize("path", PASSAGE_FILES, ids=lambda path: path.name)
+def test_no_garbled_characters(path):
+    text = path.read_text(encoding="utf-8")
+
+    assert "�" not in text
+    for marker in ("â€", "Ã", "Â"):
+        assert marker not in text
+
+
+def test_folder_load_combines_every_file_with_unique_ids():
+    passages = load_passages(PASSAGE_DIR)
+    per_file_total = sum(len(load_passages(path)) for path in PASSAGE_FILES)
+
+    assert len(passages) == per_file_total
+    assert len({passage.passage_id for passage in passages}) == len(passages)
     assert {passage.scheme_id for passage in passages} == {
-        "IGNWPS-MH",
-        "PM-KISAN-IN",
-        "IGNOAPS-MH",
+        scheme_id for scheme_id, _ in EXPECTED_SCHEMES.values()
     }
-    pilots = [p for p in passages if p.scheme_id != "IGNOAPS-MH"]
-    assert len(pilots) == 13
-    assert {passage.review_status for passage in pilots} == {"reviewed"}
-    assert {passage.source.collected_at.isoformat() for passage in pilots} == {"2026-11-01"}
-    ignoaps = {p.passage_id: p for p in passages if p.scheme_id == "IGNOAPS-MH"}
-    assert ignoaps["IGNOAPS-MH-ELIGIBILITY-01"].review_status == "reviewed"
-    assert {p.review_status for pid, p in ignoaps.items() if pid != "IGNOAPS-MH-ELIGIBILITY-01"} == {
-        "pending_review"
-    }
-    assert all(passage.source.source_id for passage in passages)
-    assert all(passage.source.locator for passage in passages)
+    assert {passage.review_status for passage in passages} == {"reviewed"}
 
 
 def test_folder_load_includes_marathi_passages():

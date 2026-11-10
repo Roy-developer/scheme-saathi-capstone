@@ -74,10 +74,10 @@ lists using Reciprocal Rank Fusion, and reranks the candidates with a
 cross-encoder. The tool returns evidence for retrieval-augmented answers; it
 does not generate an answer or determine eligibility.
 
-The versioned corpus is `data/schemes/passages.json`. It currently contains
-17 English passages across IGNWPS-MH, PM-KISAN-IN and IGNOAPS-MH. Their `reviewed` status
-was set per the user's human-review attestation; it is not legal or policy
-approval. The PM-KISAN source-currentness caveats are recorded in the review
+The corpus is every `*.json` file in `data/schemes/passages/` (one file per
+scheme, loaded together; passage IDs must be unique across files). All
+passages are marked `reviewed`, per the user's human-review attestation (not
+legal or policy approval). The PM-KISAN source-currentness caveats are recorded in the review
 workbook. This remains a technical pilot, not the complete 40–60-scheme
 corpus, and retrieval does not determine eligibility.
 

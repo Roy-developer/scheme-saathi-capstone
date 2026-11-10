@@ -46,9 +46,7 @@ def build_retriever(passages):
     )
 
 
-def test_vector_search_uses_free_key_and_one_embeddings_request(monkeypatch):
-    """Index once, then embed every query variant in one OpenRouter request."""
-
+def test_openrouter_embeddings_prefers_free_api_key(monkeypatch):
     requests = []
 
     def handle(request: httpx.Request) -> httpx.Response:
@@ -236,16 +234,9 @@ def test_bm25_ranks_scheme_specific_terms_first(corpus):
 
     results = retriever._bm25_search("atal", tuple(corpus))
 
-    # Both BPL eligibility clauses match; no shared scheme metadata does.
-    assert results == ["IGNWPS-MH-ELIGIBILITY-01", "IGNOAPS-MH-ELIGIBILITY-01"]
-
-
-def test_bm25_finds_the_old_age_pension_scheme():
-    passages = load_passages(PASSAGE_FILE)
-
-    results = build_retriever(passages)._bm25_search("old age pension", tuple(passages))
-
-    assert results and results[0].startswith("IGNOAPS-MH-")
+    assert results
+    by_id = {passage.passage_id: passage for passage in corpus}
+    assert by_id[results[0]].scheme_id == "APY-IN"
 
 
 def test_bm25_does_not_return_passages_without_query_terms(corpus):
