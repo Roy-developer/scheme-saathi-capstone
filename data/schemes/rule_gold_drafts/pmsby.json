@@ -1,0 +1,49 @@
+{
+  "scheme_id": "PMSBY-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "PMSBY-IN-R01",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": null,
+      "source_passage_id": "PMSBY-IN-ELIGIBILITY-01",
+      "source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 70 years are entitled to join.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PMSBY-IN-R02",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 70,
+      "unit": null,
+      "source_passage_id": "PMSBY-IN-ELIGIBILITY-01",
+      "source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 70 years are entitled to join.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PMSBY-IN-R03",
+      "kind": "eligibility",
+      "field": "has_savings_bank_account",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMSBY-IN-ELIGIBILITY-01",
+      "source_quote": "All individual account holders of participating banks/ Post office",
+      "needs_human_review": false,
+      "note": "Passage says bank or Post office account holder; mapped to savings bank account."
+    }
+  ],
+  "unresolved": [
+    "MISSING FIELD: applicant holds only an institutional (non-individual) account; institutional account holders are not eligible.",
+    "MISSING FIELD: consent to auto-debit of premium.",
+    "NOTE: NRIs with an eligible bank account in India may join, so no residency rule was encoded."
+  ]
+}

@@ -25,7 +25,13 @@ from src.workflow import journey as journey_module
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = RulePackageProvider().packages
-PASSAGES = load_passages(ROOT / "data" / "schemes" / "passages.json")
+PASSAGES = load_passages(ROOT / "data" / "schemes" / "passages")
+
+
+def passage_for(scheme_id):
+    """First real passage of a scheme from the per-scheme passage files."""
+
+    return next(p for p in PASSAGES if p.scheme_id == scheme_id)
 
 
 async def uncertain_answer_interpreter(_fact, _question, _reply):
@@ -35,7 +41,7 @@ async def uncertain_answer_interpreter(_fact, _question, _reply):
 def build_graph(*, eligibility_tool=None, answer_interpreter=None):
     async def search_tool(_client, query):
         assert query == "widow pension"
-        return [PASSAGES[0]]
+        return [passage_for("APY-IN")]
 
     async def identity_rewriter(query):
         return query
@@ -76,8 +82,25 @@ def test_search_flow_routes_through_intake_and_returns_citations():
     assert result.status == "search_results"
     assert result.plan
     assert "Showing up to 20 passages" in result.message
-    assert result.passages[0].passage_id == PASSAGES[0].passage_id
+    assert result.passages[0].passage_id == passage_for("APY-IN").passage_id
+    assert result.candidate_scheme_ids == ["APY-IN"]
     assert any(turn["role"] == "user" for turn in result.conversation)
+
+
+def test_scheme_without_rule_package_is_information_only():
+    assert "APY-IN" not in PACKAGES
+    graph = build_graph()
+
+    result = asyncio.run(
+        run_journey(
+            graph,
+            JourneyRequest(action="evaluate", scheme_id="APY-IN", profile={}),
+        )
+    )
+
+    assert result.status == "information_only"
+    assert result.eligibility_result is None
+    assert result.candidate_verdicts["APY-IN"].result == "information_only"
 
 
 def test_eligibility_flow_uses_rule_tool_and_returns_its_verdict():
@@ -107,11 +130,11 @@ def test_eligibility_flow_uses_rule_tool_and_returns_its_verdict():
 
 
 def test_candidate_schemes_are_unique_and_new_search_clears_old_results():
-    widow = next(p for p in PASSAGES if p.scheme_id == "IGNWPS-MH")
-    farmer = next(p for p in PASSAGES if p.scheme_id == "PM-KISAN-IN")
+    pension = passage_for("APY-IN")
+    employees = passage_for("EPS-IN")
 
     async def search_tool(_client, _query):
-        return [widow, farmer, widow]
+        return [pension, employees, pension]
 
     async def identity(query):
         return query
@@ -140,7 +163,7 @@ def test_candidate_schemes_are_unique_and_new_search_clears_old_results():
                 conversation_id=first.conversation_id,
             ),
         )
-        assert result.candidate_scheme_ids == ["IGNWPS-MH", "PM-KISAN-IN"]
+        assert result.candidate_scheme_ids == ["APY-IN", "EPS-IN"]
         assert "across 2 schemes" in result.message
         assert len(result.passages) == 3  # Group schemes, not their evidence.
         assert result.candidate_verdicts == {}

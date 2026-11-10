@@ -1,0 +1,383 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "PRE-DIS-IN-ELIGIBILITY-01",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Students studying in Class IX or X.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholership-schemes-pre-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-15",
+        "locator": "DEPwD page: Pre-Matric Scholarship for Students with Disabilities (saved HTML); Who can apply?, class"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-ELIGIBILITY-02",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Indian nationals only.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholership-schemes-pre-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-15",
+        "locator": "DEPwD page: Pre-Matric Scholarship for Students with Disabilities (saved HTML); Who can apply?, nationality"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-ELIGIBILITY-03",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Students with benchmark disability of 40% or more.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholership-schemes-pre-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-15",
+        "locator": "DEPwD page: Pre-Matric Scholarship for Students with Disabilities (saved HTML); Who can apply?, disability"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-ELIGIBILITY-04",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "UDID Card.\nAadhaar Card.\nFamily income up to Rs. 2.5 lakh per year.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholership-schemes-pre-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-15",
+        "locator": "DEPwD page: Pre-Matric Scholarship for Students with Disabilities (saved HTML); Must have"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-ELIGIBILITY-05",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Student should not receive another scholarship/stipend.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholership-schemes-pre-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-15",
+        "locator": "DEPwD page: Pre-Matric Scholarship for Students with Disabilities (saved HTML); Must have, other scholarship"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-BENEFIT-01",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Scholarship available for one academic year.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholership-schemes-pre-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-15",
+        "locator": "DEPwD page: Pre-Matric Scholarship for Students with Disabilities (saved HTML); Who can apply?, duration"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-BENEFIT-02",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "No tuition fee.\nBook grant: Rs. 1,000 per year.\nDisability allowance: Rs. 2,000 to Rs. 4,000 per year.\nScholarship support through DBT/PFMS.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholership-schemes-pre-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-15",
+        "locator": "DEPwD page: Pre-Matric Scholarship for Students with Disabilities (saved HTML); Financial support"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-BENEFIT-03",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Hosteller: Rs. 800 per month.\nDay scholar: Rs. 500 per month.\nGiven for 12 months.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholership-schemes-pre-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-15",
+        "locator": "DEPwD page: Pre-Matric Scholarship for Students with Disabilities (saved HTML); Monthly support"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-EXCLUSION-01",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "Maximum 2 children with disabilities from the same parents can receive it.\nScholarship is for one class or one academic year.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholership-schemes-pre-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-15",
+        "locator": "DEPwD page: Pre-Matric Scholarship for Students with Disabilities (saved HTML); Important rules"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-APPLICATION-01",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Apply online on the\nNational Scholarship Portal\nScholarship amount is sent directly through DBT/PFMS.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholership-schemes-pre-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-15",
+        "locator": "DEPwD page: Pre-Matric Scholarship for Students with Disabilities (saved HTML); How to apply"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-DOCUMENTS-01",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Keep ready:\nUDID Card and Aadhaar Card.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholership-schemes-pre-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-15",
+        "locator": "DEPwD page: Pre-Matric Scholarship for Students with Disabilities (saved HTML); Quick action, keep ready"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-BENEFIT-04",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Visually Impaired: 4000.\nHearing Impaired: 2000.\nPhysically Disabled (OH): 2000.\nIntellectual Disabilities: 4000.\nAll other types of disability not covered above: 2000.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/pre_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, disability allowances"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-EXCLUSION-02",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "Scholarship will not be given to more than two students from a family. Provided in case the second child is a twin, the scholarship will be admissible to both.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/pre_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Exclusions, twins"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-EXCLUSION-03",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "If any candidate furnishes false information / document and is established as false. An action will be initiated for recovery of the amount spent with 15% compound interest thereon. Also, such candidate will be blacklisted for future and appropriate legal action can be taken.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/pre_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Exclusions, false information"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-EXCLUSION-04",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "If a student has to repeat a class, he/she would not get any scholarship for that class for a second (or subsequent) year.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/pre_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Exclusions, repeating a class"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-APPLICATION-02",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1:   Keep ready the soft copies of the required documents.\nGo to http://www.scholarships.gov.in/. and click “New Registration”.\nGuidelines for Registration will appear. Scroll to the bottom.\nRead carefully the undertaking. Accept the Terms. Click “Continue”.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/pre_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-APPLICATION-03",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 2:  A Registration Form will appear. (The fields marked as * are compulsory)\nFill the details and click “Register”.\nYour Application ID and password will be displayed.\nThe same will also be sent as an SMS on your registered mobile number.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/pre_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-APPLICATION-04",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 3:  Go to https://scholarships.gov.in/fresh/newstdRegfrmInstruction\nClick on “Login to Apply”. Enter your Application ID and password.\nType the Captcha and click “Login”.\nOn the next screen, provide the OTP received on your registered mobile number. You will be directed to the Password Reset screen.\nCreate a new password and confirm.\nClick “Submit”. You will be directed to the “Applicant’s Dashboard”.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/pre_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-APPLICATION-05",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 4:  On the left pane, click “Application Form”. The fields marked as * are compulsory. Fill the details and upload the documents.\nYou can either click on “Save as Draft” to complete the application later.\nElse, click “Final Submit” to submit the application.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/pre_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, step 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-APPLICATION-06",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The institution in which the candidate is studying should also register itself at NSP and verify the details provided by the candidates.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/pre_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required, institution"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PRE-DIS-IN-DOCUMENTS-02",
+      "scheme_id": "PRE-DIS-IN",
+      "scheme_name": "Pre Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Photograph.\nProof of Age.\nCertificate of Disability (issued by the competent authority)\nIncome Certificate.\nTuition Fee Receipt.\nLast academic qualification certificate.\nBank Details of the applicant or of the Parent/Guardian.",
+      "source": {
+        "source_id": "SRC-PRE-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/pre_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

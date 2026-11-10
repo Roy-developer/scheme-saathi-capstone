@@ -96,7 +96,12 @@ class ProjectPaths:
 
     @property
     def passages(self) -> Path:
-        return self.schemes / "passages.json"
+        return self.schemes / "passages"
+
+    def passages_file(self, scheme_id: str) -> Path:
+        """The one corpus file holding this scheme's passages."""
+
+        return self.passages / f"{scheme_id.lower().replace('-', '_')}_passages.json"
 
     @property
     def cases(self) -> Path:
@@ -410,8 +415,11 @@ def plan_onboarding(scheme_id: str, paths: ProjectPaths) -> OnboardingPlan:
         package, staged.name, package_sha, registry.registry_version, new_sha, facts, registry,
     ))
 
-    corpus_raw = paths.passages.read_bytes()
-    corpus = json.loads(corpus_raw)
+    passages_path = paths.passages_file(scheme_id)
+    if passages_path.exists():
+        raise OnboardingRefused(f"{passages_path.name} already exists; remove it to re-onboard")
+    corpus_raw = b""  # a new file, written with LF line endings
+    corpus = {"corpus_version": "0.3.0", "passages": []}
     try:
         new_passages = _passages(package, details)
     except KeyError as error:
@@ -427,7 +435,7 @@ def plan_onboarding(scheme_id: str, paths: ProjectPaths) -> OnboardingPlan:
     changes = {
         target: package_raw,
         paths.bundle_registry: _json_like(bundles_raw, bundles),
-        paths.passages: _json_like(corpus_raw, corpus),
+        passages_path: _json_like(corpus_raw, corpus),
         paths.cases: new_cases,
     }
     summary = [

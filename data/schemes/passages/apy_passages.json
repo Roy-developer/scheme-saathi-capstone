@@ -1,0 +1,257 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "APY-IN-BENEFIT-01",
+      "scheme_id": "APY-IN",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "APY is a voluntary, periodic contribution-based pension system, under which the subscriber would receive the following benefits: (i) Central Government guaranteed minimum pension amount: Each subscriber under APY shall receive a Central Government guaranteed minimum pension of Rs. 1000 per month or Rs. 2000 per month or Rs. 3000 per month or Rs. 4000 per month or Rs. 5000 per month, after the age of 60 years until death;",
+      "source": {
+        "source_id": "SRC-APY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF p. 1, section 2.1(i): Benefits of APY"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "APY-IN-BENEFIT-02",
+      "scheme_id": "APY-IN",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "(ii) Central Government guaranteed minimum pension amount to the spouse: After the subscriber’s demise, the spouse of the subscriber shall be entitled to receive the same pension amount as that of the subscriber until the death of the spouse;",
+      "source": {
+        "source_id": "SRC-APY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF p. 1, section 2.1(ii): Benefits of APY"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "APY-IN-BENEFIT-03",
+      "scheme_id": "APY-IN",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "(iii) Return of the pension wealth to the nominee of the subscriber: After the demise of both, the subscriber and the spouse, the nominee of the subscriber shall be entitled to receive the pension wealth, as accumulated till the age of 60 years of the subscriber.",
+      "source": {
+        "source_id": "SRC-APY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF p. 1, section 2.1(iii): Benefits of APY"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "APY-IN-BENEFIT-04",
+      "scheme_id": "APY-IN",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Upon the death of the subscriber (before the age of 60 years), the spouse of the subscriber has the option to continue contributing to the APY account of the subscriber for the remaining vesting period till the original subscriber would have attained the age of 60 years. The spouse of the subscriber shall then be entitled to receive the same pension amount as that of the subscriber until the death of the spouse. After the death of both, the subscriber and the spouse, the nominee of the subscriber shall be entitled to receive the pension wealth, as accumulated till the age of 60 years of the subscriber. The minimum pension is guaranteed by the Government, i.e., if the accumulated corpus based on contributions earns a lower-than-estimated return on investment and is inadequate to provide the minimum guaranteed pension, the Central Government would fund such inadequacy. Alternatively, if the returns on investment are higher, the subscribers would get enhanced pensionary benefits.",
+      "source": {
+        "source_id": "SRC-APY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF p. 2, section 2.2: Benefits of APY"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "APY-IN-ELIGIBILITY-01",
+      "scheme_id": "APY-IN",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "APY is open to all citizens of India who have a savings bank account. The minimum age of joining APY is 18 years and maximum age is 40 years.",
+      "source": {
+        "source_id": "SRC-APY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF p. 2, section 3: Eligibility for APY"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "APY-IN-EXCLUSION-01",
+      "scheme_id": "APY-IN",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "From 1st October, 2022, any citizen who is or has been an income-tax payer, is not eligible to join APY.",
+      "source": {
+        "source_id": "SRC-APY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF p. 2, section 3: Eligibility for APY"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "APY-IN-ELIGIBILITY-02",
+      "scheme_id": "APY-IN",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The minimum age of joining PY is 18 year and maximum is 40 years. The age of exit and start of pension is 60 years.",
+      "source": {
+        "source_id": "SRC-APY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF p. 2, section 4: Age of joining and contribution payment by subscribers"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "APY-IN-ELIGIBILITY-03",
+      "scheme_id": "APY-IN",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The subscriber’s contributions to APY shall be made through the facility of ‘auto-debit’ of the prescribed contribution amount from the savings bank account of the subscriber in monthly, quarterly or half-yearly frequency. The subscribers are required to contribute the prescribed contribution amount from the age of joining APY till the age of 60 years. The details of age-wise, pension-wise and contribution-frequency-wise prescribed contribution amount and the indicative pension wealth available for the nominee is given in the table at Annex – 1.",
+      "source": {
+        "source_id": "SRC-APY-IN-001",
+        "publisher": "Ministry of Finance",
+        "url": "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "PDF p. 2, section 4: Age of joining and contribution payment by subscribers"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "APY-IN-BENEFICIARY-01",
+      "scheme_id": "APY-IN",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "The scheme is mainly targeted at the poor, the under-privileged and workers in the unorganized sector.",
+      "source": {
+        "source_id": "SRC-APY-IN-002",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.myscheme.gov.in/schemes/apy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Details, Focus of APY"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "APY-IN-BENEFIT-05",
+      "scheme_id": "APY-IN",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Contributions to the Atal Pension Yojana (APY) are eligible for tax benefits similar to the National Pension System (NPS) under section 80CCD(1).",
+      "source": {
+        "source_id": "SRC-APY-IN-002",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.myscheme.gov.in/schemes/apy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, tax benefit"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "APY-IN-APPLICATION-01",
+      "scheme_id": "APY-IN",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "One can also open an APY account online using one's Net banking facility. The applicant can login into his/her internet banking account and search for APY on dashboard. Customer has to fill basic and Nominee details. Customer has to give consent for auto debit of premium from the account and submit the form.",
+      "source": {
+        "source_id": "SRC-APY-IN-002",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.myscheme.gov.in/schemes/apy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Process 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "APY-IN-APPLICATION-02",
+      "scheme_id": "APY-IN",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Visit website “https://enps.nsdl.com/eNPS/NationalPensionSystem.html “ and select “Atal Pension Yojana”. Select “APY Registration”. Fill the basic details in the form. One can complete KYC through 3 options – Offline KYC – Where one has to upload XML file of Aadhaar; Aadhaar – Where KYC is done through OTP verification on Mobile Number register with Aadhaar; Virtual ID – Where Aadhaar virtual ID is created for KYC. Citizen can select either one of three options. Once the basic details are filled, an acknowledgement number is generated. Citizen then has to fill personal details and decide the pension amount he/she wants after 60 years. The Citizen also has to decide the frequency of contribution for the scheme. Once the citizen “confirms” for personal details, he/she has to then fill nominee details. After submitting the personal and Nominee details, Citizen is redirected to NSDL website for eSign. Once Aadhaar is OTP verified, Citizen gets successfully registered in APY.",
+      "source": {
+        "source_id": "SRC-APY-IN-002",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.myscheme.gov.in/schemes/apy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Process 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "APY-IN-APPLICATION-03",
+      "scheme_id": "APY-IN",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "One can also join digitally through e-APY portal or through web portal of banks providing such facility.",
+      "source": {
+        "source_id": "SRC-APY-IN-002",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.myscheme.gov.in/schemes/apy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "APY-IN-DOCUMENTS-01",
+      "scheme_id": "APY-IN",
+      "scheme_name": "Atal Pension Yojana",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "KYC details are fetched from active Bank/Post Office Savings account.",
+      "source": {
+        "source_id": "SRC-APY-IN-002",
+        "publisher": "Ministry of Finance",
+        "url": "https://www.myscheme.gov.in/schemes/apy",
+        "collected_at": "2026-11-03",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

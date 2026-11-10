@@ -13,7 +13,7 @@ from src.api.scheme_search import HybridSchemeRetriever, load_passages
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_EVAL_SET = PROJECT_ROOT / "data" / "schemes" / "retrieval_eval_dev.json"
-DEFAULT_CORPUS = PROJECT_ROOT / "data" / "schemes" / "passages.json"
+DEFAULT_CORPUS = PROJECT_ROOT / "data" / "schemes" / "passages"
 
 
 class EvaluationQuery(BaseModel):

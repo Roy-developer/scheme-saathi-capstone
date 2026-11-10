@@ -1,0 +1,365 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "POST-DIS-IN-ELIGIBILITY-01",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Students in Class 11 or 12.\nStudents in Diploma, Degree or Post-Graduate courses.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholarship-post-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-18",
+        "locator": "DEPwD page: Scholarship Post Matric (saved HTML); Who can apply?, courses"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-ELIGIBILITY-02",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Indian nationals only.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholarship-post-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-18",
+        "locator": "DEPwD page: Scholarship Post Matric (saved HTML); Who can apply?, nationality"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-ELIGIBILITY-03",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Students with a benchmark disability of 40% or more.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholarship-post-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-18",
+        "locator": "DEPwD page: Scholarship Post Matric (saved HTML); Who can apply?, disability"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-ELIGIBILITY-04",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "UDID Card.\nAadhaar Card.\nFamily income up to Rs. 2.5 lakh per year.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholarship-post-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-18",
+        "locator": "DEPwD page: Scholarship Post Matric (saved HTML); Must have"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-ELIGIBILITY-05",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The student should not receive another post-scholarship or stipend.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholarship-post-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-18",
+        "locator": "DEPwD page: Scholarship Post Matric (saved HTML); Must have, other scholarship"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-BENEFIT-01",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Tuition/admission fee: up to Rs. 1.4 lakh.\nOther fee: up to Rs. 10,000.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholarship-post-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-18",
+        "locator": "DEPwD page: Scholarship Post Matric (saved HTML); Money support, tuition and other fees"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-BENEFIT-02",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Disability allowance: Rs. 2,000 to Rs. 4,000 per year.\nBook allowance: Rs. 1,500 per year.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholarship-post-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-18",
+        "locator": "DEPwD page: Scholarship Post Matric (saved HTML); Money support, allowances"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-BENEFIT-03",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Hosteller: Rs. 1,200 per month.\nDay scholar: Rs. 650 per month.\nGiven for 12 months.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholarship-post-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-18",
+        "locator": "DEPwD page: Scholarship Post Matric (saved HTML); Monthly support"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-EXCLUSION-01",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "Maximum 2 children with disabilities from the same parents can receive it.\npost-scholarship is for one class or one academic year.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholarship-post-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-18",
+        "locator": "DEPwD page: Scholarship Post Matric (saved HTML); Important rules"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-APPLICATION-01",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Apply online on the\nNational post-scholarship Portal\nMoney is sent directly through DBT/PFMS.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholarship-post-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-18",
+        "locator": "DEPwD page: Scholarship Post Matric (saved HTML); How to apply"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-DOCUMENTS-01",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Keep ready:\nUDID Card and Aadhaar Card.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-001",
+        "publisher": "Department of Empowerment of Persons with Disabilities, Ministry of Social Justice and Empowerment, Government of India",
+        "url": "https://depwd.gov.in/en/scholarship-post-matric/",
+        "collected_at": "2026-11-08",
+        "publication_date": "2026-09-18",
+        "locator": "DEPwD page: Scholarship Post Matric (saved HTML); Quick action, keep ready"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-BENEFIT-04",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Visually Impaired – 4000.\nHearing Impaired – 2000.\nPhysically Disabled (OH) – 2000.\nIntellectual Disabilities – 4000.\nAll other types of disability not covered above – 2000.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/post_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits, disability allowances"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-EXCLUSION-02",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "Scholarship will not be given to more than two students from a family. Provided in case the second child is a twin, the scholarship will be admissible to both.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/post_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Exclusions, twins"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-EXCLUSION-03",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "If any candidate furnishes false information / document and is established as false. An action will be initiated for recovery of the amount spent with 15% compound interest thereon. Also, such candidate will be blacklisted for future and appropriate legal action can be taken.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/post_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Exclusions, false information"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-EXCLUSION-04",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "If a student has to repeat a class, he/she would not get any scholarship for that class for a second (or subsequent) year.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/post_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Exclusions, repeating a class"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-APPLICATION-02",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1:   Keep ready the soft copies of the required documents.\nGo to http://www.scholarships.gov.in/. and click “New Registration”.\nGuidelines for Registration will appear. Scroll to the bottom.\nRead carefully the undertaking. Accept the Terms. Click “Continue”.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/post_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-APPLICATION-03",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 2:  A Registration Form will appear. (The fields marked as * are compulsory)\nFill the details and click “Register”.\nYour Application ID and password will be displayed.\nThe same will also be sent as an SMS on your registered mobile number.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/post_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-APPLICATION-04",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 3:  Go to https://scholarships.gov.in/fresh/newstdRegfrmInstruction\nClick on “Login to Apply”. Enter your Application ID and password.\nType the Captcha and click “Login”.\nOn the next screen, provide the OTP received on your registered mobile number. You will be directed to the Password Reset screen.\nCreate a new password and confirm.\nClick “Submit”. You will be directed to the “Applicant’s Dashboard”.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/post_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-APPLICATION-05",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 4:  On the left pane, click “Application Form”. The fields marked as * are compulsory. Fill the details and upload the documents.\nYou can either click on “Save as Draft” to complete the application later.\nElse, click “Final Submit” to submit the application.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/post_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, step 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "POST-DIS-IN-DOCUMENTS-02",
+      "scheme_id": "POST-DIS-IN",
+      "scheme_name": "Post Matric Scholarship for Students with Disabilities",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Photograph.\nProof of Age.\nCertificate of Disability (Rights of Persons with Disabilities Act 2016).\nIncome Certificate.\nTuition Fee Receipt.\nLast academic qualification certificate.\nBank Details of the applicant or of the Parent/Guardian.",
+      "source": {
+        "source_id": "SRC-POST-DIS-IN-002",
+        "publisher": "Ministry of Social Justice and Empowerment",
+        "url": "https://www.myscheme.gov.in/schemes/post_dis",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "scheme_id": "FAISHL-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "FAISHL-IN-R01",
+      "kind": "eligibility",
+      "field": "is_war_bereaved_or_disabled_or_casualty",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "FAISHL-IN-ELIGIBILITY-01",
+      "source_quote": "This facility is applicable for War Bereaved, War Disabled and Attributable Peacetime casualties only.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "FAISHL-IN-R02",
+      "kind": "eligibility",
+      "field": "has_home_loan",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "FAISHL-IN-ELIGIBILITY-03",
+      "source_quote": "The applicant must have taken a home loan from a bank, government/public sector undertaking, LIC, GIC, or HUDCO.",
+      "needs_human_review": false,
+      "note": null
+    }
+  ],
+  "unresolved": [
+    "The Rs 1,00,000 loan limit caps the subsidy; it is a benefit limit, not an eligibility rule."
+  ]
+}

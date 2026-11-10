@@ -56,9 +56,9 @@ class SchemeDocuments(BaseModel):
 def register_tools(mcp: MCPServer) -> None:
     """Add BM25 retrieval for RAG context to the shared MCP server."""
 
-    passage_file = PROJECT_ROOT / "data" / "schemes" / "passages.json"
+    passage_dir = PROJECT_ROOT / "data" / "schemes" / "passages"
+    passages = load_passages(passage_dir)
     rerank_mode = os.getenv("SCHEME_SAATHI_RERANKER", "").casefold()
-    passages = load_passages(passage_file)
     retriever = HybridSchemeRetriever(
         passages,
         rerank=OpenRouterReranker() if rerank_mode == "openrouter" else None,

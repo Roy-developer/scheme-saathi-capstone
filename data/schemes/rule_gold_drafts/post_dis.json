@@ -1,0 +1,63 @@
+{
+  "scheme_id": "POST-DIS-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "POST-DIS-IN-R01",
+      "kind": "eligibility",
+      "field": "is_citizen_of_india",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "POST-DIS-IN-ELIGIBILITY-02",
+      "source_quote": "Indian nationals only.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "POST-DIS-IN-R02",
+      "kind": "eligibility",
+      "field": "has_disability",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "POST-DIS-IN-ELIGIBILITY-03",
+      "source_quote": "Students with a benchmark disability of 40% or more.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "POST-DIS-IN-R03",
+      "kind": "eligibility",
+      "field": "disability_percent",
+      "operator": "gte",
+      "value": 40,
+      "unit": "percent",
+      "source_passage_id": "POST-DIS-IN-ELIGIBILITY-03",
+      "source_quote": "Students with a benchmark disability of 40% or more.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "POST-DIS-IN-R04",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 250000,
+      "unit": "INR",
+      "source_passage_id": "POST-DIS-IN-ELIGIBILITY-04",
+      "source_quote": "Family income up to Rs. 2.5 lakh per year.",
+      "needs_human_review": false,
+      "note": null
+    }
+  ],
+  "unresolved": [
+    "MISSING FIELD: student currently in Class 11/12 or a Diploma, Degree or Post-Graduate course.",
+    "MISSING FIELD: student receives another post-scholarship or stipend.",
+    "MISSING FIELD: number of children/students from the same family already receiving the scholarship (max 2; twins allowed).",
+    "MISSING FIELD: student is repeating a class.",
+    "NOTE: UDID Card and Aadhaar Card are listed under eligibility but as documents; has_aadhaar not encoded."
+  ]
+}

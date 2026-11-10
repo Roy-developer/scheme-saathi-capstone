@@ -1,0 +1,329 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "RASSNB-MH-BENEFICIARY-01",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "The state government has implemented the ‘Ramai Awas Yojana’ since 2010-11 to provide permanent housing to individuals/families from Scheduled Castes and Neo-Buddhist communities in rural and urban areas. A brief overview of the scheme is as follows:",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/ramai-awas-yojana-rural-urban/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Scheme Information"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-ELIGIBILITY-01",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The beneficiary must belong to the Scheduled Castes / Neo-Buddhist category.",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/ramai-awas-yojana-rural-urban/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Criteria, category"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-ELIGIBILITY-02",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The beneficiary must have resided in Maharashtra for at least 15 years.",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/ramai-awas-yojana-rural-urban/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Criteria, residence"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-ELIGIBILITY-03",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The benefit of the scheme is provided to only one person per family.",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/ramai-awas-yojana-rural-urban/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Criteria, one person per family"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-ELIGIBILITY-04",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The beneficiary must own a plot of land or a temporary house.",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/ramai-awas-yojana-rural-urban/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Criteria, plot or house"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-ELIGIBILITY-05",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The beneficiary should not have availed benefits from any other housing scheme previously.",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/ramai-awas-yojana-rural-urban/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Criteria, no earlier housing benefit"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-ELIGIBILITY-06",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The annual income limit for the beneficiary’s family should be up to ₹1.20 lakh for rural areas and up to ₹3.00 lakh for urban areas.",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/ramai-awas-yojana-rural-urban/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Criteria, income limit"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-ELIGIBILITY-07",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The beneficiary should be outside the priority list criteria of the Social, Economic, and Caste Census-2011 (SEC-2011).",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/ramai-awas-yojana-rural-urban/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Eligibility Criteria, SECC-2011"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-DOCUMENTS-01",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "documents",
+      "text": "One of the following: 7/12 extract, property registration document (Property Registered Card), or extract from the property register in the Gram Panchayat.\nOne of the following: house tax, water tax, or electricity bill.\nCaste certificate issued by a competent authority.\nIncome certificate issued by a competent authority.\nExtract of names from the voter list as of 01/01/1995.\nElection voter ID card.\nRation card.\nCertificate from the Sarpanch / Talathi.\nCopy of the receipt for property tax paid to the Municipal Corporation / Municipality.",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/ramai-awas-yojana-rural-urban/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Required Documents"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-DOCUMENTS-02",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "documents",
+      "text": "Note: According to the Government Resolution No. VISAA-2015/PR. NO. 85/CONSTRUCTION, dated March 15, 2016, the requirement to submit the 7/12 extract has been relaxed for beneficiaries who have encroached on government, municipal, local self-government, MMRDA, or government enterprise land and have been residing there as of 01/01/1995, with their house/ residence on that land and are protected as slum dwellers.",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/ramai-awas-yojana-rural-urban/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Required Documents, note"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-APPLICATION-01",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Rural Areas:\nThe selection of beneficiaries is done through the Gram Sabha. However, the final selection of Scheduled Caste beneficiaries chosen by the Gram Sabha is carried out by the House Construction Committee established under the chairmanship of the Chief Executive Officer, Zilla Parishad, for rural areas.",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/ramai-awas-yojana-rural-urban/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Beneficiary Selection Procedure, rural areas"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-APPLICATION-02",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Urban Areas:\nFor urban areas, the selection of beneficiaries is done by the House Construction Committee established under the chairmanship of the Commissioner for Municipal Corporation areas and the District Collector for Municipal Council/Nagar Panchayat areas.",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/ramai-awas-yojana-rural-urban/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Beneficiary Selection Procedure, urban areas"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-BENEFIT-01",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Rural Areas: ₹1.32 lakh (including ₹12,000 for toilet construction)\nHilly/Naxal-affected Areas: ₹1.42 lakh (including ₹12,000 for toilet construction)\nMunicipal Council/Nagar Parishad: ₹2.50 lakh\nMunicipal Corporation: ₹2.50 lakh",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-001",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://sjsa.maharashtra.gov.in/en/scheme/ramai-awas-yojana-rural-urban/",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "department.txt; Nature of Benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-APPLICATION-03",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1: The interested applicant should visit (during office hours) one of the following officers and request a hard copy of the prescribed format of the application form from the concerned authority -\nAssistant Commissioner, Social Welfare Office\nProject Director, District Rural Development Agency\nDistrict Council / Municipal Commissioner",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/rassnb",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-APPLICATION-04",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 2: In the application form, fill in all the mandatory fields, paste the passport-sized photograph (signed across, if required), and attach copies of all the mandatory documents (self-attest, if required).",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/rassnb",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-APPLICATION-05",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 3: Submit the duly filled and signed application form along with the documents, within the prescribed period (if any), to the concerned authority.",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/rassnb",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-APPLICATION-06",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step 4: Request a receipt or acknowledgement from the concerned authority to whom the application has been submitted. Ensure that the receipt contains essential details such as the date and time of submission, and a unique identification number (if applicable).",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/rassnb",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, step 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "RASSNB-MH-APPLICATION-07",
+      "scheme_id": "RASSNB-MH",
+      "scheme_name": "Ramai Awas (Gharkul) Scheme for SC & Nav-Buddha (Urban and Rural)",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "NOTE: Ensure that the application is submitted within the prescribed period, if any.",
+      "source": {
+        "source_id": "SRC-RASSNB-MH-002",
+        "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/rassnb",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, note"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

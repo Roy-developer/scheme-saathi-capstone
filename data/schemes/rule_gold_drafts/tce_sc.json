@@ -1,0 +1,28 @@
+{
+  "scheme_id": "TCE-SC-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "TCE-SC-IN-R01",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 800000,
+      "unit": "INR per year",
+      "source_passage_id": "TCE-SC-IN-ELIGIBILITY-01",
+      "source_quote": "total annual family income from all sources up to Rs. 8.00 lakh",
+      "needs_human_review": false,
+      "note": "Rs. 8.00 lakh = 800000; 'up to' read as inclusive."
+    }
+  ],
+  "unresolved": [
+    "MISSING FIELD: belongs to a Scheduled Caste (SC).",
+    "MISSING FIELD: admitted to a full-time course in a notified institution (and institution slot availability).",
+    "MISSING FIELD: first-year student (fresh scholarship only for 1st year).",
+    "MISSING FIELD: number of siblings in the family already benefiting (not more than 2 siblings).",
+    "MISSING FIELD: receives other scholarship benefits of similar schemes (exclusion).",
+    "MISSING FIELD: changed institution after selection (exclusion)."
+  ]
+}

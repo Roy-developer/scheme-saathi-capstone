@@ -1,0 +1,15 @@
+{
+  "scheme_id": "WMCL-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [],
+  "unresolved": [
+    "No rule could be expressed with the available fields.",
+    "MISSING FIELD: belongs to SC / ST and is a child of a labourer in a coffee plantation or licensed curing works.",
+    "MISSING FIELD: first two surviving children only (twins/multiple births allowed).",
+    "MISSING FIELD: pursuing higher education after X Class / education level; studying in a government-recognised institution.",
+    "MISSING FIELD: parent is a clerk, driver, supervisor or manager of the estate / curing works (exclusion, WMCL-IN-EXCLUSION-01).",
+    "Benefit release is subject to availability of funds (WMCL-IN-BENEFIT-02)."
+  ]
+}

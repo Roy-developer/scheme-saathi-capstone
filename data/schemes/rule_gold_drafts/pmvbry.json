@@ -1,0 +1,26 @@
+{
+  "scheme_id": "PMVBRY-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "PMVBRY-IN-R01",
+      "kind": "eligibility",
+      "field": "monthly_pay_inr",
+      "operator": "lte",
+      "value": 100000,
+      "unit": "INR",
+      "source_passage_id": "PMVBRY-IN-ELIGIBILITY-03",
+      "source_quote": "Gross wages up to ₹ 1 Lakh at the time of joining",
+      "needs_human_review": true,
+      "note": "Gross wage at joining for First Timers; period (monthly) assumed."
+    }
+  ],
+  "unresolved": [
+    "MISSING FIELD: first-time EPFO contributing member (First Timer) joined between 01.08.2025 and 31.07.2027.",
+    "MISSING FIELD: UAN authenticated by Face Authentication Technology on UMANG.",
+    "MISSING FIELD: employer-side facts (EPFO-covered establishment, baseline and additional employment, manufacturing sector, pending EPFO inquiries or FIR).",
+    "Scheme is mostly establishment/employer-focused; only one individual-level rule is expressible."
+  ]
+}
