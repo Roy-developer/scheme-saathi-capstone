@@ -16,6 +16,7 @@ from src.workflow.agent_runtime import (
     observation,
     run_agent,
 )
+from src.workflow.injection_guard import screen_free_text
 from src.workflow.questions import parse_interpreted_answer
 
 
@@ -81,6 +82,12 @@ async def propose_initial_profile_facts(
 
     if provider is None:
         return [], copy_agent_budget(budget), [], "deterministic"
+
+    # Neutralise suspected embedded instructions before the model's
+    # reasoning ever sees this text. Not a replacement for the schema-
+    # constrained proposal step or the citizen-only confirmation step
+    # below, which remain the real backstop. See docs/THREAT_MODEL.md.
+    description = screen_free_text(description).text
 
     task_scheme_id = scheme_id
     required_facts: set[str] = set()
