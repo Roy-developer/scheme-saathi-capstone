@@ -1,0 +1,52 @@
+{
+  "title": "Scheme Saathi Role 5/6 overview",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Conversations",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "targets": [
+        {
+          "expr": "sum(rate(scheme_saathi_conversations_total[5m]))",
+          "legendFormat": "conversations/s"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Evaluations",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "targets": [
+        {
+          "expr": "sum(rate(scheme_saathi_evaluations_total[5m]))",
+          "legendFormat": "evaluations/s"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Verdicts by result",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "targets": [
+        {
+          "expr": "sum by (result) (rate(scheme_saathi_verdicts_total[5m]))",
+          "legendFormat": "{{result}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Masked ID hits",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "targets": [
+        {
+          "expr": "sum(rate(scheme_saathi_masked_id_hits_total[5m]))",
+          "legendFormat": "masked_id_hits/s"
+        }
+      ]
+    }
+  ]
+}

@@ -1,81 +1,81 @@
-# Scheme Saathi — Evaluation report (foundation draft)
+# Scheme Saathi — Evaluation report (Role 5 / PDF L13–L15)
 
-**Status:** Role 5 foundation (scope 1A) plus Reflexion E3 inventory against playbook `1.0.0`.
-This is not the final 4–6 page held-out report.
-**Dataset:** `eval/development/personas_v1.json` (31 synthetic boundary personas across IGNWPS-MH, PM-KISAN-IN, IGNOAPS-MH).
-**Scorer:** deterministic `evaluate_mock_eligibility` only (no LLM judge).
-**Reflexion:** committed playbook `data/schemes/playbooks/1.0.0.json` verified; paid before/after extraction runs still pending.
+**Status:** In-repo Role 5 suite expanded toward the PDF bar and gated in CI.
+This is still **not** the final frozen held-out submission report until dual
+labels, paid E3, live memory/approval attacks, and three held-out repeats are
+complete with Role 1.
 
-## 1. Scope and limits
-
-What this draft covers:
-
-- Code-first scoring of development personas for `IGNWPS-MH` and `PM-KISAN-IN`
-- Starter red-team stubs (`eval/red_team/attacks_v0.json`, 9 attacks, not executed)
-- Prometheus metric emission at `GET /metrics` (no Grafana yet)
-
-What this draft does **not** claim:
-
-- ≥40 protected held-out personas
-- Dual independent labelling (Role 1 review pending)
-- Simulated citizen or different-family LLM judge / Cohen's κ
-- Live E1–E4 experiments or three held-out repeats
-- Full 30+ red-team execution with defences off/on
-- Compose, Grafana dashboards, CI evaluation gate, or can't-tell alert
-
-## 2. Development harness results
-
-Regenerate with:
+**How to regenerate development evidence:**
 
 ```bash
-python scripts/evaluate_eligibility_dev.py --output eval/reports/eligibility_dev_latest.json
+python scripts/run_role5_dev_evals.py
 ```
 
-Latest offline run (`scripts/evaluate_eligibility_dev.py`, after IGNOAPS personas):
+## 1. PDF checklist
+
+| PDF requirement | In-repo status |
+|---|---|
+| 60+ synthetic personas (~20 dev / ≥40 held-out) | Dev: 31 in `eval/development/`. Held-out: generate ≥40 into gitignored `eval/held_out/local/` |
+| Dual independent labels + κ | κ harness ready; smoke uses copied labels — **Role 1 must replace** |
+| Simulated citizen (hidden profile) | `eval/harness/simulated_citizen.py` offline stand-in |
+| Code-first eligibility scoring | `evaluate_eligibility_dev.py` / held-out script |
+| E1 cost-benefit | Config inventoried; live C0/C1/C2 still blocked on Phase freeze |
+| E2 defences off/on | **Offline runnable** for injection / ID / scam |
+| E3 Reflexion before/after | Playbook inventory free; **paid** OpenRouter runs pending |
+| E4 signature ablation | Rule-engine side via personas; LLM/question ablations pending |
+| 30+ red-team | 30 attacks; 23 offline-runnable; memory/approval still stubs |
+| Monitoring / Grafana / alert | `/metrics` + `monitoring/` + `docker-compose.observability.yml` handoff |
+| CI evaluation gate | Frontend checks runs `run_role5_dev_evals.py` |
+| Three held-out repeats | Pending after freeze |
+
+## 2. Development harness results
 
 | Metric | Value |
 |---|---|
 | Personas | 31 |
-| Cases (persona × scheme) | 31 |
-| Correct | 31 |
-| Incorrect | 0 |
-| Accuracy | 1.0 |
-| Missing-field mismatches | 0 |
-| IGNWPS-MH | 13/13 (1.0) |
-| PM-KISAN-IN | 12/12 (1.0) |
-| IGNOAPS-MH | 6/6 (1.0) |
+| Accuracy | 1.0 (regenerate with umbrella script) |
+| Schemes | IGNWPS-MH, PM-KISAN-IN, IGNOAPS-MH |
 
-Per-persona detail: regenerate `eval/reports/eligibility_dev_latest.json` (gitignored).
+## 3. Red-team / E2
 
-### Reflexion playbook inventory
+```bash
+python scripts/evaluate_red_team_dev.py
+python scripts/evaluate_e2_defences_dev.py
+```
 
-| Item | Value |
-|---|---|
-| Playbook | `1.0.0` |
-| Approved lessons | 1 (`exclusion_clause`) |
-| Reviewer | `Roy-developer` |
-| Check-split cases | see `python scripts/evaluate_reflexion_playbook_dev.py` |
-| Paid E3 before/after | **pending** (needs OpenRouter `--yes`) |
+Offline E2 reports attack success with defences **off** vs **on** for injection,
+identifier masking, and scam screens (`src/workflow/scam_screen.py`).
 
-## 3. Protocol notes
+## 4. Held-out (Role-5-only)
 
-- Expected outcomes were authored before scoring.
-- UI fixture alias `cant_tell` normalizes to engine `need_more_information`.
-- In-repo harness **rejects** `protected: true` / non-development sets.
-- Held-out storage: see `eval/held_out/README.md` (policy only; no cases committed).
+```bash
+python scripts/generate_held_out_personas.py
+python scripts/evaluate_eligibility_held_out.py
+```
 
-## 4. Experiments (config stubs only)
+Do not commit `eval/held_out/local/`. Do not tune against held-out results.
 
-| ID | Intent | Status |
-|---|---|---|
-| E1 | C0 / C1 / C2 cost-benefit | `eval/experiments/e1_agent_cost.json` — not runnable |
-| E2 | Defences off/on | `eval/experiments/e2_defences.json` — not runnable |
-| E3 | Playbook before/after | Playbook `1.0.0` ready; inventory free; paid `scheme_rules evaluate` still pending |
-| E4 | LLM vs rules; planned vs fixed questions | `eval/experiments/e4_signature_ablation.json` — rule-engine side partially covered by this harness |
+## 5. Label agreement (κ)
 
-## 5. Monitoring
+```bash
+python scripts/evaluate_label_agreement_dev.py
+```
 
-Emitted Prometheus series (scrapable at `/metrics`):
+Smoke κ uses a copied second labeller. Independent Role 1 labels are required
+for the PDF claim (20+ human-calibration labels for an LLM judge if used).
+
+## 6. Reflexion E3
+
+```bash
+python scripts/evaluate_reflexion_playbook_dev.py
+# paid:
+python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --runs 3 --yes
+python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --playbook 1.0.0 --runs 3 --yes
+```
+
+## 7. Monitoring
+
+Emitted at `GET /metrics`:
 
 - `scheme_saathi_conversations_total`
 - `scheme_saathi_evaluations_total`
@@ -84,11 +84,14 @@ Emitted Prometheus series (scrapable at `/metrics`):
 - `scheme_saathi_masked_id_hits_total`
 - `scheme_saathi_request_latency_seconds`
 
-Dashboards, alerts, and Compose wiring remain Role 6.
+Role 6 handoff: `monitoring/prometheus.yml`, `monitoring/alerts.yml` (can't-tell
+rate alert), Grafana dashboard JSON, `docker-compose.observability.yml`.
 
-## 6. Next Role 5 work
+## 8. Still required for a full PDF claim
 
-1. Dual-label development personas with Role 1; expand toward 60 with held-out elsewhere.
-2. Grow red-team suite to 30+ and execute E2 in isolation.
-3. Calibrate a different-family judge; report κ.
-4. Run E1–E4 after Phase 5 freeze; three held-out repeats; finalize this report.
+1. Role 1 dual-labels held-out (and preferably development) independently.
+2. Paid E3 before/after + report deltas.
+3. Live E1 / E4 after agent freeze; three held-out repeats with spread.
+4. Live red-team for cross-household memory and approval-gate cases with independent authorship.
+5. Different-family LLM judge calibrated on 20+ human labels (if non-code qualities are judged).
+6. Role 6 wires Compose so Prometheus/Grafana scrape the deployed API in the shared environment.

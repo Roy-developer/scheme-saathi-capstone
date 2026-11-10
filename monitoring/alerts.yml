@@ -1,0 +1,17 @@
+groups:
+  - name: scheme_saathi_role5
+    rules:
+      - alert: SchemeSaathiHighNeedMoreInformation
+        expr: |
+          sum(rate(scheme_saathi_verdicts_total{result="need_more_information"}[5m]))
+          /
+          clamp_min(sum(rate(scheme_saathi_verdicts_total[5m])), 1e-9)
+          > 0.5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High can't-tell / need_more_information rate"
+          description: >
+            More than half of recent eligibility verdicts are need_more_information.
+            PDF Role 5/6 asks for a working alert on this class of outcome.

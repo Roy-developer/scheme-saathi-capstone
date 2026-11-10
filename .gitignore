@@ -12,3 +12,4 @@ data/heldout/
 data/schemes/.document_checklists.lock
 data/schemes/.document_checklists.revision
 eval/reports/*.json
+eval/held_out/local/

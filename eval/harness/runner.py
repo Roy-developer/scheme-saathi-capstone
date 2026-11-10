@@ -17,8 +17,16 @@ from src.rules.facts import FactRegistry, FactState, TypedFactStore
 from src.rules.models import HouseholdProfile, RulePackage
 
 
-def load_persona_evaluation_set(path: Path) -> PersonaEvaluationSet:
-    """Load and validate a persona set; reject protected / non-development."""
+def load_persona_evaluation_set(
+    path: Path,
+    *,
+    allow_held_out: bool = False,
+) -> PersonaEvaluationSet:
+    """Load and validate a persona set.
+
+    By default only unprotected development sets are accepted. Role-5-only
+    held-out scoring passes ``allow_held_out=True`` from a controlled script.
+    """
 
     data = json.loads(path.read_text(encoding="utf-8"))
     try:
@@ -26,10 +34,21 @@ def load_persona_evaluation_set(path: Path) -> PersonaEvaluationSet:
     except ValidationError as error:
         raise ValueError(f"Invalid persona evaluation set: {error}") from error
 
-    if evaluation_set.split != "development" or evaluation_set.protected:
+    if evaluation_set.split == "held_out" or evaluation_set.protected:
+        if not allow_held_out:
+            raise ValueError(
+                "This in-repo harness only accepts unprotected development persona "
+                "sets by default. Held-out cases must stay outside the application "
+                "image; use scripts/evaluate_eligibility_held_out.py from a "
+                "Role-5-only environment."
+            )
+        if evaluation_set.split != "held_out" or not evaluation_set.protected:
+            raise ValueError(
+                "Held-out sets must have split='held_out' and protected=true."
+            )
+    elif evaluation_set.split != "development" or evaluation_set.protected:
         raise ValueError(
-            "This in-repo harness only accepts unprotected development persona sets. "
-            "Held-out cases must stay outside the application image."
+            "Development sets must have split='development' and protected=false."
         )
     return evaluation_set
 

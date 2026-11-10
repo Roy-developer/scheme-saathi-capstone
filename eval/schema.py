@@ -136,8 +136,52 @@ class PersonaEvaluationSet(StrictFrozen):
         return self
 
 
+RedTeamCheckKind = Literal[
+    "injection_screen",
+    "id_mask",
+    "eligibility_truthful",
+    "scam_screen",
+]
+
+
+class RedTeamCheck(StrictFrozen):
+    """Offline check that Role 5 can run without a live LLM journey.
+
+    ``injection_screen`` — ``screen_free_text`` must flag the attack input.
+    ``scam_screen`` — ``screen_scam_text`` must flag the attack input.
+    ``id_mask`` — ``mask_sensitive_text`` must remove ``must_not_contain``.
+    ``eligibility_truthful`` — rule engine on ``profile`` / ``typed_facts``
+    must match ``expect_result`` (true facts win over a user's request to lie).
+    """
+
+    kind: RedTeamCheckKind
+    expect_flagged: bool | None = None
+    must_not_contain: tuple[str, ...] = ()
+    scheme_id: str | None = None
+    profile: dict[str, Any] | None = None
+    typed_facts: dict[str, Any] | None = None
+    expect_result: VerdictResult | None = None
+
+    @model_validator(mode="after")
+    def check_fields_for_kind(self) -> RedTeamCheck:
+        if self.kind in {"injection_screen", "scam_screen"} and self.expect_flagged is None:
+            raise ValueError(f"{self.kind} checks require expect_flagged")
+        if self.kind == "id_mask" and not self.must_not_contain:
+            raise ValueError("id_mask checks require must_not_contain")
+        if self.kind == "eligibility_truthful":
+            if not self.scheme_id or self.expect_result is None:
+                raise ValueError(
+                    "eligibility_truthful checks require scheme_id and expect_result"
+                )
+            if self.profile is None and self.typed_facts is None:
+                raise ValueError(
+                    "eligibility_truthful checks require profile or typed_facts"
+                )
+        return self
+
+
 class RedTeamCase(StrictFrozen):
-    """One red-team attack stub (execution against defences is a later pass)."""
+    """One red-team attack. ``check`` makes it offline-runnable; else stub."""
 
     attack_id: str = Field(min_length=1)
     category: AttackCategory
@@ -146,6 +190,19 @@ class RedTeamCase(StrictFrozen):
     attack_input: str = Field(min_length=1)
     expected_behaviour: str = Field(min_length=1)
     status: Literal["stub", "runnable"] = "stub"
+    check: RedTeamCheck | None = None
+
+    @model_validator(mode="after")
+    def runnable_requires_check(self) -> RedTeamCase:
+        if self.status == "runnable" and self.check is None:
+            raise ValueError(
+                f"Attack {self.attack_id!r}: runnable cases need a check block"
+            )
+        if self.status == "stub" and self.check is not None:
+            raise ValueError(
+                f"Attack {self.attack_id!r}: stub cases must not declare a check"
+            )
+        return self
 
 
 class RedTeamSuite(StrictFrozen):
@@ -163,6 +220,27 @@ class RedTeamSuite(StrictFrozen):
                 raise ValueError(f"Duplicate attack_id {attack.attack_id!r}")
             seen.add(attack.attack_id)
         return self
+
+
+class ExperimentConfig(BaseModel):
+    """E1–E4 experiment config stub loaded from eval/experiments/.
+
+    Extra keys (for example ``approved_lessons``) are ignored so configs can
+    grow without breaking the inventory loader.
+    """
+
+    model_config = ConfigDict(extra="ignore", frozen=True)
+
+    experiment_id: str = Field(min_length=1)
+    title: str = Field(min_length=1)
+    status: str = Field(min_length=1)
+    description: str = Field(min_length=1)
+    controls: dict[str, Any] = Field(min_length=1)
+    metrics: tuple[str, ...] = Field(min_length=1)
+    blocker: str | None = None
+    configurations: tuple[dict[str, Any], ...] | None = None
+    commands: dict[str, Any] | None = None
+    note: str | None = None
 
 
 def profile_from_mapping(raw: dict) -> HouseholdProfile:

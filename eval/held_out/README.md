@@ -1,12 +1,22 @@
-# Held-out evaluation cases (policy only)
+# Held-out evaluation cases (Role 5 only)
 
 **Do not commit protected persona files in this directory.**
 
-Capstone rules:
+Capstone / PDF rules:
 
-- About 20 development cases may live in `eval/development/`.
-- At least 40 held-out cases belong in Role-5-only storage (or a private location with repository permissions that builders and the agent cannot read).
+- About 20 development cases may live in `eval/development/` (this repo currently keeps a larger development boundary set; that is fine for tuning).
+- At least **40 held-out** cases belong in Role-5-only storage.
 - CI for the application must not checkout, package, index, print, or upload held-out fixtures.
-- The in-repo harness (`scripts/evaluate_eligibility_dev.py`) **rejects** any set with `split != "development"` or `protected: true`.
+- The default harness (`scripts/evaluate_eligibility_dev.py`) **rejects** protected / held-out sets.
+- Held-out scoring uses `scripts/evaluate_eligibility_held_out.py` from a controlled Role-5 environment only.
 
-When held-out storage is ready, keep the same persona schema as development (`eval/schema.py`) and run scoring only from a controlled Role-5 environment after freezing prompts, rules, and lessons.
+## Local generation (gitignored)
+
+```bash
+python scripts/generate_held_out_personas.py
+# writes eval/held_out/local/personas_held_out_v1.json  (≥40, protected)
+
+python scripts/evaluate_eligibility_held_out.py
+```
+
+`eval/held_out/local/` is gitignored. Dual independent labels (Role 1 + teammate) and three frozen held-out repeats remain required before the final PDF claim.
