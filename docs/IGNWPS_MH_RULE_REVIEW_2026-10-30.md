@@ -200,3 +200,25 @@ This report applies only to `IGNWPS-MH`, the Maharashtra page retrieved for
 this review, and the mock decisions recorded above. Its sign-off is limited
 to the synthetic mock portal; it does not approve any other scheme or decide
 any individual's eligibility.
+
+## Amendment 2026-11-07: per-rule evidence and age unit
+
+Reviewer Debadyuti Roy approved these additions to `src/rules/packages/ignwps_mh.v1.json` (package version unchanged, `1.0.0`):
+
+| Rule(s) | Added |
+|---|---|
+| All four rules | `source_text`: the S1 sentence already quoted above ("A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.") |
+| All four rules | `source_location`: "Eligibility Criteria section" |
+| `IGNWPS-MH-AGE-MIN-01`, `IGNWPS-MH-AGE-MAX-01` | `unit`: "years", matching the fact registry |
+
+No rule's fact, operator, value, `if_not_met` or `missing_field_label` changed, and no eligibility result changes. The evidence panel now shows "Eligibility Criteria section" instead of the internal ID `IGNWPS-MH-ELIGIBILITY-01`, which closes the "Record source mapping" item above. The package SHA-256 changed from `d74284819f122d827a9913405dc69907d687868a93b298679c3a46f6840bea45` to `224bf03585d9bb6bc41a64765c890dd84ea36c6006b0907065d9ded8bd5b2c65` and is re-pinned in `src/rules/bundle_registry.json` and `src/rules/data_provider.py`.
+
+Reason: make IGNWPS record its evidence the same way as PM-KISAN (text and location on every rule, unit for number facts), so every scheme is handled uniformly, including by the rule-extraction development tools.
+
+The reviewer also decided (Option B) that the BPL rule's "card not shown means ask for the card" behaviour (`if_not_met: need_more_information`, `missing_field_label: government_bpl_card`) is reviewer policy about evidence and uncertainty, not a condition stated in S1, which mentions no card or document. Rule-extraction development checks therefore compare only what can be read from the source clause (fact, operator, value, unit, source clause) and ignore `if_not_met` and `missing_field_label`, so reviewer-policy enrichments never produce reflection failures or lessons. A cross-scheme lesson such as "a missing document means need more information" was rejected because it could be over-applied where a source intends strict exclusion.
+
+## Update 2026-11-09: document checklist
+
+The demo checklist was replaced by version `v2` and approved at the reviewer's
+instruction, using the best official text available, which may not be current.
+It cites a Department of Rural Development evaluation of NSAP based on discussions with beneficiaries; no Maharashtra-specific document list was found. Hindi and Marathi labels have had no native-speaker review.

@@ -1,8 +1,6 @@
 """Typed contracts shared by the supervisor and specialist agents.
 
 Phase 1 defines these contracts so later phases build on agreed shapes.
-``HouseholdProfile`` lives in ``src.rules.models`` because the rule engine
-evaluates it directly.
 """
 
 from typing import Any, Literal
@@ -10,7 +8,6 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from src.rules.models import HouseholdProfile
 
 
 SpecialistName = Literal[
@@ -152,7 +149,6 @@ class Handoff(ContractModel):
 __all__ = [
     "CandidateVerdict",
     "Handoff",
-    "HouseholdProfile",
     "JourneyHistoryEvent",
     "Plan",
     "PlanChange",

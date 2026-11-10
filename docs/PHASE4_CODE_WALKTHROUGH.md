@@ -1,5 +1,12 @@
 # Phase 4 code walkthrough: documents, an exact draft and a human decision
 
+> **Current design (2026-11-09).** IGNWPS, PM-KISAN and IGNOAPS all run on one
+> registry path. The household's answers are held in a typed `HouseholdProfile`
+> (`src/rules/facts.py`), validated against the fact registry and kept in the
+> journey state under `typed_facts`. Where this guide describes fixed profile
+> fields, a legacy adapter, `legacy_compatibility` or profile mappings, it is
+> describing how the first two pilots worked in this phase.
+
 This guide explains the **current local Phase 4 code** in plain English. It
 starts after eligibility, follows a synthetic document checklist into a saved
 draft, and shows why approving one exact draft must never approve a different
@@ -53,6 +60,10 @@ in the [Phase-wise implementation plan](PHASE_WISE_IMPLEMENTATION_PLAN.md).
 > they are not verified official requirements. The two pilot rule-package
 > pins in `src/rules/bundle_registry.json` are unchanged, and the fact
 > definitions, questions and privacy text are still **pending human review**.
+> *Update 2026-11-07:* the IGNWPS package pin changed (reviewer-approved evidence
+> and unit amendment), and all 13 fact **definitions** are now approved
+> (reviewer `Roy-developer`; registry re-pinned). Questions and privacy text
+> remain pending.
 > No novel scheme is approved or activated for normal use. A mock receipt is
 > not a government submission, benefit approval or payment.
 
@@ -106,7 +117,7 @@ validates every choice and owns every result.
 | **Stale** | A draft whose inputs (profile, documents or rules) changed after it was made. It can never be approved or submitted again. |
 | **Dependency version** | A counter that goes up whenever the profile, the document report, or the rule package changes. |
 | **Fact** | One named, typed answer such as `date_of_birth` or `exam_marks`. Its type, bounds, choices and questions are defined in `src/rules/fact_registry.json`. |
-| **Typed fact store** | `TypedFactStore` in `src/rules/facts.py`: the confirmed facts as real Python values (dates, exact decimals, integers). `value(fact_id, registry)` is the one place that reads a fact. |
+| **Typed fact store** | `HouseholdProfile` in `src/rules/facts.py`: the confirmed facts as real Python values (dates, exact decimals, integers). `value(fact_id, registry)` is the one place that reads a fact. |
 | **Derived fact** | A fact computed by code from other facts. Today the only one is `age`, worked out from `date_of_birth` and `application_date` (`derivation: age_on_application_date`). A person can never type it. |
 | **Bundle** | `SchemeBundle` in `src/rules/bundles.py`: the pinned package of one scheme (rule package hash, registry hash, allowed `fact_ids`). Its fact list is the **allowlist** for that scheme's documents and form. |
 | **Mock form mapping** | A data file in `data/schemes/mock_forms/<SCHEME_ID>.json` that says which facts fill which fields of the synthetic form. It is not an official form. |
@@ -546,7 +557,7 @@ global registry contained it. The fix is the **bundle allowlist**.
 * a derived fact depends on a fact the bundle does not list.
 
 `document_fact_values(scheme_id, registry, store, bundle)` then builds the
-value map. It validates the `TypedFactStore`, then calls
+value map. It validates the `HouseholdProfile`, then calls
 `store.value(fact_id, registry)` for **each allowed fact only**. Because
 `value` understands derivations, `age` arrives as a computed number, not a raw
 copy of stored states. Stored-but-out-of-bundle facts are simply absent from
@@ -564,7 +575,7 @@ the loaders, startup readiness in `get_active_rule_data`
 
 **Derived age example.** The age rule is data, not a branch in code:
 `age` has `derivation: "age_on_application_date"` and is computed by
-`TypedFactStore.value` using `calculate_age_on`. With date of birth
+`HouseholdProfile.value` using `calculate_age_on`. With date of birth
 1970-11-05, an application date of 2026-11-04 gives 55, and 2026-11-05 gives
 56. If either date is missing the value is `None`; a checklist condition
 `{"kind": "registered_fact", "fact_id": "age", "operator": "gte", "value": 56}`
@@ -579,8 +590,8 @@ age value is returned while an out-of-bundle fact is excluded, and that
 removing `application_date` from the bundle makes the call fail.
 
 **Where typed values reach the checks.** The graph's `document_agent` passes
-the saved `typed_facts` (a wire dictionary from `TypedFactStore.to_wire`) to
-`check_documents`. The tool restores it with `TypedFactStore.from_wire`,
+the saved `typed_facts` (a wire dictionary from `HouseholdProfile.to_wire`) to
+`check_documents`. The tool restores it with `HouseholdProfile.from_wire`,
 which turns tagged decimals (`{"$decimal": "12.50"}`) back into `Decimal` and
 ISO dates back into `date` without float rounding. The API form preview and the
 portal use the same restore step.
@@ -1157,7 +1168,7 @@ the Hindi and Marathi wording is still open.
 | Plan for tasks | `src/workflow/supervisor.py` | `build_application_plan` |
 | UI screen | `src/ui/app.py` | `render_application_flow`, `_render_document_groups`, `_render_form_preview`, `_form_values_from_session`, `registered_answer_input` |
 | UI client | `src/ui/api_client.py` | `assess_documents`, `decide_application_draft` |
-| Typed fact store and derived age | `src/rules/facts.py` | `TypedFactStore`, `value`, `to_wire`, `from_wire`, `calculate_age_on` |
+| Typed fact store and derived age | `src/rules/facts.py` | `HouseholdProfile`, `value`, `to_wire`, `from_wire`, `calculate_age_on` |
 | Bundle allowlist | `src/rules/bundles.py` | `document_fact_allowlist`, `document_fact_values` |
 | Fact and bundle data | `src/rules/fact_registry.json`, `src/rules/bundle_registry.json` | one registry; pilot bundles are `legacy_compatibility` |
 | Mock form models and loader | `src/documents/forms.py` | `MockFormField`, `load_mock_form_snapshot`, `build_form_fields` |

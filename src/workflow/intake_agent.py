@@ -1,6 +1,6 @@
 """Code-validated initial profile-fact proposals for the intake specialist."""
 
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from typing import Literal
 
 from langchain_core.language_models import BaseChatModel
@@ -8,7 +8,7 @@ from langchain_core.tools import tool
 from pydantic import Field, StrictBool, StrictStr
 
 from src.mcp_servers.service_routing import ToolActor
-from src.rules.models import FactName, HouseholdProfile
+from src.rules.facts import FactRegistry, HouseholdProfile
 from src.workflow.agent_runtime import (
     AgentActionError,
     AgentSchema,
@@ -16,7 +16,7 @@ from src.workflow.agent_runtime import (
     observation,
     run_agent,
 )
-from src.workflow.questions import parse_interpreted_answer
+from src.workflow.questions import parse_interpreted_registered_answer
 
 
 class ReadFactsArguments(AgentSchema):
@@ -28,13 +28,13 @@ class ReadFactsArguments(AgentSchema):
 class ReadFactsObservation(AgentSchema):
     """Validated list of rule facts observed from the rule-engine service."""
 
-    required_facts: list[FactName]
+    required_facts: list[str]
 
 
 class ProposedFact(AgentSchema):
     """One typed fact candidate; it is not applied until the person confirms."""
 
-    fact_name: FactName
+    fact_name: str = Field(min_length=1, max_length=120)
     value: StrictBool | StrictStr
 
 
@@ -64,18 +64,54 @@ class FinishIntakeObservation(AgentSchema):
     finished: Literal[True]
 
 
-async def propose_initial_profile_facts(
+def _wire_value(value: object) -> object:
+    """Return a proposal value in the form saved with the question."""
+
+    return value.isoformat() if hasattr(value, "isoformat") else value
+
+
+async def propose_initial_registered_facts(
     provider: BaseChatModel | None,
     client: object,
     actor: ToolActor,
-    journey_id: str,
     scheme_id: str,
     description: str,
-    profile: HouseholdProfile,
-    package_facts: tuple[FactName, ...],
+    store: HouseholdProfile,
+    registry: FactRegistry,
+    package_facts: tuple[str, ...],
     locale: Literal["en", "hi", "mr"],
     budget: Mapping[str, int] | None,
-    discovery_facts: tuple[FactName, ...] = (),
+    discovery_facts: tuple[str, ...] = (),
+) -> tuple[list[dict[str, object]], dict[str, int], list[dict[str, object]], str]:
+    """Interpret a description as proposals for registered facts."""
+
+    def checked(fact_name: str, value: bool | str) -> object | None:
+        parsed = parse_interpreted_registered_answer(registry.get(fact_name), value, locale)
+        if parsed.kind != "value" or parsed.value is None:
+            return None
+        return _wire_value(parsed.value)
+
+    return await _propose_facts(
+        provider, client, actor, scheme_id, description, package_facts, locale, budget,
+        discovery_facts,
+        is_confirmed=lambda fact_name: fact_name in store.facts,
+        checked=checked,
+    )
+
+
+async def _propose_facts(
+    provider: BaseChatModel | None,
+    client: object,
+    actor: ToolActor,
+    scheme_id: str,
+    description: str,
+    package_facts: tuple[str, ...],
+    locale: Literal["en", "hi", "mr"],
+    budget: Mapping[str, int] | None,
+    discovery_facts: tuple[str, ...],
+    *,
+    is_confirmed: Callable[[str], bool],
+    checked: Callable[[str, bool | str], object | None],
 ) -> tuple[list[dict[str, object]], dict[str, int], list[dict[str, object]], str]:
     """Interpret synthetic free text as uncommitted facts through permitted tools."""
 
@@ -121,33 +157,17 @@ async def propose_initial_profile_facts(
         nonlocal ignored_confirmed, invalid_count
         if not required_facts:
             raise AgentActionError("Read allowed fact names before proposing facts.")
-        profile_values = profile.model_dump(mode="python")
         for proposal in facts:
             if proposal.fact_name not in required_facts:
                 invalid_count += 1
                 continue
-            if profile_values.get(proposal.fact_name) is not None:
+            if is_confirmed(proposal.fact_name):
                 ignored_confirmed += 1
                 continue
-            parsed = parse_interpreted_answer(
-                proposal.fact_name, proposal.value, locale
-            )
-            if parsed.kind != "value" or parsed.value is None:
+            value = checked(proposal.fact_name, proposal.value)
+            if value is None:
                 invalid_count += 1
                 continue
-            try:
-                HouseholdProfile.model_validate({
-                    **profile_values,
-                    proposal.fact_name: parsed.value,
-                })
-            except (ValueError, TypeError):
-                invalid_count += 1
-                continue
-            value = (
-                parsed.value.isoformat()
-                if hasattr(parsed.value, "isoformat")
-                else parsed.value
-            )
             accepted_proposals.append({
                 "fact_name": proposal.fact_name,
                 "value": value,

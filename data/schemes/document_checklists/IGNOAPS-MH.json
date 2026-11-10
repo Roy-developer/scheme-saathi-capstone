@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "scheme_id": "IGNOAPS-MH",
+  "checklist_version": "v2",
+  "requirements": [
+    {
+      "requirement_id": "identity_group",
+      "labels": {
+        "en": "Identity",
+        "hi": "पहचान",
+        "mr": "ओळख"
+      },
+      "alternatives": [
+        {
+          "document_id": "identity_proof",
+          "labels": {
+            "en": "Aadhaar card",
+            "hi": "आधार कार्ड",
+            "mr": "आधार कार्ड"
+          }
+        }
+      ],
+      "condition": {
+        "kind": "unconditional"
+      },
+      "evidence_passage_ids": [
+        "IGNOAPS-DOC-EVALUATION-01"
+      ]
+    },
+    {
+      "requirement_id": "bank_account_group",
+      "labels": {
+        "en": "Bank account",
+        "hi": "बैंक खाता",
+        "mr": "बँक खाते"
+      },
+      "alternatives": [
+        {
+          "document_id": "bank_account_proof",
+          "labels": {
+            "en": "Bank passbook",
+            "hi": "बैंक पासबुक",
+            "mr": "बँक पासबुक"
+          }
+        }
+      ],
+      "condition": {
+        "kind": "unconditional"
+      },
+      "evidence_passage_ids": [
+        "IGNOAPS-DOC-EVALUATION-01"
+      ]
+    },
+    {
+      "requirement_id": "age_group",
+      "labels": {
+        "en": "Age",
+        "hi": "आयु",
+        "mr": "वय"
+      },
+      "alternatives": [
+        {
+          "document_id": "age_proof",
+          "labels": {
+            "en": "Age certificate",
+            "hi": "आयु प्रमाण पत्र",
+            "mr": "वयाचा दाखला"
+          }
+        }
+      ],
+      "condition": {
+        "kind": "unconditional"
+      },
+      "evidence_passage_ids": [
+        "IGNOAPS-DOC-CERTIFICATES-01"
+      ]
+    },
+    {
+      "requirement_id": "income_group",
+      "labels": {
+        "en": "Income",
+        "hi": "आय",
+        "mr": "उत्पन्न"
+      },
+      "alternatives": [
+        {
+          "document_id": "income_certificate",
+          "labels": {
+            "en": "Income certificate issued by the Talathi",
+            "hi": "तलाठी द्वारा जारी आय प्रमाण पत्र",
+            "mr": "तलाठ्याने दिलेला उत्पन्नाचा दाखला"
+          }
+        }
+      ],
+      "condition": {
+        "kind": "unconditional"
+      },
+      "evidence_passage_ids": [
+        "IGNOAPS-DOC-CERTIFICATES-01"
+      ]
+    },
+    {
+      "requirement_id": "helpless_group",
+      "labels": {
+        "en": "Certificate of being helpless",
+        "hi": "निराधार होने का प्रमाण पत्र",
+        "mr": "निराधार असल्याचा दाखला"
+      },
+      "alternatives": [
+        {
+          "document_id": "helpless_certificate",
+          "labels": {
+            "en": "Certificate of the Tahsildar or Talathi of being helpless",
+            "hi": "तहसीलदार या तलाठी का निराधार होने का प्रमाण पत्र",
+            "mr": "तहसीलदार किंवा तलाठ्याचा निराधार असल्याचा दाखला"
+          }
+        }
+      ],
+      "condition": {
+        "kind": "unconditional"
+      },
+      "evidence_passage_ids": [
+        "IGNOAPS-DOC-CERTIFICATES-01"
+      ]
+    }
+  ],
+  "approval": {
+    "status": "approved",
+    "checklist_version": "v2",
+    "reviewer_role": "Policy/domain reviewer (Roy-developer)",
+    "review_reference": "docs/IGNOAPS_MH_RULE_REVIEW_2026-11-08.md, Update 2026-11-09",
+    "reviewed_on": "2026-11-09"
+  }
+}

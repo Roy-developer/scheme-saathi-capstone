@@ -7,9 +7,12 @@
       "version": "1.0.0",
       "meaning": "Completed age in years on the application date.",
       "source_refs": [
-        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/"
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "person",
       "value_type": "integer",
       "unit": "years",
@@ -35,24 +38,30 @@
           "text": "वयाची गणना जन्मतारीख आणि अर्जाच्या तारखेवरून होते."
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": null
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "application_date",
       "version": "1.0.0",
       "meaning": "On what date are you applying? For example 30 October 2026.",
       "source_refs": [
-        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/"
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "person",
       "value_type": "date",
       "unit": null,
@@ -75,15 +84,18 @@
           "text": "तुम्ही कोणत्या तारखेला अर्ज करत आहात?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "application_date"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "bpl_card_shown",
@@ -92,7 +104,9 @@
       "source_refs": [
         "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -115,24 +129,30 @@
           "text": "तुम्ही सरकारी बीपीएल कार्ड दाखवू शकता का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "bpl_card_shown"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "date_of_birth",
       "version": "1.0.0",
       "meaning": "What is your date of birth? For example 12 March 1981 or 12/03/1981.",
       "source_refs": [
-        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/"
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "person",
       "value_type": "date",
       "unit": null,
@@ -155,15 +175,18 @@
           "text": "तुमची जन्मतारीख काय आहे? उदाहरण: 12 मार्च 1981 किंवा 12/03/1981."
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "highly_sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "date_of_birth"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "excluded_government_employee_member",
@@ -172,7 +195,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -195,15 +220,18 @@
           "text": "निर्दिष्ट कनिष्ठ श्रेणी अपवाद वगळता कुटुंबातील कोणी सरकारी कर्मचारी आहे किंवा होते का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "excluded_government_employee_member"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "income_tax_paid_last_assessment_year",
@@ -212,7 +240,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -235,15 +265,18 @@
           "text": "कुटुंबातील कोणी मागील निर्धारण वर्षात आयकर भरला का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "income_tax_paid_last_assessment_year"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "institutional_landholder",
@@ -252,7 +285,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -275,15 +310,18 @@
           "text": "जमीन एखाद्या संस्थेच्या नावावर आहे का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "institutional_landholder"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "is_widow",
@@ -292,7 +330,9 @@
       "source_refs": [
         "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "person",
       "value_type": "boolean",
       "unit": null,
@@ -315,15 +355,18 @@
           "text": "अर्जदार विधवा आहेत का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "highly_sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "is_widow"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "landholding_family_in_state_records",
@@ -332,7 +375,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -355,15 +400,18 @@
           "text": "शेतकरी कुटुंबाची लागवडीयोग्य जमीन राज्य/केंद्रशासित प्रदेशाच्या नोंदीत आहे का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "landholding_family_in_state_records"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "listed_public_office_member",
@@ -372,7 +420,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -395,15 +445,66 @@
           "text": "कुटुंबातील कोणी मंत्री, खासदार, आमदार किंवा महापौर यांसारख्या सूचीबद्ध सार्वजनिक पदावर आहे किंवा होते का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
+    },
+    {
+      "fact_id": "name_on_bpl_list",
+      "version": "1.0.0",
+      "meaning": "Is the applicant's name on the government Below Poverty Line (BPL) list?",
+      "source_refs": [
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/"
+      ],
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-08",
+      "scope": "person",
+      "value_type": "boolean",
+      "unit": null,
+      "period": null,
+      "minimum": null,
+      "maximum": null,
+      "choices": [],
+      "max_length": null,
+      "display_only": false,
+      "derived_from": [],
+      "derivation": null,
+      "questions": {
+        "en": {
+          "text": "Is your name on the government BPL (Below Poverty Line) list?",
+          "help_text": "If you are not sure, answer 'don't know'."
+        },
+        "hi": {
+          "text": "क्या आपका नाम सरकारी बीपीएल (गरीबी रेखा से नीचे) सूची में है?",
+          "help_text": "अगर आपको पक्का नहीं पता, तो 'पता नहीं' चुनें।"
+        },
+        "mr": {
+          "text": "तुमचे नाव सरकारी बीपीएल (दारिद्र्यरेषेखालील) यादीत आहे का?",
+          "help_text": "तुम्हाला खात्री नसेल, तर 'माहीत नाही' निवडा."
+        }
       },
-      "legacy_profile_field": "listed_public_office_member"
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
+      "privacy": {
+        "policy_id": "synthetic-mock-minimum-data",
+        "version": "1.0.0",
+        "purpose": "Use only to evaluate the synthetic mock scheme rules.",
+        "sensitivity": "sensitive",
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "nri_new_beneficiary",
@@ -412,7 +513,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -435,15 +538,18 @@
           "text": "हा अनिवासी भारतीय शेतकरी कुटुंबाचा नवीन अर्ज आहे का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "nri_new_beneficiary"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "pension_at_least_10000_excluding_stated_grades",
@@ -452,7 +558,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": "INR",
@@ -475,15 +583,18 @@
           "text": "कुटुंबातील कोणाला दरमहा 10,000 रुपये किंवा अधिक पेन्शन मिळते का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "pension_at_least_10000_excluding_stated_grades"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "registered_practicing_professional_member",
@@ -492,7 +603,9 @@
       "source_refs": [
         "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf"
       ],
-      "definition_review_status": "pending",
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-07",
       "scope": "family",
       "value_type": "boolean",
       "unit": null,
@@ -515,15 +628,18 @@
           "text": "कुटुंबातील कोणी नोंदणीकृत व कार्यरत डॉक्टर, अभियंता, वकील किंवा चार्टर्ड अकाउंटंट आहे का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "registered_practicing_professional_member"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     }
   ]
 }

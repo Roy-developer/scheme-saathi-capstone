@@ -1,5 +1,6 @@
 """Verify the synthetic document checklist and mock-portal approval gate."""
 
+import copy
 import asyncio
 import json
 import multiprocessing
@@ -58,23 +59,22 @@ def _create_draft(journey_id: str = "journey-a") -> dict:
             },
             "documents": {
                 "identity_proof": "available",
-                "age_proof": "available",
+                "bank_account_proof": "available",
                 "widow_status_proof": "available",
-                "bpl_proof": "available",
             },
         }
     )
 
 
-def test_document_check_never_calls_demo_items_official() -> None:
+def test_document_check_reports_source_backed_requirements() -> None:
     result = documents.assess_document_metadata(
         {"scheme_id": "IGNWPS-MH", "documents": {}}
     )
 
     assert result["status"] == "unknown_items"
-    assert result["demo_only"] is True
+    assert result["demo_only"] is False
     assert all(item["status"] == "unknown" for item in result["requirements"])
-    assert "not verified official" in result["message"]
+    assert "source evidence" in result["message"]
 
 
 def test_unknown_scheme_requirements_block_draft() -> None:
@@ -342,7 +342,7 @@ def test_supported_publish_before_submit_invalidates_approval_and_retry_receipt(
     assert applications._portal_action(request)["receipt_id"] == submitted["receipt_id"]
     assert load_checklist_snapshot(
         "IGNWPS-MH", checklist_directory=directory, evidence_file=evidence_file
-    ).trust_status == "demo_only_unverified"
+    ).trust_status == "approved_source_backed"
 
 
 def test_publisher_waits_until_portal_submission_commits(
@@ -531,9 +531,8 @@ def _document_report(status="available"):
         "scheme_id": "IGNWPS-MH",
         "documents": {
             "identity_proof": status,
-            "age_proof": "available",
+            "bank_account_proof": "available",
             "widow_status_proof": "available",
-            "bpl_proof": "available",
         },
     }
 
@@ -841,9 +840,9 @@ def test_application_agent_rechecks_rules_before_writing(application_graph):
         journey_id = await _start_application_journey(graph)
         config = {"configurable": {"thread_id": str(journey_id)}}
         snapshot = await graph.aget_state(config)
-        await graph.aupdate_state(
-            config, {"profile": {**snapshot.values["profile"], "is_widow": False}}
-        )
+        typed = copy.deepcopy(snapshot.values["typed_facts"])
+        typed["facts"]["is_widow"]["value"] = False
+        await graph.aupdate_state(config, {"typed_facts": typed})
         with pytest.raises(ApplicationTaskError, match="no longer eligible"):
             await run_application_task(
                 graph, journey_id, "create_draft", _document_report()

@@ -4,12 +4,12 @@
     {
       "scheme_id": "IGNWPS-MH",
       "bundle_version": "1.0.0",
-      "activation_state": "legacy_compatibility",
+      "activation_state": "approved",
       "package_file": "ignwps_mh.v1.json",
       "package_version": "1.0.0",
-      "package_sha256": "d74284819f122d827a9913405dc69907d687868a93b298679c3a46f6840bea45",
+      "package_sha256": "224bf03585d9bb6bc41a64765c890dd84ea36c6006b0907065d9ded8bd5b2c65",
       "registry_version": "1.0.0",
-      "registry_sha256": "babc9941a4018a459add5aabb97fdef98bbfd652f3ff456df67ec9f2e787c12a",
+      "registry_sha256": "7f8cd7ab43e9ab0b7be71c10d9e455f07e36e087de0af345b71e4061764eb7d4",
       "fact_ids": [
         "age",
         "application_date",
@@ -17,12 +17,6 @@
         "date_of_birth",
         "is_widow"
       ],
-      "legacy_profile_mapping": {
-        "is_widow": "is_widow",
-        "date_of_birth": "date_of_birth",
-        "bpl_card_shown": "bpl_card_shown",
-        "application_date": "application_date"
-      },
       "source_clause_ids": [
         "IGNWPS-MH-ELIGIBILITY-01"
       ],
@@ -32,12 +26,12 @@
     {
       "scheme_id": "PM-KISAN-IN",
       "bundle_version": "1.0.0",
-      "activation_state": "legacy_compatibility",
+      "activation_state": "approved",
       "package_file": "pmkisan_in.v1.json",
       "package_version": "1.0.0",
-      "package_sha256": "3e7b14c676a21a878ef5c11a0e2d2fd8e202ff50c40318299d9d644ab20cb4a7",
+      "package_sha256": "fb59df9f7420b29d33f5a41d938cdd00f688db742e62cd989f11a948b11137a1",
       "registry_version": "1.0.0",
-      "registry_sha256": "babc9941a4018a459add5aabb97fdef98bbfd652f3ff456df67ec9f2e787c12a",
+      "registry_sha256": "7f8cd7ab43e9ab0b7be71c10d9e455f07e36e087de0af345b71e4061764eb7d4",
       "fact_ids": [
         "excluded_government_employee_member",
         "income_tax_paid_last_assessment_year",
@@ -48,16 +42,6 @@
         "pension_at_least_10000_excluding_stated_grades",
         "registered_practicing_professional_member"
       ],
-      "legacy_profile_mapping": {
-        "landholding_family_in_state_records": "landholding_family_in_state_records",
-        "pension_at_least_10000_excluding_stated_grades": "pension_at_least_10000_excluding_stated_grades",
-        "nri_new_beneficiary": "nri_new_beneficiary",
-        "institutional_landholder": "institutional_landholder",
-        "registered_practicing_professional_member": "registered_practicing_professional_member",
-        "excluded_government_employee_member": "excluded_government_employee_member",
-        "income_tax_paid_last_assessment_year": "income_tax_paid_last_assessment_year",
-        "listed_public_office_member": "listed_public_office_member"
-      },
       "source_clause_ids": [
         "PMKISAN-GUIDELINES-2020-3",
         "PMKISAN-GUIDELINES-2020-4.1(a)",
@@ -67,6 +51,27 @@
         "PMKISAN-GUIDELINES-2020-4.1(b)(v)",
         "PMKISAN-GUIDELINES-2020-4.1(b)(vi)",
         "PMKISAN-GUIDELINES-2020-4.1(c)"
+      ],
+      "checklist_version": null,
+      "mock_form_version": null
+    },
+    {
+      "scheme_id": "IGNOAPS-MH",
+      "bundle_version": "1.0.0",
+      "activation_state": "approved",
+      "package_file": "ignoaps_mh.v1.json",
+      "package_version": "1.0.0",
+      "package_sha256": "cd4652b8a7da119561eee6ee8a532b4059cca8b750c9d323d93c6a05c00a6549",
+      "registry_version": "1.0.0",
+      "registry_sha256": "7f8cd7ab43e9ab0b7be71c10d9e455f07e36e087de0af345b71e4061764eb7d4",
+      "fact_ids": [
+        "age",
+        "application_date",
+        "date_of_birth",
+        "name_on_bpl_list"
+      ],
+      "source_clause_ids": [
+        "IGNOAPS-MH-ELIGIBILITY-01"
       ],
       "checklist_version": null,
       "mock_form_version": null

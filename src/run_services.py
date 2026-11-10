@@ -6,6 +6,9 @@ import subprocess
 import sys
 import time
 
+# Long enough for the API's final database save; Azure allows 30 seconds in all.
+SHUTDOWN_WAIT_SECONDS = 25
+
 
 def service_commands(service: str) -> tuple[list[str], ...]:
     api = [
@@ -71,7 +74,7 @@ def main(argv: list[str] | None = None) -> int:
         stop_children(signal.SIGTERM, None)
         for child in children:
             try:
-                child.wait(timeout=10)
+                child.wait(timeout=SHUTDOWN_WAIT_SECONDS)
             except subprocess.TimeoutExpired:
                 child.kill()
                 child.wait()

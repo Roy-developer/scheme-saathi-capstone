@@ -75,11 +75,14 @@ cross-encoder. The tool returns evidence for retrieval-augmented answers; it
 does not generate an answer or determine eligibility.
 
 The versioned corpus is `data/schemes/passages.json`. It currently contains
-13 English passages across IGNWPS-MH and PM-KISAN-IN. Their `reviewed` status
+17 English passages across IGNWPS-MH, PM-KISAN-IN and IGNOAPS-MH. Their `reviewed` status
 was set per the user's human-review attestation; it is not legal or policy
 approval. The PM-KISAN source-currentness caveats are recorded in the review
 workbook. This remains a technical pilot, not the complete 40–60-scheme
 corpus, and retrieval does not determine eligibility.
+
+To add a scheme, from its official source through to the app, follow
+`docs/RULE_EXTRACTION_REFLEXION_CODE_WALKTHROUGH.md`, section "From official PDF to live app, end to end".
 
 The current pilot uses the OpenRouter `voyageai/voyage-4` multilingual
 embedding model. The deployed API uses OpenRouter's hosted
@@ -216,6 +219,16 @@ startup command overrides: `python src/run_services.py api` for FastAPI and
 services do not communicate through `localhost`. Configure OpenRouter
 credentials only as backend Container App secrets. Never bake `.env` into the
 image.
+
+The backend scales to zero, which erases the container's disk. To keep
+conversations and mock-portal drafts, set `SCHEME_SAATHI_BACKUP_DIR` on the
+backend app to the mounted Azure file share (`/mnt/saathi-runtime`). The live
+SQLite databases stay on the container's disk, because their WAL mode does not
+work over a network share. Complete copies are saved to the share every five
+minutes (`SCHEME_SAATHI_BACKUP_INTERVAL_SECONDS`) and at shutdown, and restored
+at startup. A crash can lose changes since the last copy. Run only one backend
+replica while this is in use. Do not point `SCHEME_SAATHI_CHECKPOINT_DB` or
+`SCHEME_SAATHI_PORTAL_DB` at the share.
 
 The API health check is at `http://127.0.0.1:8000/health`; interactive API
 documentation is at `http://127.0.0.1:8000/docs`. Run the test suite with

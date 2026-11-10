@@ -8,90 +8,7 @@ from typing import Mapping
 
 from src.rules.bundles import BundleRegistry, SchemeBundle
 from src.rules.facts import FactRegistry
-from src.rules.models import HouseholdProfile, Rule, RulePackage
-
-
-# A legacy marker is only a compatibility route for these exact, already
-# deployed pilot definitions. Novel bundles cannot self-declare this status.
-LegacyPilotBinding = tuple[
-    str,
-    str,
-    str,
-    str,
-    str,
-    tuple[str, ...],
-    tuple[tuple[str, str], ...],
-    tuple[str, ...],
-]
-_LEGACY_PILOT_BINDINGS: dict[str, LegacyPilotBinding] = {
-    "IGNWPS-MH": (
-        "ignwps_mh.v1.json",
-        "1.0.0",
-        "d74284819f122d827a9913405dc69907d687868a93b298679c3a46f6840bea45",
-        "1.0.0",
-        "babc9941a4018a459add5aabb97fdef98bbfd652f3ff456df67ec9f2e787c12a",
-        ("age", "application_date", "bpl_card_shown", "date_of_birth", "is_widow"),
-        (
-            ("application_date", "application_date"),
-            ("bpl_card_shown", "bpl_card_shown"),
-            ("date_of_birth", "date_of_birth"),
-            ("is_widow", "is_widow"),
-        ),
-        ("IGNWPS-MH-ELIGIBILITY-01",),
-    ),
-    "PM-KISAN-IN": (
-        "pmkisan_in.v1.json",
-        "1.0.0",
-        "3e7b14c676a21a878ef5c11a0e2d2fd8e202ff50c40318299d9d644ab20cb4a7",
-        "1.0.0",
-        "babc9941a4018a459add5aabb97fdef98bbfd652f3ff456df67ec9f2e787c12a",
-        (
-            "excluded_government_employee_member",
-            "income_tax_paid_last_assessment_year",
-            "institutional_landholder",
-            "landholding_family_in_state_records",
-            "listed_public_office_member",
-            "nri_new_beneficiary",
-            "pension_at_least_10000_excluding_stated_grades",
-            "registered_practicing_professional_member",
-        ),
-        (
-            (
-                "excluded_government_employee_member",
-                "excluded_government_employee_member",
-            ),
-            (
-                "income_tax_paid_last_assessment_year",
-                "income_tax_paid_last_assessment_year",
-            ),
-            ("institutional_landholder", "institutional_landholder"),
-            (
-                "landholding_family_in_state_records",
-                "landholding_family_in_state_records",
-            ),
-            ("listed_public_office_member", "listed_public_office_member"),
-            ("nri_new_beneficiary", "nri_new_beneficiary"),
-            (
-                "pension_at_least_10000_excluding_stated_grades",
-                "pension_at_least_10000_excluding_stated_grades",
-            ),
-            (
-                "registered_practicing_professional_member",
-                "registered_practicing_professional_member",
-            ),
-        ),
-        (
-            "PMKISAN-GUIDELINES-2020-3",
-            "PMKISAN-GUIDELINES-2020-4.1(a)",
-            "PMKISAN-GUIDELINES-2020-4.1(b)(i)-(ii)",
-            "PMKISAN-GUIDELINES-2020-4.1(b)(iii)",
-            "PMKISAN-GUIDELINES-2020-4.1(b)(iv)",
-            "PMKISAN-GUIDELINES-2020-4.1(b)(v)",
-            "PMKISAN-GUIDELINES-2020-4.1(b)(vi)",
-            "PMKISAN-GUIDELINES-2020-4.1(c)",
-        ),
-    ),
-}
+from src.rules.models import Rule, RulePackage
 
 
 def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
@@ -121,8 +38,6 @@ def _digest(raw: bytes) -> str:
 def _validate_rule(
     rule: Rule,
     registry: FactRegistry,
-    *,
-    allow_legacy_unitless_age: bool,
 ) -> None:
     """Check a rule's fact type, operator, and literal against its definition."""
 
@@ -176,12 +91,7 @@ def _validate_rule(
         compatible = False
     numeric_fact = definition.value_type in {"integer", "decimal"}
     if numeric_fact and definition.unit is not None:
-        legacy_age = (
-            rule.field == "age"
-            and allow_legacy_unitless_age
-            and rule.unit is None
-        )
-        compatible = compatible and (rule.unit == definition.unit or legacy_age)
+        compatible = compatible and rule.unit == definition.unit
     elif rule.unit is not None:
         compatible = False
     if not compatible:
@@ -204,22 +114,6 @@ def _validate_bundle(
 ) -> None:
     """Validate bundle references and compatibility before package activation."""
 
-    if bundle.activation_state == "legacy_compatibility":
-        expected = _LEGACY_PILOT_BINDINGS.get(bundle.scheme_id)
-        actual = (
-            bundle.package_file,
-            bundle.package_version,
-            bundle.package_sha256,
-            bundle.registry_version,
-            bundle.registry_sha256,
-            tuple(sorted(bundle.fact_ids)),
-            tuple(sorted(bundle.legacy_profile_mapping.items())),
-            tuple(sorted(bundle.source_clause_ids)),
-        )
-        if expected is None or actual != expected:
-            raise ValueError(
-                f"Unrecognized legacy compatibility bundle: {bundle.scheme_id}"
-            )
     if bundle.scheme_id != package.scheme_id:
         raise ValueError("Bundle scheme ID does not match its rule package")
     if bundle.package_version != package.package_version:
@@ -234,13 +128,7 @@ def _validate_bundle(
     package_source = str(package.source.source_url)
     referenced = set(package.required_facts)
     for rule in package.rules:
-        _validate_rule(
-            rule,
-            registry,
-            allow_legacy_unitless_age=(
-                bundle.activation_state == "legacy_compatibility"
-            ),
-        )
+        _validate_rule(rule, registry)
         definition = registry.get(rule.field)
         referenced.update(definition.derived_from or (rule.field,))
     if not referenced <= set(bundle.fact_ids):
@@ -254,27 +142,6 @@ def _validate_bundle(
             raise ValueError(
                 f"Fact source references do not include package source: {fact_id}"
             )
-    profile_fields = set(HouseholdProfile.model_fields)
-    for fact_id, profile_field in bundle.legacy_profile_mapping.items():
-        definition = registry.get(fact_id)
-        if (
-            fact_id not in package.required_facts
-            or definition.legacy_profile_field != profile_field
-            or profile_field not in profile_fields
-        ):
-            raise ValueError(
-                f"Invalid legacy profile mapping for {package.scheme_id}: {fact_id}"
-            )
-    missing_legacy = {
-        fact_id
-        for fact_id in package.required_facts
-        if registry.get(fact_id).legacy_profile_field is not None
-        and fact_id not in bundle.legacy_profile_mapping
-    }
-    if missing_legacy:
-        raise ValueError(
-            f"Bundle omits legacy profile mappings: {sorted(missing_legacy)}"
-        )
 
 
 class RulePackageProvider:

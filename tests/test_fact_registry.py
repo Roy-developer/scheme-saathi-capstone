@@ -20,7 +20,7 @@ from src.api.scheme_search import SchemePassage
 from src.mcp_servers.tools.eligibility import evaluate_registered_profile
 from src.mcp_servers.tools import applications, documents
 from src.rules.data_provider import RulePackageProvider
-from src.rules.facts import FactDefinition, FactRegistry, FactState, TypedFactStore
+from src.rules.facts import FactDefinition, FactRegistry, FactState, HouseholdProfile
 from src.rules.models import RulePackage
 from fake_chat_model import FakeChatModel, ModelDecision
 from src.workflow.errors import MCPToolError
@@ -94,7 +94,6 @@ def _fact(
             "sensitivity": "ordinary",
             "review_status": "pending",
         },
-        "legacy_profile_field": None,
     }
 
 
@@ -106,6 +105,8 @@ def _write_synthetic_bundle(
     activation_state: str = "development_only",
     scheme_id: str = "SYNTHETIC-SCHOLARSHIP-TEST",
     create_only: bool = False,
+    package_approved: bool = False,
+    definitions_approved: bool = False,
 ) -> tuple[RulePackageProvider | None, RulePackage]:
     """Write a data-only bundle outside the real scheme catalogue."""
 
@@ -119,6 +120,13 @@ def _write_synthetic_bundle(
             _fact("course_type", "choice", choices=["science", "arts"]),
         ],
     }
+    if definitions_approved:
+        for definition in registry_data["definitions"]:
+            definition.update({
+                "definition_review_status": "approved",
+                "definition_reviewer": "Offline test reviewer",
+                "definition_reviewed_at": "2026-11-08",
+            })
     registry_bytes = (
         json.dumps(registry_data, ensure_ascii=False, indent=2) + "\n"
     ).encode("utf-8")
@@ -126,7 +134,10 @@ def _write_synthetic_bundle(
     package_data = {
         "package_version": "1.0.0",
         "scheme_id": scheme_id,
-        "approval_status": "mock_baseline_pending_human_rule_approval",
+        "approval_status": (
+            "approved_for_mock_portal" if package_approved
+            else "mock_baseline_pending_human_rule_approval"
+        ),
         "reviewer_name": "Offline synthetic test fixture; no policy review",
         "reviewed_at": "2026-11-04",
         "approval_scope": "synthetic_mock_portal_only",
@@ -189,7 +200,6 @@ def _write_synthetic_bundle(
                 "registry_version": "1.0.0",
                 "registry_sha256": hashlib.sha256(registry_bytes).hexdigest(),
                 "fact_ids": ["exam_marks", "course_type"],
-                "legacy_profile_mapping": {},
                 "source_clause_ids": ["SYNTHETIC-TEST-CLAUSE"],
             }
         ],
@@ -212,7 +222,7 @@ def _store(
     marks: object | None,
     course: str = "science",
     status: str = "known",
-) -> TypedFactStore:
+) -> HouseholdProfile:
     """Build a test fact store with explicitly versioned values."""
 
     facts: dict[str, FactState] = {
@@ -230,7 +240,7 @@ def _store(
             definition_version="1.0.0",
             provenance="user_reported" if status == "known" else None,
         )
-    return TypedFactStore(registry_version="1.0.0", facts=facts)
+    return HouseholdProfile(registry_version="1.0.0", facts=facts)
 
 
 def test_new_numeric_and_choice_facts_evaluate_through_mcp_core(
@@ -241,7 +251,7 @@ def test_new_numeric_and_choice_facts_evaluate_through_mcp_core(
     provider, package = _write_synthetic_bundle(tmp_path)
     bundle = provider.get_bundle(package.scheme_id)
 
-    def evaluate(store: TypedFactStore):
+    def evaluate(store: HouseholdProfile):
         return evaluate_registered_profile(
             package.scheme_id,
             store,
@@ -299,7 +309,7 @@ def test_decimal_checkpoint_roundtrip_preserves_verdict_boundary(
         for rule in package.rules
     ]
     precision_package = package.model_copy(update={"rules": rules})
-    store = TypedFactStore(
+    store = HouseholdProfile(
         registry_version=provider.registry.registry_version,
         facts={
             "exam_marks": FactState(
@@ -328,8 +338,8 @@ def test_decimal_checkpoint_roundtrip_preserves_verdict_boundary(
     assert wire["facts"]["exam_marks"]["value"] == {
         "$decimal": "0.12345678901234567"
     }
-    mcp_decoded = TypedFactStore.model_validate(wire)
-    restored = TypedFactStore.from_wire(mcp_decoded.model_dump(), provider.registry)
+    mcp_decoded = HouseholdProfile.model_validate(wire)
+    restored = HouseholdProfile.from_wire(mcp_decoded.model_dump(), provider.registry)
     after = evaluate_registered_profile(
         package.scheme_id,
         restored,
@@ -355,7 +365,7 @@ def test_decimal_checkpoint_roundtrip_preserves_verdict_boundary(
         },
     }
     with pytest.raises(ValueError, match="require a numeric value"):
-        TypedFactStore.from_wire(invalid_wire, provider.registry)
+        HouseholdProfile.from_wire(invalid_wire, provider.registry)
 
 
 def test_decimal_answer_keeps_precision_through_journey_interrupt_and_checkpoint(
@@ -493,6 +503,38 @@ def test_decimal_answer_keeps_precision_through_journey_interrupt_and_checkpoint
     asyncio.run(scenario())
 
 
+def test_dont_know_appears_in_the_chat_as_the_person_chose_it(tmp_path: Path) -> None:
+    """The answer buttons send "skip"; the conversation must not show that code."""
+
+    provider, package = _write_synthetic_bundle(tmp_path)
+    packages = {package.scheme_id: package}
+
+    async def evaluate(_client, scheme_id, store):
+        return evaluate_registered_profile(
+            scheme_id, store, packages, provider.bundles, provider.registry,
+        )
+
+    async def scenario() -> None:
+        graph = build_journey_graph(
+            object(),
+            packages,
+            eligibility_tool=evaluate,
+            checkpointer=MemorySaver(),
+            fact_registry=provider.registry,
+            rule_bundles=provider.bundles,
+        )
+        started = await run_journey(
+            graph, JourneyRequest(action="interview", scheme_id=package.scheme_id),
+        )
+        reply = await resume_journey(graph, started.conversation_id, "skip")
+        said = [turn["content"] for turn in reply.conversation if turn["role"] == "user"]
+
+        assert "I don't know" in said
+        assert "skip" not in said
+
+    asyncio.run(scenario())
+
+
 def test_choice_fact_rejects_values_outside_its_finite_set(
     tmp_path: Path,
 ) -> None:
@@ -567,26 +609,6 @@ def test_development_only_bundle_is_not_activated_by_default(
     with pytest.raises(ValueError, match="Development-only bundles"):
         RulePackageProvider(tmp_path / "packages")
 
-
-def test_novel_pending_bundle_cannot_masquerade_as_legacy_compatibility(
-    tmp_path: Path,
-) -> None:
-    """Only exact pinned pilot bundles can use legacy activation semantics."""
-
-    _write_synthetic_bundle(
-        tmp_path,
-        activation_state="legacy_compatibility",
-        scheme_id="SYNTHETIC-SCHOLARSHIP-TEST",
-        create_only=True,
-    )
-    with pytest.raises(
-        ValueError,
-        match="Unrecognized legacy compatibility bundle",
-    ):
-        RulePackageProvider(
-            tmp_path / "packages",
-            allow_development=True,
-        )
 
 
 def test_explicit_development_loader_accepts_pending_synthetic_bundle(
@@ -735,12 +757,21 @@ def test_registry_question_parser_is_strict_and_localized(
     assert registered_question_details(display_note, "en")["max_length"] == 20
 
 
-def test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure(
-    tmp_path: Path,
+@pytest.mark.parametrize("activation_state", ["development_only", "approved"])
+def test_registry_questions_drive_typed_journey_and_resume(
+    tmp_path: Path, activation_state: str,
 ) -> None:
-    """A pending synthetic bundle asks localized questions and resumes typed facts."""
+    """A synthetic bundle asks localized registry questions and resumes typed facts.
 
-    provider, package = _write_synthetic_bundle(tmp_path)
+    Runs for a development bundle and for an "approved" one: approved schemes
+    use the registry question path, not the old pilot path.
+    """
+
+    approved = activation_state == "approved"
+    provider, package = _write_synthetic_bundle(
+        tmp_path, activation_state=activation_state,
+        package_approved=approved, definitions_approved=approved,
+    )
     checkpointer = MemorySaver()
 
     class Planner(FakeChatModel):
@@ -791,7 +822,6 @@ def test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosur
                 action="interview",
                 scheme_id=package.scheme_id,
                 locale="hi",
-                profile_description="Synthetic exam marks are 99.",
             ),
         )
         assert started.status == "awaiting_answer"
@@ -801,7 +831,6 @@ def test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosur
         assert started.question_definition.unit == "percent"
         assert started.question_definition.minimum == 0
         assert started.question_definition.maximum == 100
-        assert "Synthetic exam marks are 99." not in "\n".join(model.seen)
 
         invalid = await resume_journey(
             graph, started.conversation_id, "100.01"
@@ -1069,20 +1098,13 @@ def test_data_only_multischeme_discovery_sharing_and_typed_correction_through_ht
 
     async def evaluate(_client, scheme_id, store):
         evaluations.append(scheme_id)
-        assert isinstance(store, TypedFactStore)
+        assert isinstance(store, HouseholdProfile)
         return evaluate_registered_profile(
             scheme_id, store, provider.packages, provider.bundles, provider.registry
         )
 
-    class ForbiddenRegistryModel(FakeChatModel):
-        model_name: str = "offline-must-not-disclose"
-
-        async def choose(self, *_args):
-            pytest.fail("Registry answers and derived verdicts must not reach a model")
-
     graph = build_journey_graph(
         object(), provider.packages, eligibility_tool=evaluate, search_tool=search,
-        eligibility_model_provider=ForbiddenRegistryModel(),
         checkpointer=MemorySaver(), fact_registry=provider.registry,
         rule_bundles=provider.bundles,
     )
@@ -1287,7 +1309,7 @@ def test_typed_corrections_and_changed_definitions_revoke_real_pilot_approval_af
     report = {
         "scheme_id": "IGNWPS-MH",
         "documents": {name: "available" for name in (
-            "identity_proof", "age_proof", "widow_status_proof", "bpl_proof",
+            "identity_proof", "bank_account_proof", "widow_status_proof",
         )},
     }
 
@@ -1392,7 +1414,6 @@ def _write_mapped_development_bundle(root: Path) -> RulePackageProvider:
 
     _write_synthetic_bundle(root, create_only=True)
     widow = _fact("is_widow", "boolean")
-    widow["legacy_profile_field"] = "is_widow"
     registry_bytes = json.dumps({
         "schema_version": "1.0", "registry_version": "1.0.0",
         "definitions": [widow, _fact("synthetic_flag", "boolean")],
@@ -1413,7 +1434,6 @@ def _write_mapped_development_bundle(root: Path) -> RulePackageProvider:
         "registry_sha256": hashlib.sha256(registry_bytes).hexdigest(),
         "package_sha256": hashlib.sha256(package_bytes).hexdigest(),
         "fact_ids": package["required_facts"],
-        "legacy_profile_mapping": {"is_widow": "is_widow"},
     })
     manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
     return RulePackageProvider(root / "packages", allow_development=True)
@@ -1429,7 +1449,7 @@ def test_development_bundle_with_legacy_bridge_still_asks_and_corrects_novel_fac
     seen = []
 
     async def evaluate(_client, candidate, store):
-        assert isinstance(store, TypedFactStore)
+        assert isinstance(store, HouseholdProfile)
         seen.append(store.to_wire(provider.registry))
         return evaluate_registered_profile(
             candidate, store, provider.packages, provider.bundles, provider.registry
@@ -1470,7 +1490,7 @@ def test_development_bundle_with_legacy_bridge_still_asks_and_corrects_novel_fac
 
 
 @pytest.mark.parametrize(("seed", "pending", "invalid", "valid"), [
-    ({"date_of_birth": "1986-01-01"}, "application_date", "1900-01-01", "2026-01-01"),
+    # The application date is no longer asked, so only date of birth can be pending.
     ({"application_date": "2026-01-01"}, "date_of_birth", "1800-01-01", "1986-01-01"),
 ])
 def test_combined_date_answer_reasks_safely_and_invalid_correction_never_writes(
@@ -1672,3 +1692,65 @@ def test_every_registry_question_is_readable_in_every_language():
     for fact in registry["definitions"]:
         for locale, question in fact.get("questions", {}).items():
             assert "??" not in question["text"], (fact["fact_id"], locale)
+
+
+def test_every_packaged_rule_carries_its_exact_source_clause():
+    """Every rule records its official text, where it is, and the fact's unit.
+
+    IGNWPS once kept its one eligibility sentence only at package level, while
+    PM-KISAN kept text on each rule; the evidence panel then showed an internal
+    clause ID as the location. Rule-extraction cases are also built per rule.
+    """
+
+    package_dir = Path(__file__).resolve().parents[1] / "src" / "rules" / "packages"
+    registry = FactRegistry.model_validate_json(
+        (package_dir.parent / "fact_registry.json").read_bytes()
+    )
+    packages = sorted(package_dir.glob("*.json"))
+    assert packages
+    for path in packages:
+        package = RulePackage.model_validate_json(path.read_bytes())
+        for rule in package.rules:
+            assert rule.source_text and rule.source_text.strip(), (path.name, rule.rule_id)
+            assert rule.source_location and rule.source_location.strip(), (path.name, rule.rule_id)
+            # IGNWPS age rules once had no unit and relied on a legacy exception.
+            # As in the loader, units count only for number facts; a yes/no
+            # fact may describe an amount ("pension of at least Rs 10,000").
+            definition = registry.get(rule.field)
+            numeric = definition.value_type in {"integer", "decimal"}
+            expected_unit = definition.unit if numeric else None
+            assert rule.unit == expected_unit, (path.name, rule.rule_id)
+
+
+# --- "approved" activation: a reviewed new scheme goes live through its records ---
+
+
+def test_approved_bundle_goes_live_when_package_and_definitions_are_approved(
+    tmp_path: Path,
+) -> None:
+    """The default (live) loader accepts it; questions and privacy may be pending."""
+    _write_synthetic_bundle(
+        tmp_path, activation_state="approved", create_only=True,
+        package_approved=True, definitions_approved=True,
+    )
+
+    provider = RulePackageProvider(tmp_path / "packages")
+
+    assert "SYNTHETIC-SCHOLARSHIP-TEST" in provider.packages
+    assert provider.bundles["SYNTHETIC-SCHOLARSHIP-TEST"].activation_state == "approved"
+
+
+
+
+def test_development_only_bundle_is_still_refused_even_when_approved_records_exist(
+    tmp_path: Path,
+) -> None:
+    """Approved records do not turn a development bundle on; only the state does."""
+    _write_synthetic_bundle(
+        tmp_path, activation_state="development_only", create_only=True,
+        package_approved=True, definitions_approved=True,
+    )
+
+    with pytest.raises(ValueError, match="Development-only bundles"):
+        RulePackageProvider(tmp_path / "packages")
+

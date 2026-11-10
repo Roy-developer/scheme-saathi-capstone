@@ -33,21 +33,29 @@
       "field": "is_widow",
       "operator": "eq",
       "value": true,
-      "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01"
+      "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01",
+      "source_text": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
+      "source_location": "Eligibility Criteria section"
     },
     {
       "rule_id": "IGNWPS-MH-AGE-MIN-01",
       "field": "age",
       "operator": "gte",
       "value": 40,
-      "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01"
+      "unit": "years",
+      "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01",
+      "source_text": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
+      "source_location": "Eligibility Criteria section"
     },
     {
       "rule_id": "IGNWPS-MH-AGE-MAX-01",
       "field": "age",
       "operator": "lte",
       "value": 79,
-      "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01"
+      "unit": "years",
+      "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01",
+      "source_text": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
+      "source_location": "Eligibility Criteria section"
     },
     {
       "rule_id": "IGNWPS-MH-BPL-01",
@@ -55,6 +63,8 @@
       "operator": "eq",
       "value": true,
       "source_clause_id": "IGNWPS-MH-ELIGIBILITY-01",
+      "source_text": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
+      "source_location": "Eligibility Criteria section",
       "if_not_met": "need_more_information",
       "missing_field_label": "government_bpl_card"
     }

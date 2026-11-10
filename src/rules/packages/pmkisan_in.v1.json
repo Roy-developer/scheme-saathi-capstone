@@ -1,9 +1,9 @@
 {
   "package_version": "1.0.0",
   "scheme_id": "PM-KISAN-IN",
-  "approval_status": "mock_baseline_pending_human_rule_approval",
-  "reviewer_name": "Independent second-model review (identity unavailable); see docs/PMKISAN_RULE_REVIEW_2026-11-02.md",
-  "reviewed_at": "2026-11-02",
+  "approval_status": "approved_for_mock_portal",
+  "reviewer_name": "Roy-developer",
+  "reviewed_at": "2026-11-09",
   "approval_scope": "synthetic_mock_portal_only",
   "source": {
     "publisher": "Department of Agriculture & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
