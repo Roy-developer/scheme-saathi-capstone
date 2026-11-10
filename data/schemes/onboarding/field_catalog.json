@@ -1,0 +1,109 @@
+{
+  "version": "0.1.0",
+  "note": "Maps each gold-rule field to a registry fact. 'use_existing' reuses a fact already in src/rules/fact_registry.json; 'new' describes a fact the staging tool will propose (always pending review). Hindi and Marathi wording is a draft and needs native-speaker review. Fields missing here are blocked until added or drafted with --draft-missing.",
+  "fields": {
+    "age": {"action": "use_existing", "fact_id": "age"},
+    "is_widow": {"action": "use_existing", "fact_id": "is_widow"},
+    "is_institutional_landholder": {"action": "use_existing", "fact_id": "institutional_landholder"},
+    "is_nri": {"action": "use_existing", "fact_id": "nri_new_beneficiary", "reviewer_check": "Registry fact is limited to new PM-KISAN beneficiaries."},
+    "family_has_constitutional_post_holder": {"action": "use_existing", "fact_id": "listed_public_office_member", "reviewer_check": "Confirm the registry wording covers the same office holders."},
+    "family_has_government_employee": {"action": "use_existing", "fact_id": "excluded_government_employee_member", "reviewer_check": "Confirm wording and the Class IV / Group D carve-out."},
+    "family_has_pensioner_monthly_10000_or_more": {"action": "use_existing", "fact_id": "pension_at_least_10000_excluding_stated_grades"},
+    "family_has_registered_professional": {"action": "use_existing", "fact_id": "registered_practicing_professional_member"},
+    "is_name_in_land_records": {"action": "use_existing", "fact_id": "landholding_family_in_state_records", "reviewer_check": "Registry fact is about the family's land in State/UT records; confirm it matches this clause."},
+
+    "is_below_poverty_line": {
+      "action": "new", "scope": "family", "value_type": "boolean", "sensitivity": "sensitive",
+      "meaning": "Does the applicant's household live below the poverty line (BPL) according to the criteria of the Government of India?",
+      "reviewer_check": "The registry already has name_on_bpl_list and bpl_card_shown. Decide whether to reuse one of them for this scheme instead.",
+      "questions": {
+        "en": {"text": "Does your family live below the poverty line (BPL)?", "help_text": "If you are not sure, answer 'don't know'."},
+        "hi": {"text": "क्या आपका परिवार गरीबी रेखा से नीचे (बीपीएल) है?", "help_text": "अगर आपको पक्का नहीं पता, तो 'पता नहीं' चुनें।"},
+        "mr": {"text": "तुमचे कुटुंब दारिद्र्यरेषेखाली (बीपीएल) आहे का?", "help_text": "तुम्हाला खात्री नसेल, तर 'माहीत नाही' निवडा."}
+      }
+    },
+    "is_remarried": {
+      "action": "new", "scope": "person", "value_type": "boolean", "sensitivity": "sensitive",
+      "meaning": "Has the applicant remarried?",
+      "questions": {
+        "en": {"text": "Have you remarried?"},
+        "hi": {"text": "क्या आपने पुनर्विवाह किया है?"},
+        "mr": {"text": "तुम्ही पुनर्विवाह केला आहे का?"}
+      }
+    },
+    "is_citizen_of_india": {
+      "action": "new", "scope": "person", "value_type": "boolean", "sensitivity": "ordinary",
+      "meaning": "Is the applicant a citizen of India?",
+      "questions": {
+        "en": {"text": "Are you a citizen of India?"},
+        "hi": {"text": "क्या आप भारत के नागरिक हैं?"},
+        "mr": {"text": "तुम्ही भारताचे नागरिक आहात का?"}
+      }
+    },
+    "is_resident_of_state": {
+      "action": "new", "scope": "person", "value_type": "boolean", "sensitivity": "ordinary",
+      "meaning": "Is the applicant a resident of Maharashtra?",
+      "reviewer_check": "State-specific. If schemes of other states are added, this needs a state variable instead.",
+      "questions": {
+        "en": {"text": "Do you live in Maharashtra?"},
+        "hi": {"text": "क्या आप महाराष्ट्र में रहते हैं?"},
+        "mr": {"text": "तुम्ही महाराष्ट्रात राहता का?"}
+      }
+    },
+    "has_disability": {
+      "action": "new", "scope": "person", "value_type": "boolean", "sensitivity": "highly_sensitive",
+      "meaning": "Does the applicant have a physical or mental disability?",
+      "questions": {
+        "en": {"text": "Do you have a physical or mental disability?"},
+        "hi": {"text": "क्या आपको कोई शारीरिक या मानसिक दिव्यांगता है?"},
+        "mr": {"text": "तुम्हाला शारीरिक किंवा मानसिक दिव्यांगत्व आहे का?"}
+      }
+    },
+    "disability_percent": {
+      "action": "new", "scope": "person", "value_type": "integer", "unit": "percent", "minimum": 0, "maximum": 100, "sensitivity": "highly_sensitive",
+      "meaning": "Disability percentage as shown on the applicant's disability certificate.",
+      "questions": {
+        "en": {"text": "What disability percentage is shown on your disability certificate?"},
+        "hi": {"text": "आपके दिव्यांगता प्रमाणपत्र में दिव्यांगता कितने प्रतिशत लिखी है?"},
+        "mr": {"text": "तुमच्या दिव्यांगत्व प्रमाणपत्रावर दिव्यांगत्व किती टक्के नमूद आहे?"}
+      }
+    },
+    "is_receiving_other_pension": {
+      "action": "new", "scope": "person", "value_type": "boolean", "sensitivity": "sensitive",
+      "meaning": "Is the applicant already receiving a pension under any social security scheme?",
+      "questions": {
+        "en": {"text": "Are you already receiving a pension under any other social security scheme?"},
+        "hi": {"text": "क्या आपको किसी अन्य सामाजिक सुरक्षा योजना के तहत पहले से पेंशन मिल रही है?"},
+        "mr": {"text": "तुम्हाला इतर कोणत्याही सामाजिक सुरक्षा योजनेअंतर्गत आधीच पेन्शन मिळते का?"}
+      }
+    },
+    "has_savings_bank_account": {
+      "action": "new", "scope": "person", "value_type": "boolean", "sensitivity": "sensitive",
+      "meaning": "Does the applicant have a savings bank account?",
+      "questions": {
+        "en": {"text": "Do you have a savings bank account?"},
+        "hi": {"text": "क्या आपका बचत बैंक खाता है?"},
+        "mr": {"text": "तुमचे बचत बँक खाते आहे का?"}
+      }
+    },
+    "is_income_tax_payer": {
+      "action": "new", "scope": "person", "value_type": "boolean", "sensitivity": "sensitive",
+      "meaning": "Is, or has the applicant ever been, an income tax payer?",
+      "reviewer_check": "The registry has income_tax_paid_last_assessment_year (PM-KISAN); this scheme asks about being a payer at any time.",
+      "questions": {
+        "en": {"text": "Are you, or have you ever been, an income tax payer?"},
+        "hi": {"text": "क्या आप आयकर दाता हैं, या कभी रहे हैं?"},
+        "mr": {"text": "तुम्ही आयकर भरता का, किंवा कधी भरत होता का?"}
+      }
+    },
+    "consents_to_auto_debit": {
+      "action": "new", "scope": "person", "value_type": "boolean", "sensitivity": "sensitive",
+      "meaning": "Does the applicant agree to the contribution being deducted automatically from their savings account?",
+      "questions": {
+        "en": {"text": "Do you agree to the contribution being deducted automatically (auto-debit) from your savings account?"},
+        "hi": {"text": "क्या आप अपने बचत खाते से अंशदान अपने-आप कटने (ऑटो-डेबिट) के लिए सहमत हैं?"},
+        "mr": {"text": "तुमच्या बचत खात्यातून योगदान आपोआप वजा (ऑटो-डेबिट) होण्यास तुम्ही सहमत आहात का?"}
+      }
+    }
+  }
+}
