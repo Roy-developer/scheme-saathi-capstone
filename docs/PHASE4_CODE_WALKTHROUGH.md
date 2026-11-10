@@ -47,8 +47,10 @@ in the [Phase-wise implementation plan](PHASE_WISE_IMPLEMENTATION_PLAN.md).
 >
 > **Synthetic demonstration only.** A positive eligibility result means the
 > supplied facts satisfy the dated mock rule package. Document checks compare
-> **text a person typed** (a name and a date). There are **no uploads, no OCR, no
-> authenticity checks and no identity validation**. The two pilot checklists
+> **text a person typed** (a name and a date). Synthetic files can now be
+> uploaded per document (PDF/JPG/PNG, max 20 MB; see "Document uploads and
+> checker" at the end of this file), but there is **no OCR, no
+> authenticity check and no identity validation**. The two pilot checklists
 > (`IGNWPS-MH`, `PM-KISAN-IN`) are still **demo-only** with no linked evidence:
 > they are not verified official requirements. The two pilot rule-package
 > pins in `src/rules/bundle_registry.json` are unchanged, and the fact
@@ -1267,7 +1269,8 @@ needed/requested; the 415-test full run above predates this test-only adjustment
   groups, typed `registered_fact` conditions, a legacy `profile_boolean`
   bridge, bundle-scoped facts, data-defined mock forms and source-trust
   validation (sections 6.4 to 6D).
-  **Not implemented:** real uploads, OCR, authenticity or identity checks.
+  **Not implemented:** OCR, authenticity or identity checks (stored uploads are
+  described at the end of this file).
   **No official checklist data is included**; the pilot lists are demo-only.
 * **Open:** source data preparation and human review for real checklists (a
   parallel human step, not approved by any agent), manual browser run-through,
@@ -1316,3 +1319,44 @@ needed/requested; the 415-test full run above predates this test-only adjustment
   or recovery after killing processes at every stage.
 * **UI errors:** application failures show one generic localized message, not the
   specific reason (expired, stale, wrong revision).
+
+
+## Document uploads and checker
+
+* **Upload:** each document in a checklist has a file control in the
+  "Upload documents" tab. Allowed: PDF, JPG, PNG (checked by file signature
+  and extension), up to 20 MB (`src/documents/uploads.py`, enforced again in
+  `src/api/document_uploads.py`). Uploading marks the document `available`.
+* **Where files live:** `data/runtime/uploads/<conversation_id>/<document_id>/`
+  (override with `SCHEME_SAATHI_UPLOAD_DIR`), metadata in
+  `uploads.sqlite3` (`SCHEME_SAATHI_UPLOAD_DB`). In Azure the folder and
+  database are mirrored to the `/mnt/saathi-runtime` file share by
+  `DatabaseBackups`; run a single backend replica. "Forget my journey" deletes
+  them. Use synthetic files only; retention and malware scanning are open items.
+* **Document checker tab:** `POST .../documents/check` reports each required
+  document as in place, missing, needs attention or acknowledged. It is
+  deterministic and non-gating: it does not read file contents or prove
+  authenticity.
+* **Human resolution:** name/date mismatches and "cannot compare" can be
+  acknowledged with a written reason (`/resolutions`) and reopened. The
+  acknowledgment is tied to a fingerprint of the file, typed values, profile
+  name and checklist, so any change voids it. Missing or damaged files must be
+  fixed by uploading.
+* **Readiness:** `POST .../documents/readiness` ranks the candidate schemes by
+  how many required document groups are on file. It is not an eligibility
+  decision. Draft creation still follows the existing checklist rules.
+* **Reviewer sign-off:** in the Document checker tab a person can enter their
+  name (and an optional note) and press "Mark as reviewed" for each stored file
+  (`POST/DELETE .../documents/files/{document_id}/review`). It records who
+  looked at the file and when, tied to the file's hash, so replacing or removing
+  the file cancels it. It is informational: it does not change document states
+  or gate drafts, and it is not an identity check of the reviewer.
+* **Suggested values from the file (optional):** when
+  `SCHEME_SAATHI_DOCINTEL_ENDPOINT` and `SCHEME_SAATHI_DOCINTEL_KEY` are set
+  (Azure Document Intelligence, store the key as a secret), a "Read name and
+  date from file" button appears under each stored file
+  (`src/documents/extraction.py`). Only values next to a label (Name, DOB, and
+  Hindi/Marathi equivalents) are suggested. A person must press "Use these
+  values"; the checker still compares only the confirmed typed values. The
+  suggestion is dropped when the file is replaced or removed. It is not
+  verification or proof of authenticity, and a model never reads the text.

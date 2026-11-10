@@ -838,6 +838,8 @@ def test_document_action_updates_supervisor_plan_for_both_pilots(
     ), patch(
         "src.ui.api_client.list_application_drafts", return_value=[]
     ), patch(
+        "src.ui.api_client.list_document_files", return_value={"files": []}
+    ), patch(
         "src.ui.api_client.assess_documents",
         return_value={**assessment, "plan_detail": document_plan},
     ) as assess:
@@ -1038,6 +1040,8 @@ def test_document_dates_accept_everyday_formats_and_explain_unreadable_ones() ->
         "src.ui.api_client.get_journey_state", return_value=saved
     ), patch(
         "src.ui.api_client.list_application_drafts", return_value=[]
+    ), patch(
+        "src.ui.api_client.list_document_files", return_value={"files": []}
     ), patch(
         "src.ui.api_client.assess_documents", return_value=assessment,
     ) as assess:
