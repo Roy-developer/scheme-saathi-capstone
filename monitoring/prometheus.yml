@@ -1,4 +1,6 @@
-# Role 5 → Role 6 handoff: scrape Scheme Saathi /metrics.
+# Reference scrape config for a standalone Prometheus (optional).
+# In Azure, prefer Managed Grafana / Azure Monitor scraping the BE Container App
+# /metrics URL. Replace the target with your BE hostname when using self-hosted Prometheus.
 global:
   scrape_interval: 15s
 
@@ -9,6 +11,6 @@ scrape_configs:
   - job_name: scheme-saathi-api
     metrics_path: /metrics
     static_configs:
-      - targets: ["api:8000"]
+      - targets: ["YOUR_BE_HOST:8000"]
         labels:
           service: scheme-saathi

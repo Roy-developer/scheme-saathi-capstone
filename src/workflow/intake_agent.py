@@ -87,7 +87,12 @@ async def propose_initial_profile_facts(
     # reasoning ever sees this text. Not a replacement for the schema-
     # constrained proposal step or the citizen-only confirmation step
     # below, which remain the real backstop. See docs/THREAT_MODEL.md.
-    description = screen_free_text(description).text
+    screened = screen_free_text(description)
+    if screened.flagged:
+        from src.observability.metrics import record_guardrail_block
+
+        record_guardrail_block("injection_screen", "flagged")
+    description = screened.text
 
     task_scheme_id = scheme_id
     required_facts: set[str] = set()

@@ -46,6 +46,8 @@ from src.observability.metrics import (
     observe_duration,
     record_conversation,
     record_evaluation,
+    record_pending_approval_created,
+    record_pending_approval_resolved,
     record_question,
     record_verdict,
 )
@@ -925,6 +927,7 @@ async def create_application_draft(
                 "district": draft_request.district,
             },
         )
+        record_pending_approval_created()
         return _public_application_record(created)
     except HTTPException:
         raise
@@ -1095,6 +1098,9 @@ async def update_application_approval(
                 },
             },
         )
+        # Capstone monitoring: draft left the waiting-approval queue.
+        if decision.action in {"approve", "reject", "submit"}:
+            record_pending_approval_resolved()
         return _public_application_record(result)
     except HTTPException:
         raise

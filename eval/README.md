@@ -23,7 +23,7 @@ defences off/on, κ smoke, simulated-citizen smoke, E1–E4 config inventory.
 | Red-team 30 | `python scripts/evaluate_red_team_dev.py` |
 | E2 off/on | `python scripts/evaluate_e2_defences_dev.py` |
 | E3 inventory | `python scripts/evaluate_reflexion_playbook_dev.py` |
-| Monitoring handoff | `monitoring/` + `docker-compose.observability.yml` |
+| Monitoring handoff | `monitoring/` configs for Azure Managed Grafana / separate Container App |
 
 ## Honest limits
 

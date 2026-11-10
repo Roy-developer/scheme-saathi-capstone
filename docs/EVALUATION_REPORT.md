@@ -24,7 +24,7 @@ python scripts/run_role5_dev_evals.py
 | E3 Reflexion before/after | Playbook inventory free; **paid** OpenRouter runs pending |
 | E4 signature ablation | Rule-engine side via personas; LLM/question ablations pending |
 | 30+ red-team | 30 attacks; 23 offline-runnable; memory/approval still stubs |
-| Monitoring / Grafana / alert | `/metrics` + `monitoring/` + `docker-compose.observability.yml` handoff |
+| Monitoring / Grafana / alert | `/metrics` + `monitoring/` JSON/rules for Azure Managed Grafana or separate Container App |
 | CI evaluation gate | Frontend checks runs `run_role5_dev_evals.py` |
 | Three held-out repeats | Pending after freeze |
 
@@ -85,7 +85,7 @@ Emitted at `GET /metrics`:
 - `scheme_saathi_request_latency_seconds`
 
 Role 6 handoff: `monitoring/prometheus.yml`, `monitoring/alerts.yml` (can't-tell
-rate alert), Grafana dashboard JSON, `docker-compose.observability.yml`.
+rate alert), Grafana dashboard JSON under `monitoring/` (Azure Managed Grafana / separate Container App — no Compose).
 
 ## 8. Still required for a full PDF claim
 
