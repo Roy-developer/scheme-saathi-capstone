@@ -276,7 +276,7 @@ PII_RULES = (
 )
 ```
 
-Digits may be grouped by up to three spaces, dots or hyphens (`2345.6789.0123`, `2345 - 6789 - 0123`). Two guards keep values agents need readable: a number glued to a letter, underscore or hyphen is part of an ID (draft UUIDs, hex fingerprints, rule IDs), and a number that starts as a date (`12.05.2024`, `2024-05-12 10:30`) is a date.
+Digits may be grouped by up to three spaces, dots or hyphens (`2345.6789.0123`, `2345 - 6789 - 0123`). Two guards keep values agents need readable: a number glued to a letter, underscore or hyphen is part of an ID (draft UUIDs, hex fingerprints, rule IDs), and a number that starts as a date (`12.05.2024`, `2024-05-12 10:30`) is a date. The exception is a number glued to a known label word (`Aadhaar-234567890123`, `आधार234567890123`, `mobile-9876543210`; see `_PII_LABELS`), which is masked. Labels must be whole words and use letters that never appear in hex IDs, so IDs stay intact.
 
 - **Agents:** `PIIMiddleware` applies each rule to the task message and to every tool result before the next model call.
 - **Everything else** (the free-text description, intake replies, search queries): `mask_sensitive_text(text)` applies the same rules. Trace events never hold free text at all, only fixed summaries.

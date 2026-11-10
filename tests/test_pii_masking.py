@@ -183,6 +183,38 @@ def test_identifiers_with_dots_or_wider_gaps_are_masked(raw):
     assert raw not in json.dumps(run.trace)
 
 
+@pytest.mark.parametrize("raw", [
+    "Aadhaar-234567890123",
+    "AADHAAR_2345 6789 0123",
+    "aadhar234567890123",
+    "UID:234567890123",
+    "Account-123456789012345",
+    "mobile-9876543210",
+    "Phone9876543210",
+    "आधार-234567890123",       # hi / mr label glued to the number
+    "आधार234567890123",
+    "खाता-123456789012345",
+    "मोबाइल9876543210",
+])
+def test_identifier_glued_to_a_known_label_is_masked(raw):
+    model = RecordingModel(_finish_only())
+
+    run = _run(model, "intake", _context_with(raw), [finish])
+
+    seen = model.seen_text()
+    assert _digits(raw) not in _digits(seen)
+    assert "[REDACTED_" in seen
+    assert _digits(raw) not in json.dumps(run.trace)
+
+
+@pytest.mark.parametrize("text", [
+    "fluid-234567890123",       # label must be a whole word
+    "myaadhaar-234567890123",
+])
+def test_label_inside_another_word_does_not_trigger_masking(text):
+    assert mask_sensitive_text(text) == text
+
+
 @pytest.mark.xfail(strict=True, reason=(
     "Known limit: a 16-digit number in groups of four is masked as an "
     "Aadhaar (first 12 digits) and its last group stays visible, "
