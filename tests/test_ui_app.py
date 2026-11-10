@@ -960,6 +960,14 @@ def test_phase4_rejection_edit_and_receipt_copy_is_localized(
     drafts = [draft]
     with patch("src.ui.api_client.get_journey_state", return_value=saved), patch(
         "src.ui.api_client.list_application_drafts", return_value=drafts,
+    ), patch(
+        "src.ui.api_client.list_document_files", return_value={"files": []}
+    ), patch(
+        "src.ui.api_client.check_documents_report",
+        return_value={
+            "overall": "incomplete", "groups": [], "notice": "Synthetic.",
+            "missing_labels": [],
+        },
     ):
         app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS)
         app.query_params["conversation"] = str(conversation_id)
@@ -968,6 +976,10 @@ def test_phase4_rejection_edit_and_receipt_copy_is_localized(
         app.selectbox[0].set_value(locale).run()
         assert not app.exception
         assert any(rejected_notice in item.value for item in app.error)
+        assert any(
+            item.value in {"Document checker", "दस्तावेज़ जाँच", "कागदपत्र तपासणी"}
+            for item in app.subheader
+        )
         next(button for button in app.button if button.label == reopen).click().run()
         assert not app.exception
         assert any(item.label == reference for item in app.text_input)

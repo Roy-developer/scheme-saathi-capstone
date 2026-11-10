@@ -81,9 +81,9 @@ each document with the profile.
   mode). This is one shared code, not per-person login, and the name a reviewer
   types is still self-declared. Review stays optional by design: it happens after
   submission and does not block the draft.
-- **Rejected draft:** the screen shows only the rejection message and "Edit and
-  reopen draft". Files stay stored; the checker and file view are available again
-  once the draft is reopened.
+- **Rejected draft:** the application summary stays visible, with the rejection
+  message and "Edit and reopen draft". The checker and "View uploaded file" are
+  shown below it so the files can still be opened.
 
 ## All cases
 

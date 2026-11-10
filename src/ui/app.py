@@ -1479,6 +1479,15 @@ def render_submitted_review(scheme_id: str, flow_state: dict) -> None:
     render_document_checker(scheme_id, [], flow_state)
 
 
+def render_rejected_documents(scheme_id: str, flow_state: dict) -> None:
+    """A rejected draft still lets the reviewer open the files and the checker."""
+
+    st.subheader(ct("tab_checker"))
+    if "checker" not in flow_state:
+        _run_checker(scheme_id, [], flow_state)
+    render_document_checker(scheme_id, [], flow_state)
+
+
 def render_document_checker(
     scheme_id: str, items: list[dict[str, object]], flow_state: dict
 ) -> None:
@@ -2087,6 +2096,7 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                 ):
                     flow_state["edit_mode"] = True
                     st.rerun()
+                render_rejected_documents(scheme_id, flow_state)
             else:
                 if flow_state.get("edit_mode"):
                     reference = st.text_input(
