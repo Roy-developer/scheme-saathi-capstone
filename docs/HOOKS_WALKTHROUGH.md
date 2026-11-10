@@ -64,7 +64,7 @@ Saathi uses the standard LangChain v1 / LangGraph piece wherever one exists. Cus
 | Strict arguments | Pydantic `args_schema` with `extra="forbid"` | **LangChain + Pydantic** | `AgentSchema`, [`agent_runtime.py`](../src/workflow/agent_runtime.py) |
 | Finishing actions | `return_direct=True` | **LangChain** | the handoff tools |
 | Steps per run | `ModelCallLimitMiddleware` | **LangChain** | `run_agent` |
-| Masking personal data | `PIIMiddleware` + `RedactionRule` | **LangChain** | [`agent_runtime.py:45`](../src/workflow/agent_runtime.py#L45) |
+| Masking personal data | `PIIMiddleware` + `RedactionRule` | **LangChain** | [`agent_runtime.py:58`](../src/workflow/agent_runtime.py#L58) |
 | One-off structured answers | `with_structured_output(...)` | **LangChain** | [`intake.py`](../src/workflow/intake.py) |
 | The conversation graph, pauses, saving | `StateGraph`, `interrupt()`, `AsyncSqliteSaver` | **LangGraph** | [`journey.py`](../src/workflow/journey.py) |
 | Per-conversation budget storage | `Store` (`AsyncSqliteStore`) | **LangGraph** | [`conversation_budget.py`](../src/workflow/conversation_budget.py) |
@@ -230,7 +230,8 @@ graph = create_agent(
     system_prompt=system_prompt,                 # from agent_config.prompt_for(agent, locale)
     middleware=[
         *(
-            PIIMiddleware(rule.pii_type, detector=rule.detector, strategy="redact")
+            PIIMiddleware(rule.pii_type, detector=rule.detector, strategy="redact",
+                          apply_to_tool_results=True)
             for rule in PII_RULES
         ),                                                                    # LangChain
         ModelCallLimitMiddleware(run_limit=max_steps, exit_behavior="end"),  # LangChain
@@ -263,23 +264,26 @@ return AgentRunResult("step_limit", counters, trace)
 
 ### 5.4 Masking personal data: `PIIMiddleware` + `RedactionRule` **[LC]**
 
-The rules are defined once, [`agent_runtime.py:45`](../src/workflow/agent_runtime.py#L45):
+The rules are defined once, [`agent_runtime.py:58`](../src/workflow/agent_runtime.py#L58):
 
 ```python
+# shortened: see agent_runtime.py for the full guard patterns
 PII_RULES = (
     RedactionRule("email"),                                                   # built-in detector
-    RedactionRule("aadhaar", detector=r"(?<!\d)(?:\d[ -]?){11}\d(?!\d)"),
-    RedactionRule("phone",   detector=r"(?<!\d)(?:\+?91[ -]?)?[6-9]\d{9}(?!\d)"),
-    RedactionRule("account", detector=r"(?<!\d)(?:\d[ -]?){8,17}\d(?!\d)"),
+    RedactionRule("aadhaar", detector=_NOT_INSIDE_ID + _NOT_A_DATE + r"(?:\d[\s.\-]{0,3}){11}\d" + _ID_END),
+    RedactionRule("phone",   detector=_NOT_INSIDE_ID + r"(?:\+?91[ -]?)?[6-9]\d{9}" + _ID_END),
+    RedactionRule("account", detector=_NOT_INSIDE_ID + _NOT_A_DATE + r"(?:\d[\s.\-]{0,3}){8,17}\d" + _ID_END),
 )
 ```
 
-- **Agents:** `PIIMiddleware` applies each rule to the model input.
+Digits may be grouped by up to three spaces, dots or hyphens (`2345.6789.0123`, `2345 - 6789 - 0123`). Two guards keep values agents need readable: a number glued to a letter, underscore or hyphen is part of an ID (draft UUIDs, hex fingerprints, rule IDs), and a number that starts as a date (`12.05.2024`, `2024-05-12 10:30`) is a date.
+
+- **Agents:** `PIIMiddleware` applies each rule to the task message and to every tool result before the next model call.
 - **Everything else** (the free-text description, intake replies, search queries): `mask_sensitive_text(text)` applies the same rules. Trace events never hold free text at all, only fixed summaries.
 
 Matches become `[REDACTED_EMAIL]`, `[REDACTED_AADHAAR]`, `[REDACTED_PHONE]` and `[REDACTED_ACCOUNT]`. Aadhaar comes before phone and account so that a 12-digit Aadhaar number isn't partly matched as a phone number.
 
-**Tests:** `test_react_intake_observes_allowed_tool_then_confirms_each_fact` checks that the model sees `[REDACTED_EMAIL]` and `[REDACTED_AADHAAR]`. `test_search_query_rewrite_uses_the_durable_model_budget` checks search queries.
+**Tests:** `tests/test_pii_masking.py` runs every agent with each identifier type (task message and tool results), checks the trace, and checks that IDs, dates and amounts are left alone. `test_react_intake_observes_allowed_tool_then_confirms_each_fact` checks the intake journey. `test_search_query_rewrite_uses_the_durable_model_budget` checks search queries.
 
 ### 5.5 Steps per run: `ModelCallLimitMiddleware` **[LC]**
 
@@ -664,7 +668,7 @@ PM-KISAN: no verdict
 |---|---|
 | Trace events aren't sent to a monitoring tool | Events stay in the conversation state (last 40). The project plan recommends LangSmith, Langfuse or Grafana; that isn't built yet. Any exporter must keep the "no prompts, no applicant data" rule. |
 | Denied tool names are logged as typed | On a `denied` event, `action` holds the model's raw tool name. Logging a fixed word such as `unknown_tool` would be safer. |
-| Masking is pattern-based | `PII_RULES` catch formats (emails, phone, Aadhaar and account numbers), not names or addresses. |
+| Masking is pattern-based | `PII_RULES` catch formats (emails, phone, Aadhaar and account numbers), not names or addresses. A 16-digit number in groups of four keeps its last group visible (`[REDACTED_AADHAAR] 1234`). |
 | Code-only paths have no agent budget | The conversation budget limits what agents and one-off model calls use. Fixed code paths (no API key, registered-scheme eligibility, status reads) don't use it. |
 | MCP connections are not `langchain-mcp-adapters` | The adapters (0.3.2, the latest) require `mcp<2`; Saathi uses MCP 2. Saathi's agents don't take raw MCP tools anyway; they call MCP through guarded `@tool` functions. When the adapters support MCP 2, startup can move to `MultiServerMCPClient` and the role check to a tool interceptor. |
 | The eligibility rule-check retry isn't counted | Loop 3 (section 10) retries the rule engine once without counting it. It is free code, so this costs nothing, but it isn't visible in the tool budget. |

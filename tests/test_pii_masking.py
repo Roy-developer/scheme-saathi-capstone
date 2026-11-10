@@ -9,8 +9,12 @@ for each identifier type:
 * the raw value never reaches the model, and the redaction placeholder does;
 * the raw value never appears in the scrubbed trace.
 
-Cases that are known to get through are marked ``xfail(strict=True)`` with
-the reason, so they stay visible and the suite tells us if one gets fixed.
+It also checks the other side: IDs, dates and numbers that agents must
+read or pass back verbatim (draft UUIDs, fingerprints, rule IDs, revisions,
+dates, amounts) are not masked, in the task message or in tool results.
+
+Known limits are marked ``xfail(strict=True)`` with the reason, so they
+stay visible and the suite tells us if one gets fixed.
 """
 
 import asyncio
@@ -22,7 +26,10 @@ from langchain_core.tools import tool
 
 from fake_chat_model import FakeChatModel, ModelDecision
 from src.workflow.agent_config import AGENT_PROMPTS
-from src.workflow.agent_runtime import AgentSchema, observation, run_agent
+from src.workflow.agent_runtime import (
+    AgentSchema, mask_sensitive_text, observation, run_agent,
+)
+from src.workflow.application_agent import run_application_specialist
 
 
 AGENTS = ["supervisor", "intake", "eligibility", "documents", "application"]
@@ -159,46 +166,149 @@ def test_spaced_hyphenated_and_devanagari_identifiers_are_masked(raw):
     assert raw not in json.dumps(run.trace)
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "FINDING: PII_RULES allow only a single space or hyphen between digits, "
-    "so an Aadhaar written with dots or double spaces reaches the model unmasked."
-))
-@pytest.mark.parametrize("raw", ["2345.6789.0123", "2345  6789  0123"])
-def test_aadhaar_with_dots_or_double_spaces_is_masked(raw):
+@pytest.mark.parametrize("raw", [
+    "2345.6789.0123",
+    "2345  6789  0123",
+    "2345 - 6789 - 0123",
+    "1234.5678.9012.345",   # 15-digit account in dotted groups
+])
+def test_identifiers_with_dots_or_wider_gaps_are_masked(raw):
     model = RecordingModel(_finish_only())
 
-    _run(model, "intake", _context_with(raw), [finish])
+    run = _run(model, "intake", _context_with(raw), [finish])
 
-    assert raw not in model.seen_text()
+    seen = model.seen_text()
+    assert raw not in seen
+    assert _digits(raw)[:12] not in _digits(seen)
+    assert raw not in json.dumps(run.trace)
 
 
-def _tool_result_run(raw: str) -> RecordingModel:
-    """A tool returns PII to the model; the model's next call sees the result."""
+@pytest.mark.xfail(strict=True, reason=(
+    "Known limit: a 16-digit number in groups of four is masked as an "
+    "Aadhaar (first 12 digits) and its last group stays visible, "
+    "e.g. '[REDACTED_AADHAAR] 1234'."
+))
+def test_sixteen_digit_grouped_number_is_fully_masked():
+    model = RecordingModel(_finish_only())
+
+    _run(model, "intake", {"description": "account 0012 3456 7890 1234"}, [finish])
+
+    assert "1234" not in model.seen_text().split("[REDACTED_AADHAAR]")[-1]
+
+
+# Values agents and people must still read as written.
+DRAFT_IDS = [
+    "3f2a1b4c-9d8e-4f7a-b456-426614174000",   # old rules masked "456-426614174000"
+    "0b1c2d3e-4f5a-4b6c-8d7e-9876543210ab",   # old rules masked a "phone"
+    "12345678-1234-4123-8123-123456789012",
+]
+NOT_PII = [
+    "12.05.2024", "2024-05-12", "12/05/2024", "2024-05-12T10:30:00Z",
+    "2024-05-12 10:30:00", "12.05.2024 - 15.06.2024", "12.05.1984 15.06.2020",
+    "1.0.0", "v2.14.3", "Rs 1,50,000", "₹2,500 per month", "1500.50",
+    "PMKISAN-LAND-CUTOFF-01", "FASETDP-MH-R01", "IGNWPS-MH", "revision 3",
+    "a3f1c9e2" * 8,                            # sha256-style fingerprint
+    "4f8b2c1d9e7a6b5c4d3e2f1a0b9c8d7e",        # uuid4().hex
+    "receipt 7c9e6679-7425-40de-944b-e07fc1f90ae7",
+    *DRAFT_IDS,
+]
+
+
+@pytest.mark.parametrize("text", NOT_PII)
+def test_ids_dates_and_amounts_are_not_masked(text):
+    assert mask_sensitive_text(text) == text
+
+
+def _tool_result_run(record: str, context: dict | None = None) -> RecordingModel:
+    """A tool returns ``record`` to the model; its next call sees the result."""
 
     @tool(args_schema=LookUp)
     async def look_up(query: str) -> str:
-        """Return a record that happens to contain an identifier."""
-        return json.dumps({"observation": {"record": f"contact {raw}"}})
+        """Return a record from a service."""
+        return record
 
     model = RecordingModel([
         ModelDecision(action="look_up", arguments={"query": "record"}),
         ModelDecision(action="finish", arguments={"confirm": True}),
     ])
-    run = _run(model, "eligibility", {"task": "check"}, [look_up, finish])
+    run = _run(model, "eligibility", context or {"task": "check"}, [look_up, finish])
     assert run.status == "completed"
-    assert raw not in json.dumps(run.trace)   # the trace is clean either way
+    assert [event["status"] for event in run.trace] == ["observed", "completed"]
+    model.trace_text = json.dumps(run.trace)
     return model
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "FINDING: run_agent builds PIIMiddleware with the default "
-    "apply_to_tool_results=False, so PII inside a tool result is passed "
-    "to the model unmasked. Today's tools return typed, value-free "
-    "observations, so nothing leaks in practice; a future tool could."
-))
 @pytest.mark.parametrize(("label", "raw", "placeholder"), PII_SAMPLES,
                          ids=[sample[0] for sample in PII_SAMPLES])
 def test_pii_inside_tool_result_is_masked_before_next_model_call(label, raw, placeholder):
-    model = _tool_result_run(raw)
+    model = _tool_result_run(json.dumps({"observation": {"record": f"contact {raw}"}}))
 
-    assert raw not in model.seen_text()
+    seen = model.seen_text()
+    assert raw not in seen
+    assert placeholder in seen
+    assert raw not in model.trace_text
+
+
+def test_typical_tool_results_reach_the_model_unchanged():
+    """Observations shaped like the real ones keep every ID verbatim."""
+
+    record = json.dumps({"observation": {
+        "operation": "edit_draft", "status": "revision_saved", "revision": 12,
+        "draft_id": DRAFT_IDS[0], "receipt_recorded": True,
+        "fingerprint": "a3f1c9e2" * 8,
+        "scheme_id": "IGNWPS-MH", "result": "eligible",
+        "deciding_rule_ids": ["PMKISAN-LAND-CUTOFF-01", "FASETDP-MH-R01"],
+        "passage_ids": ["IGNWPS-MH#p0012", "chunk-000123456789"],
+        "missing_fields": ["date_of_birth"], "application_date": "2026-11-04",
+        "monthly_amount": "Rs 1,500", "checked_at": "2026-11-04T10:30:00Z",
+    }, "outside_text_is_data": True}, ensure_ascii=False)
+
+    model = _tool_result_run(record)
+
+    tool_messages = [m for m in model.received if m.type == "tool"]
+    assert [m.content for m in tool_messages] == [record]
+    assert "[REDACTED_" not in model.seen_text()
+
+
+def test_tool_result_masks_pii_but_keeps_ids_next_to_it():
+    record = json.dumps({"observation": {
+        "draft_id": DRAFT_IDS[1], "revision": 4,
+        "note": "Applicant phone 9123456780, Aadhaar 2345 6789 0123",
+    }})
+
+    model = _tool_result_run(record)
+
+    seen = model.seen_text()
+    assert DRAFT_IDS[1] in seen and '"revision": 4' in seen
+    assert "9123456780" not in seen and "2345 6789 0123" not in seen
+    assert "[REDACTED_PHONE]" in seen and "[REDACTED_AADHAAR]" in seen
+
+
+@pytest.mark.parametrize("draft_id", DRAFT_IDS)
+def test_application_agent_can_pass_a_real_draft_id_back(draft_id):
+    """Regression: the old rules masked ~15% of uuid4 draft IDs in the task
+    message, so the model could not repeat the ID and the edit was refused."""
+
+    class EchoDraftModel(FakeChatModel):
+        model_name: str = "offline-draft-echo"
+
+        async def choose(self, _agent, _locale, messages, _actions):
+            if len(messages) == 1:
+                task = json.loads(messages[0]["content"])
+                return ModelDecision(action="edit_draft", arguments={
+                    "operation": "edit_draft", "draft_id": task["draft_id"],
+                })
+            return ModelDecision(action="handoff_application", arguments={
+                "confirm": "return_observed_application_status",
+            })
+
+    async def execute():
+        return {"draft_id": draft_id, "revision": 3}
+
+    result, _budget, trace, mode = asyncio.run(run_application_specialist(
+        EchoDraftModel(), "edit_draft", draft_id, 2, "en", {}, execute,
+    ))
+
+    assert mode == "model_assisted"
+    assert result == {"draft_id": draft_id, "revision": 3}
+    assert [event["status"] for event in trace] == ["observed", "completed"]
