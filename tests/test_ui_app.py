@@ -597,7 +597,7 @@ def test_registry_decimal_question_submits_exact_text_at_precision_boundary() ->
         course_widget = next(
             widget
             for widget in app.selectbox
-            if widget.label == "Type your answer (yes / no / don't know, a date like 12 March 1981, or your own words)"
+            if widget.label == "Type your answer (yes / no / don't know, a date like 1958-05-05, or your own words)"
         )
         course_widget.set_value("Science")
         next(button for button in app.button if button.label == "Send answer").click().run()
