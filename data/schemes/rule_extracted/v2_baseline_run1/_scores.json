@@ -1,0 +1,368 @@
+{
+  "schemes": {
+    "AABYM-MH": {
+      "gold_rules": 7,
+      "extracted_rules": 4,
+      "matched": 4,
+      "precision": 1.0,
+      "recall": 0.5714285714285714,
+      "f1": 0.7272727272727273,
+      "missing": [
+        "('is_labourer', 'eq', True)",
+        "('lives_in_rural_area', 'eq', True)",
+        "('owns_cultivable_land', 'eq', False)"
+      ],
+      "extra": []
+    },
+    "APY-IN": {
+      "gold_rules": 5,
+      "extracted_rules": 5,
+      "matched": 4,
+      "precision": 0.8,
+      "recall": 0.8,
+      "f1": 0.8000000000000002,
+      "missing": [
+        "('is_citizen_of_india', 'eq', True)"
+      ],
+      "extra": [
+        "('consents_to_auto_debit', 'eq', True)"
+      ]
+    },
+    "FADSE-MH": {
+      "gold_rules": 7,
+      "extracted_rules": 7,
+      "matched": 7,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "missing": [],
+      "extra": []
+    },
+    "FASETDP-MH": {
+      "gold_rules": 5,
+      "extracted_rules": 5,
+      "matched": 5,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "missing": [],
+      "extra": []
+    },
+    "IGNDPS-IN": {
+      "gold_rules": 5,
+      "extracted_rules": 5,
+      "matched": 5,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "missing": [],
+      "extra": []
+    },
+    "IGNDPSM-MH": {
+      "gold_rules": 6,
+      "extracted_rules": 6,
+      "matched": 5,
+      "precision": 0.8333333333333334,
+      "recall": 0.8333333333333334,
+      "f1": 0.8333333333333334,
+      "missing": [
+        "('is_receiving_other_pension', 'eq', False)"
+      ],
+      "extra": [
+        "('is_covered_under_other_social_security_scheme', 'eq', False)"
+      ]
+    },
+    "IGNOAPS-MH": {
+      "gold_rules": 4,
+      "extracted_rules": 3,
+      "matched": 3,
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1": 0.8571428571428571,
+      "missing": [
+        "('is_receiving_other_pension', 'eq', False)"
+      ],
+      "extra": []
+    },
+    "IGNWPS-IN": {
+      "gold_rules": 5,
+      "extracted_rules": 4,
+      "matched": 4,
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1": 0.888888888888889,
+      "missing": [
+        "('is_widow', 'eq', True)"
+      ],
+      "extra": []
+    },
+    "IGNWPS-MH": {
+      "gold_rules": 4,
+      "extracted_rules": 3,
+      "matched": 3,
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1": 0.8571428571428571,
+      "missing": [
+        "('is_widow', 'eq', True)"
+      ],
+      "extra": []
+    },
+    "NFBSM-MH": {
+      "gold_rules": 5,
+      "extracted_rules": 5,
+      "matched": 3,
+      "precision": 0.6,
+      "recall": 0.6,
+      "f1": 0.6,
+      "missing": [
+        "('deceased_breadwinner_age', 'gte', 18.0)",
+        "('deceased_breadwinner_age', 'lte', 59.0)"
+      ],
+      "extra": [
+        "('age', 'gte', 18.0)",
+        "('age', 'lte', 59.0)"
+      ]
+    },
+    "NSAP-IGNOAPS-IN": {
+      "gold_rules": 3,
+      "extracted_rules": 3,
+      "matched": 3,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "missing": [],
+      "extra": []
+    },
+    "PG-IGSSGC-IN": {
+      "gold_rules": 7,
+      "extracted_rules": 6,
+      "matched": 4,
+      "precision": 0.6666666666666666,
+      "recall": 0.5714285714285714,
+      "f1": 0.6153846153846153,
+      "missing": [
+        "('is_distance_education', 'eq', False)",
+        "('is_regular_full_time_pg_first_year', 'eq', True)",
+        "('is_woman', 'eq', True)"
+      ],
+      "extra": [
+        "('family_has_government_employee', 'eq', False)",
+        "('is_admitted_to_notified_institution_full_time', 'eq', True)"
+      ]
+    },
+    "PM-KISAN-IN": {
+      "gold_rules": 10,
+      "extracted_rules": 4,
+      "matched": 2,
+      "precision": 0.5,
+      "recall": 0.2,
+      "f1": 0.28571428571428575,
+      "missing": [
+        "('family_has_constitutional_post_holder', 'eq', False)",
+        "('family_has_government_employee', 'eq', False)",
+        "('family_has_pensioner_monthly_10000_or_more', 'eq', False)",
+        "('family_has_registered_professional', 'eq', False)",
+        "('is_institutional_landholder', 'eq', False)",
+        "('is_name_in_land_records', 'eq', True)",
+        "('owned_cultivable_land_on_2019_02_01', 'eq', True)",
+        "('owns_cultivable_land', 'eq', True)"
+      ],
+      "extra": [
+        "('is_resident_of_state', 'eq', True)",
+        "('owns_land_in_own_name', 'eq', True)"
+      ]
+    },
+    "PMAY-U-IN": {
+      "gold_rules": 5,
+      "extracted_rules": 10,
+      "matched": 2,
+      "precision": 0.2,
+      "recall": 0.4,
+      "f1": 0.26666666666666666,
+      "missing": [
+        "('availed_housing_scheme_last_20_years', 'eq', False)",
+        "('lives_in_urban_area', 'eq', True)",
+        "('owns_pucca_house_anywhere', 'eq', False)"
+      ],
+      "extra": [
+        "('annual_family_income_inr', 'gte', 300000.0)",
+        "('annual_family_income_inr', 'lte', 300000.0)",
+        "('annual_family_income_inr', 'lte', 600000.0)",
+        "('is_citizen_of_india', 'eq', True)",
+        "('is_family_member_of_deceased_breadwinner', 'eq', False)",
+        "('is_scheduled_caste', 'eq', True)",
+        "('is_scheduled_tribe', 'eq', True)",
+        "('is_woman', 'eq', True)"
+      ]
+    },
+    "PMJJBY-IN": {
+      "gold_rules": 5,
+      "extracted_rules": 5,
+      "matched": 2,
+      "precision": 0.4,
+      "recall": 0.4,
+      "f1": 0.4000000000000001,
+      "missing": [
+        "('age', 'lte', 50.0)",
+        "('has_savings_bank_account', 'eq', True)",
+        "('is_institutional_account_holder', 'eq', False)"
+      ],
+      "extra": [
+        "('age', 'lt', 55.0)",
+        "('annual_income_inr', 'ne', 0.0)",
+        "('is_resident_of_india', 'eq', True)"
+      ]
+    },
+    "PMKMDY-IN": {
+      "gold_rules": 14,
+      "extracted_rules": 10,
+      "matched": 6,
+      "precision": 0.6,
+      "recall": 0.42857142857142855,
+      "f1": 0.5,
+      "missing": [
+        "('is_constitutional_post_holder', 'eq', False)",
+        "('is_covered_under_other_social_security_scheme', 'eq', False)",
+        "('is_enrolled_in_pm_sym_or_pm_lvm', 'eq', False)",
+        "('is_government_employee', 'eq', False)",
+        "('is_institutional_landholder', 'eq', False)",
+        "('is_name_in_land_records', 'eq', True)",
+        "('is_registered_professional', 'eq', False)",
+        "('land_holding_hectares', 'lte', 2.0)"
+      ],
+      "extra": [
+        "('availed_housing_scheme_last_20_years', 'eq', False)",
+        "('family_has_constitutional_post_holder', 'eq', False)",
+        "('family_has_government_employee', 'eq', False)",
+        "('family_has_registered_professional', 'eq', False)"
+      ]
+    },
+    "PMSBY-IN": {
+      "gold_rules": 5,
+      "extracted_rules": 5,
+      "matched": 2,
+      "precision": 0.4,
+      "recall": 0.4,
+      "f1": 0.4000000000000001,
+      "missing": [
+        "('age', 'lte', 70.0)",
+        "('has_savings_bank_account', 'eq', True)",
+        "('is_institutional_account_holder', 'eq', False)"
+      ],
+      "extra": [
+        "('age', 'lt', 70.0)",
+        "('has_aadhaar', 'eq', True)",
+        "('is_resident_of_india', 'eq', True)"
+      ]
+    },
+    "POST-DIS-IN": {
+      "gold_rules": 8,
+      "extracted_rules": 4,
+      "matched": 4,
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1": 0.6666666666666666,
+      "missing": [
+        "('family_members_receiving_scholarship', 'lte', 2.0)",
+        "('has_disability', 'eq', True)",
+        "('is_repeating_class', 'eq', False)",
+        "('is_student_in_post_matric_course', 'eq', True)"
+      ],
+      "extra": []
+    },
+    "PRE-DIS-IN": {
+      "gold_rules": 8,
+      "extracted_rules": 7,
+      "matched": 5,
+      "precision": 0.7142857142857143,
+      "recall": 0.625,
+      "f1": 0.6666666666666666,
+      "missing": [
+        "('family_members_receiving_scholarship', 'lte', 2.0)",
+        "('has_disability', 'eq', True)",
+        "('is_repeating_class', 'eq', False)"
+      ],
+      "extra": [
+        "('family_members_receiving_scholarship', 'lt', 3.0)",
+        "('has_failed_or_dropped_out', 'eq', False)"
+      ]
+    },
+    "PRE-ST-IN": {
+      "gold_rules": 7,
+      "extracted_rules": 6,
+      "matched": 3,
+      "precision": 0.5,
+      "recall": 0.42857142857142855,
+      "f1": 0.4615384615384615,
+      "missing": [
+        "('has_savings_bank_account', 'eq', True)",
+        "('is_repeating_class', 'eq', False)",
+        "('is_student_in_class_9_or_10', 'eq', True)",
+        "('is_studying_in_recognised_school', 'eq', True)"
+      ],
+      "extra": [
+        "('has_aadhaar', 'eq', True)",
+        "('has_failed_or_dropped_out', 'eq', False)",
+        "('is_admitted_to_notified_institution_full_time', 'eq', True)"
+      ]
+    },
+    "PSGS-DIP-IN": {
+      "gold_rules": 7,
+      "extracted_rules": 6,
+      "matched": 5,
+      "precision": 0.8333333333333334,
+      "recall": 0.7142857142857143,
+      "f1": 0.7692307692307692,
+      "missing": [
+        "('family_members_receiving_scholarship', 'lte', 2.0)",
+        "('is_woman', 'eq', True)"
+      ],
+      "extra": [
+        "('is_first_year_student', 'eq', True)"
+      ]
+    },
+    "TCE-SC-IN": {
+      "gold_rules": 6,
+      "extracted_rules": 4,
+      "matched": 1,
+      "precision": 0.25,
+      "recall": 0.16666666666666666,
+      "f1": 0.2,
+      "missing": [
+        "('annual_family_income_inr', 'lte', 800000.0)",
+        "('family_members_receiving_scholarship', 'lte', 2.0)",
+        "('is_admitted_to_notified_institution_full_time', 'eq', True)",
+        "('is_scheduled_caste', 'eq', True)",
+        "('receives_other_scholarship_or_stipend', 'eq', False)"
+      ],
+      "extra": [
+        "('has_failed_or_dropped_out', 'eq', False)",
+        "('is_family_member_of_deceased_breadwinner', 'eq', True)",
+        "('is_government_employee', 'eq', False)"
+      ]
+    },
+    "TFEFVS-MH": {
+      "gold_rules": 5,
+      "extracted_rules": 3,
+      "matched": 1,
+      "precision": 0.3333333333333333,
+      "recall": 0.2,
+      "f1": 0.25,
+      "missing": [
+        "('annual_family_income_inr', 'gte', 100000.0)",
+        "('annual_family_income_inr', 'lte', 450000.0)",
+        "('is_student_in_post_matric_course', 'eq', True)",
+        "('number_of_failures', 'lte', 1.0)"
+      ],
+      "extra": [
+        "('has_failed_or_dropped_out', 'eq', True)",
+        "('is_covered_under_other_similar_insurance', 'eq', False)"
+      ]
+    }
+  },
+  "micro_precision": 0.6916666666666667,
+  "micro_recall": 0.5804195804195804,
+  "micro_f1": 0.6311787072243346,
+  "lessons_used": []
+}

@@ -1,0 +1,39 @@
+{
+  "scheme_id": "TCE-SC-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "3",
+      "kind": "exclusion",
+      "field": "is_first_year_student",
+      "operator": "ne",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "TCE-SC-IN-ELIGIBILITY-03",
+      "source_quote": "Fresh scholarship will be awarded only to 1st year students.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "5",
+      "kind": "exclusion",
+      "field": "has_failed_or_dropped_out",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "TCE-SC-IN-EXCLUSION-02",
+      "source_quote": "The scholarship will be terminated if the student fails to get promoted to the next semester/class.",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": [
+    "rule #4: Value error, Unknown field 'number_of_siblings'",
+    "rule #6: Value error, Unknown field 'is_receiving_other_scholarship_or_stipend'",
+    "1: quote not found word for word in TCE-SC-IN-ELIGIBILITY-01",
+    "2: quote not found word for word in TCE-SC-IN-ELIGIBILITY-01"
+  ]
+}

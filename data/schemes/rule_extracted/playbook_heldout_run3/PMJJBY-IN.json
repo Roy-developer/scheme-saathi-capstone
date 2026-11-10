@@ -1,0 +1,82 @@
+{
+  "scheme_id": "PMJJBY-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "1",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": "years",
+      "source_passage_id": "PMJJBY-IN-ELIGIBILITY-01",
+      "source_quote": "age group of 18 to 50 years",
+      "needs_human_review": false,
+      "note": "Includes the minimum age."
+    },
+    {
+      "rule_id": "2",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 50,
+      "unit": "years",
+      "source_passage_id": "PMJJBY-IN-ELIGIBILITY-01",
+      "source_quote": "age group of 18 to 50 years",
+      "needs_human_review": false,
+      "note": "Includes the maximum age."
+    },
+    {
+      "rule_id": "3",
+      "kind": "eligibility",
+      "field": "consents_to_auto_debit",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMJJBY-IN-ELIGIBILITY-03",
+      "source_quote": "give their consent to join / enable auto-debit",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "4",
+      "kind": "eligibility",
+      "field": "is_nri",
+      "operator": "eq",
+      "value": false,
+      "unit": "",
+      "source_passage_id": "PMJJBY-IN-ELIGIBILITY-05",
+      "source_quote": "All bank account holders other than institutional account holders",
+      "needs_human_review": true,
+      "note": "The rule about NRI eligibility is separate and may conflict with this."
+    },
+    {
+      "rule_id": "5",
+      "kind": "exclusion",
+      "field": "age",
+      "operator": "gte",
+      "value": 55,
+      "unit": "years",
+      "source_passage_id": "PMJJBY-IN-EXCLUSION-01",
+      "source_quote": "On attaining age 55 years",
+      "needs_human_review": false,
+      "note": "Includes the maximum age."
+    },
+    {
+      "rule_id": "6",
+      "kind": "exclusion",
+      "field": "is_income_tax_payer",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMJJBY-IN-ELIGIBILITY-05",
+      "source_quote": "All bank account holders other than institutional account holders",
+      "needs_human_review": true,
+      "note": "The text does not explicitly state that income tax payers are excluded."
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

@@ -1,0 +1,58 @@
+{
+  "scheme_id": "NFBSM-MH",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "NFBSM-MH-ELIGIBILITY-01",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": "years",
+      "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
+      "source_quote": "in the age group of 18 to 59 years",
+      "needs_human_review": false,
+      "note": "Includes the minimum value."
+    },
+    {
+      "rule_id": "NFBSM-MH-ELIGIBILITY-02",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 59,
+      "unit": "years",
+      "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
+      "source_quote": "in the age group of 18 to 59 years",
+      "needs_human_review": false,
+      "note": "Includes the maximum value."
+    },
+    {
+      "rule_id": "NFBSM-MH-ELIGIBILITY-03",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "NFBSM-MH-ELIGIBILITY-02",
+      "source_quote": "The applicant should be a resident of Maharashtra.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "NFBSM-MH-ELIGIBILITY-04",
+      "kind": "eligibility",
+      "field": "is_family_member_of_deceased_breadwinner",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "NFBSM-MH-ELIGIBILITY-03",
+      "source_quote": "The applicant should be a family member or dependent of the deceased breadwinner",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

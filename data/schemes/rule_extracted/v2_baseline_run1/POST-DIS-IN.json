@@ -1,0 +1,60 @@
+{
+  "scheme_id": "POST-DIS-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "POST-DIS-IN-ELIGIBILITY-02",
+      "kind": "eligibility",
+      "field": "is_citizen_of_india",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "POST-DIS-IN-ELIGIBILITY-02",
+      "source_quote": "Indian nationals only.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "POST-DIS-IN-ELIGIBILITY-03",
+      "kind": "eligibility",
+      "field": "disability_percent",
+      "operator": "gte",
+      "value": 40,
+      "unit": null,
+      "source_passage_id": "POST-DIS-IN-ELIGIBILITY-03",
+      "source_quote": "Students with a benchmark disability of 40% or more.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "POST-DIS-IN-ELIGIBILITY-04",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 250000,
+      "unit": "INR",
+      "source_passage_id": "POST-DIS-IN-ELIGIBILITY-04",
+      "source_quote": "Family income up to Rs. 2.5 lakh per year.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "POST-DIS-IN-ELIGIBILITY-05",
+      "kind": "exclusion",
+      "field": "receives_other_scholarship_or_stipend",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "POST-DIS-IN-ELIGIBILITY-05",
+      "source_quote": "The student should not receive another post-scholarship or stipend.",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": [
+    "rule #1: Value error, Unknown field 'student_in_class_11_or_12'"
+  ]
+}

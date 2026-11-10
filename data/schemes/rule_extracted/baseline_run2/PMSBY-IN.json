@@ -1,0 +1,70 @@
+{
+  "scheme_id": "PMSBY-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "1",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": "years",
+      "source_passage_id": "PMSBY-IN-ELIGIBILITY-01",
+      "source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 70 years are entitled to join.",
+      "needs_human_review": false,
+      "note": "Minimum age is included."
+    },
+    {
+      "rule_id": "2",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 70,
+      "unit": "years",
+      "source_passage_id": "PMSBY-IN-ELIGIBILITY-01",
+      "source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 70 years are entitled to join.",
+      "needs_human_review": false,
+      "note": "Maximum age is included."
+    },
+    {
+      "rule_id": "3",
+      "kind": "eligibility",
+      "field": "consents_to_auto_debit",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMSBY-IN-ELIGIBILITY-03",
+      "source_quote": "Individual bank/ Post office account holders of the participating banks/ Post office aged between 18 and 70 years who give their consent to join / enable auto-debit, as per the above modality, will be enrolled into the scheme.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "4",
+      "kind": "eligibility",
+      "field": "is_nri",
+      "operator": "eq",
+      "value": false,
+      "unit": "",
+      "source_passage_id": "PMSBY-IN-ELIGIBILITY-06",
+      "source_quote": "Any NRI having an eligible bank account with a bank branch located in India is eligible for purchase of PMSBY cover subject to fulfillment of the terms and conditions relating to the scheme.",
+      "needs_human_review": true,
+      "note": "This rule excludes NRIs, but the eligibility for NRIs is conditional."
+    },
+    {
+      "rule_id": "5",
+      "kind": "eligibility",
+      "field": "is_income_tax_payer",
+      "operator": "eq",
+      "value": false,
+      "unit": "",
+      "source_passage_id": "PMSBY-IN-ELIGIBILITY-05",
+      "source_quote": "All bank account holders other than institutional account holders are eligible for subscribing to PMSBY scheme.",
+      "needs_human_review": true,
+      "note": "The passage does not explicitly state that income tax payers are excluded."
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

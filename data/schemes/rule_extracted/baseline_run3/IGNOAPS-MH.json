@@ -1,0 +1,58 @@
+{
+  "scheme_id": "IGNOAPS-MH",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "rule_1",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 65,
+      "unit": "years",
+      "source_passage_id": "IGNOAPS-MH-ELIGIBILITY-01",
+      "source_quote": "Eligible elderly individuals aged 65 and above, whose names are on the Below Poverty Line (BPL) list, receive monthly financial assistance under the Indira Gandhi National Old Age Pension Scheme.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "rule_2",
+      "kind": "eligibility",
+      "field": "is_below_poverty_line",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "IGNOAPS-MH-ELIGIBILITY-01",
+      "source_quote": "Eligible elderly individuals aged 65 and above, whose names are on the Below Poverty Line (BPL) list, receive monthly financial assistance under the Indira Gandhi National Old Age Pension Scheme.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "rule_3",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "IGNOAPS-MH-ELIGIBILITY-02",
+      "source_quote": "The applicant should be a resident of Maharashtra.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "rule_4",
+      "kind": "exclusion",
+      "field": "is_receiving_other_pension",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "IGNOAPS-MH-ELIGIBILITY-03",
+      "source_quote": "The applicant should not be receiving pension benefits under any social security scheme.",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

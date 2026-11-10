@@ -1,0 +1,748 @@
+{
+  "dataset_version": "0.1.0",
+  "created": "2026-11-09",
+  "n_schemes_in_corpus": 42,
+  "annotation_note": "Synthetic English queries written from reviewed passage text. Labels mark passages that directly answer the query (not an eligibility outcome). Authored by one person who also works on retrieval; the guide wants a different role to own held-out cases, so treat held-out as provisional until Role 5 re-labels or replaces it. No human domain review is claimed. Hindi/Marathi excluded (translations unvalidated).",
+  "split": "heldout",
+  "protected": true,
+  "cases": [
+    {
+      "case_id": "GOLD-HO-001",
+      "group": "EPS-IN",
+      "scheme_id": "EPS-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Until what age does a member stay in the Employees' Pension Fund?",
+      "relevant_passage_ids": [
+        "EPS-IN-ELIGIBILITY-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-002",
+      "group": "EPS-IN",
+      "scheme_id": "EPS-IN",
+      "intent": "definition",
+      "language": "en",
+      "query": "Who counts as family of a female member under the employees pension scheme?",
+      "relevant_passage_ids": [
+        "EPS-IN-ELIGIBILITY-06"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-003",
+      "group": "EPS-IN",
+      "scheme_id": "EPS-IN",
+      "intent": "definition",
+      "language": "en",
+      "query": "How does EPS define an orphan?",
+      "relevant_passage_ids": [
+        "EPS-IN-ELIGIBILITY-07"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-004",
+      "group": "FAISHL-IN",
+      "scheme_id": "FAISHL-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "What is the largest home loan amount on which interest subsidy is given to war widows' families?",
+      "relevant_passage_ids": [
+        "FAISHL-IN-ELIGIBILITY-02"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-005",
+      "group": "FAISHL-IN",
+      "scheme_id": "FAISHL-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "How long is the home loan interest subsidy paid for ex-servicemen's dependants?",
+      "relevant_passage_ids": [
+        "FAISHL-IN-BENEFIT-02"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-006",
+      "group": "FAISHL-IN",
+      "scheme_id": "FAISHL-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "How often is the interest subsidy paid and to whom?",
+      "relevant_passage_ids": [
+        "FAISHL-IN-BENEFIT-04"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-007",
+      "group": "IGNOAPS-MH",
+      "scheme_id": "IGNOAPS-MH",
+      "intent": "benefit",
+      "language": "en",
+      "query": "What monthly old age pension does Maharashtra give each beneficiary under Indira Gandhi scheme?",
+      "relevant_passage_ids": [
+        "IGNOAPS-MH-BENEFIT-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-008",
+      "group": "IGNOAPS-MH",
+      "scheme_id": "IGNOAPS-MH",
+      "intent": "exclusion",
+      "language": "en",
+      "query": "Can I get old age pension if I already receive another social security pension?",
+      "relevant_passage_ids": [
+        "IGNOAPS-MH-ELIGIBILITY-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-009",
+      "group": "IGNOAPS-MH",
+      "scheme_id": "IGNOAPS-MH",
+      "intent": "documents",
+      "language": "en",
+      "query": "Is an Aadhaar card needed to apply for the Maharashtra old age pension?",
+      "relevant_passage_ids": [
+        "IGNOAPS-MH-DOCUMENTS-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-010",
+      "group": "IGNWPS-IN",
+      "scheme_id": "IGNWPS-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "What monthly pension does a widow aged between 40 and 79 receive from the Centre?",
+      "relevant_passage_ids": [
+        "IGNWPS-IN-BENEFIT-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-011",
+      "group": "IGNWPS-IN",
+      "scheme_id": "IGNWPS-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Does the national widow pension require a BPL household?",
+      "relevant_passage_ids": [
+        "IGNWPS-IN-ELIGIBILITY-02"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-012",
+      "group": "IGNWPS-IN",
+      "scheme_id": "IGNWPS-IN",
+      "intent": "application",
+      "language": "en",
+      "query": "Can I apply for the widow pension through the UMANG app?",
+      "relevant_passage_ids": [
+        "IGNWPS-IN-APPLICATION-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-013",
+      "group": "IGNWPSM-MH",
+      "scheme_id": "IGNWPSM-MH",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Is a widow from Maharashtra who is 38 years old eligible for the Indira Gandhi widow pension?",
+      "relevant_passage_ids": [
+        "IGNWPSM-MH-ELIGIBILITY-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-014",
+      "group": "IGNWPSM-MH",
+      "scheme_id": "IGNWPSM-MH",
+      "intent": "application",
+      "language": "en",
+      "query": "Where in Maharashtra do I submit the widow pension application?",
+      "relevant_passage_ids": [
+        "IGNWPSM-MH-APPLICATION-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-015",
+      "group": "IPMWCD-IN",
+      "scheme_id": "IPMWCD-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Who can apply for the Ministry of Women and Child Development internship programme?",
+      "relevant_passage_ids": [
+        "IPMWCD-IN-ELIGIBILITY-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-016",
+      "group": "IPMWCD-IN",
+      "scheme_id": "IPMWCD-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "Are travel costs reimbursed for interns on tour with the women and child development ministry?",
+      "relevant_passage_ids": [
+        "IPMWCD-IN-BENEFIT-02"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-017",
+      "group": "IPMWCD-IN",
+      "scheme_id": "IPMWCD-IN",
+      "intent": "documents",
+      "language": "en",
+      "query": "Do I need to attach a photograph for the WCD internship application?",
+      "relevant_passage_ids": [
+        "IPMWCD-IN-DOCUMENTS-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-018",
+      "group": "MSY-IN",
+      "scheme_id": "MSY-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "What is the maximum project cost for a safai karamchari's loan under Mahila Samridhi Yojana?",
+      "relevant_passage_ids": [
+        "MSY-IN-ELIGIBILITY-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-019",
+      "group": "MSY-IN",
+      "scheme_id": "MSY-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "What is the repayment period and moratorium under Mahila Samridhi Yojana loans?",
+      "relevant_passage_ids": [
+        "MSY-IN-BENEFIT-04"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-020",
+      "group": "MSY-IN",
+      "scheme_id": "MSY-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "Who pays for skills training and stipend for groups of women under MSY?",
+      "relevant_passage_ids": [
+        "MSY-IN-BENEFIT-05"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-021",
+      "group": "MJPJAY-MH",
+      "scheme_id": "MJPJAY-MH",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Since when is cashless treatment available to everyone in Maharashtra under Mahatma Jyotirao Phule Jan Arogya Yojana?",
+      "relevant_passage_ids": [
+        "MJPJAY-MH-ELIGIBILITY-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-022",
+      "group": "MJPJAY-MH",
+      "scheme_id": "MJPJAY-MH",
+      "intent": "benefit",
+      "language": "en",
+      "query": "How many health benefit packages does MJPJAY cover for most categories?",
+      "relevant_passage_ids": [
+        "MJPJAY-MH-BENEFIT-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-023",
+      "group": "NSMNY-MH",
+      "scheme_id": "NSMNY-MH",
+      "intent": "benefit",
+      "language": "en",
+      "query": "How much does a farmer family get per instalment under Namo Shetkari Mahasanman Nidhi?",
+      "relevant_passage_ids": [
+        "NSMNY-MH-BENEFIT-05"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-024",
+      "group": "NSMNY-MH",
+      "scheme_id": "NSMNY-MH",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "What land holding date decides eligibility for the Namo Shetkari scheme?",
+      "relevant_passage_ids": [
+        "NSMNY-MH-ELIGIBILITY-04"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-025",
+      "group": "NSMNY-MH",
+      "scheme_id": "NSMNY-MH",
+      "intent": "application",
+      "language": "en",
+      "query": "How do I register for the Maharashtra Namo Shetkari yojana?",
+      "relevant_passage_ids": [
+        "NSMNY-MH-APPLICATION-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-026",
+      "group": "NSIGSE-IN",
+      "scheme_id": "NSIGSE-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "When can a girl draw the incentive deposit made for secondary education?",
+      "relevant_passage_ids": [
+        "NSIGSE-IN-BENEFIT-04",
+        "NSIGSE-IN-BENEFIT-05"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-027",
+      "group": "NSIGSE-IN",
+      "scheme_id": "NSIGSE-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Is there an income limit for SC/ST girls to get the secondary education incentive?",
+      "relevant_passage_ids": [
+        "NSIGSE-IN-ELIGIBILITY-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-028",
+      "group": "NSIGSE-IN",
+      "scheme_id": "NSIGSE-IN",
+      "intent": "documents",
+      "language": "en",
+      "query": "Which birth proof is accepted for the girl child incentive scheme?",
+      "relevant_passage_ids": [
+        "NSIGSE-IN-DOCUMENTS-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-029",
+      "group": "PG-IGSSGC-IN",
+      "scheme_id": "PG-IGSSGC-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Is the single girl child PG scholarship available for distance education courses?",
+      "relevant_passage_ids": [
+        "PG-IGSSGC-IN-EXCLUSION-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-030",
+      "group": "PG-IGSSGC-IN",
+      "scheme_id": "PG-IGSSGC-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "How many new scholarships are given each year to single girl child postgraduate students?",
+      "relevant_passage_ids": [
+        "PG-IGSSGC-IN-BENEFIT-02"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-031",
+      "group": "PG-IGSSGC-IN",
+      "scheme_id": "PG-IGSSGC-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Which course year must the only girl child be admitted to for the Indira Gandhi PG scholarship?",
+      "relevant_passage_ids": [
+        "PG-IGSSGC-IN-ELIGIBILITY-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-032",
+      "group": "PM-KISAN-IN",
+      "scheme_id": "PM-KISAN-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "How is the yearly 6000 rupees split across the year for farmers?",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-BENEFIT-02"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-033",
+      "group": "PM-KISAN-IN",
+      "scheme_id": "PM-KISAN-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "What is the cut-off date for deciding PM-KISAN beneficiaries?",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-ELIGIBILITY-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-034",
+      "group": "PM-KISAN-IN",
+      "scheme_id": "PM-KISAN-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "If land was bought by sale deed after the cut-off, can the buyer get PM-KISAN?",
+      "relevant_passage_ids": [
+        "PM-KISAN-IN-ELIGIBILITY-05"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-035",
+      "group": "PMAY-U-IN",
+      "scheme_id": "PMAY-U-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Who is eligible for urban housing if they have no pucca house anywhere in India?",
+      "relevant_passage_ids": [
+        "PMAY-U-IN-ELIGIBILITY-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-036",
+      "group": "PMAY-U-IN",
+      "scheme_id": "PMAY-U-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "Can an EWS family build a house on its own plot under PMAY-Urban 2.0?",
+      "relevant_passage_ids": [
+        "PMAY-U-IN-BENEFIT-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-037",
+      "group": "PMFBY-IN",
+      "scheme_id": "PMFBY-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Which farmers can take voluntary crop insurance under PMFBY?",
+      "relevant_passage_ids": [
+        "PMFBY-IN-ELIGIBILITY-02"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-038",
+      "group": "PMFBY-IN",
+      "scheme_id": "PMFBY-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "Are hailstorm and landslide losses on individual farms covered by crop insurance?",
+      "relevant_passage_ids": [
+        "PMFBY-IN-BENEFIT-05"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-039",
+      "group": "PMKMDY-IN",
+      "scheme_id": "PMKMDY-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "How many hectares can a small and marginal farmer own to join the farmers' pension scheme?",
+      "relevant_passage_ids": [
+        "PMKMDY-IN-ELIGIBILITY-02"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-040",
+      "group": "PMKMDY-IN",
+      "scheme_id": "PMKMDY-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "Does the Government match the farmer's contribution to the Kisan Maandhan pension?",
+      "relevant_passage_ids": [
+        "PMKMDY-IN-BENEFIT-02"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-041",
+      "group": "PMKMDY-IN",
+      "scheme_id": "PMKMDY-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "Can the pension contribution be deducted from the PM-KISAN benefit?",
+      "relevant_passage_ids": [
+        "PMKMDY-IN-BENEFIT-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-042",
+      "group": "PMUY2-IN",
+      "scheme_id": "PMUY2-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Can a woman get a free LPG connection under Ujjwala if her household already has one?",
+      "relevant_passage_ids": [
+        "PMUY2-IN-ELIGIBILITY-02"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-043",
+      "group": "PMUY2-IN",
+      "scheme_id": "PMUY2-IN",
+      "intent": "application",
+      "language": "en",
+      "query": "Where do I submit an application for an Ujjwala gas connection?",
+      "relevant_passage_ids": [
+        "PMUY2-IN-APPLICATION-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-044",
+      "group": "PMVBRY-IN",
+      "scheme_id": "PMVBRY-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Who is considered a new employee under the Viksit Bharat employment scheme?",
+      "relevant_passage_ids": [
+        "PMVBRY-IN-ELIGIBILITY-02"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-045",
+      "group": "PMVBRY-IN",
+      "scheme_id": "PMVBRY-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "In how many instalments is the first-timer employment incentive paid?",
+      "relevant_passage_ids": [
+        "PMVBRY-IN-BENEFIT-04"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-046",
+      "group": "PMVBRY-IN",
+      "scheme_id": "PMVBRY-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "How many days after meeting conditions is the incentive disbursed?",
+      "relevant_passage_ids": [
+        "PMVBRY-IN-BENEFIT-09"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-047",
+      "group": "POST-DIS-IN",
+      "scheme_id": "POST-DIS-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "What is the maximum tuition fee support in the post-matric scholarship for students with disabilities?",
+      "relevant_passage_ids": [
+        "POST-DIS-IN-BENEFIT-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-048",
+      "group": "POST-DIS-IN",
+      "scheme_id": "POST-DIS-IN",
+      "intent": "exclusion",
+      "language": "en",
+      "query": "How many children from one family can get the disability post-matric scholarship?",
+      "relevant_passage_ids": [
+        "POST-DIS-IN-EXCLUSION-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-049",
+      "group": "PRE-DIS-IN",
+      "scheme_id": "PRE-DIS-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Is a UDID card required for the pre-matric scholarship for disabled students?",
+      "relevant_passage_ids": [
+        "PRE-DIS-IN-ELIGIBILITY-04"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-050",
+      "group": "PRE-ST-IN",
+      "scheme_id": "PRE-ST-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "How is parental income counted when both parents work for the ST pre-matric scholarship?",
+      "relevant_passage_ids": [
+        "PRE-ST-IN-ELIGIBILITY-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-051",
+      "group": "PRE-ST-IN",
+      "scheme_id": "PRE-ST-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "For how many months is the ST pre-matric scholarship paid in a year?",
+      "relevant_passage_ids": [
+        "PRE-ST-IN-BENEFIT-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-052",
+      "group": "PSGS-DIP-IN",
+      "scheme_id": "PSGS-DIP-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "What is the allowed gap between passing the qualifying exam and diploma admission for the AICTE girls' scholarship?",
+      "relevant_passage_ids": [
+        "PSGS-DIP-IN-ELIGIBILITY-02"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-053",
+      "group": "PSGS-DIP-IN",
+      "scheme_id": "PSGS-DIP-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "How many Pragati scholarships for diploma girls are awarded each year?",
+      "relevant_passage_ids": [
+        "PSGS-DIP-IN-BENEFIT-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-054",
+      "group": "RASSNB-MH",
+      "scheme_id": "RASSNB-MH",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Can two people in the same family get a Ramai Awas house?",
+      "relevant_passage_ids": [
+        "RASSNB-MH-ELIGIBILITY-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-055",
+      "group": "RASSNB-MH",
+      "scheme_id": "RASSNB-MH",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Do I need to own land to get a house under Ramai Awas Yojana?",
+      "relevant_passage_ids": [
+        "RASSNB-MH-ELIGIBILITY-04"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-056",
+      "group": "RASSNB-MH",
+      "scheme_id": "RASSNB-MH",
+      "intent": "exclusion",
+      "language": "en",
+      "query": "Can someone who got a different government housing benefit before apply for Ramai Awas?",
+      "relevant_passage_ids": [
+        "RASSNB-MH-ELIGIBILITY-05"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-057",
+      "group": "SBSSPS-MH",
+      "scheme_id": "SBSSPS-MH",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "How many years of Maharashtra residence are needed for the Sanjay Gandhi destitute pension?",
+      "relevant_passage_ids": [
+        "SBSSPS-MH-ELIGIBILITY-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-058",
+      "group": "SBSSPS-MH",
+      "scheme_id": "SBSSPS-MH",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Must the applicant be destitute to get the Shravanbal / Sanjay Gandhi support pension?",
+      "relevant_passage_ids": [
+        "SBSSPS-MH-ELIGIBILITY-04"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-059",
+      "group": "TCE-SC-IN",
+      "scheme_id": "TCE-SC-IN",
+      "intent": "exclusion",
+      "language": "en",
+      "query": "How many siblings in one family can get the top class education scholarship for SC students?",
+      "relevant_passage_ids": [
+        "TCE-SC-IN-EXCLUSION-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-060",
+      "group": "TCE-SC-IN",
+      "scheme_id": "TCE-SC-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "What portion of slots is reserved for SC girl students in the top class education scheme?",
+      "relevant_passage_ids": [
+        "TCE-SC-IN-ELIGIBILITY-04"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-061",
+      "group": "TCE-SC-IN",
+      "scheme_id": "TCE-SC-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "Until when does the SC top class scholarship continue once awarded?",
+      "relevant_passage_ids": [
+        "TCE-SC-IN-BENEFIT-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-062",
+      "group": "TFEFVS-MH",
+      "scheme_id": "TFEFVS-MH",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Is a VJNT student with one failed year still eligible for fee reimbursement?",
+      "relevant_passage_ids": [
+        "TFEFVS-MH-ELIGIBILITY-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-063",
+      "group": "TFEFVS-MH",
+      "scheme_id": "TFEFVS-MH",
+      "intent": "benefit",
+      "language": "en",
+      "query": "Which fees are reimbursed to the college for VJNT students?",
+      "relevant_passage_ids": [
+        "TFEFVS-MH-BENEFIT-02"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-064",
+      "group": "TFEFVSSSHS-MH",
+      "scheme_id": "TFEFVSSSHS-MH",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Which classes are covered by the fee reimbursement for DNT and SBC high school students?",
+      "relevant_passage_ids": [
+        "TFEFVSSSHS-MH-BENEFICIARY-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-065",
+      "group": "TMDVSO-MH",
+      "scheme_id": "TMDVSO-MH",
+      "intent": "benefit",
+      "language": "en",
+      "query": "How much is paid per student for posting the driving licence?",
+      "relevant_passage_ids": [
+        "TMDVSO-MH-BENEFIT-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-066",
+      "group": "WMCL-IN",
+      "scheme_id": "WMCL-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Which students of coffee plantation workers get an incentive award for merit?",
+      "relevant_passage_ids": [
+        "WMCL-IN-ELIGIBILITY-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-HO-067",
+      "group": "WMCL-IN",
+      "scheme_id": "WMCL-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Can a student who gets the educational stipend also receive the incentive award?",
+      "relevant_passage_ids": [
+        "WMCL-IN-ELIGIBILITY-05"
+      ]
+    }
+  ]
+}

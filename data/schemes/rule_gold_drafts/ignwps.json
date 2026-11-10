@@ -2,7 +2,7 @@
   "scheme_id": "IGNWPS-IN",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "IGNWPS-IN-R01",

@@ -1,0 +1,253 @@
+{
+  "dataset_version": "0.1.0",
+  "created": "2026-11-09",
+  "n_schemes_in_corpus": 42,
+  "annotation_note": "Synthetic English queries written from reviewed passage text. Labels mark passages that directly answer the query (not an eligibility outcome). Authored by one person who also works on retrieval; the guide wants a different role to own held-out cases, so treat held-out as provisional until Role 5 re-labels or replaces it. No human domain review is claimed. Hindi/Marathi excluded (translations unvalidated).",
+  "split": "development",
+  "protected": false,
+  "cases": [
+    {
+      "case_id": "GOLD-DEV-001",
+      "group": "AABYM-MH",
+      "scheme_id": "AABYM-MH",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Is a landless farm labourer aged 45 covered by the Maharashtra accident insurance scheme?",
+      "relevant_passage_ids": [
+        "AABYM-MH-BENEFICIARY-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-002",
+      "group": "AABYM-MH",
+      "scheme_id": "AABYM-MH",
+      "intent": "benefit",
+      "language": "en",
+      "query": "What amount does the family get if the insured member dies in an accident?",
+      "relevant_passage_ids": [
+        "AABYM-MH-BENEFIT-02"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-003",
+      "group": "AABYM-MH",
+      "scheme_id": "AABYM-MH",
+      "intent": "benefit",
+      "language": "en",
+      "query": "Do children of insured members get any study scholarship?",
+      "relevant_passage_ids": [
+        "AABYM-MH-BENEFIT-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-004",
+      "group": "AABYM-MH",
+      "scheme_id": "AABYM-MH",
+      "intent": "exclusion",
+      "language": "en",
+      "query": "Can I join if I already have another similar insurance cover?",
+      "relevant_passage_ids": [
+        "AABYM-MH-ELIGIBILITY-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-005",
+      "group": "APY-IN",
+      "scheme_id": "APY-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "What happens to the Atal Pension account if the subscriber dies before turning 60?",
+      "relevant_passage_ids": [
+        "APY-IN-BENEFIT-04"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-006",
+      "group": "APY-IN",
+      "scheme_id": "APY-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "How are the monthly contributions to Atal Pension Yojana collected?",
+      "relevant_passage_ids": [
+        "APY-IN-ELIGIBILITY-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-007",
+      "group": "APY-IN",
+      "scheme_id": "APY-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "Is there any income tax saving on Atal Pension Yojana contributions?",
+      "relevant_passage_ids": [
+        "APY-IN-BENEFIT-05"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-008",
+      "group": "APY-IN",
+      "scheme_id": "APY-IN",
+      "intent": "application",
+      "language": "en",
+      "query": "Can I enrol in APY online through my bank's internet banking?",
+      "relevant_passage_ids": [
+        "APY-IN-APPLICATION-01",
+        "APY-IN-APPLICATION-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-009",
+      "group": "FADSE-MH",
+      "scheme_id": "FADSE-MH",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "What is the age range for a disabled person to get self-employment financial assistance in Maharashtra?",
+      "relevant_passage_ids": [
+        "FADSE-MH-ELIGIBILITY-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-010",
+      "group": "FADSE-MH",
+      "scheme_id": "FADSE-MH",
+      "intent": "benefit",
+      "language": "en",
+      "query": "What share of the loan is funded by the nationalized bank for disabled entrepreneurs?",
+      "relevant_passage_ids": [
+        "FADSE-MH-BENEFIT-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-011",
+      "group": "FASETDP-MH",
+      "scheme_id": "FASETDP-MH",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "What minimum disability percentage is required for the vocational training based assistance in Maharashtra?",
+      "relevant_passage_ids": [
+        "FASETDP-MH-ELIGIBILITY-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-012",
+      "group": "IGNDPS-IN",
+      "scheme_id": "IGNDPS-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Are persons of short stature (dwarfs) eligible for the national disability pension?",
+      "relevant_passage_ids": [
+        "IGNDPS-IN-ELIGIBILITY-05"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-013",
+      "group": "IGNDPS-IN",
+      "scheme_id": "IGNDPS-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Does a disabled applicant need to be below the poverty line for the central disability pension?",
+      "relevant_passage_ids": [
+        "IGNDPS-IN-ELIGIBILITY-06"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-014",
+      "group": "IGNDPS-IN",
+      "scheme_id": "IGNDPS-IN",
+      "intent": "documents",
+      "language": "en",
+      "query": "Which card shows poverty status when applying for the disability pension?",
+      "relevant_passage_ids": [
+        "IGNDPS-IN-DOCUMENTS-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-015",
+      "group": "IGNDPSM-MH",
+      "scheme_id": "IGNDPSM-MH",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "How much disability must a person have to get the Maharashtra Indira Gandhi disability pension?",
+      "relevant_passage_ids": [
+        "IGNDPSM-MH-ELIGIBILITY-04"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-016",
+      "group": "IGNDPSM-MH",
+      "scheme_id": "IGNDPSM-MH",
+      "intent": "benefit",
+      "language": "en",
+      "query": "How much does the Centre pay monthly to a disabled beneficiary under the Maharashtra scheme?",
+      "relevant_passage_ids": [
+        "IGNDPSM-MH-BENEFIT-01"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-017",
+      "group": "PMJJBY-IN",
+      "scheme_id": "PMJJBY-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "What is the entry age band for the Jeevan Jyoti life insurance for bank account holders?",
+      "relevant_passage_ids": [
+        "PMJJBY-IN-ELIGIBILITY-03"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-018",
+      "group": "PMJJBY-IN",
+      "scheme_id": "PMJJBY-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "From which month to which month does the PMJJBY yearly cover run?",
+      "relevant_passage_ids": [
+        "PMJJBY-IN-BENEFIT-06"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-019",
+      "group": "PMJJBY-IN",
+      "scheme_id": "PMJJBY-IN",
+      "intent": "eligibility",
+      "language": "en",
+      "query": "Can both holders of a joint bank account take PMJJBY?",
+      "relevant_passage_ids": [
+        "PMJJBY-IN-ELIGIBILITY-04"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-020",
+      "group": "PMSBY-IN",
+      "scheme_id": "PMSBY-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "Can a nominee make more than one claim under the Suraksha Bima accident scheme?",
+      "relevant_passage_ids": [
+        "PMSBY-IN-BENEFIT-08"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-021",
+      "group": "PMSBY-IN",
+      "scheme_id": "PMSBY-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "Does PMSBY reimburse hospital expenses after an accident?",
+      "relevant_passage_ids": [
+        "PMSBY-IN-BENEFIT-07"
+      ]
+    },
+    {
+      "case_id": "GOLD-DEV-022",
+      "group": "PMSBY-IN",
+      "scheme_id": "PMSBY-IN",
+      "intent": "benefit",
+      "language": "en",
+      "query": "How does PMSBY define an accident?",
+      "relevant_passage_ids": [
+        "PMSBY-IN-BENEFIT-05"
+      ]
+    }
+  ]
+}

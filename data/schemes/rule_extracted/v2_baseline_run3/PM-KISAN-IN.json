@@ -1,0 +1,108 @@
+{
+  "scheme_id": "PM-KISAN-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "1",
+      "kind": "eligibility",
+      "field": "family_has_constitutional_post_holder",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "source_quote": "Farmer families in which one or more of its members belong to following categories : Former and present holders of constitutional posts",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "2",
+      "kind": "eligibility",
+      "field": "family_has_government_employee",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "source_quote": "All serving or retired officers and employees of Central / State Government Ministries / Offices / Departments and their field units, Central or State PSEs and Attached offices / Autonomous Institutions under Government as well as regular employees of the Local Bodies",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "3",
+      "kind": "eligibility",
+      "field": "family_has_pensioner_monthly_10000_or_more",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "source_quote": "All superannuated / retired pensioners whose monthly pension is Rs.10,000/- or more",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "4",
+      "kind": "eligibility",
+      "field": "is_income_tax_payer",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "source_quote": "All Persons who paid Income Tax in last assessment year.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "5",
+      "kind": "eligibility",
+      "field": "is_nri",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-02",
+      "source_quote": "all land holding farmers’ families who are Non-resident Indians (NRIs) in terms of the provisions of the Income Tax Act, 1961 shall be excluded from any benefit under the Scheme.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "7",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-ELIGIBILITY-02",
+      "source_quote": "The benefit shall be paid to only those farmers’ families whose names are entered into the land records.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "8",
+      "kind": "eligibility",
+      "field": "owned_cultivable_land_on_2019_02_01",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-ELIGIBILITY-03",
+      "source_quote": "The cut-off date for determination of eligibility of beneficiaries under the scheme shall be 01.02.2019",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "9",
+      "kind": "exclusion",
+      "field": "has_home_loan",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "source_quote": "Professionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practices.",
+      "needs_human_review": true,
+      "note": "This rule is vague as it does not explicitly state that having a home loan is an exclusion criterion."
+    }
+  ],
+  "unresolved": [],
+  "rejected": [
+    "6: quote not found word for word in PM-KISAN-IN-ELIGIBILITY-01"
+  ]
+}

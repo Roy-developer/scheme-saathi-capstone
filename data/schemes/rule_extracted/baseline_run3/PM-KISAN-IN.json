@@ -1,0 +1,118 @@
+{
+  "scheme_id": "PM-KISAN-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "1",
+      "kind": "eligibility",
+      "field": "family_has_constitutional_post_holder",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "source_quote": "Farmer families in which one or more of its members belong to following categories : Former and present holders of constitutional posts",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "2",
+      "kind": "eligibility",
+      "field": "family_has_government_employee",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "source_quote": "All serving or retired officers and employees of Central / State Government Ministries / Offices / Departments and their field units, Central or State PSEs and Attached offices / Autonomous Institutions under Government as well as regular employees of the Local Bodies",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "3",
+      "kind": "eligibility",
+      "field": "family_has_pensioner_monthly_10000_or_more",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "source_quote": "All superannuated / retired pensioners whose monthly pension is Rs.10,000/- or more",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "4",
+      "kind": "eligibility",
+      "field": "is_income_tax_payer",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "source_quote": "All Persons who paid Income Tax in last assessment year.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "5",
+      "kind": "eligibility",
+      "field": "is_nri",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-02",
+      "source_quote": "all land holding farmers’ families who are Non-resident Indians (NRIs) in terms of the provisions of the Income Tax Act, 1961 shall be excluded from any benefit under the Scheme.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "6",
+      "kind": "eligibility",
+      "field": "owns_cultivable_land",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-ELIGIBILITY-01",
+      "source_quote": "A landholder farmer’s family is defined as “a family comprising of husband, wife and minor children who owns cultivable land as per land records of the concerned State/UT”.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "7",
+      "kind": "eligibility",
+      "field": "is_family_member_of_deceased_breadwinner",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-ELIGIBILITY-04",
+      "source_quote": "Benefit will be allowed in those cases where transfer of ownership of cultivable land takes place on account of succession due to death of the landowner.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "8",
+      "kind": "exclusion",
+      "field": "is_income_tax_payer",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "source_quote": "All Persons who paid Income Tax in last assessment year.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "9",
+      "kind": "exclusion",
+      "field": "family_has_registered_professional",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "source_quote": "Professionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practices.",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

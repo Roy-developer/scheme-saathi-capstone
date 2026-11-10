@@ -1,0 +1,70 @@
+{
+  "scheme_id": "NFBSM-MH",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "1",
+      "kind": "eligibility",
+      "field": "is_below_poverty_line",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
+      "source_quote": "BPL Family",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "2",
+      "kind": "eligibility",
+      "field": "deceased_breadwinner_age",
+      "operator": "gte",
+      "value": 18,
+      "unit": "years",
+      "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
+      "source_quote": "age group of 18 to 59 years",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "3",
+      "kind": "eligibility",
+      "field": "deceased_breadwinner_age",
+      "operator": "lte",
+      "value": 59,
+      "unit": "years",
+      "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
+      "source_quote": "age group of 18 to 59 years",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "4",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "NFBSM-MH-ELIGIBILITY-02",
+      "source_quote": "The applicant should be a resident of Maharashtra.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "5",
+      "kind": "eligibility",
+      "field": "is_family_member_of_deceased_breadwinner",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "NFBSM-MH-ELIGIBILITY-03",
+      "source_quote": "family member or dependent of the deceased breadwinner",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

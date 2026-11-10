@@ -1,0 +1,72 @@
+{
+  "scheme_id": "PMJJBY-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "PMJJBY-IN-ELIGIBILITY-01",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": "years",
+      "source_passage_id": "PMJJBY-IN-ELIGIBILITY-01",
+      "source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 50 years are eligible to join.",
+      "needs_human_review": false,
+      "note": "Minimum age is included."
+    },
+    {
+      "rule_id": "PMJJBY-IN-ELIGIBILITY-02",
+      "kind": "eligibility",
+      "field": "consents_to_auto_debit",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMJJBY-IN-ELIGIBILITY-03",
+      "source_quote": "Individual bank/ Post office account holders of the participating banks/ Post office aged between 18 years (completed) and 50 years (age nearer birthday) who give their consent to join / enable auto-debit, as per the above modality, will be enrolled into the scheme.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "PMJJBY-IN-ELIGIBILITY-03",
+      "kind": "exclusion",
+      "field": "age",
+      "operator": "gte",
+      "value": 55,
+      "unit": "years",
+      "source_passage_id": "PMJJBY-IN-EXCLUSION-01",
+      "source_quote": "On attaining age 55 years (age near birth day), subject to annual renewal up to that date (entry, however, will not be possible beyond the age of 50 years).",
+      "needs_human_review": false,
+      "note": "Maximum age for eligibility is 50 years."
+    },
+    {
+      "rule_id": "PMJJBY-IN-ELIGIBILITY-04",
+      "kind": "eligibility",
+      "field": "annual_income_inr",
+      "operator": "ne",
+      "value": 0,
+      "unit": "inr",
+      "source_passage_id": "PMJJBY-IN-ELIGIBILITY-05",
+      "source_quote": "All bank account holders other than institutional account holders are eligible for subscribing to PMJJBY scheme.",
+      "needs_human_review": true,
+      "note": "Vague on income requirements; needs clarification."
+    },
+    {
+      "rule_id": "PMJJBY-IN-ELIGIBILITY-05",
+      "kind": "eligibility",
+      "field": "is_resident_of_india",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMJJBY-IN-ELIGIBILITY-06",
+      "source_quote": "Any NRI having an eligible bank account with a bank branch located in India is eligible for purchase of PMJJBY cover subject to fulfilment of the terms and conditions relating to the scheme.",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": [
+    "PMJJBY-IN-ELIGIBILITY-01: duplicate rule ID"
+  ]
+}

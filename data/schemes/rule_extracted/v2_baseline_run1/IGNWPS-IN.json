@@ -1,0 +1,70 @@
+{
+  "scheme_id": "IGNWPS-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "1",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 40,
+      "unit": "years",
+      "source_passage_id": "IGNWPS-IN-ELIGIBILITY-01",
+      "source_quote": "The applicant must be a widow in the age group of 40-79 years.",
+      "needs_human_review": false,
+      "note": "Includes the minimum value."
+    },
+    {
+      "rule_id": "2",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 79,
+      "unit": "years",
+      "source_passage_id": "IGNWPS-IN-ELIGIBILITY-01",
+      "source_quote": "The applicant must be a widow in the age group of 40-79 years.",
+      "needs_human_review": false,
+      "note": "Includes the maximum value."
+    },
+    {
+      "rule_id": "3",
+      "kind": "eligibility",
+      "field": "is_below_poverty_line",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "IGNWPS-IN-ELIGIBILITY-02",
+      "source_quote": "The applicant should belong to a household living below the poverty line according to the criteria prescribed by the Govt. of India",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "4",
+      "kind": "exclusion",
+      "field": "is_remarried",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "IGNWPS-IN-EXCLUSION-01",
+      "source_quote": "Pension will be discontinued In case of remarriage of widow",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "5",
+      "kind": "exclusion",
+      "field": "is_below_poverty_line",
+      "operator": "eq",
+      "value": false,
+      "unit": "",
+      "source_passage_id": "IGNWPS-IN-EXCLUSION-01",
+      "source_quote": "Once the widow moves above poverty line",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

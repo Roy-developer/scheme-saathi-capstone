@@ -1,0 +1,70 @@
+{
+  "scheme_id": "PRE-ST-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "R01",
+      "kind": "eligibility",
+      "field": "is_scheduled_tribe",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+      "source_quote": "Applicant student should belong to the Scheduled Tribe",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R02",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 250000,
+      "unit": "INR",
+      "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+      "source_quote": "The family income of student from all sources should not exceed Rs. 2.5 lakh per annum.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R03",
+      "kind": "eligibility",
+      "field": "has_aadhaar",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+      "source_quote": "The student should have a valid account in a Scheduled Bank, linked with Aadhaar and mobile number.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R04",
+      "kind": "eligibility",
+      "field": "is_receiving_other_pension",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+      "source_quote": "The student should not be getting any other scholarship.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R05",
+      "kind": "exclusion",
+      "field": "is_receiving_other_pension",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PRE-ST-IN-EXCLUSION-02",
+      "source_quote": "Any student found to have stated wrong facts or given misrepresented facts would become ineligible",
+      "needs_human_review": true,
+      "note": "This rule is based on a general exclusion clause and may require further clarification on specific conditions."
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

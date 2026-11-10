@@ -1,0 +1,139 @@
+{
+  "scheme_id": "PMAY-U-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "R01",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 300000,
+      "unit": "INR",
+      "source_passage_id": "PMAY-U-IN-ELIGIBILITY-02",
+      "source_quote": "EWS households are defined as households with an annual income of up to ₹3 lakh",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R02",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "gte",
+      "value": 300000,
+      "unit": "INR",
+      "source_passage_id": "PMAY-U-IN-ELIGIBILITY-02",
+      "source_quote": "LIG as households with an annual income from ₹3 lakh up to ₹6 lakh",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R03",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "gte",
+      "value": 600000,
+      "unit": "INR",
+      "source_passage_id": "PMAY-U-IN-ELIGIBILITY-02",
+      "source_quote": "MIG as households with an annual income from ₹6 lakh up to ₹9 lakh",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R04",
+      "kind": "exclusion",
+      "field": "annual_family_income_inr",
+      "operator": "gt",
+      "value": 900000,
+      "unit": "INR",
+      "source_passage_id": "PMAY-U-IN-EXCLUSION-01",
+      "source_quote": "Annual Household Income is above ₹9,00,000",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R05",
+      "kind": "exclusion",
+      "field": "owns_pucca_house_anywhere",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMAY-U-IN-EXCLUSION-01",
+      "source_quote": "If the user owns a pucca house anywhere in India",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R06",
+      "kind": "exclusion",
+      "field": "availed_housing_scheme_last_20_years",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMAY-U-IN-EXCLUSION-01",
+      "source_quote": "If they have availed benefit under any Housing scheme of Central/State/UT government in past 20 years.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R07",
+      "kind": "eligibility",
+      "field": "has_aadhaar",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMAY-U-IN-ELIGIBILITY-07",
+      "source_quote": "All eligible beneficiaries (including family members) should have an Aadhaar",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R08",
+      "kind": "eligibility",
+      "field": "is_widow",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMAY-U-IN-ELIGIBILITY-06",
+      "source_quote": "Preference under the Scheme will be given to Widows",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R17",
+      "kind": "eligibility",
+      "field": "availed_housing_scheme_last_20_years",
+      "operator": "eq",
+      "value": false,
+      "unit": "",
+      "source_passage_id": "PMAY-U-IN-ELIGIBILITY-03",
+      "source_quote": "The beneficiary who has been allotted house under any of the housing scheme of Central Government, State/UT Government and Local Self Government in last 20 years",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R18",
+      "kind": "eligibility",
+      "field": "owns_pucca_house_anywhere",
+      "operator": "eq",
+      "value": false,
+      "unit": "",
+      "source_passage_id": "PMAY-U-IN-ELIGIBILITY-01",
+      "source_quote": "having no pucca house anywhere in the country",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": [
+    "rule #9: Value error, Unknown field 'is_single_woman'",
+    "rule #11: Value error, Unknown field 'is_senior_citizen'",
+    "rule #12: Value error, Unknown field 'is_transgender'",
+    "rule #15: Value error, Unknown field 'is_minority'",
+    "R10: quote not found word for word in PMAY-U-IN-ELIGIBILITY-06",
+    "R13: quote not found word for word in PMAY-U-IN-ELIGIBILITY-06",
+    "R14: quote not found word for word in PMAY-U-IN-ELIGIBILITY-06",
+    "R16: quote not found word for word in PMAY-U-IN-ELIGIBILITY-06"
+  ]
+}

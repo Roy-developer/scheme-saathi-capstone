@@ -1,0 +1,82 @@
+{
+  "scheme_id": "IGNDPSM-MH",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "1",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": "years",
+      "source_passage_id": "IGNDPSM-MH-ELIGIBILITY-01",
+      "source_quote": "A Disable person in the age group of 18 to 79 years is eligible under this Scheme.",
+      "needs_human_review": false,
+      "note": "The minimum age is included."
+    },
+    {
+      "rule_id": "2",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 79,
+      "unit": "years",
+      "source_passage_id": "IGNDPSM-MH-ELIGIBILITY-01",
+      "source_quote": "A Disable person in the age group of 18 to 79 years is eligible under this Scheme.",
+      "needs_human_review": false,
+      "note": "The maximum age is included."
+    },
+    {
+      "rule_id": "3",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "IGNDPSM-MH-ELIGIBILITY-02",
+      "source_quote": "The applicant should be a resident of Maharashtra.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "4",
+      "kind": "eligibility",
+      "field": "has_disability",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "IGNDPSM-MH-ELIGIBILITY-03",
+      "source_quote": "The applicant should be a person with a disability.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "5",
+      "kind": "eligibility",
+      "field": "disability_percent",
+      "operator": "gte",
+      "value": 80,
+      "unit": "%",
+      "source_passage_id": "IGNDPSM-MH-ELIGIBILITY-04",
+      "source_quote": "The percentage of the disability should be 80% or more.",
+      "needs_human_review": false,
+      "note": "The minimum percentage is included."
+    },
+    {
+      "rule_id": "6",
+      "kind": "exclusion",
+      "field": "is_receiving_other_pension",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "IGNDPSM-MH-ELIGIBILITY-05",
+      "source_quote": "The applicant should not be receiving pension benefits under any other social security scheme.",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

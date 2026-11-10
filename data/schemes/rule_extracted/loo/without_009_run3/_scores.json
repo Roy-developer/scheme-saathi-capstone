@@ -1,0 +1,152 @@
+{
+  "schemes": {
+    "AABYM-MH": {
+      "gold_rules": 7,
+      "extracted_rules": 4,
+      "matched": 4,
+      "precision": 1.0,
+      "recall": 0.5714285714285714,
+      "f1": 0.7272727272727273,
+      "missing": [
+        "('is_labourer', 'eq', True)",
+        "('lives_in_rural_area', 'eq', True)",
+        "('owns_cultivable_land', 'eq', False)"
+      ],
+      "extra": []
+    },
+    "PG-IGSSGC-IN": {
+      "gold_rules": 7,
+      "extracted_rules": 6,
+      "matched": 3,
+      "precision": 0.5,
+      "recall": 0.42857142857142855,
+      "f1": 0.4615384615384615,
+      "missing": [
+        "('is_distance_education', 'eq', False)",
+        "('is_professional_course', 'eq', False)",
+        "('is_regular_full_time_pg_first_year', 'eq', True)",
+        "('is_woman', 'eq', True)"
+      ],
+      "extra": [
+        "('family_has_constitutional_post_holder', 'eq', True)",
+        "('has_completed_vocational_training', 'eq', False)",
+        "('is_admitted_to_notified_institution_full_time', 'eq', True)"
+      ]
+    },
+    "PMAY-U-IN": {
+      "gold_rules": 5,
+      "extracted_rules": 7,
+      "matched": 4,
+      "precision": 0.5714285714285714,
+      "recall": 0.8,
+      "f1": 0.6666666666666666,
+      "missing": [
+        "('lives_in_urban_area', 'eq', True)"
+      ],
+      "extra": [
+        "('annual_family_income_inr', 'gte', 300000.0)",
+        "('annual_family_income_inr', 'gte', 600000.0)",
+        "('annual_family_income_inr', 'lte', 300000.0)"
+      ]
+    },
+    "PMKMDY-IN": {
+      "gold_rules": 14,
+      "extracted_rules": 10,
+      "matched": 9,
+      "precision": 0.9,
+      "recall": 0.6428571428571429,
+      "f1": 0.75,
+      "missing": [
+        "('is_covered_under_other_social_security_scheme', 'eq', False)",
+        "('is_enrolled_in_pm_sym_or_pm_lvm', 'eq', False)",
+        "('is_institutional_landholder', 'eq', False)",
+        "('is_name_in_land_records', 'eq', True)",
+        "('land_holding_hectares', 'lte', 2.0)"
+      ],
+      "extra": [
+        "('is_receiving_other_pension', 'eq', False)"
+      ]
+    },
+    "PRE-ST-IN": {
+      "gold_rules": 7,
+      "extracted_rules": 4,
+      "matched": 2,
+      "precision": 0.5,
+      "recall": 0.2857142857142857,
+      "f1": 0.36363636363636365,
+      "missing": [
+        "('has_savings_bank_account', 'eq', True)",
+        "('is_repeating_class', 'eq', False)",
+        "('is_student_in_class_9_or_10', 'eq', True)",
+        "('is_studying_in_recognised_school', 'eq', True)",
+        "('receives_other_scholarship_or_stipend', 'eq', False)"
+      ],
+      "extra": [
+        "('has_aadhaar', 'eq', True)",
+        "('is_admitted_to_notified_institution_full_time', 'eq', True)"
+      ]
+    },
+    "PSGS-DIP-IN": {
+      "gold_rules": 7,
+      "extracted_rules": 6,
+      "matched": 4,
+      "precision": 0.6666666666666666,
+      "recall": 0.5714285714285714,
+      "f1": 0.6153846153846153,
+      "missing": [
+        "('family_members_receiving_scholarship', 'lte', 2.0)",
+        "('is_woman', 'eq', True)",
+        "('receives_other_scholarship_or_stipend', 'eq', False)"
+      ],
+      "extra": [
+        "('is_first_year_student', 'eq', True)",
+        "('is_receiving_other_pension', 'eq', False)"
+      ]
+    },
+    "TCE-SC-IN": {
+      "gold_rules": 6,
+      "extracted_rules": 6,
+      "matched": 3,
+      "precision": 0.5,
+      "recall": 0.5,
+      "f1": 0.5,
+      "missing": [
+        "('family_members_receiving_scholarship', 'lte', 2.0)",
+        "('is_scheduled_caste', 'eq', True)",
+        "('receives_other_scholarship_or_stipend', 'eq', False)"
+      ],
+      "extra": [
+        "('family_members_receiving_scholarship', 'lt', 3.0)",
+        "('has_failed_or_dropped_out', 'eq', False)",
+        "('is_receiving_other_pension', 'eq', True)"
+      ]
+    },
+    "TFEFVS-MH": {
+      "gold_rules": 5,
+      "extracted_rules": 5,
+      "matched": 4,
+      "precision": 0.8,
+      "recall": 0.8,
+      "f1": 0.8000000000000002,
+      "missing": [
+        "('is_student_in_post_matric_course', 'eq', True)"
+      ],
+      "extra": [
+        "('is_receiving_other_pension', 'eq', False)"
+      ]
+    }
+  },
+  "micro_precision": 0.6875,
+  "micro_recall": 0.5689655172413793,
+  "micro_f1": 0.6226415094339622,
+  "lessons_used": [
+    "LESSON-001",
+    "LESSON-002",
+    "LESSON-003",
+    "LESSON-005",
+    "LESSON-006",
+    "LESSON-007",
+    "LESSON-008",
+    "LESSON-010"
+  ]
+}

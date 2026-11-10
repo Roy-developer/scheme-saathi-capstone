@@ -1,0 +1,62 @@
+{
+  "scheme_id": "TCE-SC-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "R04",
+      "kind": "exclusion",
+      "field": "has_failed_or_dropped_out",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "TCE-SC-IN-EXCLUSION-02",
+      "source_quote": "The scholarship will be terminated if the student fails to get promoted to the next semester/class.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R05",
+      "kind": "eligibility",
+      "field": "is_first_year_student",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "TCE-SC-IN-ELIGIBILITY-03",
+      "source_quote": "Fresh scholarship will be awarded only to 1st year students.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R06",
+      "kind": "exclusion",
+      "field": "number_of_failures",
+      "operator": "gte",
+      "value": 1,
+      "unit": "",
+      "source_passage_id": "TCE-SC-IN-EXCLUSION-02",
+      "source_quote": "The scholarship will be terminated if the student fails to get promoted to the next semester/class.",
+      "needs_human_review": true,
+      "note": "This rule may conflict with other eligibility criteria regarding academic performance."
+    },
+    {
+      "rule_id": "R07",
+      "kind": "exclusion",
+      "field": "family_members_receiving_scholarship",
+      "operator": "gte",
+      "value": 3,
+      "unit": "",
+      "source_passage_id": "TCE-SC-IN-EXCLUSION-01",
+      "source_quote": "The benefit of the Scheme will not be provided to more than 2 siblings in a family.",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": [
+    "R01: quote not found word for word in TCE-SC-IN-ELIGIBILITY-01",
+    "R02: quote not found word for word in TCE-SC-IN-ELIGIBILITY-01",
+    "R03: quote not found word for word in TCE-SC-IN-EXCLUSION-03"
+  ]
+}

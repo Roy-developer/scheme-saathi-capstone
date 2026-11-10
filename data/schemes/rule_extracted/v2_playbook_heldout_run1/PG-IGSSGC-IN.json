@@ -1,0 +1,106 @@
+{
+  "scheme_id": "PG-IGSSGC-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "R01",
+      "kind": "eligibility",
+      "field": "is_only_girl_child",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-01",
+      "source_quote": "Girl students without having any brother or the girl student who are twin daughters/ fraternal daughter may also apply for scholarship under the aforesaid scheme.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R02",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 30,
+      "unit": "years",
+      "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-02",
+      "source_quote": "Age limit: Girl students up to the age of 30 years at the time of admission in first year of PG courses are eligible.",
+      "needs_human_review": false,
+      "note": "The age limit includes the end value."
+    },
+    {
+      "rule_id": "R03",
+      "kind": "eligibility",
+      "field": "is_citizen_of_india",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-04",
+      "source_quote": "The applicant must be a citizen of India.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R04",
+      "kind": "eligibility",
+      "field": "is_admitted_to_notified_institution_full_time",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-03",
+      "source_quote": "The scheme is applicable to such single girl child who has taken admission in regular, full-time first year Masters Degree course in any designated university or a post graduate college.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R05",
+      "kind": "exclusion",
+      "field": "is_only_girl_child",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PG-IGSSGC-IN-EXCLUSION-01",
+      "source_quote": "In a family if one son and one daughter is available then girl child will not be considered for scholarship under the scheme.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R06",
+      "kind": "exclusion",
+      "field": "is_admitted_to_notified_institution_full_time",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PG-IGSSGC-IN-EXCLUSION-03",
+      "source_quote": "Admission to PG Course in Distance education mode is not covered under the scheme.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R07",
+      "kind": "exclusion",
+      "field": "is_admitted_to_notified_institution_full_time",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PG-IGSSGC-IN-EXCLUSION-02",
+      "source_quote": "Those Deemed Universities which do not receive funds from the Central/ State Government are not eligible institutions under the scheme.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R08",
+      "kind": "exclusion",
+      "field": "is_receiving_other_pension",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PG-IGSSGC-IN-EXCLUSION-01",
+      "source_quote": "In a family if one son and one daughter is available then girl child will not be considered for scholarship under the scheme.",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

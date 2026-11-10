@@ -1,0 +1,94 @@
+{
+  "scheme_id": "PRE-ST-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "R01",
+      "kind": "eligibility",
+      "field": "is_scheduled_tribe",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+      "source_quote": "Applicant student should belong to the Scheduled Tribe, so specified in relation to the State/Union Territory to which he/she actually belongs (Domicile State).",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R02",
+      "kind": "eligibility",
+      "field": "is_admitted_to_notified_institution_full_time",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+      "source_quote": "The student should be studying in a Government School or in a School recognized by Government or a Central/State Board of Secondary Education.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R03",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 250000,
+      "unit": "INR",
+      "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+      "source_quote": "The family income of student from all sources should not exceed Rs. 2.5 lakh per annum.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R04",
+      "kind": "eligibility",
+      "field": "has_aadhaar",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+      "source_quote": "The student should have a valid account in a Scheduled Bank, linked with Aadhaar and mobile number.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R05",
+      "kind": "exclusion",
+      "field": "is_receiving_other_pension",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+      "source_quote": "The student should not be getting any other scholarship.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R06",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 250000,
+      "unit": "INR",
+      "source_passage_id": "PRE-ST-IN-ELIGIBILITY-02",
+      "source_quote": "The applicant student's family income from all sources should not exceed Rs.2,50,000/- (Rs. two lakh fifty thousand) per annum.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R07",
+      "kind": "exclusion",
+      "field": "is_receiving_other_pension",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PRE-ST-IN-EXCLUSION-02",
+      "source_quote": "Any student found to have stated wrong facts or given misrepresented facts would become ineligible and will be liable to be debarred from the scheme.",
+      "needs_human_review": true,
+      "note": "This rule is vague as it does not specify the conditions under which a student is found to have stated wrong facts."
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

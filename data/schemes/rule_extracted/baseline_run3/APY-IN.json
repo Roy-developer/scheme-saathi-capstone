@@ -1,0 +1,82 @@
+{
+  "scheme_id": "APY-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "1",
+      "kind": "eligibility",
+      "field": "is_citizen_of_india",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "APY-IN-ELIGIBILITY-01",
+      "source_quote": "APY is open to all citizens of India who have a savings bank account.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "2",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": "years",
+      "source_passage_id": "APY-IN-ELIGIBILITY-01",
+      "source_quote": "The minimum age of joining APY is 18 years and maximum age is 40 years.",
+      "needs_human_review": false,
+      "note": "Includes the minimum age."
+    },
+    {
+      "rule_id": "3",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 40,
+      "unit": "years",
+      "source_passage_id": "APY-IN-ELIGIBILITY-01",
+      "source_quote": "The minimum age of joining APY is 18 years and maximum age is 40 years.",
+      "needs_human_review": false,
+      "note": "Includes the maximum age."
+    },
+    {
+      "rule_id": "4",
+      "kind": "exclusion",
+      "field": "is_income_tax_payer",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "APY-IN-EXCLUSION-01",
+      "source_quote": "From 1st October, 2022, any citizen who is or has been an income-tax payer, is not eligible to join APY.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "5",
+      "kind": "eligibility",
+      "field": "has_savings_bank_account",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "APY-IN-ELIGIBILITY-01",
+      "source_quote": "APY is open to all citizens of India who have a savings bank account.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "6",
+      "kind": "eligibility",
+      "field": "consents_to_auto_debit",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "APY-IN-ELIGIBILITY-03",
+      "source_quote": "The subscriber’s contributions to APY shall be made through the facility of ‘auto-debit’ of the prescribed contribution amount from the savings bank account of the subscriber in monthly, quarterly or half-yearly frequency.",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

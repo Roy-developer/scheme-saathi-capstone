@@ -1,0 +1,103 @@
+{
+  "frozen": true,
+  "note": "Reflexion playbook for the rule extractor. Add a lesson as 'pending'; only a person may set 'approved' (with reviewed_by) or 'rejected' (with rejection_reason). Only approved lessons reach the prompt. Learn lessons from development schemes only, then set frozen to true before the held-out run.",
+  "lessons": [
+    {
+      "lesson_id": "LESSON-001",
+      "error_type": "missed_condition_in_compound_sentence",
+      "lesson": "write a separate yes/no rule for the kind of person as well as the two age rules; do not treat the person type as implied by the age range.",
+      "applies_when": "one sentence names a kind of person and an age range together (for example a widow aged 40 to 79)",
+      "review_status": "approved",
+      "reviewed_by": "Priyanka Velisetty",
+      "rejection_reason": null
+    },
+    {
+      "lesson_id": "LESSON-002",
+      "error_type": "quote_not_word_for_word",
+      "lesson": "make each rule's source_quote a short phrase copied exactly from the passage for that one category; never join, shorten or reword items, because a quote that is not word for word is discarded with its rule.",
+      "applies_when": "a passage lists several categories in one long paragraph",
+      "review_status": "pending",
+      "reviewed_by": "Priyanka Velisetty",
+      "rejection_reason": null
+    },
+    {
+      "lesson_id": "LESSON-003",
+      "error_type": "invented_rule",
+      "lesson": "use a field only if the clause itself states that condition; do not add a rule because a similar-sounding field exists (a farmer's family is not the family of a deceased person), and do not add residence or state rules the text does not state.",
+      "applies_when": "you are choosing a field for a clause",
+      "review_status": "approved",
+      "reviewed_by": "Priyanka Velisetty",
+      "rejection_reason": null
+    },
+    {
+      "lesson_id": "LESSON-004",
+      "error_type": "missed_date_or_record_condition",
+      "lesson": "write a rule for owning on that date or for being listed in those records; set needs_human_review to true if the passage also gives exceptions.",
+      "applies_when": "a passage fixes a cut-off date for ownership or says a name must appear in official records",
+      "review_status": "rejected",
+      "reviewed_by": "Priyanka Velisetty",
+      "rejection_reason": "the lesson is too specific to a single scheme; it is not a generalizable rule for the extractor."
+    },
+    {
+      "lesson_id": "LESSON-005",
+      "error_type": "duplicate_rule_id",
+      "lesson": "give every rule its own rule_id (for example R01, R02, R03); never reuse the passage ID as the rule_id, because rules with a repeated rule_id are discarded.",
+      "applies_when": "you write more than one rule from the same passage",
+      "review_status": "approved",
+      "reviewed_by": "Priyanka Velisetty",
+      "rejection_reason": null
+    },
+    {
+      "lesson_id": "LESSON-006",
+      "error_type": "unknown_field_name",
+      "lesson": "copy the field name exactly from the allowed list (for example has_disability, not is_disabled; is_receiving_other_pension, not receives_other_pension); if no listed field fits, leave the condition out rather than making up a name.",
+      "applies_when": "you pick a field for a condition",
+      "review_status": "approved",
+      "reviewed_by": "Priyanka Velisetty",
+      "rejection_reason": null
+    },
+    {
+      "lesson_id": "LESSON-007",
+      "error_type": "age_range_end_and_cover_end",
+      "lesson": "write age gte the lower number and age lte the upper number (the end value is included unless the text says 'below' or 'less than'); the maximum is the age for joining, not the later age at which cover ends.",
+      "applies_when": "a passage gives an age range such as '18 to 70' or 'between 18 and 50', or also says when cover ends",
+      "review_status": "approved",
+      "reviewed_by": "Priyanka Velisetty",
+      "rejection_reason": null
+    },
+    {
+      "lesson_id": "LESSON-008",
+      "error_type": "wrong_similar_field",
+      "lesson": "use is_receiving_other_pension eq false; do not use a social-security coverage field for a pension condition.",
+      "applies_when": "a clause says the person should not be receiving a pension under any scheme",
+      "review_status": "approved",
+      "reviewed_by": "Priyanka Velisetty",
+      "rejection_reason": null
+    },
+    {
+      "lesson_id": "LESSON-009",
+      "error_type": "threshold_without_base_condition",
+      "lesson": "write both rules: the yes/no condition (has_disability eq true) and the number rule (disability_percent gte 40).",
+      "applies_when": "a clause sets a percentage or level for a condition the person must have (for example 'disability of 40% or more')",
+      "review_status": "approved",
+      "reviewed_by": "Priyanka Velisetty",
+      "rejection_reason": null
+    },
+    {
+      "lesson_id": "LESSON-010",
+      "error_type": "age_of_other_person",
+      "lesson": "use the field for that person (deceased_breadwinner_age), not the applicant's age.",
+      "applies_when": "an age limit describes someone other than the applicant, such as a deceased breadwinner",
+      "review_status": "approved",
+      "reviewed_by": "Priyanka Velisetty",
+      "rejection_reason": null
+    }
+  ],
+  "previous_version": {
+    "version": "1.0.0",
+    "frozen_at": "2026-11-10",
+    "snapshot": "data/schemes/rule_extracted/playbook_frozen_2026-11-10.json"
+  },
+  "version": "2.0.0",
+  "frozen_at": "2026-11-10"
+}

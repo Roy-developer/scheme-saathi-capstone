@@ -1,0 +1,9 @@
+AABYM-MH: 4 rules, 0 rejected
+PMKMDY-IN: 12 rules, 0 rejected
+PRE-ST-IN: 4 rules, 2 rejected
+TCE-SC-IN: 8 rules, 1 rejected
+PG-IGSSGC-IN: 10 rules, 0 rejected
+PMAY-U-IN: 10 rules, 0 rejected
+PSGS-DIP-IN: 6 rules, 0 rejected
+TFEFVS-MH: 5 rules, 0 rejected
+micro precision 0.62 recall 0.57 f1 0.59

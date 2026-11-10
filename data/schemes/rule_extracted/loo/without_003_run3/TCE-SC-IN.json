@@ -1,0 +1,94 @@
+{
+  "scheme_id": "TCE-SC-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "R01",
+      "kind": "eligibility",
+      "field": "is_scheduled_caste",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "TCE-SC-IN-ELIGIBILITY-01",
+      "source_quote": "Those SC students having total annual family income from all sources up to Rs. 8.00 lakh",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "R02",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 800000,
+      "unit": "INR",
+      "source_passage_id": "TCE-SC-IN-ELIGIBILITY-01",
+      "source_quote": "total annual family income from all sources up to Rs. 8.00 lakh",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "R03",
+      "kind": "eligibility",
+      "field": "is_admitted_to_notified_institution_full_time",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "TCE-SC-IN-ELIGIBILITY-01",
+      "source_quote": "having secured admission in a full-time prescribed course in any of the notified institutions",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "R04",
+      "kind": "exclusion",
+      "field": "is_receiving_other_pension",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "TCE-SC-IN-EXCLUSION-03",
+      "source_quote": "The selected candidate shall be precluded from availing any other scholarship benefits of similar scheme of the Centre or State Governments.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "R05",
+      "kind": "eligibility",
+      "field": "is_first_year_student",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "TCE-SC-IN-ELIGIBILITY-03",
+      "source_quote": "Fresh scholarship will be awarded only to 1st year students.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "R06",
+      "kind": "exclusion",
+      "field": "number_of_failures",
+      "operator": "gt",
+      "value": 0,
+      "unit": null,
+      "source_passage_id": "TCE-SC-IN-EXCLUSION-02",
+      "source_quote": "The scholarship will be terminated if the student fails to get promoted to the next semester/class.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "R07",
+      "kind": "exclusion",
+      "field": "availed_housing_scheme_last_20_years",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "TCE-SC-IN-EXCLUSION-01",
+      "source_quote": "The benefit of the Scheme will not be provided to more than 2 siblings in a family.",
+      "needs_human_review": false,
+      "note": null
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

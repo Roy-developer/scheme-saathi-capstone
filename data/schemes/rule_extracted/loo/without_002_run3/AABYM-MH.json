@@ -1,0 +1,58 @@
+{
+  "scheme_id": "AABYM-MH",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "R01",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": "years",
+      "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+      "source_quote": "This scheme is meant for land less labourers in rural areas in the age Group of 18-59 years.",
+      "needs_human_review": false,
+      "note": "The end value is included."
+    },
+    {
+      "rule_id": "R02",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 59,
+      "unit": "years",
+      "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+      "source_quote": "This scheme is meant for land less labourers in rural areas in the age Group of 18-59 years.",
+      "needs_human_review": false,
+      "note": "The end value is included."
+    },
+    {
+      "rule_id": "R03",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "AABYM-MH-ELIGIBILITY-02",
+      "source_quote": "The applicant should be a resident of Maharashtra.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R04",
+      "kind": "exclusion",
+      "field": "is_covered_under_other_similar_insurance",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "AABYM-MH-ELIGIBILITY-03",
+      "source_quote": "The applicant should not be covered under any other similar insurance scheme.",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

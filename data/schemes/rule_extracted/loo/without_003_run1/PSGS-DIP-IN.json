@@ -1,0 +1,82 @@
+{
+  "scheme_id": "PSGS-DIP-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "R01",
+      "kind": "eligibility",
+      "field": "is_first_year_student",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-01",
+      "source_quote": "The girl candidate should be admitted to First year of Diploma level course",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R02",
+      "kind": "eligibility",
+      "field": "is_first_year_student",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-01",
+      "source_quote": "Second year of Diploma level course through lateral entry",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R03",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 800000,
+      "unit": "INR",
+      "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-01",
+      "source_quote": "Family income from all sources should not be more than Rs. 8 lakh per annum",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R04",
+      "kind": "eligibility",
+      "field": "qualifying_exam_gap_years",
+      "operator": "lte",
+      "value": 2,
+      "unit": "years",
+      "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-02",
+      "source_quote": "The gap period between the year of passing the qualifying examination and the session of admission in diploma course should not be more than two years.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R05",
+      "kind": "exclusion",
+      "field": "has_failed_or_dropped_out",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PSGS-DIP-IN-EXCLUSION-01",
+      "source_quote": "If a candidate failed/ drop out in subsequent year, she will not be eligible for further scholarship.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "R06",
+      "kind": "exclusion",
+      "field": "is_receiving_other_pension",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PSGS-DIP-IN-EXCLUSION-02",
+      "source_quote": "the student does not receive any financial assistance in shape of scholarship/any emoluments, salary, stipend etc. from any other source",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

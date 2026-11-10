@@ -1,0 +1,205 @@
+{
+  "schemes": {
+    "APY-IN": {
+      "gold_rules": 5,
+      "extracted_rules": 6,
+      "matched": 5,
+      "precision": 0.8333333333333334,
+      "recall": 1.0,
+      "f1": 0.9090909090909091,
+      "missing": [],
+      "extra": [
+        "('consents_to_auto_debit', 'eq', True)"
+      ]
+    },
+    "FADSE-MH": {
+      "gold_rules": 7,
+      "extracted_rules": 7,
+      "matched": 7,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "missing": [],
+      "extra": []
+    },
+    "FASETDP-MH": {
+      "gold_rules": 5,
+      "extracted_rules": 5,
+      "matched": 5,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "missing": [],
+      "extra": []
+    },
+    "IGNDPS-IN": {
+      "gold_rules": 5,
+      "extracted_rules": 5,
+      "matched": 5,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "missing": [],
+      "extra": []
+    },
+    "IGNDPSM-MH": {
+      "gold_rules": 6,
+      "extracted_rules": 6,
+      "matched": 6,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "missing": [],
+      "extra": []
+    },
+    "IGNOAPS-MH": {
+      "gold_rules": 4,
+      "extracted_rules": 4,
+      "matched": 4,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "missing": [],
+      "extra": []
+    },
+    "IGNWPS-IN": {
+      "gold_rules": 5,
+      "extracted_rules": 4,
+      "matched": 4,
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1": 0.888888888888889,
+      "missing": [
+        "('is_widow', 'eq', True)"
+      ],
+      "extra": []
+    },
+    "IGNWPS-MH": {
+      "gold_rules": 4,
+      "extracted_rules": 3,
+      "matched": 3,
+      "precision": 1.0,
+      "recall": 0.75,
+      "f1": 0.8571428571428571,
+      "missing": [
+        "('is_widow', 'eq', True)"
+      ],
+      "extra": []
+    },
+    "NFBSM-MH": {
+      "gold_rules": 5,
+      "extracted_rules": 5,
+      "matched": 3,
+      "precision": 0.6,
+      "recall": 0.6,
+      "f1": 0.6,
+      "missing": [
+        "('deceased_breadwinner_age', 'gte', 18.0)",
+        "('deceased_breadwinner_age', 'lte', 59.0)"
+      ],
+      "extra": [
+        "('age', 'gte', 18.0)",
+        "('age', 'lte', 59.0)"
+      ]
+    },
+    "NSAP-IGNOAPS-IN": {
+      "gold_rules": 3,
+      "extracted_rules": 3,
+      "matched": 3,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "missing": [],
+      "extra": []
+    },
+    "PM-KISAN-IN": {
+      "gold_rules": 10,
+      "extracted_rules": 5,
+      "matched": 3,
+      "precision": 0.6,
+      "recall": 0.3,
+      "f1": 0.4,
+      "missing": [
+        "('family_has_constitutional_post_holder', 'eq', False)",
+        "('family_has_government_employee', 'eq', False)",
+        "('family_has_pensioner_monthly_10000_or_more', 'eq', False)",
+        "('family_has_registered_professional', 'eq', False)",
+        "('is_institutional_landholder', 'eq', False)",
+        "('is_name_in_land_records', 'eq', True)",
+        "('owned_cultivable_land_on_2019_02_01', 'eq', True)"
+      ],
+      "extra": [
+        "('is_family_member_of_deceased_breadwinner', 'eq', True)",
+        "('is_resident_of_state', 'eq', True)"
+      ]
+    },
+    "PMJJBY-IN": {
+      "gold_rules": 5,
+      "extracted_rules": 6,
+      "matched": 3,
+      "precision": 0.5,
+      "recall": 0.6,
+      "f1": 0.5454545454545454,
+      "missing": [
+        "('has_savings_bank_account', 'eq', True)",
+        "('is_institutional_account_holder', 'eq', False)"
+      ],
+      "extra": [
+        "('age', 'lt', 55.0)",
+        "('is_income_tax_payer', 'eq', True)",
+        "('is_resident_of_india', 'eq', True)"
+      ]
+    },
+    "PMSBY-IN": {
+      "gold_rules": 5,
+      "extracted_rules": 5,
+      "matched": 3,
+      "precision": 0.6,
+      "recall": 0.6,
+      "f1": 0.6,
+      "missing": [
+        "('has_savings_bank_account', 'eq', True)",
+        "('is_institutional_account_holder', 'eq', False)"
+      ],
+      "extra": [
+        "('is_income_tax_payer', 'eq', False)",
+        "('is_nri', 'eq', False)"
+      ]
+    },
+    "POST-DIS-IN": {
+      "gold_rules": 8,
+      "extracted_rules": 5,
+      "matched": 4,
+      "precision": 0.8,
+      "recall": 0.5,
+      "f1": 0.6153846153846154,
+      "missing": [
+        "('family_members_receiving_scholarship', 'lte', 2.0)",
+        "('has_disability', 'eq', True)",
+        "('is_repeating_class', 'eq', False)",
+        "('is_student_in_post_matric_course', 'eq', True)"
+      ],
+      "extra": [
+        "('is_student_in_class_9_or_10', 'eq', False)"
+      ]
+    },
+    "PRE-DIS-IN": {
+      "gold_rules": 8,
+      "extracted_rules": 5,
+      "matched": 5,
+      "precision": 1.0,
+      "recall": 0.625,
+      "f1": 0.7692307692307693,
+      "missing": [
+        "('family_members_receiving_scholarship', 'lte', 2.0)",
+        "('has_disability', 'eq', True)",
+        "('is_repeating_class', 'eq', False)"
+      ],
+      "extra": []
+    }
+  },
+  "micro_precision": 0.8513513513513513,
+  "micro_recall": 0.7411764705882353,
+  "micro_f1": 0.7924528301886792,
+  "lessons_used": []
+}

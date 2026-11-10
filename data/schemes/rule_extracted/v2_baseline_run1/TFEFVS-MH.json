@@ -1,0 +1,49 @@
+{
+  "scheme_id": "TFEFVS-MH",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "3",
+      "kind": "eligibility",
+      "field": "is_vjnt",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "TFEFVS-MH-ELIGIBILITY-01",
+      "source_quote": "He should belong to the Vimukta Jatis & Nomadic Tribes(VJNT) category.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "4",
+      "kind": "eligibility",
+      "field": "has_failed_or_dropped_out",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "TFEFVS-MH-ELIGIBILITY-03",
+      "source_quote": "Students with one failure and those not covered under the Government of India Scholarship are also held eligible for such reimbursement.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "5",
+      "kind": "exclusion",
+      "field": "is_covered_under_other_similar_insurance",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "TFEFVS-MH-ELIGIBILITY-03",
+      "source_quote": "Students with one failure and those not covered under the Government of India Scholarship are also held eligible for such reimbursement.",
+      "needs_human_review": true,
+      "note": "The passage mentions students not covered under the Government of India Scholarship but does not clarify if those covered under other similar insurance are excluded."
+    }
+  ],
+  "unresolved": [],
+  "rejected": [
+    "rule #1: Value error, Unknown field 'family_annual_income_inr'",
+    "rule #2: Value error, Unknown field 'family_annual_income_inr'"
+  ]
+}

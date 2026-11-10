@@ -1,0 +1,70 @@
+{
+  "scheme_id": "FASETDP-MH",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "1",
+      "kind": "eligibility",
+      "field": "disability_percent",
+      "operator": "gte",
+      "value": 40,
+      "unit": "%",
+      "source_passage_id": "FASETDP-MH-ELIGIBILITY-01",
+      "source_quote": "Applicant should have a minimum 40% disability",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "2",
+      "kind": "eligibility",
+      "field": "is_citizen_of_india",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "FASETDP-MH-ELIGIBILITY-04",
+      "source_quote": "The applicant should be a citizen of India.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "3",
+      "kind": "eligibility",
+      "field": "has_completed_vocational_training",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "FASETDP-MH-ELIGIBILITY-03",
+      "source_quote": "The applicant should have completed their Vocational Training in a Government or Government Recognized Institution.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "4",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "FASETDP-MH-ELIGIBILITY-02",
+      "source_quote": "Applicant should be Domicile of Maharashtra",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "5",
+      "kind": "eligibility",
+      "field": "has_disability",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "FASETDP-MH-ELIGIBILITY-05",
+      "source_quote": "The applicant should be a Person with Disability (Visually Handicapped, Low Vision, Hearing Impaired, Orthopedically Handicapped, etc).",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

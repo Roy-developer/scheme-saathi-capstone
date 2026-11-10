@@ -1,0 +1,120 @@
+{
+  "scheme_id": "PMKMDY-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "1",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": "years",
+      "source_passage_id": "PMKMDY-IN-ELIGIBILITY-01",
+      "source_quote": "who are of the age of 18 years and above",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "2",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 40,
+      "unit": "years",
+      "source_passage_id": "PMKMDY-IN-ELIGIBILITY-01",
+      "source_quote": "and upto the age of 40 years",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "3",
+      "kind": "eligibility",
+      "field": "owns_cultivable_land",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMKMDY-IN-ELIGIBILITY-02",
+      "source_quote": "a farmer who owns cultivable land upto 2 hectare",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "4",
+      "kind": "eligibility",
+      "field": "has_aadhaar",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMKMDY-IN-ELIGIBILITY-05",
+      "source_quote": "The applicant should possess an Aadhaar card.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "5",
+      "kind": "eligibility",
+      "field": "has_savings_bank_account",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMKMDY-IN-ELIGIBILITY-06",
+      "source_quote": "The applicant should have a savings bank account or PM-KISAN account.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "6",
+      "kind": "exclusion",
+      "field": "is_income_tax_payer",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+      "source_quote": "All Persons who paid Income Tax in last assessment year.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "7",
+      "kind": "exclusion",
+      "field": "is_constitutional_post_holder",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+      "source_quote": "Former and present holders of constitutional posts",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "8",
+      "kind": "exclusion",
+      "field": "is_government_employee",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+      "source_quote": "All serving or retired officers and employees of Central/ State Government Ministries/ Offices/Departments",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "9",
+      "kind": "exclusion",
+      "field": "is_registered_professional",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+      "source_quote": "Professionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": [
+    "rule #10: Value error, Unknown field 'name_in_land_records'"
+  ]
+}

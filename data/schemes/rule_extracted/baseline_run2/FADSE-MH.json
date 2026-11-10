@@ -1,0 +1,94 @@
+{
+  "scheme_id": "FADSE-MH",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "1",
+      "kind": "eligibility",
+      "field": "disability_percent",
+      "operator": "gte",
+      "value": 40,
+      "unit": "%",
+      "source_passage_id": "FADSE-MH-ELIGIBILITY-01",
+      "source_quote": "Applicant should have a minimum 40% disability",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "2",
+      "kind": "eligibility",
+      "field": "is_citizen_of_india",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "FADSE-MH-ELIGIBILITY-05",
+      "source_quote": "The applicant should be a citizen of India.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "3",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": "years",
+      "source_passage_id": "FADSE-MH-ELIGIBILITY-03",
+      "source_quote": "Applicant should be aged between 18 and 50 years",
+      "needs_human_review": false,
+      "note": "Includes the minimum age."
+    },
+    {
+      "rule_id": "4",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 50,
+      "unit": "years",
+      "source_passage_id": "FADSE-MH-ELIGIBILITY-03",
+      "source_quote": "Applicant should be aged between 18 and 50 years",
+      "needs_human_review": false,
+      "note": "Includes the maximum age."
+    },
+    {
+      "rule_id": "5",
+      "kind": "eligibility",
+      "field": "annual_income_inr",
+      "operator": "lt",
+      "value": 100000,
+      "unit": "INR",
+      "source_passage_id": "FADSE-MH-ELIGIBILITY-04",
+      "source_quote": "Applicant annual income should be below Rs 100000/-",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "6",
+      "kind": "eligibility",
+      "field": "has_disability",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "FADSE-MH-ELIGIBILITY-06",
+      "source_quote": "The applicant should be a Person with Disability (Visually Handicapped, Low Vision, Hearing Impaired, Orthopedically Handicapped, etc).",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "7",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "FADSE-MH-ELIGIBILITY-02",
+      "source_quote": "Applicant should be Domicile of Maharashtra",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": []
+}

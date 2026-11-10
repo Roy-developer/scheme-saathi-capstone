@@ -1,0 +1,43 @@
+{
+  "frozen": true,
+  "note": "Reflexion playbook for the rule extractor. Add a lesson as 'pending'; only a person may set 'approved' (with reviewed_by) or 'rejected' (with rejection_reason). Only approved lessons reach the prompt. Learn lessons from development schemes only, then set frozen to true before the held-out run.",
+  "lessons": [
+    {
+      "lesson_id": "LESSON-001",
+      "error_type": "missed_condition_in_compound_sentence",
+      "lesson": "write a separate yes/no rule for the kind of person as well as the two age rules; do not treat the person type as implied by the age range.",
+      "applies_when": "one sentence names a kind of person and an age range together (for example a widow aged 40 to 79)",
+      "review_status": "approved",
+      "reviewed_by": "Priyanka Velisetty",
+      "rejection_reason": null
+    },
+    {
+      "lesson_id": "LESSON-002",
+      "error_type": "quote_not_word_for_word",
+      "lesson": "make each rule's source_quote a short phrase copied exactly from the passage for that one category; never join, shorten or reword items, because a quote that is not word for word is discarded with its rule.",
+      "applies_when": "a passage lists several categories in one long paragraph",
+      "review_status": "approved",
+      "reviewed_by": "Priyanka Velisetty",
+      "rejection_reason": null
+    },
+    {
+      "lesson_id": "LESSON-003",
+      "error_type": "invented_rule",
+      "lesson": "use a field only if the clause itself states that condition; do not add a rule because a similar-sounding field exists (a farmer's family is not the family of a deceased person), and do not add residence or state rules the text does not state.",
+      "applies_when": "you are choosing a field for a clause",
+      "review_status": "approved",
+      "reviewed_by": "Priyanka Velisetty",
+      "rejection_reason": null
+    },
+    {
+      "lesson_id": "LESSON-004",
+      "error_type": "missed_date_or_record_condition",
+      "lesson": "write a rule for owning on that date or for being listed in those records; set needs_human_review to true if the passage also gives exceptions.",
+      "applies_when": "a passage fixes a cut-off date for ownership or says a name must appear in official records",
+      "review_status": "rejected",
+      "reviewed_by": "Priyanka Velisetty",
+      "rejection_reason": "the lesson is too specific to a single scheme; it is not a generalizable rule for the extractor."
+    }
+  ],
+  "frozen_at": "2026-11-10"
+}

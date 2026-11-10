@@ -57,19 +57,22 @@ def test_gold_draft_rules_quote_their_passages_exactly(path):
 
     # A scheme may have no expressible rule yet; it must then say why.
     assert rule_set.rules or rule_set.unresolved
-    assert rule_set.review_status == "pending_human_review"
+    assert rule_set.review_status in {"pending_human_review", "human_reviewed"}
     assert check_grounding(rule_set, PASSAGES) == []
 
 
-def test_conflicting_passages_are_flagged_for_a_person():
+def test_conflicting_passages_are_flagged_or_resolved_by_a_person():
     by_scheme = {load_gold(path).scheme_id: load_gold(path) for path in GOLD_FILES}
 
-    assert any("CONFLICT" in note for note in by_scheme["IGNDPS-IN"].unresolved)
+    # MSY-IN is still an open conflict.
     assert any("CONFLICT" in note for note in by_scheme["MSY-IN"].unresolved)
+    # IGNDPS-IN was resolved by the project owner on 2026-11-10: 80% or more.
     disability = next(
         r for r in by_scheme["IGNDPS-IN"].rules if r.field == "disability_percent"
     )
-    assert disability.needs_human_review
+    assert (disability.operator, disability.value) == ("gte", 80)
+    assert not disability.needs_human_review
+    assert not any("CONFLICT" in note for note in by_scheme["IGNDPS-IN"].unresolved)
 
 
 # --- Rule schema -------------------------------------------------------------
@@ -299,7 +302,12 @@ def test_lesson_needs_a_reviewer_or_a_rejection_reason():
                review_status="rejected")
 
 
-def test_shipped_playbook_starts_empty_and_valid():
+def test_shipped_playbook_is_valid_and_every_approved_lesson_has_a_reviewer():
     path = ROOT / "data" / "schemes" / "rule_extractor_playbook.json"
 
-    assert load_approved_lessons(path) == ()
+    approved = load_approved_lessons(path)
+    assert all(lesson.reviewed_by for lesson in approved)
+    data = json.loads(path.read_text(encoding="utf-8"))
+    # The guide asks for at least one rejected lesson with its reason.
+    rejected = [item for item in data["lessons"] if item["review_status"] == "rejected"]
+    assert rejected and all(item["rejection_reason"] for item in rejected)

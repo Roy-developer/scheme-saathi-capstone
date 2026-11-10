@@ -1,0 +1,66 @@
+{
+  "scheme_id": "PM-KISAN-IN",
+  "schema_version": "1",
+  "origin": "llm_extracted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "2",
+      "kind": "eligibility",
+      "field": "owns_land_in_own_name",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PM-KISAN-IN-ELIGIBILITY-01",
+      "source_quote": "A landholder farmer’s family is defined as “a family comprising of husband, wife and minor children who owns cultivable land as per land records of the concerned State/UT”.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "3",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-02",
+      "source_quote": "all land holding farmers’ families who are Non-resident Indians (NRIs) in terms of the provisions of the Income Tax Act, 1961 shall be excluded from any benefit under the Scheme.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "4",
+      "kind": "exclusion",
+      "field": "is_nri",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-02",
+      "source_quote": "all land holding farmers’ families who are Non-resident Indians (NRIs) in terms of the provisions of the Income Tax Act, 1961 shall be excluded from any benefit under the Scheme.",
+      "needs_human_review": false,
+      "note": ""
+    },
+    {
+      "rule_id": "7",
+      "kind": "exclusion",
+      "field": "is_income_tax_payer",
+      "operator": "eq",
+      "value": true,
+      "unit": "",
+      "source_passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "source_quote": "All Persons who paid Income Tax in last assessment year.",
+      "needs_human_review": false,
+      "note": ""
+    }
+  ],
+  "unresolved": [],
+  "rejected": [
+    "1: quote not found word for word in PM-KISAN-IN-BENEFIT-03",
+    "5: quote not found word for word in PM-KISAN-IN-EXCLUSION-01",
+    "6: quote not found word for word in PM-KISAN-IN-EXCLUSION-01",
+    "8: quote not found word for word in PM-KISAN-IN-EXCLUSION-01",
+    "9: quote not found word for word in PM-KISAN-IN-EXCLUSION-01",
+    "10: quote not found word for word in PM-KISAN-IN-ELIGIBILITY-03",
+    "11: quote not found word for word in PM-KISAN-IN-EXCLUSION-01"
+  ]
+}
