@@ -1,0 +1,12 @@
+{
+  "dataset_version": "1.1.0",
+  "labeller_a": "role5-seed",
+  "labeller_b": "role5-seed-smoke-b",
+  "paired_label_count": 31,
+  "agreement_rate": 1.0,
+  "cohens_kappa": 1.0,
+  "disagreement_count": 0,
+  "disagreements": [],
+  "note": "31 paired labels meet the 20+ calibration floor.",
+  "smoke_copy": true
+}

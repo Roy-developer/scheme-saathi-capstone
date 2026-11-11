@@ -1,8 +1,8 @@
 {
-  "dataset_version": "1.1.0",
+  "dataset_version": "1.2.0",
   "split": "development",
   "protected": false,
-  "annotation_note": "Development-only synthetic boundary personas for IGNWPS-MH, PM-KISAN-IN, and IGNOAPS-MH. Expected outcomes were written before harness scoring. IGNOAPS personas use typed_facts (name_on_bpl_list). Dual independent labelling with Role 1 remains pending. Not held-out; not the final 60-set.",
+  "annotation_note": "Development-only synthetic boundary personas for IGNWPS-MH, PM-KISAN-IN, IGNOAPS-MH, and APY-IN. Expected outcomes were written before harness scoring (APY expected outcomes derived from the approved mock rule package). IGNOAPS personas use typed_facts (name_on_bpl_list). Dual independent labelling with Role 1 remains pending. Not held-out; not the final 60-set. Only schemes with approved rule packages receive eligibility personas; other passage-only schemes in data/schemes/passages are not covered yet.",
   "personas": [
     {
       "persona_id": "IGNWPS-DEV-001",
@@ -1016,6 +1016,400 @@
         {
           "labeller_id": "role5-seed",
           "scheme_id": "IGNOAPS-MH",
+          "result": "need_more_information",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "APY-DEV-001",
+      "boundary_family": "apy-eligible-baseline",
+      "split": "development",
+      "protected": false,
+      "description": "Citizen age 25 with savings bank account who has never been an income-tax payer.",
+      "profile": {
+        "date_of_birth": "2001-10-30",
+        "application_date": "2026-10-30",
+        "apy_is_citizen_of_india": true,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-AGE-MIN-01",
+            "APY-IN-AGE-MAX-01",
+            "APY-IN-CITIZEN-01",
+            "APY-IN-SAVINGS-BANK-01",
+            "APY-IN-TAX-PAYER-EXCLUSION-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role5-seed",
+          "scheme_id": "APY-IN",
+          "result": "eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "APY-DEV-002",
+      "boundary_family": "apy-age-lower",
+      "split": "development",
+      "protected": false,
+      "description": "Exact lower age boundary (18), citizen, savings bank, not tax payer.",
+      "profile": {
+        "date_of_birth": "2008-10-30",
+        "application_date": "2026-10-30",
+        "apy_is_citizen_of_india": true,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-AGE-MIN-01",
+            "APY-IN-AGE-MAX-01",
+            "APY-IN-CITIZEN-01",
+            "APY-IN-SAVINGS-BANK-01",
+            "APY-IN-TAX-PAYER-EXCLUSION-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role5-seed",
+          "scheme_id": "APY-IN",
+          "result": "eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "APY-DEV-003",
+      "boundary_family": "apy-age-upper",
+      "split": "development",
+      "protected": false,
+      "description": "Exact upper age boundary (40), citizen, savings bank, not tax payer.",
+      "profile": {
+        "date_of_birth": "1986-10-30",
+        "application_date": "2026-10-30",
+        "apy_is_citizen_of_india": true,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-AGE-MIN-01",
+            "APY-IN-AGE-MAX-01",
+            "APY-IN-CITIZEN-01",
+            "APY-IN-SAVINGS-BANK-01",
+            "APY-IN-TAX-PAYER-EXCLUSION-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role5-seed",
+          "scheme_id": "APY-IN",
+          "result": "eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "APY-DEV-004",
+      "boundary_family": "apy-age-lower",
+      "split": "development",
+      "protected": false,
+      "description": "One year below minimum joining age (17).",
+      "profile": {
+        "date_of_birth": "2009-10-30",
+        "application_date": "2026-10-30",
+        "apy_is_citizen_of_india": true,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-AGE-MIN-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role5-seed",
+          "scheme_id": "APY-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "APY-DEV-005",
+      "boundary_family": "apy-age-upper",
+      "split": "development",
+      "protected": false,
+      "description": "One year above maximum joining age (41).",
+      "profile": {
+        "date_of_birth": "1985-10-30",
+        "application_date": "2026-10-30",
+        "apy_is_citizen_of_india": true,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-AGE-MAX-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role5-seed",
+          "scheme_id": "APY-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "APY-DEV-006",
+      "boundary_family": "apy-citizen",
+      "split": "development",
+      "protected": false,
+      "description": "Not a citizen of India; otherwise eligible profile.",
+      "profile": {
+        "date_of_birth": "2001-10-30",
+        "application_date": "2026-10-30",
+        "apy_is_citizen_of_india": false,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-CITIZEN-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role5-seed",
+          "scheme_id": "APY-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "APY-DEV-007",
+      "boundary_family": "apy-savings-bank",
+      "split": "development",
+      "protected": false,
+      "description": "No savings bank account; otherwise eligible profile.",
+      "profile": {
+        "date_of_birth": "2001-10-30",
+        "application_date": "2026-10-30",
+        "apy_is_citizen_of_india": true,
+        "apy_has_savings_bank_account": false,
+        "apy_is_or_has_been_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-SAVINGS-BANK-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role5-seed",
+          "scheme_id": "APY-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "APY-DEV-008",
+      "boundary_family": "apy-tax-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "Is or has been an income-tax payer (APY exclusion).",
+      "profile": {
+        "date_of_birth": "2001-10-30",
+        "application_date": "2026-10-30",
+        "apy_is_citizen_of_india": true,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": true
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-TAX-PAYER-EXCLUSION-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role5-seed",
+          "scheme_id": "APY-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "APY-DEV-009",
+      "boundary_family": "apy-tax-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "Unknown tax-payer status with other APY facts known.",
+      "profile": {
+        "date_of_birth": "2001-10-30",
+        "application_date": "2026-10-30",
+        "apy_is_citizen_of_india": true,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": null
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "need_more_information",
+          "missing_fields": [
+            "apy_is_or_has_been_income_tax_payer"
+          ],
+          "deciding_rule_ids": [
+            "APY-IN-TAX-PAYER-EXCLUSION-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role5-seed",
+          "scheme_id": "APY-IN",
+          "result": "need_more_information",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "APY-DEV-010",
+      "boundary_family": "apy-citizen",
+      "split": "development",
+      "protected": false,
+      "description": "Unknown citizenship with other APY facts known.",
+      "profile": {
+        "date_of_birth": "2001-10-30",
+        "application_date": "2026-10-30",
+        "apy_is_citizen_of_india": null,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "need_more_information",
+          "missing_fields": [
+            "apy_is_citizen_of_india"
+          ],
+          "deciding_rule_ids": [
+            "APY-IN-CITIZEN-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role5-seed",
+          "scheme_id": "APY-IN",
+          "result": "need_more_information",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "APY-DEV-011",
+      "boundary_family": "apy-savings-bank",
+      "split": "development",
+      "protected": false,
+      "description": "Unknown savings-bank status with other APY facts known.",
+      "profile": {
+        "date_of_birth": "2001-10-30",
+        "application_date": "2026-10-30",
+        "apy_is_citizen_of_india": true,
+        "apy_has_savings_bank_account": null,
+        "apy_is_or_has_been_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "need_more_information",
+          "missing_fields": [
+            "apy_has_savings_bank_account"
+          ],
+          "deciding_rule_ids": [
+            "APY-IN-SAVINGS-BANK-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role5-seed",
+          "scheme_id": "APY-IN",
+          "result": "need_more_information",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "APY-DEV-012",
+      "boundary_family": "apy-eligible-baseline",
+      "split": "development",
+      "protected": false,
+      "description": "Empty profile — every APY required fact unknown.",
+      "profile": {},
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "need_more_information",
+          "missing_fields": [
+            "date_of_birth",
+            "application_date",
+            "apy_is_citizen_of_india",
+            "apy_has_savings_bank_account",
+            "apy_is_or_has_been_income_tax_payer"
+          ],
+          "deciding_rule_ids": [
+            "APY-IN-AGE-MIN-01",
+            "APY-IN-AGE-MAX-01",
+            "APY-IN-CITIZEN-01",
+            "APY-IN-SAVINGS-BANK-01",
+            "APY-IN-TAX-PAYER-EXCLUSION-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role5-seed",
+          "scheme_id": "APY-IN",
           "result": "need_more_information",
           "status": "single"
         }

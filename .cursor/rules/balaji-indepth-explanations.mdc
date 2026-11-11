@@ -1,0 +1,24 @@
+---
+description: Prefer in-depth, scenario-based explanations for Balaji (Role 5)
+alwaysApply: true
+---
+
+# Balaji / Role 5 — explanation depth
+
+For this user (Balaji, Role 5 evaluation/red-team), prefer **in-depth, teaching-style answers** over terse summaries.
+
+## Defaults
+
+- Use full paragraphs and concrete citizen/attacker scenarios; walk steps in order when explaining eval gaps (E1–E4, RT stubs, personas, memory on/off, harness scope).
+- When discussing what is closed vs partial vs missing, show a realistic use case, what the product does today, what eval/RT still lacks, and what “closed for the PDF claim” would look like.
+- Cite light file paths (`eval/red_team/attacks_v0.json`, `eval/harness/e2_runner.py`, tests) when they help grounding—do not dump long code.
+
+## Avoid unless asked
+
+- One-liner verdicts, ultra-brief bullet dumps, or “just the bottom line” style **unless the user explicitly asks for a short answer**.
+- Skipping scenarios when the topic is a partial/incomplete PDF or E2/RT category.
+
+## Still respect
+
+- Capstone PDF baseline rule remains authoritative for requirements.
+- Keep rule files themselves concise; put depth in the user-facing answer, not in rules.

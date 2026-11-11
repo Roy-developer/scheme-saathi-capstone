@@ -1,0 +1,1542 @@
+{
+  "dataset_version": "0.3.0",
+  "split": "development",
+  "protected": false,
+  "reranker_mode": "disabled; fused RRF order returned (top-100 corpus)",
+  "k": 5,
+  "query_count": 82,
+  "recall_at_k": 0.9065040650406504,
+  "scheme_hit_rate_at_k": 0.975609756097561,
+  "recall_at_k_by_scheme": {
+    "AABYM-MH": 0.375,
+    "APY-IN": 0.9,
+    "BFFL-MH": 1.0,
+    "EACS-MH": 1.0,
+    "EPS-IN": 0.9166666666666666,
+    "FADSE-MH": 0.8333333333333334,
+    "FAISHL-IN": 1.0,
+    "FASETDP-MH": 1.0,
+    "IGNDPS-IN": 0.7083333333333334,
+    "IGNDPSM-MH": 0.7083333333333334,
+    "IGNOAPS-MH": 1.0,
+    "IGNWPS-IN": 1.0,
+    "IGNWPS-MH": 0.5,
+    "IGNWPSM-MH": 0.75,
+    "IPMWCD-IN": 1.0,
+    "MJPJAY-MH": 0.875,
+    "MSY-IN": 1.0,
+    "NFBSM-MH": 1.0,
+    "NSAP-IGNOAPS-IN": 0.75,
+    "NSIGSE-IN": 1.0,
+    "NSMNY-MH": 0.9,
+    "NSWF-IN": 1.0,
+    "PG-IGSSGC-IN": 1.0,
+    "PM-KISAN-IN": 0.5
+  },
+  "recall_at_k_by_language": {
+    "en": 0.9065040650406504
+  },
+  "per_query": [
+    {
+      "query_id": "APY-ALL-001",
+      "query": "What monthly pension does Atal Pension Yojana guarantee after age 60?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "APY-IN-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "APY-IN-BENEFIT-01",
+        "APY-IN-BENEFIT-03",
+        "APY-IN-ELIGIBILITY-02",
+        "NSAP-IGNOAPS-IN-ELIGIBILITY-03",
+        "APY-IN-BENEFIT-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "APY-ALL-002",
+      "query": "What is the age range to join APY?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "APY-IN-ELIGIBILITY-01",
+        "APY-IN-ELIGIBILITY-02"
+      ],
+      "retrieved_passage_ids": [
+        "APY-IN-ELIGIBILITY-01",
+        "APY-IN-EXCLUSION-01",
+        "APY-IN-ELIGIBILITY-02",
+        "APY-IN-BENEFIT-01",
+        "APY-IN-BENEFIT-03"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "APY-ALL-003",
+      "query": "Can an income tax payer join Atal Pension Yojana?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "APY-IN-EXCLUSION-01"
+      ],
+      "retrieved_passage_ids": [
+        "APY-IN-EXCLUSION-01",
+        "APY-IN-ELIGIBILITY-02",
+        "APY-IN-ELIGIBILITY-01",
+        "APY-IN-BENEFIT-02",
+        "APY-IN-BENEFIT-03"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "APY-ALL-004",
+      "query": "What happens to the APY pension after the subscriber dies?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "APY-IN-BENEFIT-02",
+        "APY-IN-BENEFIT-03"
+      ],
+      "retrieved_passage_ids": [
+        "APY-IN-BENEFIT-03",
+        "APY-IN-BENEFIT-02",
+        "APY-IN-BENEFIT-01",
+        "APY-IN-ELIGIBILITY-01",
+        "APY-IN-EXCLUSION-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "BFFL-ALL-001",
+      "query": "How is the horticulture subsidy paid to farmers under the Bhausaheb Fundkar scheme?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "BFFL-MH-BENEFIT-09"
+      ],
+      "retrieved_passage_ids": [
+        "BFFL-MH-BENEFIT-09",
+        "BFFL-MH-BENEFIT-10",
+        "BFFL-MH-ELIGIBILITY-15",
+        "PM-KISAN-IN-BENEFIT-01",
+        "BFFL-MH-APPLICATION-14"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "BFFL-ALL-002",
+      "query": "Which fruit crops are covered under the Bhausaheb Fundkar orchard plantation scheme?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "BFFL-MH-BENEFIT-10"
+      ],
+      "retrieved_passage_ids": [
+        "BFFL-MH-BENEFIT-10",
+        "BFFL-MH-ELIGIBILITY-15",
+        "BFFL-MH-BENEFIT-09",
+        "BFFL-MH-APPLICATION-14",
+        "NSMNY-MH-BENEFIT-04"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "BFFL-ALL-003",
+      "query": "Must a farmer be a permanent resident of Maharashtra for the Fundkar fruit plantation scheme?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "BFFL-MH-ELIGIBILITY-15"
+      ],
+      "retrieved_passage_ids": [
+        "BFFL-MH-ELIGIBILITY-15",
+        "BFFL-MH-BENEFIT-10",
+        "BFFL-MH-APPLICATION-14",
+        "NSMNY-MH-EXCLUSION-02",
+        "BFFL-MH-BENEFIT-09"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "BFFL-ALL-004",
+      "query": "How do I apply on the MahaDBT portal for the fruit orchard subsidy?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "BFFL-MH-APPLICATION-14"
+      ],
+      "retrieved_passage_ids": [
+        "BFFL-MH-APPLICATION-14",
+        "BFFL-MH-BENEFIT-09",
+        "BFFL-MH-BENEFIT-10",
+        "FAISHL-IN-APPLICATION-04",
+        "MSY-IN-BENEFIT-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "EACS-ALL-001",
+      "query": "How much educational assistance do construction workers get for children in class 8 to 10?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "EACS-MH-BENEFIT-01",
+        "EACS-MH-BENEFIT-02"
+      ],
+      "retrieved_passage_ids": [
+        "EACS-MH-BENEFIT-01",
+        "EACS-MH-ELIGIBILITY-01",
+        "EACS-MH-ELIGIBILITY-02",
+        "EACS-MH-BENEFIT-02",
+        "EACS-MH-APPLICATION-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "EACS-ALL-002",
+      "query": "Who is eligible for the construction workers children education assistance?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "EACS-MH-ELIGIBILITY-01",
+        "EACS-MH-ELIGIBILITY-02"
+      ],
+      "retrieved_passage_ids": [
+        "EACS-MH-BENEFIT-01",
+        "EACS-MH-ELIGIBILITY-02",
+        "EACS-MH-ELIGIBILITY-01",
+        "NSIGSE-IN-EXCLUSION-02",
+        "EACS-MH-BENEFIT-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "EACS-ALL-003",
+      "query": "How do I apply for the MBOCWW education assistance form?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "EACS-MH-APPLICATION-01"
+      ],
+      "retrieved_passage_ids": [
+        "EACS-MH-APPLICATION-01",
+        "FAISHL-IN-APPLICATION-04",
+        "BFFL-MH-APPLICATION-14",
+        "IPMWCD-IN-APPLICATION-02",
+        "FASETDP-MH-BENEFIT-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "EPS-ALL-001",
+      "query": "How many years of service are needed for a monthly pension under the Employees Pension Scheme?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "EPS-IN-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "EPS-IN-BENEFIT-01",
+        "EPS-IN-BENEFIT-08",
+        "EPS-IN-BENEFIT-16",
+        "EPS-IN-BENEFIT-07",
+        "NSAP-IGNOAPS-IN-BENEFIT-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "EPS-ALL-002",
+      "query": "What is the minimum monthly pension under EPS?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "EPS-IN-BENEFIT-08"
+      ],
+      "retrieved_passage_ids": [
+        "EPS-IN-BENEFIT-08",
+        "EPS-IN-BENEFIT-16",
+        "EPS-IN-BENEFIT-01",
+        "APY-IN-BENEFIT-01",
+        "EPS-IN-BENEFIT-07"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "EPS-ALL-003",
+      "query": "How do I file the Form 10D pension claim online?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "EPS-IN-APPLICATION-06"
+      ],
+      "retrieved_passage_ids": [
+        "EPS-IN-APPLICATION-06",
+        "NSAP-IGNOAPS-IN-DOCUMENTS-01",
+        "APY-IN-BENEFIT-03",
+        "EACS-MH-APPLICATION-01",
+        "FAISHL-IN-APPLICATION-04"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "EPS-ALL-004",
+      "query": "Can I draw early pension before age 58 under EPS?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "EPS-IN-BENEFIT-07"
+      ],
+      "retrieved_passage_ids": [
+        "EPS-IN-BENEFIT-07",
+        "EPS-IN-BENEFIT-01",
+        "EPS-IN-BENEFIT-08",
+        "EPS-IN-APPLICATION-06",
+        "APY-IN-ELIGIBILITY-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "EPS-ALL-005",
+      "query": "How much is the widow pension under the Employees Pension Scheme?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "EPS-IN-BENEFIT-16"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPS-IN-EXCLUSION-01",
+        "IGNWPSM-MH-ELIGIBILITY-04",
+        "IGNWPS-MH-BENEFIT-01",
+        "IGNWPS-IN-BENEFIT-02",
+        "EPS-IN-BENEFIT-16"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "FADSE-ALL-001",
+      "query": "How much financial assistance is given to disabled persons for self employment?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "FADSE-MH-BENEFIT-02"
+      ],
+      "retrieved_passage_ids": [
+        "FADSE-MH-BENEFIT-02",
+        "FASETDP-MH-BENEFIT-01",
+        "FASETDP-MH-BENEFIT-02",
+        "FADSE-MH-BENEFIT-01",
+        "FADSE-MH-ELIGIBILITY-04"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "FADSE-ALL-002",
+      "query": "What income limit applies to the self employment assistance for disabled persons in Maharashtra?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "FADSE-MH-ELIGIBILITY-04"
+      ],
+      "retrieved_passage_ids": [
+        "FADSE-MH-ELIGIBILITY-04",
+        "FASETDP-MH-BENEFIT-02",
+        "FADSE-MH-BENEFIT-01",
+        "FADSE-MH-BENEFIT-02",
+        "FADSE-MH-ELIGIBILITY-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "FADSE-ALL-003",
+      "query": "What minimum disability percentage is required for self employment assistance?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "FADSE-MH-ELIGIBILITY-01"
+      ],
+      "retrieved_passage_ids": [
+        "FADSE-MH-ELIGIBILITY-01",
+        "FADSE-MH-ELIGIBILITY-04",
+        "FADSE-MH-BENEFIT-02",
+        "FADSE-MH-BENEFIT-01",
+        "FASETDP-MH-BENEFIT-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "FAISHL-ALL-001",
+      "query": "Interest subsidy on home loan for war disabled and war bereaved",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "FAISHL-IN-BENEFIT-01",
+        "FAISHL-IN-ELIGIBILITY-01"
+      ],
+      "retrieved_passage_ids": [
+        "FAISHL-IN-ELIGIBILITY-01",
+        "FAISHL-IN-BENEFIT-01",
+        "FAISHL-IN-BENEFIT-03",
+        "FAISHL-IN-APPLICATION-04",
+        "FADSE-MH-ELIGIBILITY-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "FAISHL-ALL-002",
+      "query": "What share of the interest is reimbursed as home loan subsidy for ex-servicemen?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "FAISHL-IN-BENEFIT-03"
+      ],
+      "retrieved_passage_ids": [
+        "FAISHL-IN-BENEFIT-01",
+        "FAISHL-IN-BENEFIT-03",
+        "FAISHL-IN-ELIGIBILITY-01",
+        "FAISHL-IN-APPLICATION-04",
+        "MSY-IN-BENEFIT-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "FAISHL-ALL-003",
+      "query": "Where is the home loan interest subsidy application submitted?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "FAISHL-IN-APPLICATION-04"
+      ],
+      "retrieved_passage_ids": [
+        "FAISHL-IN-APPLICATION-04",
+        "FAISHL-IN-BENEFIT-03",
+        "FAISHL-IN-BENEFIT-01",
+        "FAISHL-IN-ELIGIBILITY-01",
+        "MSY-IN-BENEFIT-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "FASETDP-ALL-001",
+      "query": "Assistance to buy equipment after vocational training for disabled persons",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "FASETDP-MH-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "FASETDP-MH-BENEFIT-01",
+        "FASETDP-MH-BENEFIT-02",
+        "FADSE-MH-BENEFIT-02",
+        "FADSE-MH-BENEFIT-01",
+        "FASETDP-MH-DOCUMENTS-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "FASETDP-ALL-002",
+      "query": "How much money is given for the equipment kit to trained disabled persons?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "FASETDP-MH-BENEFIT-02"
+      ],
+      "retrieved_passage_ids": [
+        "FASETDP-MH-BENEFIT-02",
+        "FASETDP-MH-BENEFIT-01",
+        "FASETDP-MH-DOCUMENTS-01",
+        "FADSE-MH-BENEFIT-01",
+        "FADSE-MH-BENEFIT-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "FASETDP-ALL-003",
+      "query": "Which documents are needed for self employment assistance to trained disabled persons?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "FASETDP-MH-DOCUMENTS-01"
+      ],
+      "retrieved_passage_ids": [
+        "FASETDP-MH-BENEFIT-01",
+        "FASETDP-MH-BENEFIT-02",
+        "FADSE-MH-ELIGIBILITY-01",
+        "FASETDP-MH-DOCUMENTS-01",
+        "FADSE-MH-BENEFIT-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNDPS-ALL-001",
+      "query": "How much pension do disabled persons get under the Indira Gandhi National Disability Pension Scheme?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNDPS-IN-BENEFIT-01",
+        "IGNDPS-IN-BENEFIT-02"
+      ],
+      "retrieved_passage_ids": [
+        "IGNDPS-IN-BENEFICIARY-01",
+        "IGNDPS-IN-ELIGIBILITY-04",
+        "IGNDPS-IN-BENEFIT-01",
+        "IGNDPSM-MH-BENEFIT-03",
+        "IGNDPSM-MH-ELIGIBILITY-05"
+      ],
+      "recall_at_k": 0.5,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNDPS-ALL-002",
+      "query": "What disability percentage is needed for the national disability pension?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNDPS-IN-BENEFICIARY-01",
+        "IGNDPS-IN-ELIGIBILITY-04"
+      ],
+      "retrieved_passage_ids": [
+        "IGNDPS-IN-ELIGIBILITY-04",
+        "IGNDPS-IN-BENEFICIARY-01",
+        "IGNDPSM-MH-ELIGIBILITY-05",
+        "IGNDPS-IN-BENEFIT-01",
+        "IGNDPS-IN-APPLICATION-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNDPS-ALL-003",
+      "query": "How do I apply for the NSAP disability pension on UMANG?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNDPS-IN-APPLICATION-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNDPS-IN-APPLICATION-01",
+        "IGNDPS-IN-BENEFICIARY-01",
+        "NSAP-IGNOAPS-IN-BENEFICIARY-01",
+        "IGNDPS-IN-ELIGIBILITY-04",
+        "IGNDPSM-MH-ELIGIBILITY-05"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNDPSM-ALL-001",
+      "query": "What is the total monthly assistance for disabled persons in Maharashtra under Sanjay Gandhi and IGNDPS?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNDPSM-MH-BENEFIT-02",
+        "IGNDPSM-MH-BENEFIT-03"
+      ],
+      "retrieved_passage_ids": [
+        "IGNDPSM-MH-BENEFIT-02",
+        "IGNWPSM-MH-BENEFIT-02",
+        "FASETDP-MH-BENEFIT-02",
+        "FADSE-MH-BENEFIT-02",
+        "IGNDPS-IN-BENEFIT-01"
+      ],
+      "recall_at_k": 0.5,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNDPSM-ALL-002",
+      "query": "Can a disabled person already receiving another pension apply for the Maharashtra disability pension?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNDPSM-MH-ELIGIBILITY-05"
+      ],
+      "retrieved_passage_ids": [
+        "IGNDPSM-MH-ELIGIBILITY-05",
+        "IGNWPSM-MH-ELIGIBILITY-04",
+        "IGNDPS-IN-BENEFICIARY-01",
+        "IGNDPSM-MH-BENEFIT-03",
+        "IGNDPS-IN-ELIGIBILITY-04"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNDPSM-ALL-003",
+      "query": "Which documents are needed for the disability pension in Maharashtra?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNDPSM-MH-DOCUMENTS-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNDPSM-MH-DOCUMENTS-01",
+        "IGNDPSM-MH-ELIGIBILITY-05",
+        "FASETDP-MH-DOCUMENTS-01",
+        "IGNDPS-IN-ELIGIBILITY-04",
+        "IGNDPS-IN-BENEFICIARY-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPS-ALL-001",
+      "query": "What widow pension does the central government pay to women aged 80 and above?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-IN-BENEFIT-02"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPS-IN-BENEFIT-02",
+        "IGNOAPS-MH-BENEFIT-01",
+        "IGNWPSM-MH-BENEFIT-01",
+        "IGNDPS-IN-BENEFIT-02",
+        "IGNWPS-IN-EXCLUSION-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPS-ALL-002",
+      "query": "When is the widow pension discontinued?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-IN-EXCLUSION-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPS-IN-EXCLUSION-01",
+        "IGNWPSM-MH-ELIGIBILITY-04",
+        "IGNWPS-IN-BENEFIT-02",
+        "IGNWPS-MH-BENEFIT-01",
+        "IGNWPS-IN-DOCUMENTS-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPS-ALL-003",
+      "query": "Is the husband's death certificate required for the national widow pension?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-IN-DOCUMENTS-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPS-IN-DOCUMENTS-01",
+        "IGNWPSM-MH-DOCUMENTS-01",
+        "NFBSM-MH-DOCUMENTS-01",
+        "EPS-IN-BENEFIT-16",
+        "IGNWPS-IN-EXCLUSION-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPSM-ALL-001",
+      "query": "How much does a Maharashtra widow receive from the central government under IGNWPS?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPSM-MH-BENEFIT-01",
+        "IGNWPSM-MH-BENEFIT-02"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPSM-MH-BENEFIT-01",
+        "IGNWPS-MH-BENEFIT-01",
+        "IGNWPS-IN-BENEFIT-02",
+        "IGNWPS-IN-EXCLUSION-01",
+        "IGNWPSM-MH-BENEFIT-03"
+      ],
+      "recall_at_k": 0.5,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPSM-ALL-002",
+      "query": "Can a widow already receiving another social security pension get the Maharashtra widow pension?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPSM-MH-ELIGIBILITY-04"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPSM-MH-ELIGIBILITY-04",
+        "IGNWPS-IN-EXCLUSION-01",
+        "IGNDPSM-MH-ELIGIBILITY-05",
+        "IGNWPSM-MH-BENEFIT-01",
+        "IGNWPSM-MH-BENEFIT-03"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNWPSM-ALL-003",
+      "query": "Which documents does a Maharashtra widow need, such as residence proof and husband's death certificate?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPSM-MH-DOCUMENTS-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPSM-MH-DOCUMENTS-01",
+        "IGNWPS-IN-DOCUMENTS-01",
+        "NFBSM-MH-DOCUMENTS-01",
+        "AABYM-MH-DOCUMENTS-01",
+        "IGNDPSM-MH-DOCUMENTS-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNOAPS-ALL-001",
+      "query": "What old age pension does the Maharashtra state add under Shravanbal Seva?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNOAPS-MH-BENEFIT-02"
+      ],
+      "retrieved_passage_ids": [
+        "IGNOAPS-MH-BENEFIT-02",
+        "IGNOAPS-MH-ELIGIBILITY-01",
+        "IGNOAPS-MH-BENEFIT-01",
+        "NSAP-IGNOAPS-IN-BENEFIT-01",
+        "IGNWPSM-MH-BENEFIT-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNOAPS-ALL-002",
+      "query": "What age and poverty criteria apply to the old age pension in Maharashtra?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNOAPS-MH-ELIGIBILITY-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNOAPS-MH-ELIGIBILITY-01",
+        "NSAP-IGNOAPS-IN-BENEFICIARY-01",
+        "IGNOAPS-MH-BENEFIT-02",
+        "IGNOAPS-MH-BENEFIT-01",
+        "NSAP-IGNOAPS-IN-ELIGIBILITY-03"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IGNOAPS-ALL-003",
+      "query": "How much central old age pension is paid to people aged 80 and above in Maharashtra?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNOAPS-MH-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNOAPS-MH-BENEFIT-01",
+        "IGNOAPS-MH-BENEFIT-02",
+        "IGNOAPS-MH-ELIGIBILITY-01",
+        "IGNDPS-IN-BENEFIT-02",
+        "IGNWPS-IN-BENEFIT-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IPMWCD-ALL-001",
+      "query": "What stipend does the Ministry of Women and Child Development internship pay?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IPMWCD-IN-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "IPMWCD-IN-BENEFIT-01",
+        "IPMWCD-IN-APPLICATION-01",
+        "IPMWCD-IN-ELIGIBILITY-02",
+        "IPMWCD-IN-BENEFIT-04",
+        "IPMWCD-IN-APPLICATION-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IPMWCD-ALL-002",
+      "query": "What is the age limit for the women internship programme?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IPMWCD-IN-ELIGIBILITY-02"
+      ],
+      "retrieved_passage_ids": [
+        "IPMWCD-IN-ELIGIBILITY-02",
+        "IPMWCD-IN-APPLICATION-01",
+        "IPMWCD-IN-APPLICATION-02",
+        "IPMWCD-IN-BENEFIT-01",
+        "IPMWCD-IN-BENEFIT-04"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IPMWCD-ALL-003",
+      "query": "When can I submit the internship application on the portal?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IPMWCD-IN-APPLICATION-01",
+        "IPMWCD-IN-APPLICATION-02"
+      ],
+      "retrieved_passage_ids": [
+        "IPMWCD-IN-APPLICATION-02",
+        "IPMWCD-IN-APPLICATION-01",
+        "IPMWCD-IN-ELIGIBILITY-02",
+        "FAISHL-IN-APPLICATION-04",
+        "EACS-MH-APPLICATION-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "IPMWCD-ALL-004",
+      "query": "Is hostel accommodation provided to interns in Delhi?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IPMWCD-IN-BENEFIT-04"
+      ],
+      "retrieved_passage_ids": [
+        "IPMWCD-IN-BENEFIT-04",
+        "IPMWCD-IN-APPLICATION-02",
+        "PG-IGSSGC-IN-BENEFIT-01",
+        "FADSE-MH-BENEFIT-02",
+        "FASETDP-MH-BENEFIT-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "MSY-ALL-001",
+      "query": "What interest rate is charged on a Mahila Samridhi Yojana loan?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "MSY-IN-BENEFIT-03"
+      ],
+      "retrieved_passage_ids": [
+        "MSY-IN-BENEFIT-03",
+        "MSY-IN-BENEFIT-02",
+        "FAISHL-IN-BENEFIT-03",
+        "FAISHL-IN-BENEFIT-01",
+        "MSY-IN-ELIGIBILITY-03"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "MSY-ALL-002",
+      "query": "What family income limit applies to women's loans under NSFDC?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "MSY-IN-ELIGIBILITY-03"
+      ],
+      "retrieved_passage_ids": [
+        "MSY-IN-ELIGIBILITY-03",
+        "NFBSM-MH-ELIGIBILITY-03",
+        "NSWF-IN-ELIGIBILITY-02",
+        "FADSE-MH-ELIGIBILITY-04",
+        "MSY-IN-BENEFIT-03"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "MSY-ALL-003",
+      "query": "How much of the project cost does Mahila Samridhi Yojana finance?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "MSY-IN-BENEFIT-02"
+      ],
+      "retrieved_passage_ids": [
+        "MSY-IN-BENEFIT-02",
+        "MSY-IN-ELIGIBILITY-03",
+        "MSY-IN-BENEFIT-03",
+        "MSY-IN-DOCUMENTS-01",
+        "FASETDP-MH-DOCUMENTS-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "MSY-ALL-004",
+      "query": "Which documents are needed for a Mahila Samridhi Yojana loan?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "MSY-IN-DOCUMENTS-01"
+      ],
+      "retrieved_passage_ids": [
+        "MSY-IN-DOCUMENTS-01",
+        "MSY-IN-BENEFIT-02",
+        "NSMNY-MH-DOCUMENTS-01",
+        "MSY-IN-ELIGIBILITY-03",
+        "AABYM-MH-DOCUMENTS-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "MJPJAY-ALL-001",
+      "query": "How much health insurance cover per family per year does Maharashtra provide?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "MJPJAY-MH-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "MJPJAY-MH-BENEFIT-01",
+        "MJPJAY-MH-BENEFIT-02",
+        "AABYM-MH-BENEFIT-04",
+        "NSWF-IN-BENEFIT-07",
+        "NFBSM-MH-BENEFIT-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "MJPJAY-ALL-002",
+      "query": "Which ration cards qualify for category A under Mahatma Jyotirao Phule Jan Arogya Yojana?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "MJPJAY-MH-ELIGIBILITY-02"
+      ],
+      "retrieved_passage_ids": [
+        "MJPJAY-MH-ELIGIBILITY-02",
+        "MJPJAY-MH-BENEFIT-02",
+        "MJPJAY-MH-BENEFIT-01",
+        "MJPJAY-MH-ELIGIBILITY-05",
+        "MJPJAY-MH-BENEFIT-09"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "MJPJAY-ALL-003",
+      "query": "What cover do road accident victims get in Maharashtra hospitals?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "MJPJAY-MH-BENEFIT-02",
+        "MJPJAY-MH-ELIGIBILITY-05"
+      ],
+      "retrieved_passage_ids": [
+        "MJPJAY-MH-ELIGIBILITY-05",
+        "AABYM-MH-ELIGIBILITY-02",
+        "AABYM-MH-ELIGIBILITY-01",
+        "NSWF-IN-BENEFIT-07",
+        "AABYM-MH-BENEFIT-01"
+      ],
+      "recall_at_k": 0.5,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "MJPJAY-ALL-004",
+      "query": "Is the patient's transport cost reimbursed under MJPJAY?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "MJPJAY-MH-BENEFIT-09"
+      ],
+      "retrieved_passage_ids": [
+        "MJPJAY-MH-BENEFIT-09",
+        "MJPJAY-MH-BENEFIT-01",
+        "MJPJAY-MH-BENEFIT-02",
+        "MJPJAY-MH-ELIGIBILITY-05",
+        "MJPJAY-MH-ELIGIBILITY-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSMNY-ALL-001",
+      "query": "How much do Maharashtra farmers get each year under Namo Shetkari Mahasanman Nidhi?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSMNY-MH-BENEFIT-04",
+        "NSMNY-MH-BENEFIT-07"
+      ],
+      "retrieved_passage_ids": [
+        "NSMNY-MH-BENEFIT-07",
+        "NSMNY-MH-BENEFIT-04",
+        "NSMNY-MH-BENEFIT-09",
+        "PM-KISAN-IN-BENEFIT-01",
+        "NSMNY-MH-EXCLUSION-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSMNY-ALL-002",
+      "query": "Is the Namo Shetkari amount credited to Aadhaar linked bank accounts?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSMNY-MH-BENEFIT-09"
+      ],
+      "retrieved_passage_ids": [
+        "NSMNY-MH-BENEFIT-09",
+        "BFFL-MH-BENEFIT-09",
+        "NSMNY-MH-BENEFIT-04",
+        "NSMNY-MH-DOCUMENTS-01",
+        "PM-KISAN-IN-BENEFIT-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSMNY-ALL-003",
+      "query": "Which farmer families are excluded from the Namo Shetkari Mahasanman Nidhi?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSMNY-MH-EXCLUSION-02"
+      ],
+      "retrieved_passage_ids": [
+        "NSMNY-MH-BENEFIT-09",
+        "NSMNY-MH-EXCLUSION-02",
+        "NSMNY-MH-BENEFIT-04",
+        "NSMNY-MH-DOCUMENTS-01",
+        "NSMNY-MH-BENEFIT-07"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSMNY-ALL-004",
+      "query": "Documents for Namo Shetkari such as 7/12 and 8-A",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSMNY-MH-DOCUMENTS-01"
+      ],
+      "retrieved_passage_ids": [
+        "NSMNY-MH-DOCUMENTS-01",
+        "NSMNY-MH-BENEFIT-09",
+        "NSMNY-MH-BENEFIT-04",
+        "NSMNY-MH-BENEFIT-07",
+        "NSMNY-MH-EXCLUSION-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NFBSM-ALL-001",
+      "query": "One time assistance when the breadwinner of a BPL family dies in Maharashtra",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NFBSM-MH-BENEFIT-01",
+        "NFBSM-MH-ELIGIBILITY-01"
+      ],
+      "retrieved_passage_ids": [
+        "NFBSM-MH-ELIGIBILITY-01",
+        "NFBSM-MH-BENEFIT-01",
+        "NFBSM-MH-ELIGIBILITY-03",
+        "NFBSM-MH-DOCUMENTS-01",
+        "MJPJAY-MH-BENEFIT-09"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NFBSM-ALL-002",
+      "query": "Which documents are needed for the family benefit scheme, such as FIR copy and death certificate?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NFBSM-MH-DOCUMENTS-01"
+      ],
+      "retrieved_passage_ids": [
+        "NFBSM-MH-DOCUMENTS-01",
+        "IGNWPSM-MH-DOCUMENTS-01",
+        "NSWF-IN-DOCUMENTS-01",
+        "IGNWPS-IN-DOCUMENTS-01",
+        "NFBSM-MH-ELIGIBILITY-03"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NFBSM-ALL-003",
+      "query": "Who can apply for the National Family Benefit Scheme in Maharashtra?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NFBSM-MH-ELIGIBILITY-03"
+      ],
+      "retrieved_passage_ids": [
+        "NFBSM-MH-ELIGIBILITY-03",
+        "NFBSM-MH-BENEFIT-01",
+        "NFBSM-MH-ELIGIBILITY-01",
+        "NFBSM-MH-DOCUMENTS-01",
+        "BFFL-MH-APPLICATION-14"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSAP-ALL-001",
+      "query": "What pension amount do BPL citizens above 60 get under IGNOAPS?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSAP-IGNOAPS-IN-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "NSAP-IGNOAPS-IN-BENEFICIARY-01",
+        "IGNOAPS-MH-ELIGIBILITY-01",
+        "NSAP-IGNOAPS-IN-ELIGIBILITY-03",
+        "IGNOAPS-MH-BENEFIT-02",
+        "IGNOAPS-MH-BENEFIT-01"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSAP-ALL-002",
+      "query": "What is the minimum age for the central old age pension?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSAP-IGNOAPS-IN-BENEFICIARY-01",
+        "NSAP-IGNOAPS-IN-ELIGIBILITY-03"
+      ],
+      "retrieved_passage_ids": [
+        "NSAP-IGNOAPS-IN-ELIGIBILITY-03",
+        "APY-IN-ELIGIBILITY-02",
+        "APY-IN-BENEFIT-01",
+        "IGNOAPS-MH-BENEFIT-01",
+        "NSAP-IGNOAPS-IN-BENEFICIARY-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSAP-ALL-003",
+      "query": "Which documents are needed for the NSAP old age pension, such as domicile certificate?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSAP-IGNOAPS-IN-DOCUMENTS-01"
+      ],
+      "retrieved_passage_ids": [
+        "NSAP-IGNOAPS-IN-DOCUMENTS-01",
+        "NSAP-IGNOAPS-IN-ELIGIBILITY-03",
+        "IGNDPSM-MH-DOCUMENTS-01",
+        "NSAP-IGNOAPS-IN-BENEFICIARY-01",
+        "IGNWPS-IN-DOCUMENTS-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "CROSS-ALL-001",
+      "query": "widow pension scheme in Maharashtra monthly amount",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNWPS-MH-BENEFIT-01",
+        "IGNWPSM-MH-BENEFIT-03"
+      ],
+      "retrieved_passage_ids": [
+        "IGNWPSM-MH-BENEFIT-03",
+        "IGNWPSM-MH-BENEFIT-01",
+        "IGNWPSM-MH-ELIGIBILITY-04",
+        "EPS-IN-BENEFIT-16",
+        "IGNWPSM-MH-BENEFIT-02"
+      ],
+      "recall_at_k": 0.5,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "CROSS-ALL-002",
+      "query": "pension for poor elderly people below poverty line",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "IGNOAPS-MH-ELIGIBILITY-01",
+        "NSAP-IGNOAPS-IN-BENEFICIARY-01"
+      ],
+      "retrieved_passage_ids": [
+        "IGNOAPS-MH-ELIGIBILITY-01",
+        "NSAP-IGNOAPS-IN-BENEFICIARY-01",
+        "IGNWPS-IN-EXCLUSION-01",
+        "IGNDPS-IN-BENEFICIARY-01",
+        "IGNOAPS-MH-BENEFIT-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "CROSS-ALL-003",
+      "query": "financial help for disabled persons",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "FADSE-MH-BENEFIT-01",
+        "IGNDPS-IN-BENEFIT-01",
+        "IGNDPSM-MH-BENEFIT-03"
+      ],
+      "retrieved_passage_ids": [
+        "FASETDP-MH-BENEFIT-01",
+        "FADSE-MH-BENEFIT-02",
+        "FASETDP-MH-BENEFIT-02",
+        "FADSE-MH-BENEFIT-01",
+        "FADSE-MH-ELIGIBILITY-04"
+      ],
+      "recall_at_k": 0.3333333333333333,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "CROSS-ALL-004",
+      "query": "income support for farmers",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSMNY-MH-BENEFIT-04",
+        "PM-KISAN-IN-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "PM-KISAN-IN-BENEFIT-01",
+        "NSMNY-MH-BENEFIT-07",
+        "FADSE-MH-ELIGIBILITY-04",
+        "NSMNY-MH-EXCLUSION-02",
+        "NSWF-IN-ELIGIBILITY-02"
+      ],
+      "recall_at_k": 0.5,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "CROSS-ALL-005",
+      "query": "pension scheme for retirement after working",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "APY-IN-BENEFIT-01",
+        "EPS-IN-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "APY-IN-BENEFIT-03",
+        "APY-IN-BENEFIT-02",
+        "APY-IN-BENEFIT-01",
+        "IGNWPSM-MH-ELIGIBILITY-04",
+        "IGNDPSM-MH-ELIGIBILITY-05"
+      ],
+      "recall_at_k": 0.5,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "AABYM-ALL-001",
+      "query": "What money does the family get if a landless labourer dies naturally?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "AABYM-MH-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "NFBSM-MH-ELIGIBILITY-01",
+        "NFBSM-MH-ELIGIBILITY-03",
+        "NFBSM-MH-BENEFIT-01",
+        "NFBSM-MH-DOCUMENTS-01",
+        "EPS-IN-BENEFIT-16"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": false
+    },
+    {
+      "query_id": "AABYM-ALL-002",
+      "query": "How much premium do I pay each year for the Aam Aadmi insurance scheme in Maharashtra?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "AABYM-MH-BENEFIT-04"
+      ],
+      "retrieved_passage_ids": [
+        "AABYM-MH-BENEFIT-04",
+        "AABYM-MH-ELIGIBILITY-01",
+        "AABYM-MH-ELIGIBILITY-02",
+        "AABYM-MH-BENEFIT-01",
+        "AABYM-MH-APPLICATION-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "AABYM-ALL-003",
+      "query": "Can landless rural workers aged 18 to 59 join this insurance, and do they need to live in Maharashtra?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "AABYM-MH-ELIGIBILITY-01",
+        "AABYM-MH-ELIGIBILITY-02"
+      ],
+      "retrieved_passage_ids": [
+        "AABYM-MH-ELIGIBILITY-01",
+        "NFBSM-MH-ELIGIBILITY-01",
+        "EACS-MH-ELIGIBILITY-02",
+        "IGNOAPS-MH-ELIGIBILITY-01",
+        "AABYM-MH-APPLICATION-01"
+      ],
+      "recall_at_k": 0.5,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "AABYM-ALL-004",
+      "query": "Where do I submit the application and which papers should I attach?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "AABYM-MH-APPLICATION-01",
+        "AABYM-MH-DOCUMENTS-01"
+      ],
+      "retrieved_passage_ids": [
+        "EACS-MH-APPLICATION-01",
+        "FAISHL-IN-APPLICATION-04",
+        "IPMWCD-IN-APPLICATION-02",
+        "EPS-IN-APPLICATION-06",
+        "BFFL-MH-APPLICATION-14"
+      ],
+      "recall_at_k": 0.0,
+      "scheme_hit_at_k": false
+    },
+    {
+      "query_id": "NSIGSE-ALL-001",
+      "query": "How much money is deposited for a girl under the incentive scheme for secondary education?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSIGSE-IN-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "NSIGSE-IN-BENEFIT-01",
+        "NSIGSE-IN-BENEFIT-03",
+        "NSIGSE-IN-EXCLUSION-01",
+        "NSIGSE-IN-ELIGIBILITY-02",
+        "NSIGSE-IN-BENEFIT-06"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSIGSE-ALL-002",
+      "query": "Is my unmarried daughter who passed class 8 eligible for the secondary education incentive?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSIGSE-IN-ELIGIBILITY-01",
+        "NSIGSE-IN-ELIGIBILITY-02"
+      ],
+      "retrieved_passage_ids": [
+        "NSIGSE-IN-ELIGIBILITY-02",
+        "NSIGSE-IN-BENEFIT-03",
+        "NSIGSE-IN-EXCLUSION-01",
+        "NSIGSE-IN-ELIGIBILITY-01",
+        "NSIGSE-IN-BENEFIT-06"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSIGSE-ALL-003",
+      "query": "When can the girl withdraw the fixed deposit and what must she show?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSIGSE-IN-BENEFIT-03",
+        "NSIGSE-IN-BENEFIT-06"
+      ],
+      "retrieved_passage_ids": [
+        "NSIGSE-IN-BENEFIT-01",
+        "NSIGSE-IN-BENEFIT-06",
+        "NSIGSE-IN-BENEFIT-03",
+        "NSIGSE-IN-ELIGIBILITY-02",
+        "PG-IGSSGC-IN-ELIGIBILITY-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSIGSE-ALL-004",
+      "query": "Which girls in private schools or married girls are left out of this scheme?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSIGSE-IN-EXCLUSION-01",
+        "NSIGSE-IN-EXCLUSION-02"
+      ],
+      "retrieved_passage_ids": [
+        "NSIGSE-IN-EXCLUSION-01",
+        "NSIGSE-IN-EXCLUSION-02",
+        "NSIGSE-IN-ELIGIBILITY-01",
+        "NSIGSE-IN-ELIGIBILITY-02",
+        "NSIGSE-IN-BENEFIT-03"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSWF-ALL-001",
+      "query": "What help do fishermen get during the fishing ban months?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSWF-IN-BENEFIT-09"
+      ],
+      "retrieved_passage_ids": [
+        "NSWF-IN-BENEFIT-09",
+        "NSWF-IN-ELIGIBILITY-02",
+        "NSWF-IN-BENEFIT-04",
+        "NSWF-IN-DOCUMENTS-01",
+        "NSWF-IN-BENEFIT-07"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSWF-ALL-002",
+      "query": "How much accident insurance cover is given to fishermen and what is the premium?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSWF-IN-BENEFIT-07"
+      ],
+      "retrieved_passage_ids": [
+        "NSWF-IN-BENEFIT-07",
+        "NSWF-IN-BENEFIT-09",
+        "AABYM-MH-BENEFIT-04",
+        "NSWF-IN-ELIGIBILITY-02",
+        "NSWF-IN-BENEFIT-04"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSWF-ALL-003",
+      "query": "Who qualifies as an eligible fisherman for the saving-cum-relief component?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSWF-IN-ELIGIBILITY-02"
+      ],
+      "retrieved_passage_ids": [
+        "NSWF-IN-ELIGIBILITY-02",
+        "NSWF-IN-BENEFIT-09",
+        "NSWF-IN-DOCUMENTS-01",
+        "NSWF-IN-BENEFIT-04",
+        "NFBSM-MH-ELIGIBILITY-03"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSWF-ALL-004",
+      "query": "What documents does a fisherman need to apply?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSWF-IN-DOCUMENTS-01"
+      ],
+      "retrieved_passage_ids": [
+        "NSWF-IN-ELIGIBILITY-02",
+        "AABYM-MH-DOCUMENTS-01",
+        "NSMNY-MH-DOCUMENTS-01",
+        "NSWF-IN-DOCUMENTS-01",
+        "MSY-IN-DOCUMENTS-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "NSWF-ALL-005",
+      "query": "How big can a house in a model fishermen village be and what does it cost?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "NSWF-IN-BENEFIT-04"
+      ],
+      "retrieved_passage_ids": [
+        "NSWF-IN-BENEFIT-04",
+        "NSWF-IN-BENEFIT-09",
+        "NSWF-IN-ELIGIBILITY-02",
+        "NSWF-IN-DOCUMENTS-01",
+        "NSWF-IN-BENEFIT-07"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PGIGSSGC-ALL-001",
+      "query": "How much scholarship does an only girl child get for postgraduate studies?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PG-IGSSGC-IN-BENEFIT-01"
+      ],
+      "retrieved_passage_ids": [
+        "PG-IGSSGC-IN-BENEFIT-01",
+        "PG-IGSSGC-IN-ELIGIBILITY-02",
+        "NSIGSE-IN-BENEFIT-01",
+        "NSIGSE-IN-BENEFIT-03",
+        "NSIGSE-IN-ELIGIBILITY-02"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    },
+    {
+      "query_id": "PGIGSSGC-ALL-002",
+      "query": "Is there an age limit to apply for the single girl child PG scholarship?",
+      "query_language": "en",
+      "relevant_passage_ids": [
+        "PG-IGSSGC-IN-ELIGIBILITY-02"
+      ],
+      "retrieved_passage_ids": [
+        "PG-IGSSGC-IN-ELIGIBILITY-02",
+        "PG-IGSSGC-IN-BENEFIT-01",
+        "NSIGSE-IN-BENEFIT-03",
+        "NSIGSE-IN-ELIGIBILITY-02",
+        "NSIGSE-IN-BENEFIT-01"
+      ],
+      "recall_at_k": 1.0,
+      "scheme_hit_at_k": true
+    }
+  ],
+  "corpus_subset": {
+    "strategy": "gold_relevant_ids_first_then_file_order_fill",
+    "passage_count": 100,
+    "queries_kept": 82,
+    "queries_dropped": 74,
+    "dropped_query_ids": [
+      "PGIGSSGC-ALL-003",
+      "PGIGSSGC-ALL-004",
+      "PMAYU-ALL-001",
+      "PMAYU-ALL-002",
+      "PMAYU-ALL-003",
+      "PMAYU-ALL-004",
+      "PMFBY-ALL-001",
+      "PMFBY-ALL-002",
+      "PMFBY-ALL-003",
+      "PMFBY-ALL-004",
+      "PMJJBY-ALL-001",
+      "PMJJBY-ALL-002",
+      "PMJJBY-ALL-003",
+      "PMJJBY-ALL-004",
+      "PMKMDY-ALL-001",
+      "PMKMDY-ALL-002",
+      "PMKMDY-ALL-003",
+      "PMKMDY-ALL-004",
+      "PMSBY-ALL-001",
+      "PMSBY-ALL-002",
+      "PMSBY-ALL-003",
+      "PMSBY-ALL-004",
+      "PMUY2-ALL-001",
+      "PMUY2-ALL-002",
+      "PMUY2-ALL-003",
+      "PMUY2-ALL-004",
+      "PMVBRY-ALL-001",
+      "PMVBRY-ALL-002",
+      "PMVBRY-ALL-003",
+      "PMVBRY-ALL-004",
+      "POST-DIS-ALL-001",
+      "POST-DIS-ALL-002",
+      "POST-DIS-ALL-003",
+      "POST-DIS-ALL-004",
+      "PRE-DIS-ALL-001",
+      "PRE-DIS-ALL-002",
+      "PRE-DIS-ALL-003",
+      "PRE-DIS-ALL-004",
+      "PRE-ST-ALL-001",
+      "PRE-ST-ALL-002",
+      "PRE-ST-ALL-003",
+      "PRE-ST-ALL-004",
+      "PSGS-DIP-ALL-001",
+      "PSGS-DIP-ALL-002",
+      "PSGS-DIP-ALL-003",
+      "PSGS-DIP-ALL-004",
+      "RASSNB-ALL-001",
+      "RASSNB-ALL-002",
+      "RASSNB-ALL-003",
+      "RASSNB-ALL-004",
+      "SBSSPS-ALL-001",
+      "SBSSPS-ALL-002",
+      "SBSSPS-ALL-003",
+      "SBSSPS-ALL-004",
+      "TCE-SC-ALL-001",
+      "TCE-SC-ALL-002",
+      "TCE-SC-ALL-003",
+      "TCE-SC-ALL-004",
+      "TFEFVS-ALL-001",
+      "TFEFVS-ALL-002",
+      "TFEFVS-ALL-003",
+      "TFEFVS-ALL-004",
+      "TFEFVSSSHS-ALL-001",
+      "TFEFVSSSHS-ALL-002",
+      "TFEFVSSSHS-ALL-003",
+      "TFEFVSSSHS-ALL-004",
+      "TMDVSO-ALL-001",
+      "TMDVSO-ALL-002",
+      "TMDVSO-ALL-003",
+      "TMDVSO-ALL-004",
+      "WMCL-ALL-001",
+      "WMCL-ALL-002",
+      "WMCL-ALL-003",
+      "WMCL-ALL-004"
+    ]
+  }
+}

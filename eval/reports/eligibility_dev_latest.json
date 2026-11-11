@@ -1,0 +1,838 @@
+{
+  "dataset_version": "1.1.0",
+  "split": "development",
+  "protected": false,
+  "persona_count": 31,
+  "case_count": 31,
+  "correct": 31,
+  "incorrect": 0,
+  "accuracy": 1.0,
+  "missing_field_mismatches": 0,
+  "by_scheme": {
+    "IGNOAPS-MH": {
+      "total": 6,
+      "correct": 6,
+      "incorrect": 0,
+      "accuracy": 1.0,
+      "confusion": {
+        "not_eligible->not_eligible": 2,
+        "eligible->eligible": 2,
+        "need_more_information->need_more_information": 2
+      }
+    },
+    "IGNWPS-MH": {
+      "total": 13,
+      "correct": 13,
+      "incorrect": 0,
+      "accuracy": 1.0,
+      "confusion": {
+        "eligible->eligible": 4,
+        "not_eligible->not_eligible": 5,
+        "need_more_information->need_more_information": 4
+      }
+    },
+    "PM-KISAN-IN": {
+      "total": 12,
+      "correct": 12,
+      "incorrect": 0,
+      "accuracy": 1.0,
+      "confusion": {
+        "eligible->eligible": 1,
+        "not_eligible->not_eligible": 8,
+        "need_more_information->need_more_information": 3
+      }
+    }
+  },
+  "per_persona": [
+    {
+      "persona_id": "IGNWPS-DEV-001",
+      "boundary_family": "ignwps-age-lower",
+      "schemes": {
+        "IGNWPS-MH": {
+          "status": "pass",
+          "expected_result": "eligible",
+          "actual_result": "eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01",
+            "IGNWPS-MH-AGE-MIN-01",
+            "IGNWPS-MH-AGE-MAX-01",
+            "IGNWPS-MH-BPL-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01",
+            "IGNWPS-MH-AGE-MIN-01",
+            "IGNWPS-MH-AGE-MAX-01",
+            "IGNWPS-MH-BPL-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNWPS-DEV-002",
+      "boundary_family": "ignwps-age-upper",
+      "schemes": {
+        "IGNWPS-MH": {
+          "status": "pass",
+          "expected_result": "eligible",
+          "actual_result": "eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01",
+            "IGNWPS-MH-AGE-MIN-01",
+            "IGNWPS-MH-AGE-MAX-01",
+            "IGNWPS-MH-BPL-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01",
+            "IGNWPS-MH-AGE-MIN-01",
+            "IGNWPS-MH-AGE-MAX-01",
+            "IGNWPS-MH-BPL-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNWPS-DEV-003",
+      "boundary_family": "ignwps-age-lower",
+      "schemes": {
+        "IGNWPS-MH": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNWPS-MH-AGE-MIN-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNWPS-MH-AGE-MIN-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNWPS-DEV-004",
+      "boundary_family": "ignwps-age-upper",
+      "schemes": {
+        "IGNWPS-MH": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNWPS-MH-AGE-MAX-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNWPS-MH-AGE-MAX-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNWPS-DEV-005",
+      "boundary_family": "ignwps-widow",
+      "schemes": {
+        "IGNWPS-MH": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNWPS-DEV-006",
+      "boundary_family": "ignwps-bpl",
+      "schemes": {
+        "IGNWPS-MH": {
+          "status": "pass",
+          "expected_result": "eligible",
+          "actual_result": "eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01",
+            "IGNWPS-MH-AGE-MIN-01",
+            "IGNWPS-MH-AGE-MAX-01",
+            "IGNWPS-MH-BPL-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01",
+            "IGNWPS-MH-AGE-MIN-01",
+            "IGNWPS-MH-AGE-MAX-01",
+            "IGNWPS-MH-BPL-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNWPS-DEV-007",
+      "boundary_family": "ignwps-bpl",
+      "schemes": {
+        "IGNWPS-MH": {
+          "status": "pass",
+          "expected_result": "need_more_information",
+          "actual_result": "need_more_information",
+          "result_match": true,
+          "expected_missing_fields": [
+            "government_bpl_card"
+          ],
+          "actual_missing_fields": [
+            "government_bpl_card"
+          ],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNWPS-MH-BPL-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNWPS-MH-BPL-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNWPS-DEV-008",
+      "boundary_family": "ignwps-bpl",
+      "schemes": {
+        "IGNWPS-MH": {
+          "status": "pass",
+          "expected_result": "need_more_information",
+          "actual_result": "need_more_information",
+          "result_match": true,
+          "expected_missing_fields": [
+            "government_bpl_card"
+          ],
+          "actual_missing_fields": [
+            "government_bpl_card"
+          ],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNWPS-MH-BPL-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNWPS-MH-BPL-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNWPS-DEV-009",
+      "boundary_family": "ignwps-widow",
+      "schemes": {
+        "IGNWPS-MH": {
+          "status": "pass",
+          "expected_result": "need_more_information",
+          "actual_result": "need_more_information",
+          "result_match": true,
+          "expected_missing_fields": [
+            "is_widow"
+          ],
+          "actual_missing_fields": [
+            "is_widow"
+          ],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNWPS-DEV-010",
+      "boundary_family": "ignwps-age-lower",
+      "schemes": {
+        "IGNWPS-MH": {
+          "status": "pass",
+          "expected_result": "need_more_information",
+          "actual_result": "need_more_information",
+          "result_match": true,
+          "expected_missing_fields": [
+            "date_of_birth"
+          ],
+          "actual_missing_fields": [
+            "date_of_birth"
+          ],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNWPS-MH-AGE-MIN-01",
+            "IGNWPS-MH-AGE-MAX-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNWPS-MH-AGE-MIN-01",
+            "IGNWPS-MH-AGE-MAX-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNWPS-DEV-011",
+      "boundary_family": "ignwps-age-lower",
+      "schemes": {
+        "IGNWPS-MH": {
+          "status": "pass",
+          "expected_result": "eligible",
+          "actual_result": "eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01",
+            "IGNWPS-MH-AGE-MIN-01",
+            "IGNWPS-MH-AGE-MAX-01",
+            "IGNWPS-MH-BPL-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01",
+            "IGNWPS-MH-AGE-MIN-01",
+            "IGNWPS-MH-AGE-MAX-01",
+            "IGNWPS-MH-BPL-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNWPS-DEV-012",
+      "boundary_family": "ignwps-age-upper",
+      "schemes": {
+        "IGNWPS-MH": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNWPS-MH-AGE-MAX-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNWPS-MH-AGE-MAX-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNWPS-DEV-013",
+      "boundary_family": "ignwps-widow",
+      "schemes": {
+        "IGNWPS-MH": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNWPS-MH-AGE-MIN-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNWPS-MH-AGE-MIN-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "PMKISAN-DEV-001",
+      "boundary_family": "pmkisan-eligible-baseline",
+      "schemes": {
+        "PM-KISAN-IN": {
+          "status": "pass",
+          "expected_result": "eligible",
+          "actual_result": "eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "PMKISAN-LAND-FAMILY-01",
+            "PMKISAN-INSTITUTIONAL-LAND-01",
+            "PMKISAN-OFFICE-HOLDER-01",
+            "PMKISAN-GOV-EMPLOYEE-01",
+            "PMKISAN-PENSION-01",
+            "PMKISAN-INCOME-TAX-01",
+            "PMKISAN-PROFESSIONAL-01",
+            "PMKISAN-NRI-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "PMKISAN-LAND-FAMILY-01",
+            "PMKISAN-INSTITUTIONAL-LAND-01",
+            "PMKISAN-OFFICE-HOLDER-01",
+            "PMKISAN-GOV-EMPLOYEE-01",
+            "PMKISAN-PENSION-01",
+            "PMKISAN-INCOME-TAX-01",
+            "PMKISAN-PROFESSIONAL-01",
+            "PMKISAN-NRI-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "PMKISAN-DEV-002",
+      "boundary_family": "pmkisan-landholding",
+      "schemes": {
+        "PM-KISAN-IN": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "PMKISAN-LAND-FAMILY-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "PMKISAN-LAND-FAMILY-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "PMKISAN-DEV-003",
+      "boundary_family": "pmkisan-institutional",
+      "schemes": {
+        "PM-KISAN-IN": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "PMKISAN-INSTITUTIONAL-LAND-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "PMKISAN-INSTITUTIONAL-LAND-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "PMKISAN-DEV-004",
+      "boundary_family": "pmkisan-office",
+      "schemes": {
+        "PM-KISAN-IN": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "PMKISAN-OFFICE-HOLDER-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "PMKISAN-OFFICE-HOLDER-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "PMKISAN-DEV-005",
+      "boundary_family": "pmkisan-gov-employee",
+      "schemes": {
+        "PM-KISAN-IN": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "PMKISAN-GOV-EMPLOYEE-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "PMKISAN-GOV-EMPLOYEE-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "PMKISAN-DEV-006",
+      "boundary_family": "pmkisan-pension",
+      "schemes": {
+        "PM-KISAN-IN": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "PMKISAN-PENSION-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "PMKISAN-PENSION-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "PMKISAN-DEV-007",
+      "boundary_family": "pmkisan-income-tax",
+      "schemes": {
+        "PM-KISAN-IN": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "PMKISAN-INCOME-TAX-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "PMKISAN-INCOME-TAX-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "PMKISAN-DEV-008",
+      "boundary_family": "pmkisan-professional",
+      "schemes": {
+        "PM-KISAN-IN": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "PMKISAN-PROFESSIONAL-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "PMKISAN-PROFESSIONAL-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "PMKISAN-DEV-009",
+      "boundary_family": "pmkisan-nri",
+      "schemes": {
+        "PM-KISAN-IN": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "PMKISAN-NRI-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "PMKISAN-NRI-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "PMKISAN-DEV-010",
+      "boundary_family": "pmkisan-landholding",
+      "schemes": {
+        "PM-KISAN-IN": {
+          "status": "pass",
+          "expected_result": "need_more_information",
+          "actual_result": "need_more_information",
+          "result_match": true,
+          "expected_missing_fields": [
+            "landholding_family_in_state_records"
+          ],
+          "actual_missing_fields": [
+            "landholding_family_in_state_records"
+          ],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "PMKISAN-LAND-FAMILY-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "PMKISAN-LAND-FAMILY-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "PMKISAN-DEV-011",
+      "boundary_family": "pmkisan-income-tax",
+      "schemes": {
+        "PM-KISAN-IN": {
+          "status": "pass",
+          "expected_result": "need_more_information",
+          "actual_result": "need_more_information",
+          "result_match": true,
+          "expected_missing_fields": [
+            "income_tax_paid_last_assessment_year"
+          ],
+          "actual_missing_fields": [
+            "income_tax_paid_last_assessment_year"
+          ],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "PMKISAN-INCOME-TAX-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "PMKISAN-INCOME-TAX-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "PMKISAN-DEV-012",
+      "boundary_family": "pmkisan-eligible-baseline",
+      "schemes": {
+        "PM-KISAN-IN": {
+          "status": "pass",
+          "expected_result": "need_more_information",
+          "actual_result": "need_more_information",
+          "result_match": true,
+          "expected_missing_fields": [
+            "landholding_family_in_state_records",
+            "institutional_landholder",
+            "listed_public_office_member",
+            "excluded_government_employee_member",
+            "pension_at_least_10000_excluding_stated_grades",
+            "income_tax_paid_last_assessment_year",
+            "registered_practicing_professional_member",
+            "nri_new_beneficiary"
+          ],
+          "actual_missing_fields": [
+            "landholding_family_in_state_records",
+            "institutional_landholder",
+            "listed_public_office_member",
+            "excluded_government_employee_member",
+            "pension_at_least_10000_excluding_stated_grades",
+            "income_tax_paid_last_assessment_year",
+            "registered_practicing_professional_member",
+            "nri_new_beneficiary"
+          ],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "PMKISAN-LAND-FAMILY-01",
+            "PMKISAN-INSTITUTIONAL-LAND-01",
+            "PMKISAN-OFFICE-HOLDER-01",
+            "PMKISAN-GOV-EMPLOYEE-01",
+            "PMKISAN-PENSION-01",
+            "PMKISAN-INCOME-TAX-01",
+            "PMKISAN-PROFESSIONAL-01",
+            "PMKISAN-NRI-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "PMKISAN-LAND-FAMILY-01",
+            "PMKISAN-INSTITUTIONAL-LAND-01",
+            "PMKISAN-OFFICE-HOLDER-01",
+            "PMKISAN-GOV-EMPLOYEE-01",
+            "PMKISAN-PENSION-01",
+            "PMKISAN-INCOME-TAX-01",
+            "PMKISAN-PROFESSIONAL-01",
+            "PMKISAN-NRI-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-001",
+      "boundary_family": "ignoaps-age-lower",
+      "schemes": {
+        "IGNOAPS-MH": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-002",
+      "boundary_family": "ignoaps-age-lower",
+      "schemes": {
+        "IGNOAPS-MH": {
+          "status": "pass",
+          "expected_result": "eligible",
+          "actual_result": "eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01",
+            "IGNOAPS-MH-BPL-LIST-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01",
+            "IGNOAPS-MH-BPL-LIST-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-003",
+      "boundary_family": "ignoaps-age-upper",
+      "schemes": {
+        "IGNOAPS-MH": {
+          "status": "pass",
+          "expected_result": "eligible",
+          "actual_result": "eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01",
+            "IGNOAPS-MH-BPL-LIST-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01",
+            "IGNOAPS-MH-BPL-LIST-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-004",
+      "boundary_family": "ignoaps-bpl-list",
+      "schemes": {
+        "IGNOAPS-MH": {
+          "status": "pass",
+          "expected_result": "not_eligible",
+          "actual_result": "not_eligible",
+          "result_match": true,
+          "expected_missing_fields": [],
+          "actual_missing_fields": [],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNOAPS-MH-BPL-LIST-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNOAPS-MH-BPL-LIST-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-005",
+      "boundary_family": "ignoaps-bpl-list",
+      "schemes": {
+        "IGNOAPS-MH": {
+          "status": "pass",
+          "expected_result": "need_more_information",
+          "actual_result": "need_more_information",
+          "result_match": true,
+          "expected_missing_fields": [
+            "name_on_bpl_list"
+          ],
+          "actual_missing_fields": [
+            "name_on_bpl_list"
+          ],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNOAPS-MH-BPL-LIST-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNOAPS-MH-BPL-LIST-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-006",
+      "boundary_family": "ignoaps-age-lower",
+      "schemes": {
+        "IGNOAPS-MH": {
+          "status": "pass",
+          "expected_result": "need_more_information",
+          "actual_result": "need_more_information",
+          "result_match": true,
+          "expected_missing_fields": [
+            "date_of_birth"
+          ],
+          "actual_missing_fields": [
+            "date_of_birth"
+          ],
+          "missing_fields_match": true,
+          "expected_deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01"
+          ],
+          "actual_deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01"
+          ],
+          "deciding_rules_match": true
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+---
+description: Capstone PDF is the authoritative Role/PDF requirements baseline for Scheme Saathi
+alwaysApply: true
+---
+
+# Capstone PDF baseline (hard constraint)
+
+Treat the capstone PDF as the **authoritative Role/PDF requirements baseline** for Scheme Saathi (Role 5), evaluation (E1–E4), personas, memory tests, monitoring claims, and readiness/scoring answers.
+
+## Source of truth
+
+- **Baseline PDF (in repo):** `capstone_projects 2 (1) (1).pdf`
+- **Absolute path:** `/Users/b0k03mk/Documents/Projects/Personal/scheme-saathi-capstone/capstone_projects 2 (1) (1).pdf`
+- **SHA-256:** `21a4b6b279628a2768354ae93a4cf88d10224917cf639cd1d4bb352e91e281ee`
+- Also present outside the repo (e.g. Downloads); prefer the in-repo copy above.
+
+## How to answer
+
+- Ground claims about readiness, scores, personas, memory-on/off, C0/C1/C2, E1–E4, MCP counts, ReAct, approval gates, Grafana/monitoring, and final-review evidence in **this PDF’s requirements**.
+- Prefer existing in-repo mirrors that quote or map the PDF:
+  - `docs/CAPSTONE_PROJECT_GUIDE_REFERENCE.md`
+  - `docs/EVALUATION_REPORT.md`
+  - `docs/PHASE_WISE_IMPLEMENTATION_PLAN.md` / `docs/END_TO_END_IMPLEMENTATION_PLAN.md`
+- **Conflict rule:** if docs/plans/code comments disagree with the PDF, the PDF wins. Say so explicitly.
+- Call out PDF gaps honestly (missing numeric thresholds, team decisions, cohort-guidelines-only items). Do not invent requirements the PDF does not state.
+- Cohort/team guides (e.g. `docs/Scheme_Saathi_Roles_and_Work_Plan.pdf`) may add detail; attribute them separately and do not override the capstone PDF silently.

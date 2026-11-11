@@ -15,7 +15,7 @@ defences off/on, κ smoke, simulated-citizen smoke, E1–E4 config inventory.
 
 | Requirement | Command / location |
 |---|---|
-| Dev personas | `eval/development/personas_v1.json` (31) |
+| Dev personas | `eval/development/personas_v1.json` (43) |
 | ≥40 held-out (local, gitignored) | `python scripts/generate_held_out_personas.py` |
 | Held-out scoring (Role 5 only) | `python scripts/evaluate_eligibility_held_out.py` |
 | Dual-label κ | `python scripts/evaluate_label_agreement_dev.py` |
