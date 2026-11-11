@@ -3,5 +3,24 @@ Name: scheme-saathi-capstone
 Version: 0.1.0
 Summary: Scheme Saathi capstone application
 Requires-Python: >=3.11
+Requires-Dist: aiosqlite<1,>=0.20
+Requires-Dist: fastapi<1,>=0.115
+Requires-Dist: filelock<5,>=3.13
+Requires-Dist: openai<4,>=3
+Requires-Dist: httpx<1,>=0.28
+Requires-Dist: pydantic<3,>=2.8
 Requires-Dist: streamlit<2,>=1.40
+Requires-Dist: uvicorn[standard]<1,>=0.32
 Requires-Dist: mcp<3,>=2
+Requires-Dist: langgraph<2,>=1.2
+Requires-Dist: langgraph-checkpoint-sqlite<5,>=2
+Requires-Dist: langchain<2,>=1.4
+Requires-Dist: langchain-openai<2,>=1.7
+Requires-Dist: python-dotenv<2,>=1
+Requires-Dist: qdrant-client[fastembed]<2,>=1.14
+Requires-Dist: langchain-qdrant<2,>=1.1
+Requires-Dist: rank-bm25<1,>=0.2.2
+Requires-Dist: prometheus_client<1,>=0.21
+Provides-Extra: dev
+Requires-Dist: openpyxl<4,>=3.1; extra == "dev"
+Requires-Dist: pytest<9,>=8.3; extra == "dev"

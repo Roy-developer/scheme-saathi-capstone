@@ -100,6 +100,7 @@ from src.workflow.question_picker import (
 from src.workflow.intake_agent import (
     propose_initial_registered_facts,
 )
+from src.workflow.scam_screen import apply_scam_screen, scam_warning_for_locale
 from src.workflow.supervisor_agent import (
     propose_supervisor_plan,
 )
@@ -916,6 +917,8 @@ def build_journey_graph(
         agent_budget = state.get("agent_budget", {})
         trace_events: list[dict[str, Any]] = []
         react_status = state.get("react_status", "deterministic")
+        discovery_notices = list(state.get("discovery_notices") or [])
+        scam_screened_this_turn = False
         attempted = durable_attempted_facts(state.get("llm_attempted_facts") or [])
         interp_ctx: list[str] = list(state.get("interpreter_context") or [])
         proposals = list(state.get("profile_proposals") or [])
@@ -1051,6 +1054,10 @@ def build_journey_graph(
                 ),
             )
             trace_events.extend(description_trace)
+            if react_status == "scam_screened":
+                scam_screened_this_turn = True
+                discovery_notices.append("scam_screened")
+                react_status = "deterministic"
             if react_status == "model_assisted":
                 interp_ctx.append(f"description: {description}")
 
@@ -1099,6 +1106,31 @@ def build_journey_graph(
                     )
             elif answer_kind == "invalid":
                 reply = pending_registered_answer.get("reply")
+                scam_reply = (
+                    apply_scam_screen(reply) if isinstance(reply, str) else None
+                )
+                if scam_reply is not None and scam_reply.flagged:
+                    scam_screened_this_turn = True
+                    discovery_notices.append("scam_screened")
+                    warning = scam_warning_for_locale(locale)
+                    prior_question = state.get("question") or state.get("message") or ""
+                    details = (
+                        registered_confirmation_details(definition)
+                        if state.get("pending_confirmation")
+                        else registered_question_details(definition, locale)
+                    )
+                    response = waiting_on(
+                        pending_fact,
+                        f"{warning}\n\n{prior_question}".strip(),
+                        details,
+                        confirming=bool(state.get("pending_confirmation")),
+                        source=state.get("pending_confirmation_source", ""),
+                        proposed=state.get("pending_interpreted_value"),
+                    )
+                    response["discovery_notices"] = list(
+                        dict.fromkeys(discovery_notices)
+                    )
+                    return response
                 if (
                     definition.value_type in {"boolean", "date"}
                         and not deterministic_fact_intake
@@ -1203,6 +1235,14 @@ def build_journey_graph(
                 else None
             ),
         )
+        if scam_screened_this_turn:
+            notices = list(
+                discovery_updates.get("discovery_notices")
+                or state.get("discovery_notices")
+                or []
+            )
+            notices.append("scam_screened")
+            discovery_updates["discovery_notices"] = list(dict.fromkeys(notices))
         if discovery_updates.get("candidate_scheme_ids"):
             packages = [
                 rule_packages[candidate]
