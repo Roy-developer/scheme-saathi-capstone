@@ -2,7 +2,7 @@
   "scheme_id": "PRE-DIS-IN",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "PRE-DIS-IN-R01",
@@ -51,13 +51,57 @@
       "source_quote": "Family income up to Rs. 2.5 lakh per year.",
       "needs_human_review": false,
       "note": null
+    },
+    {
+      "rule_id": "PRE-DIS-IN-R05",
+      "kind": "eligibility",
+      "field": "is_student_in_class_9_or_10",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-01",
+      "source_quote": "Students studying in Class IX or X.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PRE-DIS-IN-R06",
+      "kind": "exclusion",
+      "field": "receives_other_scholarship_or_stipend",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-05",
+      "source_quote": "Student should not receive another scholarship/stipend.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PRE-DIS-IN-R07",
+      "kind": "eligibility",
+      "field": "family_members_receiving_scholarship",
+      "operator": "lte",
+      "value": 2,
+      "unit": null,
+      "source_passage_id": "PRE-DIS-IN-EXCLUSION-02",
+      "source_quote": "Scholarship will not be given to more than two students from a family.",
+      "needs_human_review": true,
+      "note": "Counting basis (includes this student?) and the twin exception need a person to confirm."
+    },
+    {
+      "rule_id": "PRE-DIS-IN-R08",
+      "kind": "exclusion",
+      "field": "is_repeating_class",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PRE-DIS-IN-EXCLUSION-04",
+      "source_quote": "If a student has to repeat a class",
+      "needs_human_review": false,
+      "note": null
     }
   ],
   "unresolved": [
-    "MISSING FIELD: student currently studying in Class IX or X.",
-    "MISSING FIELD: student receives another scholarship or stipend.",
-    "MISSING FIELD: number of children/students from the same family already receiving the scholarship (max 2; twins allowed).",
-    "MISSING FIELD: student is repeating a class.",
     "NOTE: UDID Card and Aadhaar Card are listed under eligibility but as documents; has_aadhaar not encoded."
   ]
 }

@@ -2,7 +2,7 @@
   "scheme_id": "IGNDPS-IN",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "IGNDPS-IN-R01",
@@ -44,13 +44,13 @@
       "rule_id": "IGNDPS-IN-R04",
       "kind": "eligibility",
       "field": "disability_percent",
-      "operator": "gt",
+      "operator": "gte",
       "value": 80,
       "unit": null,
-      "source_passage_id": "IGNDPS-IN-ELIGIBILITY-04",
-      "source_quote": "disability should be more than 80%",
-      "needs_human_review": true,
-      "note": "Conflicts with BENEFICIARY-01 ('80% or more')."
+      "source_passage_id": "IGNDPS-IN-BENEFICIARY-01",
+      "source_quote": "with disability 80% or more",
+      "needs_human_review": false,
+      "note": "Resolved to 80% or more (inclusive) by project owner 2026-11-10. ELIGIBILITY-04 says \"more than 80%\"; BENEFICIARY-01 says \"80% or more\" and is cited."
     },
     {
       "rule_id": "IGNDPS-IN-R05",
@@ -65,7 +65,5 @@
       "note": null
     }
   ],
-  "unresolved": [
-    "CONFLICT: IGNDPS-IN-ELIGIBILITY-04 says 'more than 80%' but IGNDPS-IN-BENEFICIARY-01 says '80% or more'. A person must choose gt 80 or gte 80."
-  ]
+  "unresolved": []
 }

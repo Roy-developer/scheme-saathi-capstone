@@ -2,7 +2,7 @@
   "scheme_id": "FADSE-MH",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "FADSE-MH-R01",
@@ -37,8 +37,8 @@
       "unit": null,
       "source_passage_id": "FADSE-MH-ELIGIBILITY-03",
       "source_quote": "Applicant should be aged between 18 and 50 years",
-      "needs_human_review": true,
-      "note": "End values assumed included."
+      "needs_human_review": false,
+      "note": "End values included (project owner decision 2026-11-10)."
     },
     {
       "rule_id": "FADSE-MH-R04",
@@ -49,8 +49,8 @@
       "unit": null,
       "source_passage_id": "FADSE-MH-ELIGIBILITY-03",
       "source_quote": "Applicant should be aged between 18 and 50 years",
-      "needs_human_review": true,
-      "note": "End values assumed included."
+      "needs_human_review": false,
+      "note": "End values included (project owner decision 2026-11-10)."
     },
     {
       "rule_id": "FADSE-MH-R05",
@@ -89,7 +89,5 @@
       "note": null
     }
   ],
-  "unresolved": [
-    "Whether the end ages 18 and 50 are included is not stated."
-  ]
+  "unresolved": []
 }

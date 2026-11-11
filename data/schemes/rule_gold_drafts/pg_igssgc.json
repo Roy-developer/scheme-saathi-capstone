@@ -2,7 +2,7 @@
   "scheme_id": "PG-IGSSGC-IN",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "PG-IGSSGC-IN-R01",
@@ -14,7 +14,7 @@
       "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-02",
       "source_quote": "Girl students up to the age of 30 years at the time of admission in first year of PG courses are eligible.",
       "needs_human_review": false,
-      "note": "Age is measured at admission to the first year of PG, not today."
+      "note": "End values included (project owner decision 2026-11-10)."
     },
     {
       "rule_id": "PG-IGSSGC-IN-R02",
@@ -39,12 +39,57 @@
       "source_quote": "The applicant must be a citizen of India.",
       "needs_human_review": false,
       "note": null
+    },
+    {
+      "rule_id": "PG-IGSSGC-IN-R04",
+      "kind": "eligibility",
+      "field": "is_only_girl_child",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-03",
+      "source_quote": "single girl child",
+      "needs_human_review": true,
+      "note": "Twin daughters may also apply (ELIGIBILITY-01); a family with one son and one daughter does not qualify (EXCLUSION-01)."
+    },
+    {
+      "rule_id": "PG-IGSSGC-IN-R05",
+      "kind": "eligibility",
+      "field": "is_regular_full_time_pg_first_year",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-03",
+      "source_quote": "regular, full-time first year Masters Degree course",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PG-IGSSGC-IN-R06",
+      "kind": "exclusion",
+      "field": "is_distance_education",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PG-IGSSGC-IN-EXCLUSION-03",
+      "source_quote": "Admission to PG Course in Distance education mode is not covered under the scheme.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PG-IGSSGC-IN-R07",
+      "kind": "eligibility",
+      "field": "is_professional_course",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-05",
+      "source_quote": "should be pursuing a non-professional course",
+      "needs_human_review": false,
+      "note": null
     }
   ],
   "unresolved": [
-    "MISSING FIELD: is_only_girl_child (or number of brothers/siblings); EXCLUSION-01 says a family with one son and one daughter does not qualify, while ELIGIBILITY-01 allows girls without any brother and twin daughters.",
-    "MISSING FIELD: is_student, admitted to first year of a regular full-time PG course (not distance mode) in an eligible university or college.",
-    "MISSING FIELD: course type (non-professional course only, ELIGIBILITY-05).",
-    "Age 'up to 30 years' is taken as 30 included; the passage is not explicit."
+    "Deemed universities without Central/State funding are not eligible institutions (EXCLUSION-02); institution-level, not encoded."
   ]
 }

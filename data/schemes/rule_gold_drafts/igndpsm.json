@@ -2,7 +2,7 @@
   "scheme_id": "IGNDPSM-MH",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "IGNDPSM-MH-R01",
