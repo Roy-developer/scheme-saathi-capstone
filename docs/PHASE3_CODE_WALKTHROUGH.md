@@ -1,11 +1,10 @@
 # Phase 3 code walkthrough: one conversation, several schemes, safe re-checks
 
-> **Current design (2026-11-09).** IGNWPS, PM-KISAN and IGNOAPS all run on one
-> registry path. The household's answers are held in a typed `HouseholdProfile`
-> (`src/rules/facts.py`), validated against the fact registry and kept in the
-> journey state under `typed_facts`. Where this guide describes fixed profile
-> fields, a legacy adapter, `legacy_compatibility` or profile mappings, it is
-> describing how the first two pilots worked in this phase.
+> **Update 2026-11-09:** the legacy path described in this guide has been removed.
+> IGNWPS and PM-KISAN now use the registry path like every other scheme, so
+> `HouseholdProfile`, `legacy_compatibility`, `legacy_profile_mapping` and the
+> pinned pilot list no longer exist. Sections below are kept as the history of
+> how the project got here.
 
 This guide follows the **current** Phase 3 code. It starts with a search
 result, then follows one family through bounded re-searching, a shared
@@ -195,7 +194,7 @@ a promise of future form generation.
 | Fact meaning, scope (person/family), type, unit, period, limits | The parser that reads an answer by type |
 | Questions and choice labels in English, Hindi, Marathi | The rule engine and operators |
 | Which facts and rule package a scheme bundle uses, with hashes | The supervisor, budgets, approval and stale marks |
-| Rules (`<scheme>.vN.json`) | Typed store validation (`HouseholdProfile.validate_against`) |
+| Rules (`<scheme>.vN.json`) | Typed store validation (`TypedFactStore.validate_against`) |
 
 The golden rule is unchanged: a model never decides eligibility. At load
 time `RulePackageProvider` checks each rule against its fact (operator, type,
@@ -286,7 +285,7 @@ no saved change. It is retryable (`test_combined_date_answer_reasks_safely_and_i
 Three pins stop an old answer from quietly meaning something new:
 
 1. **Definition pin.** Every stored fact records its `definition_version`.
-   `HouseholdProfile.from_wire(...)` and `validate_against` fail if the loaded
+   `TypedFactStore.from_wire(...)` and `validate_against` fail if the loaded
    definition differs, instead of reading the old value in new terms.
 2. **Scope/bundle pin.** `registry_dependencies()` hashes the *content* of the
    registry, every bundle and every rule package (not just version numbers).

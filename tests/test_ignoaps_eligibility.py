@@ -13,7 +13,7 @@ import pytest
 
 from src.mcp_servers.tools.eligibility import evaluate_registered_profile
 from src.rules.data_provider import RulePackageProvider
-from src.rules.facts import FactState, HouseholdProfile
+from src.rules.facts import FactState, TypedFactStore
 
 SCHEME = "IGNOAPS-MH"
 APPLICATION_DATE = date(2026, 11, 8)
@@ -29,7 +29,7 @@ def _known(value: object) -> FactState:
                      provenance="user_reported")
 
 
-def _store(*, birth: date | None, on_list: bool | None, list_status: str = "known") -> HouseholdProfile:
+def _store(*, birth: date | None, on_list: bool | None, list_status: str = "known") -> TypedFactStore:
     facts = {"application_date": _known(APPLICATION_DATE)}
     if birth is not None:
         facts["date_of_birth"] = _known(birth)
@@ -38,10 +38,10 @@ def _store(*, birth: date | None, on_list: bool | None, list_status: str = "know
             _known(on_list) if list_status == "known"
             else FactState(status=list_status, definition_version="1.0.0")
         )
-    return HouseholdProfile(registry_version="1.0.0", facts=facts)
+    return TypedFactStore(registry_version="1.0.0", facts=facts)
 
 
-def _evaluate(provider: RulePackageProvider, store: HouseholdProfile):
+def _evaluate(provider: RulePackageProvider, store: TypedFactStore):
     return evaluate_registered_profile(
         SCHEME, store, provider.packages, provider.bundles, provider.registry,
     )

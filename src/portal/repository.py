@@ -25,7 +25,7 @@ from src.mcp_servers.tools.documents import (
 )
 from src.mcp_servers.rule_data import get_active_rule_data
 from src.rules.bundles import bundle_fingerprint
-from src.rules.facts import HouseholdProfile
+from src.rules.facts import TypedFactStore
 
 PortalAction = Literal[
     "list_drafts",
@@ -590,7 +590,7 @@ def _portal_action_transaction(data: dict[str, object]) -> dict[str, object]:
                     for fact_id in bundle.fact_ids
                 }
             else:
-                fact_store = HouseholdProfile.from_wire(
+                fact_store = TypedFactStore.from_wire(
                     request.typed_facts, rule_data.registry
                 )
                 fact_values = {

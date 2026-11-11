@@ -16,15 +16,15 @@ from src.api.eligibility import evaluate_mock_eligibility
 from src.api.scheme_search import SchemePassage
 from src.rules.data_provider import RulePackageProvider
 from src.rules.data_provider import RulePackageProvider
-from src.rules.facts import HouseholdProfile
+from src.rules.facts import TypedFactStore
 
 _REGISTRY = RulePackageProvider().registry
 
 
-def household_profile(**facts) -> HouseholdProfile:
+def HouseholdProfile(**facts) -> TypedFactStore:
     """Confirmed answers for a test, keyed by fact ID."""
 
-    return HouseholdProfile.from_answers(facts, _REGISTRY)
+    return TypedFactStore.from_answers(facts, _REGISTRY)
 from src.mcp_servers.tools import applications, documents
 from src.workflow.agent_config import MAX_CONVERSATION_MODEL_CALLS, MAX_CONVERSATION_TOOL_CALLS
 from fake_chat_model import FakeChatModel, ModelDecision
@@ -86,7 +86,7 @@ def test_eligibility_specialist_chooses_handoff_from_observation():
 
     async def rule_check():
         calls.append(True)
-        return await evaluate(None, "IGNWPS-MH", household_profile(**PROFILE))
+        return await evaluate(None, "IGNWPS-MH", HouseholdProfile(**PROFILE))
 
     result, budget, trace, mode = asyncio.run(run_eligibility_specialist(
         ObservingModel(), "IGNWPS-MH", "mr", {}, rule_check,
@@ -140,7 +140,7 @@ def test_eligibility_exhausted_budget_and_wrong_tool_output_do_not_invent_verdic
 
     async def rule_check():
         calls.append(True)
-        return await evaluate(None, "IGNWPS-MH", household_profile(**PROFILE))
+        return await evaluate(None, "IGNWPS-MH", HouseholdProfile(**PROFILE))
 
     result, budget, trace, mode = asyncio.run(run_eligibility_specialist(
         Model(), "IGNWPS-MH", "en",
@@ -192,7 +192,7 @@ def test_eligibility_runs_rule_check_once_when_model_is_unavailable():
 
     async def rule_check():
         calls.append(True)
-        return await evaluate(None, "IGNWPS-MH", household_profile(**PROFILE))
+        return await evaluate(None, "IGNWPS-MH", HouseholdProfile(**PROFILE))
 
     result, budget, _, mode = asyncio.run(run_eligibility_specialist(
         Unavailable(), "IGNWPS-MH", "en", {}, rule_check,
@@ -202,7 +202,7 @@ def test_eligibility_runs_rule_check_once_when_model_is_unavailable():
     assert mode == "deterministic_fallback"
 
     async def wrong_scheme():
-        return await evaluate(None, "PM-KISAN-IN", household_profile(**PROFILE))
+        return await evaluate(None, "PM-KISAN-IN", HouseholdProfile(**PROFILE))
 
     assert asyncio.run(run_eligibility_specialist(
         Unavailable(), "IGNWPS-MH", "en", {}, wrong_scheme,
@@ -265,7 +265,7 @@ def test_eligibility_observation_selects_clarification_or_safe_referral(unavaila
     async def rule_check():
         if unavailable:
             raise MCPToolError("Synthetic unavailable rule service")
-        return await evaluate(None, "IGNWPS-MH", household_profile(**{
+        return await evaluate(None, "IGNWPS-MH", HouseholdProfile(**{
             **PROFILE, "bpl_card_shown": None,
         }))
 
@@ -283,7 +283,7 @@ def test_eligibility_observation_selects_clarification_or_safe_referral(unavaila
 def test_discovery_uses_supported_inputs_without_inferred_state_or_gender(monkeypatch):
     unknown = discovery_input({}, None, "hi")
     assert unknown.model_dump() == {"query": "", "language": "hi", "limit": 20}
-    profile = household_profile(**PROFILE)
+    profile = HouseholdProfile(**PROFILE)
     known = discovery_input(
         {fact_id: fact.value for fact_id, fact in profile.facts.items()},
         profile.value("age", _REGISTRY), "mr",

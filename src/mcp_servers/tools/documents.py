@@ -14,7 +14,7 @@ from src.documents.checklists import (
     condition_applies,
     load_checklist_snapshot,
 )
-from src.rules.facts import FactRegistry, HouseholdProfile
+from src.rules.facts import FactRegistry, TypedFactStore
 from src.rules.bundles import SchemeBundle, document_fact_values
 from src.mcp_servers.contracts import tool_error
 
@@ -168,7 +168,7 @@ def assess_document_metadata(
     if any(registry.get(fact_id).derived_from for fact_id in profile_facts):
         raise ValueError("Derived document facts cannot be supplied directly.")
     if request.typed_facts is not None:
-        store = HouseholdProfile.from_wire(request.typed_facts, registry)
+        store = TypedFactStore.from_wire(request.typed_facts, registry)
         profile_facts.update(document_fact_values(
             request.scheme_id, registry, store, bundle,
         ))

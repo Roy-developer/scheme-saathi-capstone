@@ -162,9 +162,9 @@ measurable policy; they must not secretly reset the older counter.
 ### Earlier typed state sketch (not the new registry contract)
 
 This sketch records the earlier design, not exact current models. In
-particular, state/gender are not current confirmed fields. The implemented
-`HouseholdProfile` (`src/rules/facts.py`) is registry-backed instead of a fixed
-list of fields, and handoffs are typed. Use it and the versioned contracts
+particular, state/gender are not current confirmed fields. Its fixed
+`HouseholdProfile` and `Any` handoff input are **not** the target for the
+2026-11-04 redesign. Use the validated typed store and versioned contracts
 specified under "Rule engine generalisation"; agree their migration before
 implementation rather than adding a Python field for every new scheme.
 

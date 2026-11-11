@@ -399,13 +399,8 @@ class FactState(StrictDataModel):
         return self
 
 
-class HouseholdProfile(StrictDataModel):
-    """A household's answers, typed and validated against the fact registry.
-
-    This is the typed profile kept in journey state. Each entry says whether a
-    fact is known, unknown or declined, so new schemes add registry facts
-    instead of new Python fields.
-    """
+class TypedFactStore(StrictDataModel):
+    """Registry-versioned values; values are validated before rule evaluation."""
 
     registry_version: str
     facts: dict[str, FactState]
@@ -413,7 +408,7 @@ class HouseholdProfile(StrictDataModel):
     @classmethod
     def from_answers(
         cls, answers: Mapping[str, object], registry: FactRegistry,
-    ) -> "HouseholdProfile":
+    ) -> "TypedFactStore":
         """Build a store from confirmed answers keyed by fact ID; None means unknown."""
 
         facts = {}
@@ -456,7 +451,7 @@ class HouseholdProfile(StrictDataModel):
         cls,
         data: object,
         registry: FactRegistry,
-    ) -> "HouseholdProfile":
+    ) -> "TypedFactStore":
         """Restore explicitly tagged decimals and validate a wire fact store."""
 
         if not isinstance(data, dict):
@@ -480,7 +475,7 @@ class HouseholdProfile(StrictDataModel):
         restored["facts"] = facts
         return cls.model_validate(restored).validate_against(registry)
 
-    def validate_against(self, registry: FactRegistry) -> "HouseholdProfile":
+    def validate_against(self, registry: FactRegistry) -> "TypedFactStore":
         """Validate all supplied IDs, versions, types, and bounds."""
 
         if self.registry_version != registry.registry_version:

@@ -14,7 +14,7 @@ from pydantic import Field, ValidationError, model_validator
 
 from src.config import PROJECT_ROOT, test_scheme_data_directory
 from src.documents.checklists import LocalizedText, StrictModel, _reject_duplicate_json_keys
-from src.rules.facts import FactRegistry, HouseholdProfile
+from src.rules.facts import FactRegistry, TypedFactStore
 from src.rules.bundles import SchemeBundle, document_fact_allowlist, document_fact_values
 
 
@@ -222,7 +222,7 @@ def build_form_fields(
     extra_values: dict[str, object] | None = None,
     *,
     bundle: SchemeBundle | None = None,
-    typed_store: HouseholdProfile | None = None,
+    typed_store: TypedFactStore | None = None,
 ) -> tuple[dict[str, object], list[str]]:
     """Populate fixed form fields and report required facts or inputs still missing."""
 

@@ -28,7 +28,6 @@ the `onboard` command.
 | Word | Meaning | Example |
 |---|---|---|
 | Clause | One piece of official scheme text | "All Persons who paid Income Tax in last assessment year." |
-| Household profile | The typed record of a household's answers (`HouseholdProfile`), kept in the journey state | `date_of_birth` known, `name_on_bpl_list` declined |
 | Fact | One thing the app asks about a person or family, defined in `src/rules/fact_registry.json` | `income_tax_paid_last_assessment_year` (yes/no), `age` (number, years) |
 | Rule | One condition on one fact, written so it describes who **qualifies** | `income_tax_paid_last_assessment_year eq false` |
 | Operator | How the fact is compared: `eq` equals, `gte` at least, `lte` at most | `age gte 40`, `age lte 79` |
@@ -523,7 +522,7 @@ were found (2026-11-07). Code-level details and guard tests are in section 15.
 | 38 | 34 test errors appeared after browser testing | A portal server left running on port 8765 was still in use | Stop all local servers before running the test suite | — |
 | 39 | Going live took edits to six files by hand, and a missed step only showed up as a loader error | The steps were mechanical but nothing automated them | Built `scheme_rules.py onboard`; a test undoes IGNOAPS on a copy and requires the command to recreate the hand-made files byte for byte | `tests/test_scheme_onboarding.py` |
 | 40 | A teammate could not use `--playbook 1.0.0` | Playbooks lived only in a git-ignored database on one laptop, so a fresh clone stopped with "Unknown playbook version" | Playbooks are exported to `data/schemes/playbooks/` and copied into the local database on first use; the hash check refuses an altered file; `freeze --base` keeps lessons approved elsewhere | `tests/test_scheme_rules.py` |
-| 41 | The registry path looked like it could replace legacy, but several features still depended on fixed profile fields | Evaluate, the example person, the eligibility API, drafts and discovery were built on those fields | Moved them to the registry-backed `HouseholdProfile` first, then switched the pilots, then deleted the legacy path | `tests/test_registered_intake.py` |
+| 41 | The registry path looked like it could replace legacy, but several features still depended on `HouseholdProfile` | Evaluate, the example person, the eligibility API, drafts and discovery were built on the legacy format | Moved those to registry facts first, then switched the pilots, then deleted the legacy path | `tests/test_registered_intake.py` |
 | 42 | My first free-text code ignored the "no policy, no model" rule | I added model help without checking why the registry path had none | Added a privacy gate; the reviewer then approved all facts and asked for approval-only gates to be removed | Review documents, Update 2026-11-09 |
 ### Known open issues
 

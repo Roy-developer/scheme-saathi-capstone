@@ -38,7 +38,7 @@ from src.api.applications import (
 )
 from src.api.scheme_search import SchemePassage
 from src.documents.forms import build_form_fields, load_mock_form_snapshot
-from src.rules.facts import HouseholdProfile
+from src.rules.facts import TypedFactStore
 from src.rules.bundles import bundle_fingerprint
 # This adapter calls the MCP tool and translates failures for the API layer.
 from src.observability.metrics import (
@@ -145,7 +145,7 @@ def _confirmed_form_values(
                 else None
             )
     else:
-        store = HouseholdProfile.from_wire(typed_facts, request.app.state.fact_registry)
+        store = TypedFactStore.from_wire(typed_facts, request.app.state.fact_registry)
         facts = {
             fact_id: state.value if state.status == "known" else None
             for fact_id, state in store.facts.items()
@@ -495,10 +495,10 @@ async def evaluate(
         raise HTTPException(status_code=404, detail="Unknown scheme")
     bundle = http_request.app.state.rule_bundles[scheme_id]
     try:
-        HouseholdProfile.from_answers(
+        TypedFactStore.from_answers(
             eligibility_request, http_request.app.state.fact_registry,
         )
-        answers = HouseholdProfile.from_answers(
+        answers = TypedFactStore.from_answers(
             {
                 fact_id: value for fact_id, value in eligibility_request.items()
                 if fact_id in bundle.fact_ids

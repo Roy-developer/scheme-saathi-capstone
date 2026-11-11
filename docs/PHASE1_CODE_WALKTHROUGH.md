@@ -1,11 +1,10 @@
 # Phase 1 code walkthrough: one path for every scheme
 
-> **Current design (2026-11-09).** IGNWPS, PM-KISAN and IGNOAPS all run on one
-> registry path. The household's answers are held in a typed `HouseholdProfile`
-> (`src/rules/facts.py`), validated against the fact registry and kept in the
-> journey state under `typed_facts`. Where this guide describes fixed profile
-> fields, a legacy adapter, `legacy_compatibility` or profile mappings, it is
-> describing how the first two pilots worked in this phase.
+> **Update 2026-11-09:** the legacy path described in this guide has been removed.
+> IGNWPS and PM-KISAN now use the registry path like every other scheme, so
+> `HouseholdProfile`, `legacy_compatibility`, `legacy_profile_mapping` and the
+> pinned pilot list no longer exist. Sections below are kept as the history of
+> how the project got here.
 
 This guide explains what Phase 1 built, in plain English. It is written for a
 new developer who has not seen this code before. It follows one request from
@@ -67,8 +66,8 @@ Tool list: [MCP_TOOL_INVENTORY.md](MCP_TOOL_INVENTORY.md).
 | Tool inventory ([MCP_TOOL_INVENTORY.md](MCP_TOOL_INVENTORY.md)) | Written |
 | Versioned fact registry: boolean, date, integer, decimal, fixed-choice and display-only text facts, with strict type/range checks | Implemented (`src/rules/facts.py`, `fact_registry.json`) |
 | Numeric and choice facts evaluated by the same shared evaluator | Implemented; proven only with a synthetic test scheme |
-| One typed `HouseholdProfile` for every scheme, validated against the fact registry | Implemented (`src/rules/facts.py`) |
-| Registry and bundle content hashes checked at load | Implemented (`bundles.py`, `data_provider.py`) |
+| Explicit legacy adapter: pilot schemes still use `HouseholdProfile`; pilot rule files and evidence unchanged | Implemented |
+| Registry and bundle content hashes; exact pinning of the two pilot bundles as `legacy_compatibility` | Implemented (`bundles.py`, `data_provider.py`) |
 | Dev-only synthetic scheme through the shared MCP evaluator code | Implemented **in tests only**; never in the normal catalogue |
 | Review metadata for registry facts, questions and privacy | **Pending** — every entry is `pending`; this is not human policy approval and not permission to collect or disclose new fields |
 | Registry-driven questions, UI and chat for new facts | **Not done** — Phase 2 |
@@ -187,7 +186,7 @@ each step until their results come out right.
 | **Unknown** | A fact we have not been told yet. Stored as `None`. **Not the same as "no"** |
 | **Derived fact** | A fact calculated from others. The only one is `age` (from two dates). The calculation is written in code, not in data |
 | **Fact registry** | `src/rules/fact_registry.json`: the list of every fact, with its type, allowed values, unit, question text and privacy notes |
-| **Typed fact store** | `HouseholdProfile`: the answers for one person, each marked known, unknown or declined |
+| **Typed fact store** | `TypedFactStore`: the answers for one person, each marked known, unknown or declined |
 | **Scheme bundle** | An entry in `bundle_registry.json` that pins one rule package and one registry by version and content hash |
 | **Legacy adapter** | Code that turns the old fixed `HouseholdProfile` into a typed fact store |
 | **Content hash (SHA-256)** | A fingerprint of a file's exact bytes. Change one character and it no longer matches |
@@ -220,86 +219,102 @@ always **30 October 2026**.
 
 ---
 
-## Step 1: The household profile (`src/rules/facts.py`)
+## Step 1: The household profile (`src/rules/models.py`)
 
 ### What it is
 
-`HouseholdProfile` is the typed record of what a household has told Saathi. It
-is the profile the capstone brief asks the agents to keep in state: intake
-fills it in, the journey keeps it in LangGraph state (key `typed_facts`), the
-checkpoint saves it, and the rule engine reads it.
+`HouseholdProfile` is a **form with blanks**. It holds every fact any scheme
+might need. Each blank can be:
 
-It is **not a list of fixed fields**. It holds one entry per fact, keyed by the
-fact's ID in `src/rules/fact_registry.json`:
+- `True` / `False` (yes / no), or a date;
+- `None`, meaning **not known yet**.
 
 ```python
-class FactState(StrictDataModel):
-    status: Literal["known", "unknown", "declined"]
-    value: object = None
-    definition_version: str
-    provenance: Literal["user_reported", "document", "verified_record"] | None = None
-
-
-class HouseholdProfile(StrictDataModel):
-    registry_version: str
-    facts: dict[str, FactState]
+class HouseholdProfile(RulePackageModel):
+    date_of_birth: date | None = None
+    application_date: date | None = None
+    is_widow: bool | None = None
+    bpl_card_shown: bool | None = None
+    landholding_family_in_state_records: bool | None = None
+    institutional_landholder: bool | None = None
+    # ... 6 more PM-KISAN facts
 ```
 
-```text
-fact_registry.json          HouseholdProfile.facts
-------------------          --------------------------------------
-date_of_birth (date)   ->   "date_of_birth": known, 1950-03-03
-name_on_bpl_list (y/n) ->   "name_on_bpl_list": declined ("I don't know")
-is_widow (y/n)              not asked yet, so no entry
+It is a **Pydantic model**. Pydantic checks the type of every value for us.
+If a value has the wrong type, Pydantic raises a `ValidationError` before any
+rule runs.
+
+### Why "not known" (`None`) is so important
+
+Before Phase 1, the widow profile had to be complete. One missing fact meant
+the whole request was rejected. That makes a question-by-question chat
+impossible.
+
+Now a profile can start empty and fill up over time:
+
+```
+Start:          everything None
+After answer 1: date_of_birth = 1976-10-30
+After answer 2: is_widow = True
+...
 ```
 
-Because the registry decides which facts exist and what type each one is, a
-new scheme adds registry entries and does not need a new Python field.
-
-| Method | What it does |
-|---|---|
-| `HouseholdProfile.from_answers(answers, registry)` | Builds a profile from confirmed answers keyed by fact ID, checking each one |
-| `validate_against(registry)` | Checks IDs, versions, types, bounds and the date cross-checks below |
-| `value(fact_id, registry)` | Returns a fact's value, calculating derived facts such as age |
-| `missing_inputs(fact_id, registry)` | Lists what still has to be asked to know a fact |
-| `to_wire` / `from_wire` | Saves to and restores from the checkpoint without losing decimal precision |
-
-### Why "not known" is so important
-
-A profile can start empty and fill up over time:
-
-```text
-Start:          no entries
-After answer 1: date_of_birth is known
-After answer 2: name_on_bpl_list is known
-```
-
-A missing or declined fact never counts as "no". The engine (Step 3) reports
-it as missing information, and the question picker uses that to decide what to
-ask next.
+The engine (Step 3) treats `None` as "ask about this", not as "no". In
+Phase 2, the intake agent will use this to decide what to ask next.
 
 ### Age is calculated, not stored
 
-`age` is a **derived** fact: the registry says it comes from `date_of_birth`
-and `application_date`, and `value("age", registry)` works it out. If either
-date is unknown, age is unknown. Storing both age and date of birth would let
-them disagree, so the rule is: *do not store a value you can calculate.* A
-derived fact cannot be supplied directly; `validate_against` refuses it.
+```python
+@property
+def age(self) -> int | None:
+    if self.date_of_birth is None or self.application_date is None:
+        return None
+    return calculate_age_on(self.date_of_birth, self.application_date)
+```
 
-The application date defaults to today during an interview, because people
-apply on the day they ask.
+- `@property` lets you write `profile.age` as if it were a stored field.
+- If either date is unknown, age is unknown (`None`).
+- **Why not store age?** If we stored both age and date of birth, they could
+  disagree (age 30 but born in 1976). Which one is true? Calculating it gives
+  **one source of truth**. Rule: *do not store a value you can calculate.*
+
+`fact_value(name)` is a small helper. It returns `profile.age` for `"age"`,
+and the normal field for anything else.
+
+> **Revised Phase 1:** `HouseholdProfile` is now the **legacy input shape**.
+> It still has fixed fields, so the current intake, API and screen can only
+> talk about those twelve facts. The engine no longer reads the profile
+> directly: it first converts it into a typed fact store (see
+> [Step 3B](#step-3b-the-data-driven-fact-registry-revised-phase-1)). A new
+> fact does **not** get a new profile field; it goes in the registry.
 
 ### Safety checks inside the profile
 
-`validate_against` runs whenever a profile is built or changed:
+`validate_dates` runs automatically when a profile is created:
 
 | Input | What happens |
 |---|---|
 | Born **after** the application date | Rejected: "date_of_birth cannot be after application_date" |
 | Age over 125 | Rejected: "age on application_date cannot exceed 125" |
-| Only one of the two dates known | Allowed. Age is just unknown for now |
-| A value of the wrong type or outside its bounds | Rejected, using that fact's registry definition |
-| A fact not in the registry | Rejected |
+| Only one of the two dates known | Allowed. Age is just `None` for now |
+
+The model also has `extra="forbid"`. An unknown field such as
+`favourite_colour` is rejected ("Extra inputs are not permitted"). This stops
+typos such as `is_widdow` from being silently ignored.
+
+### Edge cases for Step 1
+
+| Case | Result | Why |
+|---|---|---|
+| `HouseholdProfile()` (nothing given) | Valid; every fact `None` | Empty is allowed so the chat can start blank |
+| `is_widow="maybe"` | Rejected | Not a yes/no value |
+| `is_widow="yes"`, `"true"`, `"1"`, `"on"`, `"Y"` or the number `1` | Accepted as `True` | Pydantic converts these common values. This is why Phase 2 reads chat answers with its own careful code first |
+| `is_widow="maybe"` | Rejected: not a valid boolean | Only clear yes/no values are converted |
+| Born 29 Feb 1984, application 28 Feb 2024 | Age **39** | The birthday counts on 1 March in non-leap years, so the 40th birthday has not happened yet |
+| Only `date_of_birth` given | Age `None` | Both dates are needed |
+| Only `date_of_birth`, set in the future (2030) | **Allowed for now** | With one date there is nothing to compare. The check runs as soon as the second date arrives |
+| Born 1800, application 2026 | Rejected: "age on application_date cannot exceed 125" | Catches a typo like 1806 for 1986 |
+| `date_of_birth="30/10/1976"` sent to the API | Rejected: not a valid date | The API and JSON use the ISO format `1976-10-30`. (Phase 2's chat accepts `30/10/1976` and converts it) |
 
 ---
 
@@ -627,7 +642,7 @@ new fact, showing it on screen, or building its form. That is later work (see
 
 | File | What it holds |
 |---|---|
-| `src/rules/facts.py` | The models: `FactDefinition`, `FactRegistry`, `FactState`, `HouseholdProfile` |
+| `src/rules/facts.py` | The models: `FactDefinition`, `FactRegistry`, `FactState`, `TypedFactStore` |
 | `src/rules/fact_registry.json` | The real registry, version `1.0.0`: 13 facts (the 12 pilot facts plus derived `age`) |
 | `src/rules/bundles.py` | `SchemeBundle` and `BundleRegistry`: the pin that ties a package to a registry |
 | `src/rules/bundle_registry.json` | The two real bundles, `IGNWPS-MH` and `PM-KISAN-IN` |
@@ -789,7 +804,7 @@ Lata (widow, age 50, BPL card not shown) arrives as a `HouseholdProfile`.
 `tests/test_fact_registry.py` builds a **synthetic** scholarship scheme in a
 pytest temp folder: decimal `exam_marks` (0–100, unit `percent`) and choice
 `course_type` (`science` or `arts`). Rules: marks `gte` 75, marks `lte` 100,
-course `eq` `science`. The input is a `HouseholdProfile`.
+course `eq` `science`. The input is a `TypedFactStore`.
 
 1. The temp folder gets its own `fact_registry.json`, a package and a
    `bundle_registry.json` with hashes and `development_only`.
@@ -849,7 +864,7 @@ exists it will be a **new** state, added deliberately. It will not reuse the
   loader, so a `development_only` bundle stops them. Nothing is activated by
   Step 3B.
 - **The API, graph and UI still send the legacy profile.** The MCP tool's
-  input type does accept a `HouseholdProfile`, but the current callers do not
+  input type does accept a `TypedFactStore`, but the current callers do not
   send one.
 - **No full bundle publishing** (Phase 6).
 - The LLM still never decides eligibility.

@@ -5,14 +5,14 @@ from datetime import date
 import pytest
 
 from src.rules.data_provider import RulePackageProvider
-from src.rules.facts import HouseholdProfile
+from src.rules.facts import TypedFactStore
 from src.workflow.question_picker import pick_next_registered_fact, pick_shared_registered_fact
 
 _REGISTRY = RulePackageProvider().registry
 
 
-def household_profile(**facts) -> HouseholdProfile:
-    return HouseholdProfile.from_answers(facts, _REGISTRY)
+def HouseholdProfile(**facts) -> TypedFactStore:
+    return TypedFactStore.from_answers(facts, _REGISTRY)
 
 
 def pick_next_fact(profile, package, skipped=frozenset()):
@@ -28,10 +28,10 @@ WIDOW = packages.get("IGNWPS-MH")
 PMKISAN = packages.get("PM-KISAN-IN")
 
 
-def widow_profile(**facts) -> HouseholdProfile:
+def widow_profile(**facts) -> TypedFactStore:
     """Build a widow-pension profile with the fixed application date."""
 
-    return household_profile(application_date=APPLICATION_DATE, **facts)
+    return HouseholdProfile(application_date=APPLICATION_DATE, **facts)
 
 
 @pytest.mark.parametrize(
@@ -78,7 +78,7 @@ def test_stops_when_every_unknown_fact_was_skipped():
 
 
 def test_pmkisan_stops_after_income_tax_fails():
-    ramesh = household_profile(
+    ramesh = HouseholdProfile(
         landholding_family_in_state_records=True,
         income_tax_paid_last_assessment_year=True,
     )
@@ -87,7 +87,7 @@ def test_pmkisan_stops_after_income_tax_fails():
 
 
 def test_pmkisan_asks_land_first():
-    assert pick_next_fact(household_profile(), PMKISAN) == "landholding_family_in_state_records"
+    assert pick_next_fact(HouseholdProfile(), PMKISAN) == "landholding_family_in_state_records"
 
 
 def test_shared_picker_counts_each_fact_once_per_scheme():

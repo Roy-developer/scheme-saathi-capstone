@@ -269,7 +269,7 @@ def test_derived_age_condition_and_form_use_confirmed_date_inputs(
     from src.api.app import _confirmed_form_values
     from src.documents.forms import build_form_fields
     from src.rules.data_provider import RulePackageProvider
-    from src.rules.facts import HouseholdProfile
+    from src.rules.facts import TypedFactStore
     from starlette.requests import Request
 
     provider = RulePackageProvider()
@@ -289,7 +289,7 @@ def test_derived_age_condition_and_form_use_confirmed_date_inputs(
             for fact_id, value in raw.items()
         },
     }
-    store = HouseholdProfile.from_wire(wire, registry)
+    store = TypedFactStore.from_wire(wire, registry)
     assert store.value("age", registry) == expected_age
     original = checklists.load_checklist_snapshot("IGNWPS-MH")
     payload = original.checklist.model_dump(mode="json")
@@ -360,11 +360,11 @@ def test_derived_document_fact_requires_authorized_dependency_closure() -> None:
 
     from src.rules.bundles import document_fact_values
     from src.rules.data_provider import RulePackageProvider
-    from src.rules.facts import HouseholdProfile
+    from src.rules.facts import TypedFactStore
 
     provider = RulePackageProvider()
     bundle = provider.get_bundle("IGNWPS-MH")
-    store = HouseholdProfile.from_wire({
+    store = TypedFactStore.from_wire({
         "registry_version": provider.registry.registry_version,
         "facts": {
             fact_id: {
