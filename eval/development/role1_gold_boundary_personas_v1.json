@@ -382,7 +382,8 @@
       "typed_facts": {
         "age": 40,
         "is_citizen_of_india": true,
-        "has_savings_bank_account": true
+        "has_savings_bank_account": true,
+        "is_income_tax_payer": false
       },
       "expected_by_scheme": {
         "APY-IN": {
@@ -443,7 +444,8 @@
       "typed_facts": {
         "age": 50,
         "has_savings_bank_account": true,
-        "consents_to_auto_debit": true
+        "consents_to_auto_debit": true,
+        "is_institutional_account_holder": false
       },
       "expected_by_scheme": {
         "PMJJBY-IN": {
@@ -542,7 +544,9 @@
         "disability_percent": 50,
         "annual_family_income_inr": 250000,
         "is_student_in_post_matric_course": true,
-        "family_members_receiving_scholarship": 1
+        "family_members_receiving_scholarship": 1,
+        "receives_other_scholarship_or_stipend": false,
+        "is_repeating_class": false
       },
       "expected_by_scheme": {
         "POST-DIS-IN": {
