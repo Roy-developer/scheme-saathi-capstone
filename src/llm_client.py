@@ -30,14 +30,29 @@ def _http_client() -> httpx.AsyncClient | None:
     return None
 
 
-def openrouter_chat_model(api_key: str, model: str = DEFAULT_CHAT_MODEL) -> ChatOpenAI:
+def openrouter_chat_model(
+    api_key: str,
+    model: str = DEFAULT_CHAT_MODEL,
+    *,
+    timeout: float = MODEL_TIMEOUT_SECONDS,
+    max_tokens: int = MAX_COMPLETION_TOKENS,
+    reasoning_effort: str | None = None,
+) -> ChatOpenAI:
     """Build the chat model used for every OpenRouter call.
 
     Args:
         api_key: The OpenRouter key (the standard chat key, not the free
             embeddings key).
         model: An OpenRouter ``provider/model`` name.
+        timeout: Seconds to wait for a reply; slow free models need longer.
+        max_tokens: Reply cap. Reasoning models spend it on thinking first.
+        reasoning_effort: OpenRouter ``reasoning.effort`` (for example "low")
+            to keep reasoning models short; None leaves the model default.
     """
+
+    extra_body: dict = {"max_tokens": max_tokens}
+    if reasoning_effort:
+        extra_body["reasoning"] = {"effort": reasoning_effort}
 
     return ChatOpenAI(
         model=model,
@@ -47,8 +62,8 @@ def openrouter_chat_model(api_key: str, model: str = DEFAULT_CHAT_MODEL) -> Chat
         temperature=0,
         # ChatOpenAI would send OpenAI's newer "max_completion_tokens"; send
         # OpenRouter's documented "max_tokens" so the cost cap always applies.
-        extra_body={"max_tokens": MAX_COMPLETION_TOKENS},
-        timeout=MODEL_TIMEOUT_SECONDS,
+        extra_body=extra_body,
+        timeout=timeout,
         # Callers reserve one model call in the conversation budget before
         # calling. Automatic SDK retries would send extra, uncounted requests.
         max_retries=0,
