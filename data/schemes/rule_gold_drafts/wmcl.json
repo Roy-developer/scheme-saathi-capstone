@@ -3,13 +3,47 @@
   "schema_version": "1",
   "origin": "hand_drafted",
   "review_status": "pending_human_review",
-  "rules": [],
+  "rules": [
+    {
+      "rule_id": "WMCL-IN-R01",
+      "kind": "eligibility",
+      "field": "is_child_of_sc_st_coffee_labourer",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "WMCL-IN-ELIGIBILITY-01",
+      "source_quote": "Children of SC / ST labourers working in coffee plantations and Licensed Coffee Curing Works",
+      "needs_human_review": true,
+      "note": "New composite fact (SC/ST child of a coffee plantation or curing-works labourer)."
+    },
+    {
+      "rule_id": "WMCL-IN-R02",
+      "kind": "eligibility",
+      "field": "is_pursuing_education_after_class_10",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "WMCL-IN-ELIGIBILITY-01",
+      "source_quote": "pursuing higher education after X Class",
+      "needs_human_review": true,
+      "note": "New fact. Stipend, incentive and financial-assistance tiers have different education conditions that are not encoded."
+    },
+    {
+      "rule_id": "WMCL-IN-R03",
+      "kind": "exclusion",
+      "field": "is_child_of_estate_clerk_driver_supervisor_or_manager",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "WMCL-IN-EXCLUSION-01",
+      "source_quote": "Children of Clerks, Drivers, Supervisors and Managers of Estate / Curing works are not entitled for these benefits.",
+      "needs_human_review": true,
+      "note": "Exclusion: applies when true."
+    }
+  ],
   "unresolved": [
-    "No rule could be expressed with the available fields.",
-    "MISSING FIELD: belongs to SC / ST and is a child of a labourer in a coffee plantation or licensed curing works.",
-    "MISSING FIELD: first two surviving children only (twins/multiple births allowed).",
-    "MISSING FIELD: pursuing higher education after X Class / education level; studying in a government-recognised institution.",
-    "MISSING FIELD: parent is a clerk, driver, supervisor or manager of the estate / curing works (exclusion, WMCL-IN-EXCLUSION-01).",
-    "Benefit release is subject to availability of funds (WMCL-IN-BENEFIT-02)."
+    "Only the first two surviving children qualify (twins and multiple births allowed); not encoded.",
+    "Release of money is subject to availability of funds (WMCL-IN-BENEFIT-02); not an eligibility rule.",
+    "Per-benefit conditions (educational stipend, incentive award, financial assistance) differ; only common conditions are encoded."
   ]
 }

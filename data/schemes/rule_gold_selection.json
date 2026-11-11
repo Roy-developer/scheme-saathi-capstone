@@ -1,7 +1,7 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "created": "2026-11-09",
-  "status": "23 gold schemes: 15 development, 8 held-out. All 23 human_reviewed (held-out 8 marked on owner instruction 2026-11-10).",
+  "status": "26 gold schemes: 17 development, 9 held-out. The original 15 development and 8 held-out are human_reviewed. The 3 schemes added in v0.3.0 (TMDVSO-MH, WMCL-IN development; TFEFVSSSHS-MH held-out) are hand-drafted from the passages, quote-verified, and pending human review; they use new fact names and drop conditions the fact vocabulary cannot express.",
   "selection_rule": "Quote-verified against passages; few unresolved items; no MISSING FIELD or OR-conflict that blocks full encoding; spread of populations and benefit types; families (e.g. all widow pensions) kept in one split.",
   "alternates": [
     "eps",
@@ -271,6 +271,39 @@
       "rule_review_flags": 2,
       "review_status": "human_reviewed",
       "why": "VJNT fee reimbursement; category, income band, failures <= 1, post-matric."
+    },
+    {
+      "draft_file": "rule_gold_drafts/tfefvssshs.json",
+      "scheme_id": "TFEFVSSSHS-MH",
+      "split": "held-out",
+      "family": "tuition_fee_vjnt",
+      "rules": 4,
+      "unresolved": 4,
+      "rule_review_flags": 4,
+      "review_status": "pending_human_review",
+      "why": "Same family as held-out TFEFVS-MH (tuition and exam fees for VJNT students), so it goes to the same split to avoid leakage. Pending Role 5 confirmation; must not be used to tune."
+    },
+    {
+      "draft_file": "rule_gold_drafts/tmdvso.json",
+      "scheme_id": "TMDVSO-MH",
+      "split": "development",
+      "family": "training",
+      "rules": 1,
+      "unresolved": 2,
+      "rule_review_flags": 1,
+      "review_status": "pending_human_review",
+      "why": "Motor-driving training; only the category rule can be encoded, the rest goes to a caseworker."
+    },
+    {
+      "draft_file": "rule_gold_drafts/wmcl.json",
+      "scheme_id": "WMCL-IN",
+      "split": "development",
+      "family": "education_support",
+      "rules": 3,
+      "unresolved": 3,
+      "rule_review_flags": 3,
+      "review_status": "pending_human_review",
+      "why": "Coffee Board stipend for children of SC/ST plantation labourers; exclusion for supervisory staff."
     }
   ],
   "not_used_needs_or_logic": [

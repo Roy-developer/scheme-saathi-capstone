@@ -41,6 +41,17 @@ Chosen by structure and coverage (rules expressible as AND conditions, new benef
 lesson errors seen in E3. Not used because they need OR or rural/urban conditional logic the schema cannot
 express: NSIGSE, RASSNB, PMUY2, SBSSPS. Alternates: EPS, IPMWCD, FAISHL.
 
+## Added in v0.3.0 (pending human review)
+Hand-drafted from the passages, with every quote checked against the passage text. They use new fact names and leave out conditions the vocabulary cannot express (listed in each file's `unresolved`).
+
+| Scheme | Split | Rules | Note |
+|---|---|---|---|
+| TMDVSO-MH | development | 1 | Only the category rule is encoded; age, education and fitness follow the Motor Vehicle Act with no figures. |
+| WMCL-IN | development | 3 | SC/ST labourer's child, education after Class 10, exclusion for supervisory staff. |
+| TFEFVSSSHS-MH | held-out | 4 | Same family as held-out TFEFVS-MH, so it goes to the same split. Role 5 must confirm. |
+
+Totals: 26 schemes, 17 development and 9 held-out.
+
 ## Field vocabulary
 26 fields were added to `FIELD_TYPES` in `src/rules/extraction.py` for the held-out schemes (14 more were
 added earlier for the development schemes). The extractor prompt lists these fields, so **every earlier
