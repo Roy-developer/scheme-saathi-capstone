@@ -162,6 +162,21 @@ Meta's Rule of Two calls for** — the one point where private data, a
 human-reviewable payload, and a real write combine, and it's gated by a
 human for exactly that reason.
 
+## Requests to misstate facts (inflate eligibility)
+
+A citizen may ask Saathi to lie for them ("show my income lower", "hide that
+I remarried", "pretend I am a widow"). `docs/POLICY.md` section 1, item 2 says
+Saathi must refuse. `src/workflow/honesty_guard.py` checks the opening
+description and every reply in plain code, in English, Hindi and Marathi,
+before any model reads them. A flagged description is not read for facts; a
+flagged reply is not recorded. The citizen sees a refusal that says why, then
+the same question again. Tests: `tests/test_honesty_guard.py`.
+
+Limit: this catches an explicit request to misstate, not a false answer typed
+plainly ("I am 60" when the person is 58). Nothing in software can catch that;
+the document checker and the human approval of every draft are the backstop.
+The Hindi and Marathi refusal text needs a native-speaker check.
+
 ## Still open
 
 - Hardening the intake free-text path (see "Recommended fix" above) — next task.
