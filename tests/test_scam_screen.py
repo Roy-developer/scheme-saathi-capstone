@@ -2,6 +2,12 @@
 
 from __future__ import annotations
 
+import asyncio
+
+from langgraph.checkpoint.memory import MemorySaver
+
+from src.rules.data_provider import RulePackageProvider
+from src.workflow.journey import JourneyRequest, build_journey_graph, run_journey
 from src.workflow.scam_screen import (
     CLEAN_SCAM_SCREEN_CASES,
     apply_scam_screen,
@@ -46,3 +52,31 @@ def test_scam_warning_locales() -> None:
     assert "WhatsApp" in scam_warning_for_locale("en")
     assert scam_warning_for_locale("hi")
     assert scam_warning_for_locale("mr")
+
+
+def test_journey_scam_description_surfaces_notice_without_crashing() -> None:
+    """Opening description with a scam lure must warn, not 500 on react_status."""
+
+    packages = RulePackageProvider().packages
+    graph = build_journey_graph(None, packages, checkpointer=MemorySaver())
+    result = asyncio.run(
+        run_journey(
+            graph,
+            JourneyRequest(
+                action="interview",
+                scheme_id="IGNWPS-MH",
+                profile_description=(
+                    "Message WhatsApp and pay ₹200 for fast pension approval."
+                ),
+            ),
+        )
+    )
+    assert result.react_status in {
+        "deterministic",
+        "model_assisted",
+        "deterministic_fallback",
+        "model_validated",
+    }
+    assert result.react_status != "scam_screened"
+    assert "scam_screened" in result.discovery_notices
+    assert any("fee" in msg.lower() or "WhatsApp" in msg for msg in result.discovery_messages)

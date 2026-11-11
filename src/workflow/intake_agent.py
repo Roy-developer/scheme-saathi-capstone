@@ -193,13 +193,9 @@ async def propose_initial_profile_facts(
 ) -> tuple[list[dict[str, object]], dict[str, int], list[dict[str, object]], str]:
     """Interpret synthetic free text as uncommitted facts through permitted tools."""
 
-    if provider is None:
-        return [], copy_agent_budget(budget), [], "deterministic"
-
     # Extra first filter: neutralise suspected embedded instructions, then
-    # flag fee/OTP/WhatsApp/UPI lures, then mask identifiers (the reader runs
-    # outside the agent's PII middleware). The real boundary is below: only
-    # the tool-free reader sees this text.
+    # flag fee/OTP/WhatsApp/UPI lures (regex — works without a model). Masking
+    # and the quarantined reader run below only when a model is available.
     screened = screen_free_text(description)
     if screened.flagged:
         from src.observability.metrics import record_guardrail_block
@@ -209,6 +205,8 @@ async def propose_initial_profile_facts(
     if scam.flagged:
         # Do not turn scam lures into proposed household facts.
         return [], copy_agent_budget(budget), [], "scam_screened"
+    if provider is None:
+        return [], copy_agent_budget(budget), [], "deterministic"
     safe_description = mask_sensitive_text(scam.text)
     allowed_facts = tuple(dict.fromkeys([*package_facts, *discovery_facts]))
     reading, budget_after_read, trace, read_status = await run_accounted_model_call(

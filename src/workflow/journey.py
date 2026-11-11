@@ -1735,7 +1735,13 @@ def build_journey_graph(
                     ),
                 )
                 initial_description_processed = True
-                react_status = extraction_status
+                # Keep react_status inside JourneyResponse's Literal. Scam
+                # blocking is surfaced via discovery_notices, not react_status.
+                react_status = (
+                    "deterministic"
+                    if extraction_status == "scam_screened"
+                    else extraction_status
+                )
                 discovery_updates.update({
                     "profile_description": None,
                     "profile_proposals": profile_proposals,
