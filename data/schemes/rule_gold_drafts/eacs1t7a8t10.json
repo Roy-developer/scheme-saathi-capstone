@@ -2,7 +2,7 @@
   "scheme_id": "EACS-MH",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "EACS-MH-R01",
@@ -14,7 +14,7 @@
       "source_passage_id": "EACS-MH-ELIGIBILITY-01",
       "source_quote": "The worker should be engaged in a building or other construction work.",
       "needs_human_review": false,
-      "note": null
+      "note": "Reviewed by Nidhi Kaushik (Role 1) 2026-11-11. Official source: mahabocw.in."
     },
     {
       "rule_id": "EACS-MH-R02",
@@ -26,7 +26,7 @@
       "source_passage_id": "EACS-MH-ELIGIBILITY-02",
       "source_quote": "The worker should be registered under the Maharashtra Building & Other Construction Workers Welfare Board.",
       "needs_human_review": false,
-      "note": null
+      "note": "Not encoded: child's class (1-7 or 8-10) and 75% attendance; caseworker. Reviewed 2026-11-11."
     }
   ],
   "unresolved": [

@@ -2,7 +2,7 @@
   "scheme_id": "IPMWCD-IN",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "IPMWCD-IN-R01",
@@ -14,7 +14,7 @@
       "source_passage_id": "IPMWCD-IN-ELIGIBILITY-01",
       "source_quote": "The women students, scholars, social activists and teachers",
       "needs_human_review": false,
-      "note": null
+      "note": "R01-R03 all from official wcd.intern.nic.in source. Reviewed by Nidhi Kaushik (Role 1) 2026-11-11."
     },
     {
       "rule_id": "IPMWCD-IN-R02",
@@ -50,7 +50,7 @@
       "source_passage_id": "IPMWCD-IN-ELIGIBILITY-02",
       "source_quote": "The age of the applicant should be between 21 to 40 years.",
       "needs_human_review": false,
-      "note": null
+      "note": "Cited passage is from myScheme; age range is a simple factual statement. Reviewed 2026-11-11."
     },
     {
       "rule_id": "IPMWCD-IN-R05",
@@ -62,7 +62,7 @@
       "source_passage_id": "IPMWCD-IN-ELIGIBILITY-02",
       "source_quote": "The age of the applicant should be between 21 to 40 years.",
       "needs_human_review": false,
-      "note": null
+      "note": "Not encoded: once selected, the applicant is excluded from future terms (APPLICATION-02, official source). Caseworker check if prior participation applies."
     }
   ],
   "unresolved": []

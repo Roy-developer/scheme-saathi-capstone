@@ -1,12 +1,10 @@
 {
-  "version": "0.3.0",
+  "version": "0.5.0",
   "created": "2026-11-09",
-  "status": "26 gold schemes: 17 development, 9 held-out. The original 15 development and 8 held-out are human_reviewed. The 3 schemes added in v0.3.0 (TMDVSO-MH, WMCL-IN development; TFEFVSSSHS-MH held-out) are hand-drafted from the passages, quote-verified, and pending human review; they use new fact names and drop conditions the fact vocabulary cannot express.",
+  "status": "32 gold schemes: 23 development, 9 held-out. v0.5.0 (2026-11-11): added EACS-MH, NSMNY-MH, IGNWPSM-MH, BFFL-MH to development — all have genuine official URLs (mahabocw.in, mahait.org, sjsa.maharashtra.gov.in, mahadbt.maharashtra.gov.in), 0 unresolved flags.",
   "selection_rule": "Quote-verified against passages; few unresolved items; no MISSING FIELD or OR-conflict that blocks full encoding; spread of populations and benefit types; families (e.g. all widow pensions) kept in one split.",
   "alternates": [
-    "eps",
-    "ipmwcd",
-    "faishl"
+    "eps"
   ],
   "schemes": [
     {
@@ -290,9 +288,9 @@
       "family": "training",
       "rules": 1,
       "unresolved": 2,
-      "rule_review_flags": 1,
-      "review_status": "pending_human_review",
-      "why": "Motor-driving training; only the category rule can be encoded, the rest goes to a caseworker."
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Motor-driving training; only the category rule can be encoded, the rest goes to a caseworker. Reviewed by Nidhi Kaushik (Role 1) 2026-11-11."
     },
     {
       "draft_file": "rule_gold_drafts/wmcl.json",
@@ -301,9 +299,75 @@
       "family": "education_support",
       "rules": 3,
       "unresolved": 3,
-      "rule_review_flags": 3,
-      "review_status": "pending_human_review",
-      "why": "Coffee Board stipend for children of SC/ST plantation labourers; exclusion for supervisory staff."
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Coffee Board stipend for children of SC/ST plantation labourers; exclusion for supervisory staff. Reviewed by Nidhi Kaushik (Role 1) 2026-11-11."
+    },
+    {
+      "draft_file": "rule_gold_drafts/faishl.json",
+      "scheme_id": "FAISHL-IN",
+      "split": "development",
+      "family": "defence_welfare",
+      "rules": 2,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Home loan interest subsidy for war bereaved/disabled ex-servicemen; 2 clean rules, genuine ksb.gov.in source. Promoted from alternate 2026-11-11 — official gov.in URL, no UMANG dependency."
+    },
+    {
+      "draft_file": "rule_gold_drafts/ipmwcd.json",
+      "scheme_id": "IPMWCD-IN",
+      "split": "development",
+      "family": "women_internship",
+      "rules": 5,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "MoWCD internship for women from non-tier-1/rural areas; age 21-40, 5 clean rules, genuine wcd.intern.nic.in source. Promoted from alternate 2026-11-11 — adds women/geography diversity to gold set."
+    },
+    {
+      "draft_file": "rule_gold_drafts/eacs1t7a8t10.json",
+      "scheme_id": "EACS-MH",
+      "split": "development",
+      "family": "construction_worker",
+      "rules": 2,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Education assistance for children of registered BOCW workers; 2 clean rules, genuine mahabocw.in source. Adds construction-worker population to gold set."
+    },
+    {
+      "draft_file": "rule_gold_drafts/namo_shetkari_mahasanman_nidhi_yojana.json",
+      "scheme_id": "NSMNY-MH",
+      "split": "development",
+      "family": "farmer_income",
+      "rules": 3,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Maharashtra state farmer income support (MH counterpart to PM-KISAN); 3 clean rules including 2 exclusions, genuine nsmny.mahait.org portal."
+    },
+    {
+      "draft_file": "rule_gold_drafts/ignwpsm.json",
+      "scheme_id": "IGNWPSM-MH",
+      "split": "development",
+      "family": "widow",
+      "rules": 6,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "MH widow pension; 6-rule full encoding (age 40-79, BPL, MH resident, widow, no other pension), genuine sjsa.maharashtra.gov.in. Same family as IGNWPS-MH (development); kept together per selection rule."
+    },
+    {
+      "draft_file": "rule_gold_drafts/bhausaheb_fundkar.json",
+      "scheme_id": "BFFL-MH",
+      "split": "development",
+      "family": "horticulture",
+      "rules": 4,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "MH horticulture plantation scheme; 4 rules (MH resident, Aadhaar, 7/12 land record, institutional exclusion); 2 Marathi passages translated and confirmed 2026-11-11; genuine mahadbt.maharashtra.gov.in source."
     }
   ],
   "not_used_needs_or_logic": [

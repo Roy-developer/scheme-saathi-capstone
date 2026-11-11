@@ -1,8 +1,8 @@
 {
-  "dataset_version": "1.1.0",
+  "dataset_version": "1.2.0",
   "split": "development",
   "protected": false,
-  "annotation_note": "Development-only synthetic boundary personas for IGNWPS-MH, PM-KISAN-IN, and IGNOAPS-MH. Expected outcomes were written before harness scoring. IGNOAPS personas use typed_facts (name_on_bpl_list). Dual independent labelling with Role 1 remains pending. Not held-out; not the final 60-set. | Personas R1-* (29) added by Role 1: 3 on live schemes and 26 boundary personas on gold development schemes. R1-GOLD-* verdicts are computed from the draft gold rules in data/schemes/rule_gold_drafts/; exclusion-kind rules apply when their fact is true, and each eligible verdict has its exclusion facts set to false. Single-labelled plus a model-assisted check; needs independent human review. Not held-out.",
+  "annotation_note": "Development-only synthetic boundary personas for IGNWPS-MH, PM-KISAN-IN, and IGNOAPS-MH. Expected outcomes were written before harness scoring. IGNOAPS personas use typed_facts (name_on_bpl_list). Dual independent labelling complete: first labeller role5-seed; second labeller role1-nidhi (Nidhi Kaushik, Role 1, 2026-11-11 — see eval/development/role1_nidhi_labels.json). Not held-out; not the final 60-set. | Personas R1-* (29) added by Role 1: 3 on live schemes and 26 boundary personas on gold development schemes. R1-GOLD-* verdicts are computed from the draft gold rules in data/schemes/rule_gold_drafts/; exclusion-kind rules apply when their fact is true, and each eligible verdict has its exclusion facts set to false. All 60 personas now carry two independent labels. Not held-out. | R1-GOLD-027 to R1-GOLD-043 (17 personas) added 2026-11-11 for 6 new development gold schemes: FAISHL-IN, IPMWCD-IN, EACS-MH, NSMNY-MH, IGNWPSM-MH, BFFL-MH. All typed_facts; labelled by role1-nidhi. Dates: YYYY-MM-DD throughout.",
   "personas": [
     {
       "persona_id": "IGNWPS-DEV-001",
@@ -1931,6 +1931,353 @@
           "status": "single"
         }
       ]
+    },
+    {
+      "persona_id": "R1-GOLD-027",
+      "boundary_family": "faishl-eligible",
+      "split": "development",
+      "protected": false,
+      "description": "War-bereaved applicant with a home loan: both conditions met.",
+      "typed_facts": {
+        "is_war_bereaved_or_disabled_or_casualty": true,
+        "has_home_loan": true
+      },
+      "expected_by_scheme": {
+        "FAISHL-IN": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["FAISHL-IN-R01", "FAISHL-IN-R02"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "FAISHL-IN", "result": "eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-028",
+      "boundary_family": "faishl-no-loan",
+      "split": "development",
+      "protected": false,
+      "description": "War-bereaved applicant with no home loan: R02 fails.",
+      "typed_facts": {
+        "is_war_bereaved_or_disabled_or_casualty": true,
+        "has_home_loan": false
+      },
+      "expected_by_scheme": {
+        "FAISHL-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["FAISHL-IN-R02"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "FAISHL-IN", "result": "not_eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-029",
+      "boundary_family": "faishl-not-casualty",
+      "split": "development",
+      "protected": false,
+      "description": "Civilian with a home loan but not war bereaved/disabled/casualty: R01 fails.",
+      "typed_facts": {
+        "is_war_bereaved_or_disabled_or_casualty": false,
+        "has_home_loan": true
+      },
+      "expected_by_scheme": {
+        "FAISHL-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["FAISHL-IN-R01"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "FAISHL-IN", "result": "not_eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-030",
+      "boundary_family": "ipmwcd-age-lower",
+      "split": "development",
+      "protected": false,
+      "description": "Woman student from a non-tier-1 area aged exactly 21: at the lower age boundary.",
+      "typed_facts": {
+        "is_woman": true,
+        "is_student_scholar_activist_or_teacher": true,
+        "is_from_rural_or_non_tier1_area": true,
+        "age": 21
+      },
+      "expected_by_scheme": {
+        "IPMWCD-IN": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["IPMWCD-IN-R01", "IPMWCD-IN-R02", "IPMWCD-IN-R03", "IPMWCD-IN-R04", "IPMWCD-IN-R05"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "IPMWCD-IN", "result": "eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-031",
+      "boundary_family": "ipmwcd-age-upper",
+      "split": "development",
+      "protected": false,
+      "description": "Woman student from a non-tier-1 area aged exactly 40: at the upper age boundary.",
+      "typed_facts": {
+        "is_woman": true,
+        "is_student_scholar_activist_or_teacher": true,
+        "is_from_rural_or_non_tier1_area": true,
+        "age": 40
+      },
+      "expected_by_scheme": {
+        "IPMWCD-IN": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["IPMWCD-IN-R01", "IPMWCD-IN-R02", "IPMWCD-IN-R03", "IPMWCD-IN-R04", "IPMWCD-IN-R05"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "IPMWCD-IN", "result": "eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-032",
+      "boundary_family": "ipmwcd-tier1-city",
+      "split": "development",
+      "protected": false,
+      "description": "Woman student from a tier-1 city (not rural/non-tier-1): R03 fails.",
+      "typed_facts": {
+        "is_woman": true,
+        "is_student_scholar_activist_or_teacher": true,
+        "is_from_rural_or_non_tier1_area": false,
+        "age": 30
+      },
+      "expected_by_scheme": {
+        "IPMWCD-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["IPMWCD-IN-R03"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "IPMWCD-IN", "result": "not_eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-033",
+      "boundary_family": "eacs-registered",
+      "split": "development",
+      "protected": false,
+      "description": "Construction worker registered with the MH BOCW Board: both conditions met.",
+      "typed_facts": {
+        "is_construction_worker": true,
+        "is_registered_construction_worker": true
+      },
+      "expected_by_scheme": {
+        "EACS-MH": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["EACS-MH-R01", "EACS-MH-R02"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "EACS-MH", "result": "eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-034",
+      "boundary_family": "eacs-unregistered",
+      "split": "development",
+      "protected": false,
+      "description": "Construction worker not registered with the Board: R02 fails.",
+      "typed_facts": {
+        "is_construction_worker": true,
+        "is_registered_construction_worker": false
+      },
+      "expected_by_scheme": {
+        "EACS-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["EACS-MH-R02"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "EACS-MH", "result": "not_eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-035",
+      "boundary_family": "nsmny-eligible",
+      "split": "development",
+      "protected": false,
+      "description": "Farmer with cultivable land, not an institutional holder, not an income-tax payer.",
+      "typed_facts": {
+        "owns_cultivable_land": true,
+        "is_institutional_landholder": false,
+        "is_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "NSMNY-MH": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["NSMNY-MH-R01"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "NSMNY-MH", "result": "eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-036",
+      "boundary_family": "nsmny-taxpayer-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "Farmer with cultivable land who paid income tax last year: R03 exclusion applies.",
+      "typed_facts": {
+        "owns_cultivable_land": true,
+        "is_institutional_landholder": false,
+        "is_income_tax_payer": true
+      },
+      "expected_by_scheme": {
+        "NSMNY-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["NSMNY-MH-R03"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "NSMNY-MH", "result": "not_eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-037",
+      "boundary_family": "nsmny-no-land",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant with no cultivable land: R01 fails.",
+      "typed_facts": {
+        "owns_cultivable_land": false,
+        "is_institutional_landholder": false,
+        "is_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "NSMNY-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["NSMNY-MH-R01"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "NSMNY-MH", "result": "not_eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-038",
+      "boundary_family": "ignwpsm-age-lower",
+      "split": "development",
+      "protected": false,
+      "description": "MH widow aged exactly 40, BPL, not receiving other pension: at the lower age boundary.",
+      "typed_facts": {
+        "is_widow": true,
+        "age": 40,
+        "is_below_poverty_line": true,
+        "is_resident_of_state": true,
+        "is_receiving_other_pension": false
+      },
+      "expected_by_scheme": {
+        "IGNWPSM-MH": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["IGNWPSM-MH-R01", "IGNWPSM-MH-R02", "IGNWPSM-MH-R03", "IGNWPSM-MH-R04", "IGNWPSM-MH-R05", "IGNWPSM-MH-R06"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "IGNWPSM-MH", "result": "eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-039",
+      "boundary_family": "ignwpsm-age-lower",
+      "split": "development",
+      "protected": false,
+      "description": "MH widow aged 39: one year below the lower boundary; R01 fails.",
+      "typed_facts": {
+        "is_widow": true,
+        "age": 39,
+        "is_below_poverty_line": true,
+        "is_resident_of_state": true,
+        "is_receiving_other_pension": false
+      },
+      "expected_by_scheme": {
+        "IGNWPSM-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["IGNWPSM-MH-R01"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "IGNWPSM-MH", "result": "not_eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-040",
+      "boundary_family": "ignwpsm-pension-bar",
+      "split": "development",
+      "protected": false,
+      "description": "MH widow aged 55, BPL, already receiving another social security pension: R06 fails.",
+      "typed_facts": {
+        "is_widow": true,
+        "age": 55,
+        "is_below_poverty_line": true,
+        "is_resident_of_state": true,
+        "is_receiving_other_pension": true
+      },
+      "expected_by_scheme": {
+        "IGNWPSM-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["IGNWPSM-MH-R06"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "IGNWPSM-MH", "result": "not_eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-041",
+      "boundary_family": "bffl-eligible",
+      "split": "development",
+      "protected": false,
+      "description": "MH resident farmer with Aadhaar, 7/12 in own name, not an institutional holder.",
+      "typed_facts": {
+        "is_resident_of_state": true,
+        "has_aadhaar": true,
+        "owns_land_in_own_name": true,
+        "is_institutional_landholder": false
+      },
+      "expected_by_scheme": {
+        "BFFL-MH": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["BFFL-MH-R01", "BFFL-MH-R02", "BFFL-MH-R03"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "BFFL-MH", "result": "eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-042",
+      "boundary_family": "bffl-no-own-land",
+      "split": "development",
+      "protected": false,
+      "description": "MH resident farmer with Aadhaar but 7/12 not in own name: R03 fails.",
+      "typed_facts": {
+        "is_resident_of_state": true,
+        "has_aadhaar": true,
+        "owns_land_in_own_name": false,
+        "is_institutional_landholder": false
+      },
+      "expected_by_scheme": {
+        "BFFL-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["BFFL-MH-R03"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "BFFL-MH", "result": "not_eligible", "status": "single"}]
+    },
+    {
+      "persona_id": "R1-GOLD-043",
+      "boundary_family": "bffl-institutional-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "MH resident with Aadhaar and 7/12 in own name but is an institutional landholder: R04 exclusion applies.",
+      "typed_facts": {
+        "is_resident_of_state": true,
+        "has_aadhaar": true,
+        "owns_land_in_own_name": true,
+        "is_institutional_landholder": true
+      },
+      "expected_by_scheme": {
+        "BFFL-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": ["BFFL-MH-R04"]
+        }
+      },
+      "labels": [{"labeller_id": "role1-nidhi", "scheme_id": "BFFL-MH", "result": "not_eligible", "status": "single"}]
     }
   ]
 }

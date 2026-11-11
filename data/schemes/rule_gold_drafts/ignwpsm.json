@@ -2,7 +2,7 @@
   "scheme_id": "IGNWPSM-MH",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "IGNWPSM-MH-R01",
@@ -14,7 +14,7 @@
       "source_passage_id": "IGNWPSM-MH-ELIGIBILITY-01",
       "source_quote": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
       "needs_human_review": false,
-      "note": null
+      "note": "Reviewed by Nidhi Kaushik (Role 1) 2026-11-11. Official source: sjsa.maharashtra.gov.in. 6-rule complete encoding; same family as IGNWPS-MH (development)."
     },
     {
       "rule_id": "IGNWPSM-MH-R02",

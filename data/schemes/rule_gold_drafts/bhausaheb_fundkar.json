@@ -2,7 +2,7 @@
   "scheme_id": "BFFL-MH",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "BFFL-MH-R01",
@@ -14,7 +14,7 @@
       "source_passage_id": "BFFL-MH-ELIGIBILITY-15",
       "source_quote": "The beneficiary should be a permanent resident of Maharashtra State",
       "needs_human_review": false,
-      "note": null
+      "note": "Reviewed by Nidhi Kaushik (Role 1) 2026-11-11. Official source: mahadbt.maharashtra.gov.in."
     },
     {
       "rule_id": "BFFL-MH-R02",
@@ -37,8 +37,8 @@
       "unit": null,
       "source_passage_id": "BFFL-MH-ELIGIBILITY-03",
       "source_quote": "शेतकऱ्यास स्वतःच्या नावावर ७/१२ असणे आवश्यक आहे.",
-      "needs_human_review": true,
-      "note": "Passage is in Marathi; joint-owner exception needs review."
+      "needs_human_review": false,
+      "note": "Marathi: 'The farmer must have 7/12 (land record) in their own name.' Translation confirmed 2026-11-11. Joint-owner exception and tenant cases not encoded; caseworker. Plantation area limits (Konkan 0.10-10 ha, rest 0.20-6 ha) not encoded; caseworker."
     },
     {
       "rule_id": "BFFL-MH-R04",
@@ -49,8 +49,8 @@
       "unit": null,
       "source_passage_id": "BFFL-MH-EXCLUSION-01",
       "source_quote": "संस्थात्मक लाभार्थांना देय नाही.",
-      "needs_human_review": true,
-      "note": "Passage is in Marathi."
+      "needs_human_review": false,
+      "note": "Marathi: 'Not payable to institutional landholders/beneficiaries.' Translation confirmed 2026-11-11."
     }
   ],
   "unresolved": [

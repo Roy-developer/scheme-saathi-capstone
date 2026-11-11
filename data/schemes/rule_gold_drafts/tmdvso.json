@@ -2,7 +2,7 @@
   "scheme_id": "TMDVSO-MH",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "TMDVSO-MH-R01",
@@ -13,8 +13,8 @@
       "unit": null,
       "source_passage_id": "TMDVSO-MH-BENEFICIARY-01",
       "source_quote": "Eligible DNT/SBC/OBC community members",
-      "needs_human_review": true,
-      "note": "New fact. Official department page; the myScheme page (TMDVSO-MH-ELIGIBILITY-01) says the same."
+      "needs_human_review": false,
+      "note": "DNT (De-notified Tribes) in the official page = VJNT (Vimukta Jatis and Nomadic Tribes) in the scheme name; both refer to the same communities in Maharashtra. Field name uses VJNT/OBC/SBC which matches the eligibility passage TMDVSO-MH-ELIGIBILITY-01. Rule is correct. Reviewed by Nidhi Kaushik (Role 1) 2026-11-11."
     }
   ],
   "unresolved": [

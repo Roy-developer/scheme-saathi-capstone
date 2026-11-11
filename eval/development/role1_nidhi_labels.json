@@ -1,0 +1,429 @@
+{
+  "labeller_id": "role1-nidhi",
+  "labelled_by": "Nidhi Kaushik (Role 1)",
+  "date": "2026-11-11",
+  "status": "independent human label from rules and source text",
+  "instructions_followed": "Labels derived from the gold draft rules in data/schemes/rule_gold_drafts/ (R1-GOLD-*) and the live rule packages (live-scheme personas). Each verdict reads only facts, operators and values from the rules — expected verdicts were NOT consulted first.",
+  "labels": [
+    {
+      "persona_id": "IGNWPS-DEV-001",
+      "scheme_id": "IGNWPS-MH",
+      "result": "eligible",
+      "deciding_rule_ids": ["IGNWPS-MH-WIDOW-01", "IGNWPS-MH-AGE-MIN-01", "IGNWPS-MH-AGE-MAX-01", "IGNWPS-MH-BPL-01"],
+      "reason": "DOB 1986-10-30, app 2026-10-30 = age 40 (inclusive lower bound). is_widow=true, bpl_card_shown=true. All four conditions pass."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-002",
+      "scheme_id": "IGNWPS-MH",
+      "result": "eligible",
+      "deciding_rule_ids": ["IGNWPS-MH-WIDOW-01", "IGNWPS-MH-AGE-MIN-01", "IGNWPS-MH-AGE-MAX-01", "IGNWPS-MH-BPL-01"],
+      "reason": "DOB 1947-10-30, app 2026-10-30 = age 79 (inclusive upper bound). is_widow=true, bpl_card_shown=true. All pass."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-003",
+      "scheme_id": "IGNWPS-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["IGNWPS-MH-AGE-MIN-01"],
+      "reason": "DOB 1987-10-30, app 2026-10-30 = age 39. Minimum age is 40; age 39 fails."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-004",
+      "scheme_id": "IGNWPS-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["IGNWPS-MH-AGE-MAX-01"],
+      "reason": "DOB 1946-10-30, app 2026-10-30 = age 80. Maximum age is 79; age 80 fails."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-005",
+      "scheme_id": "IGNWPS-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["IGNWPS-MH-WIDOW-01"],
+      "reason": "is_widow=false. Rule requires widow status."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-006",
+      "scheme_id": "IGNWPS-MH",
+      "result": "eligible",
+      "deciding_rule_ids": ["IGNWPS-MH-WIDOW-01", "IGNWPS-MH-AGE-MIN-01", "IGNWPS-MH-AGE-MAX-01", "IGNWPS-MH-BPL-01"],
+      "reason": "DOB 1974-10-30, age 52 at application. is_widow=true, bpl_card_shown=true. All pass."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-007",
+      "scheme_id": "IGNWPS-MH",
+      "result": "need_more_information",
+      "deciding_rule_ids": ["IGNWPS-MH-BPL-01"],
+      "reason": "bpl_card_shown=false. BPL card proof is required. Missing fact: government_bpl_card."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-008",
+      "scheme_id": "IGNWPS-MH",
+      "result": "need_more_information",
+      "deciding_rule_ids": ["IGNWPS-MH-BPL-01"],
+      "reason": "bpl_card_shown=null (unknown). BPL card status unconfirmed. Missing fact: government_bpl_card."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-009",
+      "scheme_id": "IGNWPS-MH",
+      "result": "need_more_information",
+      "deciding_rule_ids": ["IGNWPS-MH-WIDOW-01"],
+      "reason": "is_widow=null (unknown). Widow status unconfirmed. Missing fact: is_widow."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-010",
+      "scheme_id": "IGNWPS-MH",
+      "result": "need_more_information",
+      "deciding_rule_ids": ["IGNWPS-MH-AGE-MIN-01", "IGNWPS-MH-AGE-MAX-01"],
+      "reason": "date_of_birth=null. Age cannot be computed. Missing fact: date_of_birth."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-011",
+      "scheme_id": "IGNWPS-MH",
+      "result": "eligible",
+      "deciding_rule_ids": ["IGNWPS-MH-WIDOW-01", "IGNWPS-MH-AGE-MIN-01", "IGNWPS-MH-AGE-MAX-01", "IGNWPS-MH-BPL-01"],
+      "reason": "DOB 1986-03-15, app 2026-03-15 = age 40 exactly (inclusive lower bound). All pass."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-012",
+      "scheme_id": "IGNWPS-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["IGNWPS-MH-AGE-MAX-01"],
+      "reason": "DOB 1946-03-15, app 2026-03-15 = age 80. Maximum age 79 exceeded."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-013",
+      "scheme_id": "IGNWPS-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["IGNWPS-MH-AGE-MIN-01"],
+      "reason": "DOB 1986-03-15, app 2026-03-14 = age 39 (one day before 40th birthday). Minimum age 40 not met."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-001",
+      "scheme_id": "PM-KISAN-IN",
+      "result": "eligible",
+      "deciding_rule_ids": ["PMKISAN-LAND-FAMILY-01"],
+      "reason": "landholding=true, all exclusions false. All rules pass."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-002",
+      "scheme_id": "PM-KISAN-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["PMKISAN-LAND-FAMILY-01"],
+      "reason": "landholding_family_in_state_records=false. Primary eligibility condition fails."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-003",
+      "scheme_id": "PM-KISAN-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["PMKISAN-INSTITUTIONAL-LAND-01"],
+      "reason": "institutional_landholder=true. Exclusion applies."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-004",
+      "scheme_id": "PM-KISAN-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["PMKISAN-OFFICE-HOLDER-01"],
+      "reason": "listed_public_office_member=true. Exclusion applies (former/present constitutional post holders)."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-005",
+      "scheme_id": "PM-KISAN-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["PMKISAN-GOV-EMPLOYEE-01"],
+      "reason": "excluded_government_employee_member=true. Exclusion applies."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-006",
+      "scheme_id": "PM-KISAN-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["PMKISAN-PENSION-01"],
+      "reason": "pension_at_least_10000=true. Exclusion applies (pension >= Rs 10,000/month)."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-007",
+      "scheme_id": "PM-KISAN-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["PMKISAN-INCOME-TAX-01"],
+      "reason": "income_tax_paid_last_assessment_year=true. Exclusion applies."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-008",
+      "scheme_id": "PM-KISAN-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["PMKISAN-PROFESSIONAL-01"],
+      "reason": "registered_practicing_professional_member=true. Exclusion applies."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-009",
+      "scheme_id": "PM-KISAN-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["PMKISAN-NRI-01"],
+      "reason": "nri_new_beneficiary=true. Exclusion applies."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-010",
+      "scheme_id": "PM-KISAN-IN",
+      "result": "need_more_information",
+      "deciding_rule_ids": ["PMKISAN-LAND-FAMILY-01"],
+      "reason": "landholding_family_in_state_records=null (unknown). Cannot determine primary eligibility condition."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-011",
+      "scheme_id": "PM-KISAN-IN",
+      "result": "need_more_information",
+      "deciding_rule_ids": ["PMKISAN-INCOME-TAX-01"],
+      "reason": "income_tax_paid_last_assessment_year=null. Landholding confirmed but income-tax exclusion cannot be evaluated."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-012",
+      "scheme_id": "PM-KISAN-IN",
+      "result": "need_more_information",
+      "deciding_rule_ids": ["PMKISAN-LAND-FAMILY-01"],
+      "reason": "All facts null/missing. Cannot evaluate any rule."
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-001",
+      "scheme_id": "IGNOAPS-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["IGNOAPS-MH-R01"],
+      "reason": "DOB 1962-11-09, app 2026-11-08 = age 63 (turns 64 the next day). Age 63 < 65. Minimum age 65 not met."
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-002",
+      "scheme_id": "IGNOAPS-MH",
+      "result": "eligible",
+      "deciding_rule_ids": ["IGNOAPS-MH-R01", "IGNOAPS-MH-R02"],
+      "reason": "DOB 1961-11-08, app 2026-11-08 = age 65 exactly (inclusive). name_on_bpl_list=true. Both live rules pass."
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-003",
+      "scheme_id": "IGNOAPS-MH",
+      "result": "eligible",
+      "deciding_rule_ids": ["IGNOAPS-MH-R01", "IGNOAPS-MH-R02"],
+      "reason": "DOB 1941-01-01 = age 85. name_on_bpl_list=true. No upper age limit in rule. Both pass."
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-004",
+      "scheme_id": "IGNOAPS-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["IGNOAPS-MH-R02"],
+      "reason": "name_on_bpl_list=false. BPL list membership required."
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-005",
+      "scheme_id": "IGNOAPS-MH",
+      "result": "need_more_information",
+      "deciding_rule_ids": ["IGNOAPS-MH-R02"],
+      "reason": "name_on_bpl_list=null. BPL list status unknown; cannot confirm eligibility."
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-006",
+      "scheme_id": "IGNOAPS-MH",
+      "result": "need_more_information",
+      "deciding_rule_ids": ["IGNOAPS-MH-R01"],
+      "reason": "date_of_birth=null. Age cannot be computed."
+    },
+    {
+      "persona_id": "R1-IGNOAPS-003",
+      "scheme_id": "IGNOAPS-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["IGNOAPS-MH-R01"],
+      "reason": "DOB 1966-11-11, app 2026-11-11 = age 60 exactly. Maharashtra threshold is 65 (not central 60). Age 60 < 65 fails."
+    },
+    {
+      "persona_id": "R1-IGNOAPS-006",
+      "scheme_id": "IGNOAPS-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["IGNOAPS-MH-R01", "IGNOAPS-MH-R02"],
+      "reason": "DOB 1962-11-11, app 2026-11-11 = age 64. Both age (64 < 65) and BPL (false) fail."
+    },
+    {
+      "persona_id": "R1-PMKISAN-004",
+      "scheme_id": "PM-KISAN-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["PMKISAN-GOV-EMPLOYEE-01", "PMKISAN-PENSION-01"],
+      "reason": "excluded_government_employee_member=true AND pension_at_least_10000=true. Two exclusions apply."
+    },
+    {
+      "persona_id": "R1-GOLD-001",
+      "scheme_id": "NSAP-IGNOAPS-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["NSAP-IGNOAPS-IN-R03"],
+      "reason": "age=59. Rule NSAP-IGNOAPS-IN-R03 requires age >= 60. 59 < 60 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-002",
+      "scheme_id": "NSAP-IGNOAPS-IN",
+      "result": "eligible",
+      "deciding_rule_ids": ["NSAP-IGNOAPS-IN-R01", "NSAP-IGNOAPS-IN-R02", "NSAP-IGNOAPS-IN-R03"],
+      "reason": "age=60 (>= 60 ✓), citizen=true ✓, BPL=true ✓. All three rules pass."
+    },
+    {
+      "persona_id": "R1-GOLD-003",
+      "scheme_id": "IGNWPS-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["IGNWPS-IN-R01"],
+      "reason": "age=39. Rule IGNWPS-IN-R01 requires age >= 40. 39 < 40 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-004",
+      "scheme_id": "IGNWPS-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["IGNWPS-IN-R02"],
+      "reason": "age=80. Rule IGNWPS-IN-R02 requires age <= 79. 80 > 79 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-005",
+      "scheme_id": "IGNDPS-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["IGNDPS-IN-R04"],
+      "reason": "disability_percent=79. Rule IGNDPS-IN-R04 requires disability_percent >= 80. 79 < 80 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-006",
+      "scheme_id": "IGNDPS-IN",
+      "result": "eligible",
+      "deciding_rule_ids": ["IGNDPS-IN-R01", "IGNDPS-IN-R02", "IGNDPS-IN-R03", "IGNDPS-IN-R04", "IGNDPS-IN-R05"],
+      "reason": "age=40 (>= 18 ✓), resident_of_india=true ✓, has_disability=true ✓, disability_percent=80 (>= 80 ✓), BPL=true ✓. All pass."
+    },
+    {
+      "persona_id": "R1-GOLD-007",
+      "scheme_id": "IGNDPSM-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["IGNDPSM-MH-R02"],
+      "reason": "age=80. IGNDPSM-MH age range is 18-79; age <= 79 fails for 80."
+    },
+    {
+      "persona_id": "R1-GOLD-008",
+      "scheme_id": "IGNDPSM-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["IGNDPSM-MH-R05"],
+      "reason": "is_receiving_other_pension=true. Exclusion rule: must not be receiving another pension."
+    },
+    {
+      "persona_id": "R1-GOLD-009",
+      "scheme_id": "NFBSM-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["NFBSM-MH-R02"],
+      "reason": "deceased_breadwinner_age=17. Rule NFBSM-MH-R02 requires breadwinner age >= 18. 17 < 18 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-010",
+      "scheme_id": "NFBSM-MH",
+      "result": "eligible",
+      "deciding_rule_ids": ["NFBSM-MH-R01", "NFBSM-MH-R02", "NFBSM-MH-R03", "NFBSM-MH-R04", "NFBSM-MH-R05"],
+      "reason": "BPL=true ✓, breadwinner age 59 (18 <= 59 <= 59 ✓), resident_of_state=true ✓, family_member=true ✓. All pass."
+    },
+    {
+      "persona_id": "R1-GOLD-011",
+      "scheme_id": "NFBSM-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["NFBSM-MH-R03"],
+      "reason": "deceased_breadwinner_age=60. Rule NFBSM-MH-R03 requires age <= 59. 60 > 59 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-012",
+      "scheme_id": "APY-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["APY-IN-R02"],
+      "reason": "age=41. APY-IN age upper limit is 40; 41 > 40 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-013",
+      "scheme_id": "APY-IN",
+      "result": "eligible",
+      "deciding_rule_ids": ["APY-IN-R01", "APY-IN-R02", "APY-IN-R03", "APY-IN-R04", "APY-IN-R05"],
+      "reason": "age=40 (18 <= 40 <= 40 ✓), citizen=true ✓, savings_account=true ✓, is_income_tax_payer=false (exclusion does not apply ✓). All pass."
+    },
+    {
+      "persona_id": "R1-GOLD-014",
+      "scheme_id": "PMSBY-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["PMSBY-IN-R02"],
+      "reason": "age=71. PMSBY-IN age upper limit is 70; 71 > 70 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-015",
+      "scheme_id": "PMJJBY-IN",
+      "result": "eligible",
+      "deciding_rule_ids": ["PMJJBY-IN-R01", "PMJJBY-IN-R02", "PMJJBY-IN-R03", "PMJJBY-IN-R04", "PMJJBY-IN-R05"],
+      "reason": "age=50 (18 <= 50 <= 50 ✓), savings_account=true ✓, consent=true ✓, institutional=false (exclusion does not apply ✓). All pass."
+    },
+    {
+      "persona_id": "R1-GOLD-016",
+      "scheme_id": "PRE-DIS-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["PRE-DIS-IN-R04"],
+      "reason": "annual_family_income_inr=250001. Rule PRE-DIS-IN-R04 requires income <= 250000. 250001 > 250000 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-017",
+      "scheme_id": "FADSE-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["FADSE-MH-R05"],
+      "reason": "annual_income_inr=100000. Rule FADSE-MH-R05 requires income STRICTLY below (< ) 100000. 100000 is not < 100000 (strict less-than fails at exact boundary)."
+    },
+    {
+      "persona_id": "R1-GOLD-018",
+      "scheme_id": "POST-DIS-IN",
+      "result": "eligible",
+      "deciding_rule_ids": ["POST-DIS-IN-R01", "POST-DIS-IN-R02", "POST-DIS-IN-R03", "POST-DIS-IN-R04", "POST-DIS-IN-R05", "POST-DIS-IN-R07"],
+      "reason": "citizen=true ✓, disability=true ✓, disability_percent=50 (>= 40 ✓), income=250000 (<= 250000 ✓), post_matric=true ✓, family_receiving=1 (<= 2 ✓), other_scholarship=false ✓, repeating=false ✓. All pass."
+    },
+    {
+      "persona_id": "R1-GOLD-019",
+      "scheme_id": "POST-DIS-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["POST-DIS-IN-R04"],
+      "reason": "annual_family_income_inr=250001. Rule POST-DIS-IN-R04 requires income <= 250000. 250001 > 250000 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-020",
+      "scheme_id": "POST-DIS-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["POST-DIS-IN-R07"],
+      "reason": "family_members_receiving_scholarship=3. Rule POST-DIS-IN-R07 requires count <= 2 (including this applicant). 3 > 2 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-021",
+      "scheme_id": "POST-DIS-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["POST-DIS-IN-R03"],
+      "reason": "disability_percent=39. Rule POST-DIS-IN-R03 requires disability_percent >= 40. 39 < 40 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-022",
+      "scheme_id": "FASETDP-MH",
+      "result": "eligible",
+      "deciding_rule_ids": ["FASETDP-MH-R01", "FASETDP-MH-R02", "FASETDP-MH-R03", "FASETDP-MH-R04", "FASETDP-MH-R05"],
+      "reason": "disability_percent=40 (>= 40 ✓), resident_of_state=true ✓, vocational_training=true ✓, citizen=true ✓, has_disability=true ✓. All pass."
+    },
+    {
+      "persona_id": "R1-GOLD-023",
+      "scheme_id": "FASETDP-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["FASETDP-MH-R01"],
+      "reason": "disability_percent=39. Rule FASETDP-MH-R01 requires disability_percent >= 40. 39 < 40 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-024",
+      "scheme_id": "FADSE-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["FADSE-MH-R03"],
+      "reason": "age=17. Rule FADSE-MH-R03 requires age >= 18. 17 < 18 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-025",
+      "scheme_id": "FADSE-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["FADSE-MH-R04"],
+      "reason": "age=51. Rule FADSE-MH-R04 requires age <= 50. 51 > 50 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-026",
+      "scheme_id": "PRE-DIS-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["PRE-DIS-IN-R07"],
+      "reason": "family_members_receiving_scholarship=3. Rule PRE-DIS-IN-R07 requires count <= 2 (including this applicant). 3 > 2 fails."
+    }
+  ]
+}

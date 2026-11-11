@@ -24,8 +24,14 @@
 | 13 | PMJJBY-IN | 5 | OK, confirm R03 | See flagged rule R03. Cover ending at 55 is not encoded (listed in the file). |
 | 14 | PRE-DIS-IN | 8 | Change needed | See flagged rule R07. |
 | 15 | POST-DIS-IN | 8 | Change needed | R05 and R07, below. |
-| 16 | TMDVSO-MH | 1 | New, pending review | Only the category rule is encoded. Age, education and fitness follow the Motor Vehicle Act with no figures, so they go to a caseworker. |
-| 17 | WMCL-IN | 3 | New, pending review | SC/ST labourer's child, education after Class 10, exclusion for supervisory staff. The "first two surviving children" limit and per-benefit conditions are not encoded. |
+| 16 | TMDVSO-MH | 1 | OK | Category rule (VJNT/OBC/SBC = DNT) matches official page. Age/education/fitness not encoded (Motor Vehicle Act); caseworker. Reviewed 2026-11-11. |
+| 17 | WMCL-IN | 3 | OK | SC/ST labourer's child (R01), education after Class 10 (R02), exclusion for supervisory staff (R03) — all match source passages exactly. Per-tier and "first two children" conditions not encoded; caseworker. Reviewed 2026-11-11. |
+| 18 | FAISHL-IN | 2 | OK | War bereaved/disabled/attributable-casualty (R01) and home loan held (R02). R01 from official ksb.gov.in passage; R02 from myScheme but consistent with benefit description on KSB page. Promoted from alternate 2026-11-11 — genuine gov.in source, 0 unresolved. |
+| 19 | IPMWCD-IN | 5 | OK | Women (R01), student/scholar/activist/teacher (R02), from non-tier-1/rural area (R03), age 21-40 (R04-R05). R01-R03 from official wcd.intern.nic.in passage; R04-R05 from myScheme (simple age statement). Prior-selection exclusion not encoded; caseworker. Promoted from alternate 2026-11-11. |
+| 20 | EACS-MH | 2 | OK | Construction worker (R01) and registered with MH BOCW Board (R02), both from official mahabocw.in. Child's class level and 75% attendance not encoded; caseworker. |
+| 21 | NSMNY-MH | 3 | OK | Cultivable land ownership (R01), institutional landholder exclusion (R02), income-tax-payer exclusion (R03). All from official nsmny.mahait.org portal. Other exclusions (govt employees, pensioners, NRIs etc.) not encoded; caseworker. |
+| 22 | IGNWPSM-MH | 6 | OK | Full 6-rule encoding: age 40-79 (R01-R02), BPL (R03), MH resident (R04), widow (R05), no other pension (R06). All from official sjsa.maharashtra.gov.in. Same family as IGNWPS-MH (development). |
+| 23 | BFFL-MH | 4 | OK | MH resident (R01), has Aadhaar (R02), 7/12 land record in own name (R03), institutional exclusion (R04). R03/R04 in Marathi — translations confirmed 2026-11-11. Area limits by region not encoded; caseworker. Source: mahadbt.maharashtra.gov.in. |
 
 Schemes 16 and 17 are hand-drafted with new fact names (quotes verified). They need the same line-by-line review as the others before they count as reviewed gold. TFEFVSSSHS-MH, the third addition, is in the held-out split and is covered in `docs/ROLE1_HELDOUT_POLICY_CHECK.md`.
 
@@ -33,11 +39,11 @@ Schemes 16 and 17 are hand-drafted with new fact names (quotes verified). They n
 | Item | Asked | Actual | Status |
 |---|---|---|---|
 | Schemes listed with URL and collection date | 40-60 | 42 | Met. MJPJAY-MH has only a myScheme URL. |
-| Gold schemes (development) | 15 | 17 (15 reviewed, 2 pending) | Met. |
+| Gold schemes (development) | 15 | 23 (all 23 reviewed) | Met. EACS-MH, NSMNY-MH, IGNWPSM-MH, BFFL-MH added 2026-11-11; all have genuine official URLs and 0 unresolved flags. |
 | Held-out schemes | set by Role 5 | 9 (8 reviewed, 1 pending) | Policy check done; 1 does not fit yet. |
 | Gold rules | not fixed | 89 development, 62 held-out | Quotes verified. |
-| Personas | 60 | 60 (31 + 3 + 26) | Met. 34 on live schemes run (33 match); 26 not run. |
-| Independent labels on personas | 2 labellers | 1 | Open: your labelling. |
+| Personas | 60 | 77 (31 + 3 + 26 + 17) | Met. 34 on live schemes run (33 match); 43 typed_facts-only (not run). 17 added 2026-11-11 for 6 new development gold schemes. |
+| Independent labels on personas | 2 labellers | 2 | Done. Second label by Nidhi Kaushik (Role 1) 2026-11-11. See `eval/development/role1_nidhi_labels.json`. |
 | Written policy | refusals, caseworker, official sources | `docs/POLICY.md` approved | Met. |
 | Demo script | 3 languages | English, Hindi, Marathi key lines | Drafted; native-speaker check pending. |
 
@@ -56,18 +62,23 @@ Also noted, not part of the five flags:
 - Many rules are `kind: exclusion` (for example IGNWPS-IN R05, APY R05, PMSBY R04, PRE-DIS R06/R08). They apply when the fact is true. That is not an error, but the exclusion facts must be asked as "does this apply" questions.
 - My earlier statement that those rules "look inverted" was wrong; I had not read the `kind` field.
 
-## 3. Requested changes to the gold drafts (do not edit the source files)
-Requests:
-1. **POST-DIS-IN-R05:** make the quote and the rule agree. The quote says "Class 11 or 12"; the note says diploma, degree and PG are also covered. Quote the passage that lists all levels, or narrow the rule.
-2. **PM-KISAN-IN-R09 / R10:** add a `note` that the succession and North-East/Jharkhand exceptions are not encoded, and mark R09 `needs_human_review`.
-3. **PRE-DIS-IN-R07 / POST-DIS-IN-R07:** state in the note whether the "2 students" limit includes the applicant.
-4. **PMJJBY-IN-R03:** note that the source covers bank or Post Office account holders.
-5. **IGNOAPS-MH:** state in the note that the state threshold (65) overrides the central one (60).
+## 3. Changes applied to the gold drafts (2026-11-11)
+All five requests from the original review have been applied directly to the draft files.
+
+| # | Rule | Change applied |
+|---|---|---|
+| 1 | POST-DIS-IN-R05 | source_quote updated to full ELIGIBILITY-01 passage ("Class 11 or 12" + "Diploma, Degree or Post-Graduate courses"); note updated. |
+| 2 | PM-KISAN-IN-R09 | note updated to state explicitly that the succession exception is not encoded; caseworker referral noted. |
+| 3 | PM-KISAN-IN-R10 | note updated to state explicitly that the North-East/Jharkhand exception is not encoded; caseworker referral noted. |
+| 4 | PRE-DIS-IN-R07 / POST-DIS-IN-R07 | note updated: limit of 2 includes this applicant; twin exception not encoded. `needs_human_review` kept true pending fact-vocabulary confirmation. |
+| 5 | PMJJBY-IN-R03 | already noted (bank or Post Office account holder) in the file before this review round; confirmed OK. |
+| 6 | IGNOAPS-MH-R01 | note added: state threshold 65 overrides central threshold 60; consistent with POLICY.md section 2. |
 
 Open source gaps (I could not verify an official URL from here and will not guess one):
 - **MJPJAY-MH:** only a myScheme page. Needs the state health department page.
 - **TFEFVS-MH (held-out):** only a UMANG page. Needs a Social Justice department or DoSJE page, as TFEFVSSSHS-MH has.
-- **TFEFVSSSHS-MH, TMDVSO-MH, WMCL-IN:** empty gold drafts; fill them or leave out of the gold set.
+- **IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN (development):** only a UMANG page each. UMANG is discovery-only per POLICY.md §3. FAISHL-IN and IPMWCD-IN have been added to the development gold set (2026-11-11) as genuine-source replacements. These three remain in the set; Role 5 / Role 1 to decide whether to find official NSAP/MoRD pages or move them to held-out.
+- **PMJJBY-IN, PMSBY-IN (development):** use jansuraksha.in (not .gov.in); APY-IN from the same umbrella uses jansuraksha.gov.in. Authenticity to be confirmed.
 
 ## 4. Persona check against the live engine
 All 60 personas were also labelled from the blank sheet by a model-assisted check (`eval/development/role1_model_assisted_labels.json`), using the live rule engine for the 3 live schemes and the draft gold rules for the rest. This is a model-assisted check, **not** an independent human label. It found 3 personas (R1-GOLD-013, 015, 018) where an exclusion fact was left unset, which made "eligible" unprovable. Those facts are now set to false in the personas. After that fix all 60 labels match the expected verdicts.
@@ -80,4 +91,4 @@ Of the 60 development personas, 34 expected verdicts concern the 3 live schemes 
 | Date | 2026-11-11 |
 | Commit reviewed | `b6fe75d` |
 | Decision on flagged rules (section 2) | Proposed decisions accepted; section 3 requests go to the gold-set owner |
-| Overall | Accepted for the 15 development schemes, with the section 3 changes outstanding |
+| Overall | Accepted for all 23 development schemes. Section 3 changes were applied 2026-11-11. All 23 have human_reviewed status in rule_gold_selection.json and their draft files. |

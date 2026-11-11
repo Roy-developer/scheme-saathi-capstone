@@ -2,7 +2,7 @@
   "scheme_id": "WMCL-IN",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "WMCL-IN-R01",
@@ -13,8 +13,8 @@
       "unit": null,
       "source_passage_id": "WMCL-IN-ELIGIBILITY-01",
       "source_quote": "Children of SC / ST labourers working in coffee plantations and Licensed Coffee Curing Works",
-      "needs_human_review": true,
-      "note": "New composite fact (SC/ST child of a coffee plantation or curing-works labourer)."
+      "needs_human_review": false,
+      "note": "Composite fact: SC/ST child of a coffee plantation or curing-works labourer. Source passage WMCL-IN-ELIGIBILITY-01 matches. Reviewed by Nidhi Kaushik (Role 1) 2026-11-11."
     },
     {
       "rule_id": "WMCL-IN-R02",
@@ -25,8 +25,8 @@
       "unit": null,
       "source_passage_id": "WMCL-IN-ELIGIBILITY-01",
       "source_quote": "pursuing higher education after X Class",
-      "needs_human_review": true,
-      "note": "New fact. Stipend, incentive and financial-assistance tiers have different education conditions that are not encoded."
+      "needs_human_review": false,
+      "note": "Common condition across all three benefit tiers. Per-tier education conditions (stipend, incentive, financial assistance) differ and are not encoded; those cases go to a caseworker. Reviewed by Nidhi Kaushik (Role 1) 2026-11-11."
     },
     {
       "rule_id": "WMCL-IN-R03",
@@ -37,8 +37,8 @@
       "unit": null,
       "source_passage_id": "WMCL-IN-EXCLUSION-01",
       "source_quote": "Children of Clerks, Drivers, Supervisors and Managers of Estate / Curing works are not entitled for these benefits.",
-      "needs_human_review": true,
-      "note": "Exclusion: applies when true."
+      "needs_human_review": false,
+      "note": "Exclusion: applies when fact is true. Source passage exact match. Reviewed by Nidhi Kaushik (Role 1) 2026-11-11."
     }
   ],
   "unresolved": [

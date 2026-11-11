@@ -110,7 +110,7 @@
       "source_passage_id": "PM-KISAN-IN-ELIGIBILITY-03",
       "source_quote": "The cut-off date for determination of eligibility of beneficiaries under the scheme shall be 01.02.2019",
       "needs_human_review": true,
-      "note": "Exception for transfer by succession on death (ELIGIBILITY-03/04); needs a person to decide how to model it."
+      "note": "Exception for transfer by succession on death (ELIGIBILITY-03/04) is not encoded; those cases go to a caseworker. Needs a person to decide whether the rule can be simplified or dropped."
     },
     {
       "rule_id": "PM-KISAN-IN-R10",
@@ -122,7 +122,7 @@
       "source_passage_id": "PM-KISAN-IN-ELIGIBILITY-02",
       "source_quote": "whose names are entered into the land records",
       "needs_human_review": true,
-      "note": "Exception for North-East States and Jharkhand."
+      "note": "Exception for North-East States and Jharkhand (where land records may not apply) is not encoded; those cases go to a caseworker."
     }
   ],
   "unresolved": [

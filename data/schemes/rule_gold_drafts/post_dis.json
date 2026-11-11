@@ -60,9 +60,9 @@
       "value": true,
       "unit": null,
       "source_passage_id": "POST-DIS-IN-ELIGIBILITY-01",
-      "source_quote": "Students in Class 11 or 12.",
+      "source_quote": "Students in Class 11 or 12.\nStudents in Diploma, Degree or Post-Graduate courses.",
       "needs_human_review": false,
-      "note": "Post-matric also covers Diploma, Degree and Post-Graduate courses."
+      "note": "Post-matric covers Class 11/12 and also Diploma, Degree and Post-Graduate courses; both are in the source passage."
     },
     {
       "rule_id": "POST-DIS-IN-R06",
@@ -86,7 +86,7 @@
       "source_passage_id": "POST-DIS-IN-EXCLUSION-02",
       "source_quote": "Scholarship will not be given to more than two students from a family.",
       "needs_human_review": true,
-      "note": "Counting basis (includes this student?) and the twin exception need a person to confirm."
+      "note": "Counting decision (2026-11-11): the limit of 2 includes this applicant. The fact counts total family members receiving the scholarship including the applicant. The source ('not more than two students from a family') supports this. Twin/multiple-birth exception is noted in unresolved; not encoded."
     },
     {
       "rule_id": "POST-DIS-IN-R08",

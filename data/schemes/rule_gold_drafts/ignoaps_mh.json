@@ -14,7 +14,7 @@
       "source_passage_id": "IGNOAPS-MH-ELIGIBILITY-01",
       "source_quote": "Eligible elderly individuals aged 65 and above",
       "needs_human_review": false,
-      "note": null
+      "note": "Maharashtra state threshold is 65, overriding the central NSAP-IGNOAPS threshold of 60. This is correct for this state scheme; the conflict is handled by caseworker referral per POLICY.md section 2."
     },
     {
       "rule_id": "IGNOAPS-MH-R02",
