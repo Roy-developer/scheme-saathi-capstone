@@ -240,6 +240,8 @@ def test_extract_route_is_off_by_default_and_needs_a_stored_file(
     base = f"/api/v1/journey/{conversation}/documents/files/identity_proof"
     with _patched(_values()):
         monkeypatch.delenv("SCHEME_SAATHI_DOCINTEL_ENDPOINT", raising=False)
+        for variable in ("OPENROUTER_API_KEY", "OPENROUTER_API_KEY_FREE"):
+            monkeypatch.delenv(variable, raising=False)
         assert client.get(f"{base}/suggestion").json()["enabled"] is False
         assert client.post(f"{base}/extract").status_code == 503
 

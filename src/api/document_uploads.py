@@ -158,6 +158,11 @@ def _scheme_report(
         return assess_document_metadata(data, registry=registry, bundle=bundle)
 
     reviews = store.list_reviews(str(conversation_id))
+    extractions = {}
+    for document_id in intact:
+        saved = store.get_extraction(str(conversation_id), document_id)
+        if saved:
+            extractions[document_id] = saved
     try:
         report = check_scheme_documents(
             scheme_id,
@@ -181,6 +186,7 @@ def _scheme_report(
             },
             typed_facts=values.get("typed_facts"),
             resolutions=store.list_resolutions(str(conversation_id)),
+            extractions=extractions,
         )
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error

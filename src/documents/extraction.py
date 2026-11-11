@@ -1,11 +1,12 @@
 """Suggest a name and date of birth from an uploaded synthetic document.
 
-The suggestion is only a convenience for the person. Nothing here decides
-anything: a human must accept or edit a value before the checker uses it, no
-model interprets the text, and a suggestion never says a document is genuine.
-Only values that sit next to a label such as "Name" or "DOB" are suggested.
+The suggestion is only a convenience for the person. A human must accept or
+edit a value before the checker uses it as typed input. An OCR service or a
+vision model only transcribes text; plain code picks values that sit next to a
+label such as "Name" or "DOB". A suggestion never says a document is genuine.
 """
 
+import base64
 import json
 import os
 import re
@@ -19,12 +20,21 @@ from urllib.request import Request, urlopen
 MAX_TEXT_CHARS = 20_000
 MAX_VALUE_CHARS = 120
 ANALYZE_TIMEOUT_SECONDS = 40
+VISION_TIMEOUT_SECONDS = 90
+# The free Nemotron model reasons before answering; 512 tokens is all thinking.
+VISION_MAX_TOKENS = 6000
 API_VERSION = "2024-11-30"
+DEFAULT_VISION_MODEL = "nvidia/nemotron-3.5-super-vl:free"
+VISION_PROMPT = (
+    "Transcribe all text visible in this image exactly as written, one "
+    "'Label: value' pair per line (keep Hindi/Marathi text as is). Do not "
+    "guess, translate, summarise or add anything that is not visible."
+)
 
 NAME_LABELS = r"(?:name|नाम|नांव|नाव)"
 DOB_LABELS = r"(?:date\s+of\s+birth|d\.?o\.?b\.?|जन्म\s*तिथि|जन्मतारीख|जन्म\s*दिनांक)"
 _NAME_PATTERN = re.compile(
-    rf"(?im)^\s*(?!father|mother|husband|spouse|पिता|माता)[^\n:]{{0,20}}?\b{NAME_LABELS}\b"
+    rf"(?im)^\s*(?!father|mother|husband|spouse|family|पिता|माता|पारिवार|परिवार|पति|पत्नी|वडील|वडिल|आई|कुटुंबाचे)[^\n:]{{0,20}}?\b{NAME_LABELS}\b"
     r"\s*[:\-]\s*([^\n]{2,%d})$" % MAX_VALUE_CHARS
 )
 _DOB_PATTERN = re.compile(
@@ -112,9 +122,71 @@ class AzureDocumentIntelligence:
         raise ExtractionError("The file could not be read. Please type the values.")
 
 
+class OpenRouterVisionExtractor:
+    """Transcribe an image with a vision model served through OpenRouter.
+
+    The model only copies visible text; the same label-adjacent parser used
+    for OCR then picks the values, so the model never decides what a value is.
+    """
+
+    engine = "openrouter-vision"
+
+    def __init__(self, api_key: str, model: str = DEFAULT_VISION_MODEL) -> None:
+        self.api_key = api_key
+        self.model = model
+
+    def read_text(self, content: bytes) -> str:
+        mime = _image_mime(content)
+        if mime is None:
+            raise ExtractionError(
+                "Only JPG or PNG images can be read automatically. Please type the values."
+            )
+        from langchain_core.messages import HumanMessage
+
+        from src.llm_client import openrouter_chat_model
+
+        data_url = f"data:{mime};base64,{base64.b64encode(content).decode('ascii')}"
+        message = HumanMessage(content=[
+            {"type": "text", "text": VISION_PROMPT},
+            {"type": "image_url", "image_url": {"url": data_url}},
+        ])
+        try:
+            reply = openrouter_chat_model(
+                self.api_key, self.model,
+                timeout=VISION_TIMEOUT_SECONDS, max_tokens=VISION_MAX_TOKENS,
+                reasoning_effort="low",
+            ).invoke([message])
+        except Exception as error:  # provider, network and rate-limit errors
+            raise ExtractionError(
+                "The file could not be read. Please type the values."
+            ) from error
+        text = reply.content
+        if isinstance(text, list):
+            text = " ".join(
+                part.get("text", "") if isinstance(part, dict) else str(part)
+                for part in text
+            )
+        text = str(text).strip()[:MAX_TEXT_CHARS]
+        if not text:
+            raise ExtractionError("The file could not be read. Please type the values.")
+        return text
+
+
+def _image_mime(content: bytes) -> str | None:
+    if content.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png"
+    if content.startswith(b"\xff\xd8\xff"):
+        return "image/jpeg"
+    return None
+
+
 def get_extractor() -> Extractor | None:
     """Return the configured engine, or None when extraction is switched off."""
 
+    api_key = os.getenv("OPENROUTER_API_KEY_FREE") or os.getenv("OPENROUTER_API_KEY")
+    if api_key:
+        model = os.getenv("OPENROUTER_VISION_MODEL") or DEFAULT_VISION_MODEL
+        return OpenRouterVisionExtractor(api_key, model)
     endpoint = os.getenv("SCHEME_SAATHI_DOCINTEL_ENDPOINT")
     key = os.getenv("SCHEME_SAATHI_DOCINTEL_KEY")
     if endpoint and key:

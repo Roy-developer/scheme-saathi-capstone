@@ -38,6 +38,8 @@ each document with the profile.
 | `file_problem` | File unreadable or invalid | Upload a new file |
 | `no_file` | No file uploaded | Upload a file |
 | `same_file_reused` | One file attached to two documents of the same scheme | Human acknowledges, or upload the right file |
+| `file_name_mismatch` | Name read from the file differs from profile | Human acknowledges, or upload the right file |
+| `file_date_of_birth_mismatch` | Date read from the file differs from profile | Same |
 
 - **Resolve:** a person can acknowledge a warning (with a note) or reopen it.
   The acknowledgment is tied to a fingerprint of the file hash, typed values,
@@ -50,12 +52,21 @@ each document with the profile.
 - **Readiness:** the "Show document readiness" button summarises each scheme as
   ready or what is still missing, including with partial documents.
 
-### Optional: suggested values from the file (OCR)
-- Off by default. Turns on only when `SCHEME_SAATHI_DOCINTEL_ENDPOINT` and
-  `SCHEME_SAATHI_DOCINTEL_KEY` are set (Azure Document Intelligence).
+### Optional: suggested values from the file (LLM reading)
+- Turns on when `OPENROUTER_API_KEY_FREE` (or `OPENROUTER_API_KEY`) is set. A vision model
+  on OpenRouter (default `nvidia/nemotron-3.5-super-vl:free`, change with
+  `OPENROUTER_VISION_MODEL`) only transcribes the text of a **JPG or PNG**; plain code then
+  picks the values that sit next to a "Name" or "DOB" label. PDFs must be typed.
+  Azure Document Intelligence (`SCHEME_SAATHI_DOCINTEL_ENDPOINT` and `..._KEY`) is used only
+  when no OpenRouter key is set.
+- Free models may log prompts: synthetic documents only.
 - "Read name and date from file" shows a suggestion. The user must press Accept
   to copy it into the fields. It never fills them silently.
 - Suggestions apply only while the file hash is unchanged.
+- **Validation against the profile:** once a suggestion exists, the checker also compares
+  the values read from the file with the confirmed profile. A difference gives
+  `file_name_mismatch` or `file_date_of_birth_mismatch` (acknowledgeable; voided if the
+  file or the values read change). No suggestion means no extra warning.
 
 ### After submission: under review, then human review
 - When a draft is submitted to the mock portal, the app shows **Under review**
@@ -177,9 +188,14 @@ All checker text exists in English, Hindi and Marathi.
    or government-issued. That needs DigiLocker, Aadhaar secure QR or government
    APIs, which involve real personal data and are out of scope. Human review is
    the validation method for now.
-2. **OCR not proven.** The Azure call has never run against the real service.
-   A Document Intelligence resource (Central India suggested) and secrets must be
-   created by someone with Azure access. Hindi and Marathi accuracy is untested.
+2. **LLM reading is only lightly tested.** On synthetic samples the free Nemotron VL model
+   read English well and Hindi mostly well (a few wrong characters). On a Marathi sample it
+   misread a surname and a year (`शिंदे` as `शेडे`, 1958 as 1986), which would raise a false
+   mismatch. Always check a suggestion against the file before accepting it. A larger image
+   did not fix it. Other free vision models were tried and none worked: the Gemma 4 models
+   returned 429 rate limits, `nemotron-3-nano-omni` was very slow and returned nothing, and
+   `inkling-2-small` is blocked outside agentic harnesses. The Azure call has also never run
+   against the real service.
 3. **Only name and date of birth** are compared, and only when a label sits next
    to the value.
 4. **Possible loss of recent uploads.** The backend scales to zero and backup

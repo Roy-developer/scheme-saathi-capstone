@@ -9,6 +9,7 @@ document is real.
 
 import hashlib
 import json
+import unicodedata
 from collections.abc import Callable
 from typing import Any
 
@@ -17,13 +18,41 @@ from src.documents.uploads import ResolutionRecord, UploadRecord
 Assess = Callable[[dict[str, Any]], dict[str, Any]]
 
 ACKNOWLEDGEABLE_CODES = frozenset(
-    {"name_mismatch", "date_of_birth_mismatch", "cannot_compare", "same_file_reused"}
+    {
+        "name_mismatch", "date_of_birth_mismatch", "cannot_compare",
+        "same_file_reused", "file_name_mismatch", "file_date_of_birth_mismatch",
+    }
 )
 NOT_VERIFIED_NOTICE = (
     "Document checker: it confirms that files are stored and that typed names "
-    "and dates agree. It does not read documents or verify that they are "
+    "and dates agree. Values read from a file are only suggestions and are "
+    "compared with the profile; it does not verify that a document is "
     "authentic."
 )
+
+
+def _normalized_name(value: str) -> str:
+    normalized = unicodedata.normalize("NFKC", value).casefold()
+    return "".join(character for character in normalized if character.isalnum())
+
+
+def _file_value_codes(
+    extraction: dict[str, Any] | None,
+    profile_name: str | None,
+    profile_date_of_birth: str | None,
+) -> list[str]:
+    """Compare values read from the stored file with the confirmed profile."""
+
+    if not extraction:
+        return []
+    codes = []
+    name = extraction.get("name")
+    if name and profile_name and _normalized_name(name) != _normalized_name(profile_name):
+        codes.append("file_name_mismatch")
+    dob = extraction.get("date_of_birth")
+    if dob and profile_date_of_birth and dob != profile_date_of_birth:
+        codes.append("file_date_of_birth_mismatch")
+    return codes
 
 
 def issue_fingerprint(
@@ -35,22 +64,24 @@ def issue_fingerprint(
     entered_name: str | None,
     entered_date: str | None,
     checklist_fingerprint: str,
+    file_name: str | None = None,
+    file_date: str | None = None,
 ) -> str:
     """Hash everything an acknowledgment depends on; any change voids it."""
 
-    canonical = json.dumps(
-        {
-            "document_id": document_id,
-            "code": code,
-            "upload_sha256": upload_sha256,
-            "profile_name": (profile_name or "").strip(),
-            "entered_name": (entered_name or "").strip(),
-            "entered_date": entered_date or "",
-            "checklist_fingerprint": checklist_fingerprint,
-        },
-        sort_keys=True,
-        separators=(",", ":"),
-    )
+    values = {
+        "document_id": document_id,
+        "code": code,
+        "upload_sha256": upload_sha256,
+        "profile_name": (profile_name or "").strip(),
+        "entered_name": (entered_name or "").strip(),
+        "entered_date": entered_date or "",
+        "checklist_fingerprint": checklist_fingerprint,
+    }
+    if code.startswith("file_") and code != "file_problem":
+        values["file_name"] = (file_name or "").strip()
+        values["file_date"] = file_date or ""
+    canonical = json.dumps(values, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
@@ -63,6 +94,7 @@ def _document_issues(
     status: str,
     discrepancy_codes: set[str],
     shares_file: bool = False,
+    file_codes: list[str] | None = None,
 ) -> list[str]:
     codes: list[str] = []
     if upload is not None and not is_intact:
@@ -73,6 +105,7 @@ def _document_issues(
         if shares_file:
             codes.append("same_file_reused")
         codes.extend(sorted(discrepancy_codes))
+        codes.extend(file_codes or [])
         if status == "unknown" and not discrepancy_codes:
             codes.append("cannot_compare")
     return codes
@@ -91,6 +124,7 @@ def check_scheme_documents(
     profile_conditions: dict[str, bool | None],
     typed_facts: dict[str, object] | None,
     resolutions: list[ResolutionRecord],
+    extractions: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Build one scheme's checker report from stored files and typed fields."""
 
@@ -154,6 +188,7 @@ def check_scheme_documents(
         for item in group["alternatives"]:
             document_id = item["document_id"]
             upload = uploads.get(document_id)
+            extracted = (extractions or {}).get(document_id)
             codes = _document_issues(
                 document_id,
                 upload=upload,
@@ -163,6 +198,9 @@ def check_scheme_documents(
                 discrepancy_codes=discrepancies.get(document_id, set()),
                 shares_file=(
                     upload is not None and sha_counts.get(upload.sha256, 0) > 1
+                ),
+                file_codes=_file_value_codes(
+                    extracted, profile_name, profile_date_of_birth
                 ),
             )
             entered = metadata.get(document_id, {})
@@ -179,6 +217,8 @@ def check_scheme_documents(
                         if entered.get("date_of_birth") else None
                     ),
                     checklist_fingerprint=assessment["active_fingerprint"],
+                    file_name=(extracted or {}).get("name"),
+                    file_date=(extracted or {}).get("date_of_birth"),
                 )
                 resolution = resolution_by_issue.get((document_id, code))
                 acknowledged = (
