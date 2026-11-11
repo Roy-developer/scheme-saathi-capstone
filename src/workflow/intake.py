@@ -18,10 +18,8 @@ ANSWER_READER_PROMPT = (
     "clearly answers that question. For date questions, return an ISO date "
     "(YYYY-MM-DD) only when explicitly stated. Use unknown for an explicit "
     "don't-know answer and uncertain otherwise. A value is only a proposal "
-    "and will be confirmed by the person. If prior_exchanges is present, "
-    "use those earlier exchanges only to resolve references (\"same as "
-    "before\", \"I already told you\") — never infer new facts from them. "
-    "Return JSON with kind, value, confidence."
+    "and will be confirmed by the person. Return JSON with kind, value, "
+    "confidence."
 )
 QUERY_REWRITE_PROMPT = (
     "You are the intake query-normalization step for a government-scheme "
@@ -92,27 +90,17 @@ async def interpret_free_text_answer(
     fact: str,
     question: str,
     reply: str,
-    *,
-    prior_exchanges: list[str] | None = None,
 ) -> AnswerInterpretation:
-    """Interpret one unsupported reply using the configured chat model.
-
-    Args:
-        prior_exchanges: Up to 3 recent exchanges the LLM already saw, giving
-            it context when a reply references earlier conversation.
-    """
+    """Interpret one unsupported reply using the configured chat model."""
 
     if not openrouter_chat_settings(DEFAULT_CHAT_MODEL)[0]:
         raise IntakeAgentError(
             "OPENROUTER_API_KEY is required for free-text answer reading."
         )
-    payload: dict[str, object] = {"fact": fact, "question": question, "reply": reply}
-    if prior_exchanges:
-        payload["prior_exchanges"] = prior_exchanges
     return await _ask_structured(
         AnswerInterpretation,
         ANSWER_READER_PROMPT,
-        json.dumps(payload),
+        json.dumps({"fact": fact, "question": question, "reply": reply}),
         "answer-reading",
         "OpenRouter returned an invalid answer interpretation.",
     )

@@ -19,11 +19,6 @@ DATE_HINTS = {
     "hi": 'कृपया 12/03/1981 जैसी तारीख दें या "मुझे नहीं पता" कहें।',
     "mr": 'कृपया 12/03/1981 अशी तारीख द्या किंवा "माहित नाही" असे सांगा.',
 }
-UNCLEAR_REPLY_PREFIX = {
-    "en": "I could not understand that.",
-    "hi": "मुझे समझ नहीं आया।",
-    "mr": "मला समजले नाही.",
-}
 INTEGER_REPLY_PATTERN = re.compile(r"[+-]?[0-9]+")
 DECIMAL_REPLY_PATTERN = re.compile(
     r"[+-]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?"

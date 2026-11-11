@@ -25,12 +25,9 @@ from src.ui.api_client import (
     create_application_draft,
     decide_application_draft,
     edit_application_draft,
-    delete_household_profile,
     forget_journey,
     get_journey_state,
     list_application_drafts,
-    load_household_profile,
-    save_household_profile,
     correct_journey_answer,
     run_journey,
     send_journey_message,
@@ -213,14 +210,6 @@ COPY = {
         "mode_chat": "Answer questions",
         "mode_example": "Use an example person",
         "restored": "Your earlier conversation was restored.",
-        "return_code_label": "Return code",
-        "return_code_help": "Enter a return code from a previous visit to load your saved answers.",
-        "return_code_load": "Load saved answers",
-        "return_code_display": "Your return code: **{code}**. Write it down to load your answers next time.",
-        "return_code_save": "Save my answers",
-        "return_code_saved": "Answers saved. Your return code: **{code}**",
-        "return_code_not_found": "Return code not found. Starting fresh.",
-        "return_code_error": "Could not load saved answers.",
         "footer": "These are development fixtures, not held-out evaluation cases. No language model determines the verdict.",
     },
     "hi": {
@@ -376,14 +365,6 @@ COPY = {
         "mode_chat": "प्रश्नों के उत्तर दें",
         "mode_example": "उदाहरण व्यक्ति का उपयोग करें",
         "restored": "आपकी पिछली बातचीत बहाल की गई।",
-        "return_code_label": "रिटर्न कोड",
-        "return_code_help": "पिछली बार का रिटर्न कोड डालें ताकि आपके सहेजे गए उत्तर लोड हो जाएं।",
-        "return_code_load": "सहेजे गए उत्तर लोड करें",
-        "return_code_display": "आपका रिटर्न कोड: **{code}**। अगली बार उत्तर लोड करने के लिए इसे लिख लें।",
-        "return_code_save": "मेरे उत्तर सहेजें",
-        "return_code_saved": "उत्तर सहेजे गए। आपका रिटर्न कोड: **{code}**",
-        "return_code_not_found": "रिटर्न कोड नहीं मिला। नया शुरू करें।",
-        "return_code_error": "सहेजे गए उत्तर लोड नहीं हो सके।",
         "footer": "ये विकास फ़िक्स्चर हैं, सुरक्षित मूल्यांकन मामले नहीं। कोई भाषा मॉडल परिणाम तय नहीं करता।",
     },
     "mr": {
@@ -539,14 +520,6 @@ COPY = {
         "mode_chat": "प्रश्नांची उत्तरे द्या",
         "mode_example": "उदाहरण व्यक्ती वापरा",
         "restored": "तुमचे आधीचे संभाषण पुन्हा सुरू झाले.",
-        "return_code_label": "रिटर्न कोड",
-        "return_code_help": "मागील भेटीचा रिटर्न कोड टाका म्हणजे तुमची जतन केलेली उत्तरे लोड होतील.",
-        "return_code_load": "जतन केलेली उत्तरे लोड करा",
-        "return_code_display": "तुमचा रिटर्न कोड: **{code}**. पुढच्या वेळी उत्तरे लोड करण्यासाठी हा लिहून ठेवा.",
-        "return_code_save": "माझी उत्तरे जतन करा",
-        "return_code_saved": "उत्तरे जतन झाली. तुमचा रिटर्न कोड: **{code}**",
-        "return_code_not_found": "रिटर्न कोड सापडला नाही. नवीन सुरू करा.",
-        "return_code_error": "जतन केलेली उत्तरे लोड होऊ शकली नाहीत.",
         "footer": "ही विकास फिक्स्चर आहेत, सुरक्षित मूल्यमापन प्रकरणे नाहीत. कोणतेही भाषा मॉडेल निकाल ठरवत नाही.",
     },
 }
@@ -624,7 +597,6 @@ WORKFLOW_STATE_KEYS = APPLICATION_STATE_KEYS | {
     "journey_discovery_notices",
     "journey_discovery_events",
     "unprocessed_candidate_ids",
-    "journey_return_code",
     "application_drafts",
     "application_drafts_loaded_for",
     "application_flow",
@@ -768,8 +740,6 @@ def save_journey(journey: JourneyResponse) -> None:
         journey.correctable_fact_names or journey.known_fact_names
     )
     st.session_state.fact_questions = journey.fact_questions
-    if journey.return_code:
-        st.session_state.journey_return_code = journey.return_code
     st.session_state.application_flow = {
         scheme_id: {"assessment": assessment, "error": None, "edit_mode": False}
         for scheme_id, assessment in journey.document_assessments.items()
@@ -848,7 +818,6 @@ def interview_request(
             st.session_state.interaction_mode == "citizen"
             or st.session_state.csc_citizen_present
         ),
-        return_code=st.session_state.get("household_return_code") or None,
         **schemes,
     )
 
@@ -1902,27 +1871,6 @@ def render_interview(
         )
 
     if st.session_state.interview_scheme_id != scheme_id:
-        with st.expander(text["return_code_label"], expanded=False):
-            code_input = st.text_input(
-                text["return_code_label"],
-                key=f"return_code_input_{scheme_id}",
-                help=text["return_code_help"],
-                max_chars=12,
-                label_visibility="collapsed",
-            )
-            if st.button(text["return_code_load"], key=f"load_code_{scheme_id}"):
-                if code_input and code_input.strip():
-                    try:
-                        loaded = load_household_profile(code_input.strip())
-                    except JourneyApiError:
-                        loaded = None
-                    if loaded:
-                        st.session_state.household_return_code = loaded["return_code"]
-                        st.success(text["return_code_display"].format(
-                            code=loaded["return_code"],
-                        ))
-                    else:
-                        st.warning(text["return_code_not_found"])
         description_key = f"household_description_{scheme_id}"
         description = st.text_area(
             text["household_description"],
@@ -1978,20 +1926,6 @@ def render_interview(
     elif st.session_state.interview_message:
         # No verdict, e.g. the scheme has no reviewed rules.
         st.warning(st.session_state.interview_message)
-    existing_code = st.session_state.get("journey_return_code")
-    if existing_code:
-        st.info(text["return_code_display"].format(code=existing_code))
-    if st.session_state.conversation_id and st.session_state.known_fact_names:
-        if st.button(text["return_code_save"], key=f"save_code_{scheme_id}"):
-            try:
-                code = save_household_profile(
-                    st.session_state.conversation_id,
-                    return_code=existing_code,
-                )
-                st.session_state.journey_return_code = code
-                st.success(text["return_code_saved"].format(code=code))
-            except JourneyApiError as error:
-                st.error(str(error))
     if st.button(text["interview_restart"]):
         start_interview(scheme_id, locale)
         st.rerun()
@@ -2160,17 +2094,12 @@ with st.sidebar:
         st.caption(f"Deployed branch: {deployed_ref}")
     if st.button(text["forget"], use_container_width=True):
         conversation_id = st.session_state.conversation_id
-        household_code = st.session_state.get("journey_return_code")
         try:
             if conversation_id:
                 forget_journey(conversation_id)
-            if household_code:
-                delete_household_profile(household_code)
         except JourneyApiError as error:
             st.session_state.forget_error = str(error)
         else:
-            st.session_state.pop("household_return_code", None)
-            st.session_state.pop("journey_return_code", None)
             clear_workflow_state(include_inputs=True)
             st.query_params.clear()
             st.session_state.show_forgotten = True
