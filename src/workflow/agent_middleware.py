@@ -122,7 +122,20 @@ class ScrubbedTraceMiddleware(AgentMiddleware):
             self._record(None, stop.status)
             raise
         usage = response.result[-1].usage_metadata or {}
-        self._usage = (usage.get("input_tokens", 0), usage.get("output_tokens", 0), started)
+        input_tokens = usage.get("input_tokens", 0) or 0
+        output_tokens = usage.get("output_tokens", 0) or 0
+        self._usage = (input_tokens, output_tokens, started)
+        try:
+            from src.observability.metrics import record_llm_call, record_tokens
+
+            record_tokens(
+                self.model_name,
+                input_tokens=int(input_tokens),
+                output_tokens=int(output_tokens),
+            )
+            record_llm_call(self.model_name, time.monotonic() - started)
+        except Exception:  # noqa: BLE001 — metrics must not break the agent
+            pass
         return response
 
     async def awrap_tool_call(

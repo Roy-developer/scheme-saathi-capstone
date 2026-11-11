@@ -1,0 +1,26 @@
+{
+  "experiment_id": "E1",
+  "title": "Does the agent team justify its cost?",
+  "status": "config_stub_not_runnable",
+  "description": "Compare C0 fixed workflow, C1 single agent with all tools, and C2 specialist team under the same model, tools, and budget. Preserve safety and approval controls in every configuration.",
+  "controls": {
+    "model_id": "TBD_FIXED_BEFORE_RUN",
+    "tools": "same_across_C0_C1_C2",
+    "budget": "TBD_TOKEN_AND_CALL_CAPS",
+    "eval_set": "held_out_role5_only"
+  },
+  "configurations": [
+    {"id": "C0", "mode": "fixed_workflow"},
+    {"id": "C1", "mode": "single_agent"},
+    {"id": "C2", "mode": "specialist_team"}
+  ],
+  "metrics": [
+    "task_success",
+    "policy_violations",
+    "cost_per_case",
+    "median_latency",
+    "p95_latency",
+    "errors_timeouts"
+  ],
+  "blocker": "Requires frozen Phase 5 agents/guardrails and a protected held-out set."
+}

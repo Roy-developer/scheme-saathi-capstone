@@ -1,3 +1,7 @@
+[browser]
+gatherUsageStats = false
+
 [server]
+headless = true
 # Matches the 20 MB per-document limit enforced again by the API.
 maxUploadSize = 20

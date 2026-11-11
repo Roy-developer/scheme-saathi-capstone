@@ -266,8 +266,12 @@ async def recover_authorized_action(
 def mask_sensitive_text(text: str) -> str:
     """Mask common identifiers before free text reaches a model or trace."""
 
+    from src.observability.metrics import record_masked_id_hits
+
     for rule in _RESOLVED_PII_RULES:
-        text, _matches = rule.apply(text)
+        text, matches = rule.apply(text)
+        if matches:
+            record_masked_id_hits(len(matches), field_type=str(rule.pii_type))
     return text
 
 

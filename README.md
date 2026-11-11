@@ -16,7 +16,8 @@ own branch from `main` and run the app locally.
 | `docs/` | Roles and work plan, threat model, memory policy, evaluation report, and the [page-referenced capstone guide notes](docs/CAPSTONE_PROJECT_GUIDE_REFERENCE.md) |
 | `src/` | Application code (agents, MCP servers, API) |
 | `data/` | Scheme data with source URL and collection date, synthetic personas only |
-| `eval/` | Evaluation harness, golden set, red-team suite |
+| `eval/` | Role 5 PDF eval suite: personas, held-out generator, red-team, E2 off/on, κ, simulated citizen; run `python scripts/run_role5_dev_evals.py` (CI-gated; see [`eval/README.md`](eval/README.md)) |
+| `monitoring/` | L13/L16 Prometheus scrape/alert + Grafana dashboard JSON for Azure Managed Grafana or a separate Container App; see [`docs/MONITORING.md`](docs/MONITORING.md) |
 | `tests/` | Unit tests (at least one per tool) |
 
 ## Team roles
@@ -28,7 +29,7 @@ See [`docs/Scheme_Saathi_Roles_and_Work_Plan.pdf`](docs/Scheme_Saathi_Roles_and_
 | 2 | Knowledge and memory engineer | TBD |
 | 3 | Agents and orchestration engineer | TBD |
 | 4 | Tools, control and security engineer | TBD |
-| 5 | Evaluation and red-team engineer | TBD |
+| 5 | Evaluation and red-team engineer | TBD — foundation in [`eval/`](eval/) and [`docs/EVALUATION_REPORT.md`](docs/EVALUATION_REPORT.md) |
 | 6 | Deployment and operations engineer | TBD |
 
 ## Ground rules

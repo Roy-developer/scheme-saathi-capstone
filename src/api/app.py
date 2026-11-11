@@ -10,7 +10,7 @@ from typing import AsyncIterator
 from uuid import UUID
 
 import aiosqlite
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import FastAPI, HTTPException, Query, Request, Response
 # Client connects to the MCP server; parameters explain how to launch stdio.
 from mcp import Client, StdioServerParameters
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
@@ -45,6 +45,16 @@ from src.rules.facts import TypedFactStore
 from src.rules.bundles import bundle_fingerprint
 from src.rules.models import HouseholdProfile
 # This adapter calls the MCP tool and translates failures for the API layer.
+from src.observability.metrics import (
+    metrics_response,
+    observe_duration,
+    record_conversation,
+    record_evaluation,
+    record_pending_approval_created,
+    record_pending_approval_resolved,
+    record_question,
+    record_verdict,
+)
 from src.workflow.eligibility import (
     evaluate_eligibility,
 )
@@ -460,6 +470,14 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@app.get("/metrics")
+def prometheus_metrics() -> Response:
+    """Expose Prometheus metrics for Role 6 dashboards to scrape later."""
+
+    payload, content_type = metrics_response()
+    return Response(content=payload, media_type=content_type)
+
+
 @app.get("/api/v1/info", tags=["service"])
 def service_info() -> dict[str, str | bool]:
     """Return non-sensitive build metadata for shared-deployment diagnostics."""
@@ -489,11 +507,15 @@ async def evaluate(
         raise HTTPException(status_code=404, detail="Unknown scheme")
     # Send the validated profile through MCP and return the tool's verdict.
     try:
-        return await evaluate_eligibility(
-            http_request.app.state.mcp_client,
-            scheme_id,
-            eligibility_request,
-        )
+        with observe_duration("evaluate"):
+            result = await evaluate_eligibility(
+                http_request.app.state.mcp_client,
+                scheme_id,
+                eligibility_request,
+            )
+        record_evaluation(scheme_id, source="api")
+        record_verdict(scheme_id, result.result)
+        return result
     except MCPToolError as error:
         # Return a service error, never a made-up or fixture-based verdict.
         raise _tool_failure(
@@ -636,6 +658,27 @@ async def search_schemes(
 
 
 
+def _record_journey_metrics(endpoint: str, result: JourneyResponse) -> None:
+    """Record conversation, question, and verdict counters for a journey reply."""
+
+    record_conversation(endpoint)
+    if result.question is not None:
+        scheme_id = None
+        if result.eligibility_result is not None:
+            scheme_id = result.eligibility_result.scheme_id
+        elif result.candidate_scheme_ids:
+            scheme_id = result.candidate_scheme_ids[0]
+        record_question(scheme_id)
+    if result.eligibility_results:
+        for scheme_id, verdict in result.eligibility_results.items():
+            record_evaluation(scheme_id, source="journey")
+            record_verdict(scheme_id, verdict.result)
+    elif result.eligibility_result is not None:
+        scheme_id = result.eligibility_result.scheme_id
+        record_evaluation(scheme_id, source="journey")
+        record_verdict(scheme_id, result.eligibility_result.result)
+
+
 @app.post("/api/v1/journey", response_model=JourneyResponse)
 async def journey(
     journey_request: JourneyRequest,
@@ -644,11 +687,12 @@ async def journey(
     """Run one orchestrated discovery or synthetic eligibility step."""
 
     try:
-        result = await run_journey(
-            request.app.state.journey_graph,
-            journey_request,
-        )
-        return result.model_copy(update={
+        with observe_duration("journey"):
+            result = await run_journey(
+                request.app.state.journey_graph,
+                journey_request,
+            )
+        result = result.model_copy(update={
             "passages": [
                 passage.model_copy(update={
                     "eligible_for_mock_flow": passage.scheme_id
@@ -657,6 +701,8 @@ async def journey(
                 for passage in result.passages
             ],
         })
+        _record_journey_metrics("journey", result)
+        return result
     except MCPToolError as error:
         raise _tool_failure(
             "A journey tool is unavailable.",
@@ -686,11 +732,14 @@ async def journey_message(
     """
 
     try:
-        return await resume_journey(
-            request.app.state.journey_graph,
-            conversation_id,
-            journey_message.message,
-        )
+        with observe_duration("journey_message"):
+            result = await resume_journey(
+                request.app.state.journey_graph,
+                conversation_id,
+                journey_message.message,
+            )
+        _record_journey_metrics("journey_message", result)
+        return result
     except JourneyNotWaitingError as error:
         raise HTTPException(
             status_code=409,
@@ -889,6 +938,7 @@ async def create_application_draft(
                 "district": draft_request.district,
             },
         )
+        record_pending_approval_created()
         return _public_application_record(created)
     except HTTPException:
         raise
@@ -1059,6 +1109,9 @@ async def update_application_approval(
                 },
             },
         )
+        # Capstone monitoring: draft left the waiting-approval queue.
+        if decision.action in {"approve", "reject", "submit"}:
+            record_pending_approval_resolved()
         return _public_application_record(result)
     except HTTPException:
         raise

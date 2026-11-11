@@ -1,0 +1,26 @@
+{
+  "experiment_id": "E2",
+  "title": "Do the defences work?",
+  "status": "offline_defences_off_on_runnable",
+  "description": "Offline E2 compares defences off vs on for injection, ID masking, and contextual scam screens, plus clean-case false-block rate. The same scam helper is wired on live intake/journey. Live memory/approval-gate attacks and independent attack authorship remain pending.",
+  "controls": {
+    "defence_modes": ["off", "on"],
+    "attack_suite": "eval/red_team/attacks_v0.json",
+    "clean_set": "eval/development/personas_v1.json",
+    "isolation": "synthetic_evaluation_only_not_live_deployment",
+    "offline_runner": "scripts/evaluate_e2_defences_dev.py"
+  },
+  "metrics": [
+    "attack_success_rate",
+    "false_block_rate",
+    "policy_violations",
+    "cost_per_case",
+    "errors_timeouts",
+    "offline_pass_rate"
+  ],
+  "commands": {
+    "offline": "python scripts/evaluate_e2_defences_dev.py",
+    "red_team": "python scripts/evaluate_red_team_dev.py"
+  },
+  "blocker": "Live memory/approval-gate attacks and independent attack authorship still required before the full PDF E2 claim."
+}
