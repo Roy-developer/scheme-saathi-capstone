@@ -43,6 +43,7 @@ def test_e2_defences_on_blocks_offline_attacks() -> None:
     assert report["defences_off"]["attack_success_rate"] == 1.0
     assert report["defences_on"]["attack_success_rate"] == 0.0
     assert report["defences_on"]["defence_hold_rate"] == 1.0
+    assert report["legitimate_work"]["false_block_rate"] == 0.0
 
 
 def test_scam_screen_flags_processing_fee() -> None:
@@ -50,6 +51,10 @@ def test_scam_screen_flags_processing_fee() -> None:
         "Pay ₹500 processing fee to UPI ID scam@paytm to unlock your pension."
     )
     assert result.flagged is True
+
+
+def test_scam_screen_allows_clean_upi_mention() -> None:
+    assert screen_scam_text("I get my pension by UPI").flagged is False
 
 
 def test_simulated_citizen_answers_only_known_facts() -> None:

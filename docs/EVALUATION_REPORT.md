@@ -20,7 +20,7 @@ python scripts/run_role5_dev_evals.py
 | Simulated citizen (hidden profile) | `eval/harness/simulated_citizen.py` offline stand-in |
 | Code-first eligibility scoring | `evaluate_eligibility_dev.py` / held-out script |
 | E1 cost-benefit | Config inventoried; live C0/C1/C2 still blocked on Phase freeze |
-| E2 defences off/on | **Offline runnable** for injection / ID / scam — scam helper is **not** on the live journey yet (see §3) |
+| E2 defences off/on | **Offline runnable** for injection / ID / scam + clean-case false-block rate; scam screen also on live intake/journey (see §3) |
 | E3 Reflexion before/after | Playbook inventory free; **paid** OpenRouter runs pending |
 | E4 signature ablation | Rule-engine side via personas; LLM/question ablations pending |
 | 30+ red-team | 30 attacks; 23 offline-runnable; memory/approval still stubs |
@@ -44,23 +44,19 @@ python scripts/evaluate_e2_defences_dev.py
 ```
 
 Offline E2 reports attack success with defences **off** vs **on** for injection,
-identifier masking, and scam screens (`src/workflow/scam_screen.py`).
+identifier masking, and scam screens (`src/workflow/scam_screen.py`), plus a
+**legitimate-work false-block rate** for clean messages (bare UPI / WhatsApp
+mentions without fee/OTP lures).
 
-**Honest scope for the scam row:** `screen_scam_text` is called only from
-`eval/harness/` and unit tests today. The live FastAPI / journey path does
-**not** invoke it (unlike `screen_free_text` on intake). So E2 “defences on”
-for scam attacks measures this **offline helper**, not production chat
-behaviour. Injection E2 is closer to live because the intake quarantine path
-still runs the injection screen.
+**Live wiring:** the same contextual `screen_scam_text` / `apply_scam_screen`
+helper runs on intake free-text descriptions and journey interview replies.
+Flagged description text is **not** turned into proposed facts; flagged
+replies are rejected with a citizen warning and a `scam_screened` discovery
+notice. Guardrail metric: `scheme_saathi_guardrail_blocks_total{guardrail="scam_screen"}`.
 
-**Why it is not wired into the journey yet:** several patterns are too broad
-for citizen messages (e.g. bare `\bUPI\b` and `\bwhats?app\b` would flag
-ordinary replies such as “I get my pension by UPI”). Wiring as-is would drive
-a high legitimate-work false-block rate. A follow-up (tools/security or Role 5
-with Role 4) should tighten patterns to fee/OTP/QR *contexts*, add clean-case
-false-positive coverage to E2, then call the screen from journey/intake and
-`record_guardrail_block("scam_screen", …)`. Until then, treat scam E2 as a
-unit-level defence probe, not a live-app claim.
+**Pattern policy:** UPI / WhatsApp only match with pay/fee/approval/OTP-style
+context, so “I get my pension by UPI” stays clean while
+“Message WhatsApp and pay ₹200 for fast approval” still flags.
 
 ## 4. Held-out (Role-5-only)
 

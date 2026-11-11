@@ -35,6 +35,7 @@ from src.workflow.agent_runtime import (
 )
 from src.workflow.injection_guard import screen_free_text
 from src.workflow.questions import parse_interpreted_answer
+from src.workflow.scam_screen import apply_scam_screen
 
 
 DESCRIPTION_READER_PROMPT = (
@@ -196,14 +197,19 @@ async def propose_initial_profile_facts(
         return [], copy_agent_budget(budget), [], "deterministic"
 
     # Extra first filter: neutralise suspected embedded instructions, then
-    # mask identifiers (the reader runs outside the agent's PII middleware).
-    # The real boundary is below: only the tool-free reader sees this text.
+    # flag fee/OTP/WhatsApp/UPI lures, then mask identifiers (the reader runs
+    # outside the agent's PII middleware). The real boundary is below: only
+    # the tool-free reader sees this text.
     screened = screen_free_text(description)
     if screened.flagged:
         from src.observability.metrics import record_guardrail_block
 
         record_guardrail_block("injection_screen", "flagged")
-    safe_description = mask_sensitive_text(screened.text)
+    scam = apply_scam_screen(screened.text)
+    if scam.flagged:
+        # Do not turn scam lures into proposed household facts.
+        return [], copy_agent_budget(budget), [], "scam_screened"
+    safe_description = mask_sensitive_text(scam.text)
     allowed_facts = tuple(dict.fromkeys([*package_facts, *discovery_facts]))
     reading, budget_after_read, trace, read_status = await run_accounted_model_call(
         agent="intake",

@@ -64,7 +64,7 @@ some verdicts / masked IDs / agent tokens will move with live traffic).
 | `HighCantTellRate` | Journey re-counts accumulated `eligibility_results` on every turn → rate can skew |
 | Pending approvals gauge | In-memory per process; wrong across Azure replicas / restarts; not DB-backed |
 | Cost / tokens / LLM latency | Estimate only; helper LLM paths (`run_accounted_model_call`, intake structured asks) not fully counted; agent `PIIMiddleware` redactions do not increment masked-ID hits |
-| Guardrail blocks | Only intake injection screen; scam screen is not on the live API path |
+| Guardrail blocks | Injection + scam screens on live intake/journey; scam patterns are contextual (still expand coverage / UX as attacks grow) |
 | Conversation duration | Guide metric not implemented |
 
 **Before claiming monitoring complete:** (1) record journey verdicts once per new

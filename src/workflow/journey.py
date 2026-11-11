@@ -95,6 +95,7 @@ from src.workflow.question_picker import (
 from src.workflow.intake_agent import (
     propose_initial_profile_facts,
 )
+from src.workflow.scam_screen import apply_scam_screen, scam_warning_for_locale
 from src.workflow.supervisor_agent import (
     propose_supervisor_plan,
 )
@@ -1740,6 +1741,12 @@ def build_journey_graph(
                     "profile_proposals": profile_proposals,
                     "initial_description_processed": True,
                 })
+                if extraction_status == "scam_screened":
+                    notices = list(state.get("discovery_notices", []))
+                    notices.append("scam_screened")
+                    discovery_updates["discovery_notices"] = list(
+                        dict.fromkeys(notices)
+                    )
                 if profile_proposals:
                     return ask_next_proposal(
                         profile=profile.model_dump(mode="json"),
@@ -1751,6 +1758,21 @@ def build_journey_graph(
 
             # A reply has arrived for the last question: apply it.
             if pending_fact and reply is not None:
+                scam_reply = apply_scam_screen(str(reply))
+                if scam_reply.flagged:
+                    notices = list(state.get("discovery_notices", []))
+                    notices.append("scam_screened")
+                    warning = scam_warning_for_locale(locale)
+                    prior_question = state.get("question") or state.get("message") or ""
+                    return ask(
+                        pending_fact,
+                        f"{warning}\n\n{prior_question}".strip(),
+                        confirming=bool(state.get("pending_confirmation")),
+                        source=state.get("pending_confirmation_source", ""),
+                        proposed=state.get("pending_interpreted_value"),
+                        discovery_notices=list(dict.fromkeys(notices)),
+                        pending_answer=None,
+                    )
                 problem: str | None = None
                 if state.get("pending_confirmation"):
                     confirmation = parse_answer("is_widow", reply, locale)

@@ -123,6 +123,7 @@ def main(argv: list[str] | None = None) -> int:
             "defences_off_attack_success_rate": e2["defences_off"]["attack_success_rate"],
             "defences_on_attack_success_rate": e2["defences_on"]["attack_success_rate"],
             "defences_on_defence_hold_rate": e2["defences_on"]["defence_hold_rate"],
+            "legitimate_work_false_block_rate": e2["legitimate_work"]["false_block_rate"],
         },
         "label_agreement": {
             "paired_label_count": agreement["paired_label_count"],
@@ -145,6 +146,7 @@ def main(argv: list[str] | None = None) -> int:
         eligibility["incorrect"] > 0
         or red_team["failed"] > 0
         or (e2["defences_on"]["attack_success_rate"] or 0) > 0
+        or (e2["legitimate_work"]["false_block_rate"] or 0) > 0
     )
     return 1 if failed else 0
 

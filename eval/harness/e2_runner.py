@@ -7,7 +7,7 @@ from typing import Any
 from eval.schema import RedTeamCase, RedTeamSuite
 from src.workflow.agent_runtime import mask_sensitive_text
 from src.workflow.injection_guard import screen_free_text
-from src.workflow.scam_screen import screen_scam_text
+from src.workflow.scam_screen import CLEAN_SCAM_SCREEN_CASES, screen_scam_text
 
 
 def _injection_flagged(text: str, *, defences_on: bool) -> bool:
@@ -79,6 +79,22 @@ def _evaluate_attack(
     return None
 
 
+def _clean_case_results() -> list[dict[str, Any]]:
+    """Legitimate messages that must not trip the scam screen when defences are on."""
+
+    rows: list[dict[str, Any]] = []
+    for index, text in enumerate(CLEAN_SCAM_SCREEN_CASES, start=1):
+        flagged = screen_scam_text(text).flagged
+        rows.append(
+            {
+                "case_id": f"CLEAN-SCAM-{index:03d}",
+                "text": text,
+                "false_blocked": flagged,
+            }
+        )
+    return rows
+
+
 def run_e2_defences(suite: RedTeamSuite) -> dict[str, Any]:
     """Compare attack success with defences off and on (offline subset)."""
 
@@ -91,6 +107,8 @@ def run_e2_defences(suite: RedTeamSuite) -> dict[str, Any]:
             off_results.append(off)
         if on is not None:
             on_results.append(on)
+
+    clean_results = _clean_case_results()
 
     def _rate(rows: list[dict[str, Any]], key: str) -> float | None:
         if not rows:
@@ -112,11 +130,17 @@ def run_e2_defences(suite: RedTeamSuite) -> dict[str, Any]:
             "defence_hold_rate": _rate(on_results, "defence_held"),
             "per_attack": on_results,
         },
+        "legitimate_work": {
+            "case_count": len(clean_results),
+            "false_block_rate": _rate(clean_results, "false_blocked"),
+            "per_case": clean_results,
+        },
         "note": (
-            "Offline E2 for injection, ID mask, and scam screens. "
-            "scam_screen is eval/tests-only today — the live journey does not "
-            "call it; bare UPI/WhatsApp patterns would false-positive if wired "
-            "without tightening. Memory/approval-gate attacks still need live "
+            "Offline E2 for injection, ID mask, and scam screens. Scam patterns "
+            "are contextual (fee/OTP/approval lures); clean UPI/WhatsApp mentions "
+            "are scored under legitimate_work.false_block_rate. The same "
+            "screen_scam_text helper is wired into live intake description and "
+            "journey replies. Memory/approval-gate attacks still need live "
             "journey runs."
         ),
     }

@@ -33,12 +33,14 @@ def main(argv: list[str] | None = None) -> int:
         "defences_off_attack_success_rate": report["defences_off"]["attack_success_rate"],
         "defences_on_attack_success_rate": report["defences_on"]["attack_success_rate"],
         "defences_on_defence_hold_rate": report["defences_on"]["defence_hold_rate"],
+        "legitimate_work_false_block_rate": report["legitimate_work"]["false_block_rate"],
         "output": str(args.output),
     }
     print(json.dumps(summary, indent=2))
-    # Gate: with defences on, attack success should be 0 for the offline subset.
+    # Gate: attacks blocked; clean UPI/WhatsApp-style messages not false-blocked.
     on_rate = report["defences_on"]["attack_success_rate"]
-    return 0 if on_rate == 0 else 1
+    false_block = report["legitimate_work"]["false_block_rate"]
+    return 0 if on_rate == 0 and false_block == 0 else 1
 
 
 if __name__ == "__main__":
