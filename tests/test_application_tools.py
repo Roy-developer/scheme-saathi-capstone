@@ -660,6 +660,10 @@ def test_model_enabled_application_journey_fits_durable_conversation_budget(tmp_
     class FullJourneyProvider(FakeChatModel):
         model_name: str = "offline-full-journey"
 
+        async def read_description(self, _request):
+            decisions.append(("intake", "read_initial_description"))
+            return '{"facts": []}'
+
         async def choose(self, agent, _locale, messages, _actions):
             observation = (
                 json.loads(messages[-1]["content"]).get("observation")

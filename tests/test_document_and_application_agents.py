@@ -536,6 +536,10 @@ def test_model_budget_allows_safe_document_recheck_draft_and_submission_after_re
     class Model(FakeChatModel):
         model_name: str = "offline-full-phase4"
 
+        async def read_description(self, _request):
+            calls.append("intake_reader")
+            return '{"facts": [{"fact_name": "is_widow", "value": true}]}'
+
         async def choose(self, agent, _locale, messages, _actions):
             calls.append(agent)
             context = json.loads(messages[0]["content"])
@@ -650,8 +654,8 @@ def test_model_budget_allows_safe_document_recheck_draft_and_submission_after_re
             assert ledger.values["counters"]["model_calls"] == len(calls) == 8
             assert len(calls) == MAX_CONVERSATION_MODEL_CALLS
             assert calls[:2] == ["supervisor"] * 2
-            assert calls[2:5] == ["intake"] * 3
-            assert calls[5:7] == ["eligibility"] * 2
+            assert calls[2:6] == ["intake_reader", "intake", "intake", "intake"]
+            assert calls[6:8] == ["eligibility"] * 2
             assert ledger.values["counters"]["tool_calls"] <= MAX_CONVERSATION_TOOL_CALLS
 
     try:
