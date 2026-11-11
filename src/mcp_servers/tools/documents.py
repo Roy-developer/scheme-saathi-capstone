@@ -160,10 +160,14 @@ def assess_document_metadata(
     """Compare user-entered synthetic fields; never inspect files or authenticity."""
 
     request = DocumentCheckInput.model_validate(data)
-    if registry is None:
+    if registry is None or bundle is None:
         from src.mcp_servers.rule_data import get_active_rule_data
 
-        registry = get_active_rule_data().registry
+        active = get_active_rule_data()
+        if registry is None:
+            registry = active.registry
+        if bundle is None:
+            bundle = active.bundles.get(request.scheme_id)
     profile_facts = dict(request.profile_facts)
     if any(registry.get(fact_id).derived_from for fact_id in profile_facts):
         raise ValueError("Derived document facts cannot be supplied directly.")

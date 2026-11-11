@@ -1,0 +1,73 @@
+{
+  "scheme_id": "SBSSPS-MH",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "SBSSPS-MH-R01",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 65,
+      "unit": null,
+      "source_passage_id": "SBSSPS-MH-ELIGIBILITY-01",
+      "source_quote": "aged 65 and above",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "SBSSPS-MH-R02",
+      "kind": "eligibility",
+      "field": "is_below_poverty_line",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "SBSSPS-MH-ELIGIBILITY-01",
+      "source_quote": "whose names are on the Below Poverty Line (BPL) list",
+      "needs_human_review": true,
+      "note": "Alternative to the income test (R03): BPL list OR annual income below 21000. The rule format cannot express OR."
+    },
+    {
+      "rule_id": "SBSSPS-MH-R03",
+      "kind": "eligibility",
+      "field": "annual_income_inr",
+      "operator": "lt",
+      "value": 21000,
+      "unit": "INR per year",
+      "source_passage_id": "SBSSPS-MH-ELIGIBILITY-01",
+      "source_quote": "whose annual income is less than ₹21,000",
+      "needs_human_review": true,
+      "note": "Alternative to the BPL test (R02): BPL list OR annual income below 21000. The rule format cannot express OR."
+    },
+    {
+      "rule_id": "SBSSPS-MH-R04",
+      "kind": "eligibility",
+      "field": "is_citizen_of_india",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "SBSSPS-MH-ELIGIBILITY-02",
+      "source_quote": "The applicant should be a citizen of India.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "SBSSPS-MH-R05",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "SBSSPS-MH-ELIGIBILITY-03",
+      "source_quote": "The applicant should be a domicile / permanent resident of the state of Maharashtra for at least 15 years.",
+      "needs_human_review": true,
+      "note": "The 15-year minimum cannot be held by the profile; only residence in the state is encoded."
+    }
+  ],
+  "unresolved": [
+    "R02 and R03 are alternatives (OR); a rule engine that treats every eligibility rule as required would wrongly reject people who meet only one of them.",
+    "MISSING FIELD: applicant should be destitute.",
+    "MISSING FIELD: duration of residence in Maharashtra (15 years)."
+  ]
+}

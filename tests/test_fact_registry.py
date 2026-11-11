@@ -471,7 +471,7 @@ def test_decimal_answer_keeps_precision_through_journey_interrupt_and_checkpoint
             for item in (value if isinstance(value, list) else [value])
         ]
         assert all(
-            item["safe_text"] == "0.[REDACTED_ACCOUNT]"
+            item["safe_text"] == "[REDACTED_ACCOUNT]"
             for item in resume_payloads
         )
         assert all(
@@ -1702,7 +1702,7 @@ def test_pmkmdy_historical_land_record_fact_is_separate_and_mock_scoped():
     fact = registry.get("applicant_name_in_land_records_on_2019_08_01")
     gold = json.loads(
         (
-            root / "data" / "schemes" / "rule_gold_drafts" / "pmkmdy.json"
+            root / "data" / "schemes" / "rule_gold_evaluation" / "pmkmdy.json"
         ).read_text(encoding="utf-8")
     )
     rule = next(item for item in gold["rules"] if item["rule_id"] == "PMKMDY-IN-R09")

@@ -2,7 +2,7 @@
   "scheme_id": "NSAP-IGNOAPS-IN",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "human_reviewed",
+  "review_status": "pending_human_review",
   "rules": [
     {
       "rule_id": "NSAP-IGNOAPS-IN-R01",
@@ -34,7 +34,7 @@
       "field": "age",
       "operator": "gte",
       "value": 60,
-      "unit": "years",
+      "unit": null,
       "source_passage_id": "NSAP-IGNOAPS-IN-ELIGIBILITY-03",
       "source_quote": "The applicant should be at least 60 years of age.",
       "needs_human_review": false,

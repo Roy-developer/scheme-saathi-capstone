@@ -1,0 +1,635 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "PM-KISAN-IN-BENEFICIARY-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "With a view to provide income support to all landholding farmers’ families in the country, having cultivable land, the Central Government has implemented a Central Sector Scheme, namely, “Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)”.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 2, para 1 Scheme"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-BENEFIT-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The scheme aims to supplement the financial needs of all landholding farmers’ families in procuring various inputs to ensure proper crop health and appropriate yields, commensurate with the anticipated farm income as well as for domestic needs. Under the Scheme an amount of Rs.6000/- per year is released by the Central Government online directly into the bank accounts of the eligible farmers under Direct Benefit Transfer mode, subject to certain exclusions.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 2, para 2 Objective and Benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-BENEFIT-02",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The financial benefit of Rs.6000/- per year is to be released to the eligible farmers in three installments of Rs.2000/- each every 4-month / trimester, i.e. April-July, August-November and December-March.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 10, para 10.1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-BENEFIT-03",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The Scheme is being implemented through an Aadhaar linked electronic data base containing details of all members of the families of the farmers whose names appear in the land records. For transfer of the financial benefits to the eligible farmers, Aadhaar number shall be collected for all beneficiaries, since payment of all installments pertaining to the trimester December, 2019 – March, 2020 onwards shall be done only on the basis of Aadhaar seeded data base.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 10, para 10.2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-BENEFIT-04",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The amount due to the beneficiaries under the scheme is to be paid directly into their bank accounts through the mechanism of Direct Benefit Transfer (DBT). The amount will flow to the accounts of the beneficiaries held in destination banks, through the accredited bank of DAC&FW and sponsoring banks of the States /UTs, using PFMS portal. The destination bank can be a Schedule Bank, Post office, Rural Bank, Cooperative Bank or any other Financial Institution.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 11, para 10.4(a)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-BENEFIT-05",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The beneficiaries, whose names are uploaded on PM-Kisan Portal by the State / UT Government in a particular 4-month period / trimester, shall be entitled to receive benefit for that trimester and for further installments pertaining to the subsequent trimesters for that financial year.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 4, para 5.4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-ELIGIBILITY-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "A landholder farmer’s family is defined as “a family comprising of husband, wife and minor children who owns cultivable land as per land records of the concerned State/UT”. The existing land-ownership system will be used for identification of beneficiaries for calculation of benefit.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 2, para 3 Definition of farmer’s family"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-ELIGIBILITY-02",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The benefit shall be paid to only those farmers’ families whose names are entered into the land records. Exception has, however, been made for North-East States and Jharkhand in this regard.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 3, para 5.1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-ELIGIBILITY-03",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The cut-off date for determination of eligibility of beneficiaries under the scheme shall be 01.02.2019 and no changes thereafter shall be considered for eligibility of benefit under the scheme for next 5 years. However, this date is not applicable when transfer of ownership of cultivable land takes place on account of succession due to death.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 3, para 5.2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-ELIGIBILITY-04",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Benefit will be allowed in those cases where transfer of ownership of cultivable land takes place on account of succession due to death of the landowner.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 3, para 5.3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-ELIGIBILITY-05",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "In cases of cultivable land transferred to other persons through Sale Deed, Partition Deed, Gift Deed, etc., the transferee will not be eligible under the Scheme as he / she was not the land owner as on 01.02.2019. However, in such cases even the transferor of the land will become ineligible if the family of the transferor does not have any cultivable land subsequent to such a transfer.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 4, para 5.3.3 (ii)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-EXCLUSION-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "The following categories of beneficiaries of higher economic status shall not be eligible for benefit under the scheme:\nAll Institutional Land holders; and\nFarmer families in which one or more of its members belong to following categories :\nFormer and present holders of constitutional posts\nFormer and present Ministers / State Ministers and former / present Members of Lok Sabha / Rajya Sabha / State Legislative Assemblies / State Legislative Councils, former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central / State Government Ministries / Offices / Departments and their field units, Central or State PSEs and Attached offices / Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll superannuated / retired pensioners whose monthly pension is Rs.10,000/- or more (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practices.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); pp. 2-3, para 4.1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-EXCLUSION-02",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "In case of new beneficiaries being uploaded on the PM-KISAN Portal, all land holding farmers’ families who are Non-resident Indians (NRIs) in terms of the provisions of the Income Tax Act, 1961 shall be excluded from any benefit under the Scheme.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 3, para 4.1 (c)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-EXCLUSION-03",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "For the purpose of exclusion State / UT Governments can certify the eligibility of the beneficiaries based on self declaration by the beneficiaries. In case beneficiary is not available / does not reside in the village, State / UT Governments may consider certification based on the declaration by other adult member of his / her family. In case of incorrect self declaration, beneficiary shall be liable for recovery of transferred financial benefit and other penal actions as per law.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 3, para 4.2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-APPLICATION-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "In case of beneficiaries in States of Assam, Meghalaya, J&K where Aadhaar number has not been issued to most of the citizens, Aadhaar number shall be collected for those beneficiaries where it is available and for others alternate prescribed documents such as Driving Licence, Voters’ ID Card, NREGA Job Card, or any other identification documents issued by Central / State / UT Governments or their authorities, etc. can be collected for identity verification purposes.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 6, para 6.1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-APPLICATION-02",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The lists of eligible beneficiaries would be published at the village level. Farmers’ families who are eligible but have been excluded should be provided an opportunity to represent their case.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 7, para 6.4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-APPLICATION-03",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Any grievances or complaints which are received should be disposed off on merit preferably within two weeks time.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 7, para 7.2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-APPLICATION-04",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The list of beneficiaries identified by States / UTs shall be valid for one year.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 12, para 11"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-DOCUMENTS-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "State, District, Sub-District/Block, Village, Farmer Name, Type of Identity –Aadhaar Number and in case Aadhaar not available, Aadhaar enrollment number with any other ID proof like Voter ID etc, Gender, Category, IFSC Code, Bank Account Number.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 8, para 9.3 Farmer Attributes (Essential)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-APPLICATION-05",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1: The following are the prerequisites for the enrollment process:\nAadhaar Card\nLandholding paper\nSavings bank account",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pm_kisan",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online via CSCs, step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-APPLICATION-06",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 2: The VLE will fill in the complete details of farmer registration details like State, district, subdistrict block, and village, key in the Aadhaar number, Name of the beneficiary, category, Bank detail, Land Registration ID, and Date of birth as printed on Aadhaar card for authentication..",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pm_kisan",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online via CSCs, step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-APPLICATION-07",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 3: The VLE will fill in the Land details like Survey/ Kahta No., Khasra no., and area of land as mentioned in land holding papers.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pm_kisan",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online via CSCs, step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-APPLICATION-08",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 4: Upload the supporting documents like Land, Aadhar, and Bank passbook.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pm_kisan",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online via CSCs, step 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-APPLICATION-09",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 5: Self-declaration accept and save the application form.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pm_kisan",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online via CSCs, step 5"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-APPLICATION-10",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 6: After saving the application form make payment through CSC ID.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pm_kisan",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online via CSCs, step 6"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-APPLICATION-11",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 7: Check the Beneficiary status through the Aadhaar number.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pm_kisan",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online via CSCs, step 7"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-DOCUMENTS-02",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Aadhaar Card\nLandholding papers\nSavings Bank Account.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pm_kisan",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-ELIGIBILITY-LAND-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "who owns cultivable land as per land records of the concerned State/UT",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "PDF p. 2, section 3: Definition of farmer?s family; clause fragment"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-IDENTIFICATION-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "identification",
+      "text": "The existing land-ownership system will be used for identification of beneficiaries for calculation of benefit.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "PDF p. 2, section 3: Definition of farmer?s family"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-IDENTIFICATION-02",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "identification",
+      "text": "Responsibility of identifying the land holder farmer family eligible for benefit under the scheme shall be of the State / UT Government.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "PDF p. 6, section 6.1: Strategy for Implementation"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-PORTAL-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Beneficiaries under the scheme are to be identified by the respective State and Union Territory.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "PDF p. 8, section 9.1: PM-Kisan Portal for implementation"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-PAYMENT-01",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The amount due to the beneficiaries under the scheme is to be paid directly into their bank accounts through the mechanism of Direct Benefit Transfer (DBT).",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-002",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "PDF p. 11, section 10.4(a): Transfer of funds"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-OPERATIONS-001",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "operations",
+      "text": "eKYC is MANDATORY for PMKISAN Registered Farmers. Biometric-based eKYC option is now available for CSC VLE Logins, PM-KISAN Mobile Application and State Authorized User Logins.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-001",
+        "publisher": "PM-KISAN Portal, Government of India",
+        "url": "https://pmkisan.gov.in/",
+        "collected_at": "2026-11-01",
+        "publication_date": null,
+        "locator": "Official homepage notice: eKYC message"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-EXCLUSION-04",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "The following categories of beneficiaries of higher economic status shall not be eligible for benefit under the scheme:\nAll Institutional Land holders; and\nFarmer families in which one or more of its members belong to following categories :\nFormer and present holders of constitutional posts\nFormer and present Ministers / State Ministers and former / present Members of Lok Sabha / Rajya Sabha / State Legislative Assemblies / State Legislative Councils, former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central / State Government Ministries / Offices / Departments and their field units, Central or State PSEs and Attached offices / Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll superannuated / retired pensioners whose monthly pension is Rs.10,000/- or more (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practices.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-003",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); pp. 2-3, para 4.1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PM-KISAN-IN-EXCLUSION-05",
+      "scheme_id": "PM-KISAN-IN",
+      "scheme_name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "In case of new beneficiaries being uploaded on the PM-KISAN Portal, all land holding farmers’ families who are Non-resident Indians (NRIs) in terms of the provisions of the Income Tax Act, 1961 shall be excluded from any benefit under the Scheme.",
+      "source": {
+        "source_id": "SRC-PMKISAN-IN-003",
+        "publisher": "Department of Agriculture, Cooperation & Farmers’ Welfare, Ministry of Agriculture & Farmers’ Welfare",
+        "url": "https://pmkisan.gov.in/Documents/RevisedPM-KISANOperationalGuidelines(English).pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": "2020-03-29",
+        "locator": "PM-KISAN Operational Guidelines (revised as on 29.03.2020); p. 3, para 4.1 (c)"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

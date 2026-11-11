@@ -23,8 +23,12 @@ from src.config import (
     openrouter_chat_settings,
     portal_database_path,
     test_rule_package_directory,
+    upload_database_path,
+    upload_directory,
 )
 from src.api.database_backup import DatabaseBackups
+from src.api.document_uploads import router as document_uploads_router
+from src.documents.uploads import UploadStore
 from src.api.portal_service import start_portal_service, stop_portal_service
 from src.api.eligibility import EligibilityResponse
 from src.api.applications import (
@@ -320,10 +324,14 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
     )
     # Bring back saved databases before anything opens them.
     backups = DatabaseBackups.from_environment(
-        (checkpoint_path, portal_database_path())
+        (checkpoint_path, portal_database_path(), upload_database_path()),
+        (upload_directory(),),
     )
     if backups is not None:
         await asyncio.to_thread(backups.restore)
+    application.state.upload_store = await asyncio.to_thread(
+        UploadStore, upload_directory(), upload_database_path()
+    )
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     checkpoint_connection = await aiosqlite.connect(checkpoint_path)
     checkpointer = AsyncSqliteSaver(checkpoint_connection)
@@ -355,7 +363,9 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
                     "OPENBLAS_NUM_THREADS": "1",
                 }
                 if service_name == "schemes-kb":
-                    service_environment["SCHEME_SAATHI_RERANKER"] = "openrouter"
+                    service_environment["SCHEME_SAATHI_RERANKER"] = os.getenv(
+                        "SCHEME_SAATHI_RERANKER", "openrouter"
+                    )
                     if embedding_credential := (
                         os.getenv("OPENROUTER_API_KEY_FREE")
                         or os.getenv("OPEN_ROUTER_FREE")
@@ -459,6 +469,7 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+app.include_router(document_uploads_router)
 
 
 @app.get("/health")
@@ -1122,7 +1133,8 @@ async def forget_journey(conversation_id: str, request: Request) -> None:
             "Could not clear mock application data",
         ) from error
     await request.app.state.journey_checkpointer.adelete_thread(conversation_id)
-
+    if (upload_store := getattr(request.app.state, "upload_store", None)) is not None:
+        await asyncio.to_thread(upload_store.delete_conversation, conversation_id)
 
 # -- Household memory endpoints -----------------------------------------------
 

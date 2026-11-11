@@ -293,17 +293,21 @@ def _application_request(
     *,
     method: str = "GET",
     body: dict | None = None,
+    reviewer_code: str | None = None,
 ) -> dict:
     """Send an application request and expose only a safe API message."""
 
     data = None if body is None else json.dumps(body).encode("utf-8")
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    }
+    if reviewer_code:
+        headers["X-Reviewer-Code"] = reviewer_code
     request = Request(
         _journey_url(f"{_conversation_path(conversation_id)}{path}"),
         data=data,
-        headers={
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-        },
+        headers=headers,
         method=method,
     )
     try:
@@ -348,6 +352,213 @@ def assess_documents(
             "documents": documents or {},
             "profile_name": profile_name,
             "document_metadata": document_metadata or {},
+        },
+    )
+
+
+def list_document_files(conversation_id: str) -> dict:
+    return _application_request(conversation_id, "/documents/files")
+
+
+def upload_document(
+    conversation_id: str, document_id: str, file_name: str, content: bytes
+) -> dict:
+    """Send one file as a raw body; the API enforces type and the 20 MB cap."""
+
+    request = Request(
+        _journey_url(
+            f"{_conversation_path(conversation_id)}/documents/files/"
+            f"{quote(document_id, safe='')}"
+        ),
+        data=content,
+        headers={
+            "Accept": "application/json",
+            "Content-Type": "application/octet-stream",
+            "X-File-Name": quote(file_name, safe=""),
+        },
+        method="PUT",
+    )
+    try:
+        with urlopen(request, timeout=120) as response:
+            return json.loads(response.read())
+    except HTTPError as error:
+        try:
+            detail = json.loads(error.read()).get("detail")
+        except (json.JSONDecodeError, AttributeError):
+            detail = None
+        raise ApplicationApiError(
+            detail if isinstance(detail, str)
+            else f"The upload failed with HTTP {error.code}."
+        ) from error
+    except (URLError, TimeoutError, json.JSONDecodeError) as error:
+        raise ApplicationApiError(
+            "Could not upload the file. Start the API and try again."
+        ) from error
+
+
+def fetch_document_file(
+    conversation_id: str, document_id: str, reviewer_code: str | None = None
+) -> bytes:
+    """Download one stored file's bytes for the reviewer."""
+
+    request = Request(
+        _journey_url(
+            f"{_conversation_path(conversation_id)}/documents/files/"
+            f"{quote(document_id, safe='')}/content"
+        ),
+        headers={"X-Reviewer-Code": reviewer_code} if reviewer_code else {},
+        method="GET",
+    )
+    try:
+        with urlopen(request, timeout=60) as response:
+            return response.read()
+    except HTTPError as error:
+        try:
+            detail = json.loads(error.read()).get("detail")
+        except (json.JSONDecodeError, AttributeError):
+            detail = None
+        raise ApplicationApiError(
+            detail if isinstance(detail, str)
+            else f"The file could not be loaded (HTTP {error.code})."
+        ) from error
+    except (URLError, TimeoutError) as error:
+        raise ApplicationApiError("Could not load the file.") from error
+
+
+def get_document_suggestion(conversation_id: str, document_id: str) -> dict:
+    return _application_request(
+        conversation_id, f"/documents/files/{quote(document_id, safe='')}/suggestion"
+    )
+
+
+def extract_document_suggestion(conversation_id: str, document_id: str) -> dict:
+    return _application_request(
+        conversation_id,
+        f"/documents/files/{quote(document_id, safe='')}/extract",
+        method="POST",
+    )
+
+
+def review_document_file(
+    conversation_id: str,
+    document_id: str,
+    reviewer_name: str,
+    note: str = "",
+    reviewer_code: str | None = None,
+) -> dict:
+    return _application_request(
+        conversation_id,
+        f"/documents/files/{quote(document_id, safe='')}/review",
+        method="POST",
+        body={"reviewer_name": reviewer_name, "note": note},
+        reviewer_code=reviewer_code,
+    )
+
+
+def remove_document_review(
+    conversation_id: str, document_id: str, reviewer_code: str | None = None
+) -> dict:
+    return _application_request(
+        conversation_id,
+        f"/documents/files/{quote(document_id, safe='')}/review",
+        method="DELETE",
+        reviewer_code=reviewer_code,
+    )
+
+
+def delete_document_file(conversation_id: str, document_id: str) -> dict:
+    return _application_request(
+        conversation_id,
+        f"/documents/files/{quote(document_id, safe='')}",
+        method="DELETE",
+    )
+
+
+def _check_body(
+    scheme_id: str | None,
+    documents: dict[str, str] | None,
+    profile_name: str | None,
+    document_metadata: dict[str, dict[str, str | None]] | None,
+) -> dict:
+    body = {
+        "documents": documents or {},
+        "profile_name": profile_name,
+        "document_metadata": document_metadata or {},
+    }
+    if scheme_id is not None:
+        body["scheme_id"] = scheme_id
+    return body
+
+
+def check_documents_report(
+    conversation_id: str,
+    scheme_id: str,
+    documents: dict[str, str] | None = None,
+    profile_name: str | None = None,
+    document_metadata: dict[str, dict[str, str | None]] | None = None,
+) -> dict:
+    return _application_request(
+        conversation_id,
+        "/documents/check",
+        method="POST",
+        body=_check_body(scheme_id, documents, profile_name, document_metadata),
+    )
+
+
+def document_readiness(
+    conversation_id: str,
+    documents: dict[str, str] | None = None,
+    profile_name: str | None = None,
+    document_metadata: dict[str, dict[str, str | None]] | None = None,
+) -> dict:
+    return _application_request(
+        conversation_id,
+        "/documents/readiness",
+        method="POST",
+        body=_check_body(None, documents, profile_name, document_metadata),
+    )
+
+
+def resolve_document_issue(
+    conversation_id: str,
+    scheme_id: str,
+    document_id: str,
+    issue_code: str,
+    reason: str,
+    documents: dict[str, str] | None = None,
+    profile_name: str | None = None,
+    document_metadata: dict[str, dict[str, str | None]] | None = None,
+) -> dict:
+    return _application_request(
+        conversation_id,
+        "/documents/resolutions",
+        method="POST",
+        body={
+            **_check_body(scheme_id, documents, profile_name, document_metadata),
+            "document_id": document_id,
+            "issue_code": issue_code,
+            "reason": reason,
+        },
+    )
+
+
+def reopen_document_issue(
+    conversation_id: str,
+    scheme_id: str,
+    document_id: str,
+    issue_code: str,
+    documents: dict[str, str] | None = None,
+    profile_name: str | None = None,
+    document_metadata: dict[str, dict[str, str | None]] | None = None,
+) -> dict:
+    return _application_request(
+        conversation_id,
+        "/documents/resolutions/reopen",
+        method="POST",
+        body={
+            **_check_body(scheme_id, documents, profile_name, document_metadata),
+            "document_id": document_id,
+            "issue_code": issue_code,
         },
     )
 

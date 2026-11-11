@@ -1,0 +1,239 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "WMCL-IN-BENEFICIARY-01",
+      "scheme_id": "WMCL-IN",
+      "scheme_name": "Welfare Measures for Children of Labourers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "Labourers working in coffee plantations and curing establishments are the important stakeholders of the Industry. To provide welfare measures in the form of educational stipend, incentives for merit, financial assistance towards higher education to the children of SC / ST labourers who excel in studies and pursue higher education after X Class to improve their education.",
+      "source": {
+        "source_id": "SRC-WMCL-IN-001",
+        "publisher": "Coffee Board, Ministry of Commerce and Industry",
+        "url": "https://coffeeboard.gov.in/Schemes/MTF_LWM.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Coffee Board MTF modalities, Sub Component 2.4 (scanned PDF; read from page image); p. 1, Objective"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "WMCL-IN-ELIGIBILITY-01",
+      "scheme_id": "WMCL-IN",
+      "scheme_name": "Welfare Measures for Children of Labourers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Children of SC / ST labourers working in coffee plantations and Licensed Coffee Curing Works, pursuing higher education after X Class are eligible.\nThe first two surviving children of SC / ST labourers working in Coffee Plantation and Licensed Coffee Curing Works are eligible. However, if the second child birth results in twins or multiple births, assistance shall be admissible to all the children if other requirements viz. merit is fulfilled individually.\nThe Educational Institution in which the student is studying should be recognized by the Central / State Governments.",
+      "source": {
+        "source_id": "SRC-WMCL-IN-001",
+        "publisher": "Coffee Board, Ministry of Commerce and Industry",
+        "url": "https://coffeeboard.gov.in/Schemes/MTF_LWM.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Coffee Board MTF modalities, Sub Component 2.4 (scanned PDF; read from page image); p. 1, para 2.4.1 Eligibility"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "WMCL-IN-ELIGIBILITY-02",
+      "scheme_id": "WMCL-IN",
+      "scheme_name": "Welfare Measures for Children of Labourers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Educational Stipends: Students who have passed SSLC / 10th Class / Matriculation examination and have taken up higher studies after SSLC viz. 1st year PUC, Polytechnic / Vocational Training in the current academic year are eligible.",
+      "source": {
+        "source_id": "SRC-WMCL-IN-001",
+        "publisher": "Coffee Board, Ministry of Commerce and Industry",
+        "url": "https://coffeeboard.gov.in/Schemes/MTF_LWM.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Coffee Board MTF modalities, Sub Component 2.4 (scanned PDF; read from page image); p. 1, para 2.4.1 Eligibility, Educational Stipends"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "WMCL-IN-ELIGIBILITY-03",
+      "scheme_id": "WMCL-IN",
+      "scheme_name": "Welfare Measures for Children of Labourers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Incentive Award: One girl student and one boy student in each region of the Deputy Director (Extension) [in case of NER, Joint Director (Extension) Region] who have scored highest marks in the SSLC / 10th Class / Matriculation examination in the previous academic year and continuing further studies in the current academic year are eligible.",
+      "source": {
+        "source_id": "SRC-WMCL-IN-001",
+        "publisher": "Coffee Board, Ministry of Commerce and Industry",
+        "url": "https://coffeeboard.gov.in/Schemes/MTF_LWM.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Coffee Board MTF modalities, Sub Component 2.4 (scanned PDF; read from page image); p. 1, para 2.4.1 Eligibility, Incentive Award"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "WMCL-IN-ELIGIBILITY-04",
+      "scheme_id": "WMCL-IN",
+      "scheme_name": "Welfare Measures for Children of Labourers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Financial Assistance: Students pursuing higher education such as Graduation / Post-Graduation / Professional Courses such as Medical, Engineering, Agriculture, Pharmacy & Nursing during the current academic year after completion of 2nd PUC / 12th Class during the previous academic year are eligible.",
+      "source": {
+        "source_id": "SRC-WMCL-IN-001",
+        "publisher": "Coffee Board, Ministry of Commerce and Industry",
+        "url": "https://coffeeboard.gov.in/Schemes/MTF_LWM.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Coffee Board MTF modalities, Sub Component 2.4 (scanned PDF; read from page image); p. 1, para 2.4.1 Eligibility, Financial Assistance"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "WMCL-IN-ELIGIBILITY-05",
+      "scheme_id": "WMCL-IN",
+      "scheme_name": "Welfare Measures for Children of Labourers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "A student who is eligible for Educational stipend is also eligible for Incentive Award based on merit.\nStudents pursuing 1st year PUC (11th Class) or Diploma courses during a particular academic year, but completed SSLC (10th Class) during earlier years are also eligible for educational stipends.\nStudents pursuing Graduation / Professional Courses during a particular academic year, but completed 2nd year PUC (12th Class) during earlier years are also eligible for financial assistance.\nStudents pursuing Post-Graduation studies during the year 2017-18, but completed Graduation during earlier years (other than 2016-17) are also eligible for financial assistance.\nStudents pursuing 2nd or 3rd year of Graduation or Post-Graduation courses as the case may be, are eligible for financial assistance irrespective of whether they had availed/applied for financial assistance during the previous years while pursuing 1st or 2nd year of the course.",
+      "source": {
+        "source_id": "SRC-WMCL-IN-001",
+        "publisher": "Coffee Board, Ministry of Commerce and Industry",
+        "url": "https://coffeeboard.gov.in/Schemes/MTF_LWM.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Coffee Board MTF modalities, Sub Component 2.4 (scanned PDF; read from page image); p. 1, para 2.4.1 Eligibility, other cases"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "WMCL-IN-EXCLUSION-01",
+      "scheme_id": "WMCL-IN",
+      "scheme_name": "Welfare Measures for Children of Labourers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "Children of Clerks, Drivers, Supervisors and Managers of Estate / Curing works are not entitled for these benefits.",
+      "source": {
+        "source_id": "SRC-WMCL-IN-001",
+        "publisher": "Coffee Board, Ministry of Commerce and Industry",
+        "url": "https://coffeeboard.gov.in/Schemes/MTF_LWM.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Coffee Board MTF modalities, Sub Component 2.4 (scanned PDF; read from page image); p. 1, para 2.4.1 Eligibility"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "WMCL-IN-BENEFIT-01",
+      "scheme_id": "WMCL-IN",
+      "scheme_name": "Welfare Measures for Children of Labourers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Extent of support per student (in Rs.):\nEducational Stipends: 2,250\nIncentive Award (in addition to Rs.2,250/- Educational Stipend): 1,500 for Girl & 1,000 for Boy\nFinancial Assistance, Traditional Courses (Arts, Science, Commerce etc.), Graduation: 3,750\nFinancial Assistance, Traditional Courses (Arts, Science, Commerce etc.), Post-Graduation: 7,500\nFinancial Assistance, Professional Courses, Medical Sciences: 7,500\nFinancial Assistance, Professional Courses, Agriculture and allied Sciences / Animal Husbandry / Engineering / Pharmacy / Nursing / other equivalent professional degree courses: 7,500",
+      "source": {
+        "source_id": "SRC-WMCL-IN-001",
+        "publisher": "Coffee Board, Ministry of Commerce and Industry",
+        "url": "https://coffeeboard.gov.in/Schemes/MTF_LWM.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Coffee Board MTF modalities, Sub Component 2.4 (scanned PDF; read from page image); p. 2, para 2.4.2 Extent of Incentives (table; reformatted as one line per item)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "WMCL-IN-BENEFIT-02",
+      "scheme_id": "WMCL-IN",
+      "scheme_name": "Welfare Measures for Children of Labourers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The submission of application by the applicant or acceptance of the application by the office does not automatically entitle the applicant for the eligible incentive from the Coffee Board. The release of eligible amount to the applicant is subject to availability of funds during a particular year.",
+      "source": {
+        "source_id": "SRC-WMCL-IN-001",
+        "publisher": "Coffee Board, Ministry of Commerce and Industry",
+        "url": "https://coffeeboard.gov.in/Schemes/MTF_LWM.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Coffee Board MTF modalities, Sub Component 2.4 (scanned PDF; read from page image); p. 2, para 2.4.4 Amendment to the Scheme"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "WMCL-IN-EXCLUSION-02",
+      "scheme_id": "WMCL-IN",
+      "scheme_name": "Welfare Measures for Children of Labourers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "Applications of persons who resort to making offers, rewards, gifts or any material benefit, or any coercion either directly or indirectly, to influence the sanction process shall summarily be rejected. Similarly, legal action will be initiated against applicants who obtain the subsidy benefit by wilfully furnishing wrong/incorrect information, misrepresentation and suppression of information.",
+      "source": {
+        "source_id": "SRC-WMCL-IN-001",
+        "publisher": "Coffee Board, Ministry of Commerce and Industry",
+        "url": "https://coffeeboard.gov.in/Schemes/MTF_LWM.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Coffee Board MTF modalities, Sub Component 2.4 (scanned PDF; read from page image); p. 2, para 2.4.4 Amendment to the Scheme"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "WMCL-IN-APPLICATION-01",
+      "scheme_id": "WMCL-IN",
+      "scheme_name": "Welfare Measures for Children of Labourers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Application in the prescribed format from the students who are children of SC / ST labours working in coffee plantations and Licensed Coffee Curing Works may be entertained along with the following documents:",
+      "source": {
+        "source_id": "SRC-WMCL-IN-001",
+        "publisher": "Coffee Board, Ministry of Commerce and Industry",
+        "url": "https://coffeeboard.gov.in/Schemes/MTF_LWM.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Coffee Board MTF modalities, Sub Component 2.4 (scanned PDF; read from page image); p. 2, para 2.4.3 Procedure for availing the incentives"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "WMCL-IN-DOCUMENTS-01",
+      "scheme_id": "WMCL-IN",
+      "scheme_name": "Welfare Measures for Children of Labourers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Duly filled in application in the prescribed forms, affixed with recent photographs of the students.\nA self-attested Identity card viz., Student identity card and Aadhaar.\nA self-attested marks sheet of the previous class/year.\nSelf-attested copy of the SC/ST caste certificate issued by competent state government authority.\nA Certificate from the owners / authorized persons of the plantation / curing works in which the parent/s are employed. (as per the prescribed format provided in the application).\nA Certificate from the Principal of the college, where the student is studying during the current academic year. (as per the prescribed format provided in the application)\nA copy of the Bank Pass Book having the details of account number, name of the Bank, branch, IFSC code, etc.",
+      "source": {
+        "source_id": "SRC-WMCL-IN-001",
+        "publisher": "Coffee Board, Ministry of Commerce and Industry",
+        "url": "https://coffeeboard.gov.in/Schemes/MTF_LWM.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "Coffee Board MTF modalities, Sub Component 2.4 (scanned PDF; read from page image); p. 2, para 2.4.3 Procedure for availing the incentives, items a-g"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "WMCL-IN-APPLICATION-02",
+      "scheme_id": "WMCL-IN",
+      "scheme_name": "Welfare Measures for Children of Labourers",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 3: Submit the duly filled and signed application form along with the documents to the Coffee Board.",
+      "source": {
+        "source_id": "SRC-WMCL-IN-002",
+        "publisher": "Ministry of Commerce and Industry",
+        "url": "https://www.myscheme.gov.in/schemes/wmcl",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 3"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

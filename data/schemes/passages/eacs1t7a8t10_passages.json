@@ -1,0 +1,185 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "EACS-MH-BENEFIT-01",
+      "scheme_id": "EACS-MH",
+      "scheme_name": "Educational Assistance to the Children Studying in 1st to 7th and 8th to 10th Class",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Under this scheme, educational assistance of ₹2,500/- to the children studying in 1st to 7th standard and ₹5,000/- for the children studying in 8th to 10th standard of the registered construction workers.",
+      "source": {
+        "source_id": "SRC-EACS-MH-001",
+        "publisher": "Maharashtra Building And Other Construction Workers Welfare Board (MBOCWW), Labour Department Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/eacs1t7a8t10",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Details"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EACS-MH-BENEFIT-02",
+      "scheme_id": "EACS-MH",
+      "scheme_name": "Educational Assistance to the Children Studying in 1st to 7th and 8th to 10th Class",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "benefit",
+      "text": "Financial Assistance: 1st to 7th Class: ₹2,500/- 8th to 10th Class: ₹5,000/-",
+      "source": {
+        "source_id": "SRC-EACS-MH-001",
+        "publisher": "Maharashtra Building And Other Construction Workers Welfare Board (MBOCWW), Labour Department Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/eacs1t7a8t10",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Benefits"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EACS-MH-ELIGIBILITY-01",
+      "scheme_id": "EACS-MH",
+      "scheme_name": "Educational Assistance to the Children Studying in 1st to 7th and 8th to 10th Class",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The worker should be engaged in a building or other construction work.",
+      "source": {
+        "source_id": "SRC-EACS-MH-001",
+        "publisher": "Maharashtra Building And Other Construction Workers Welfare Board (MBOCWW), Labour Department Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/eacs1t7a8t10",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EACS-MH-ELIGIBILITY-02",
+      "scheme_id": "EACS-MH",
+      "scheme_name": "Educational Assistance to the Children Studying in 1st to 7th and 8th to 10th Class",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The worker should be registered under the Maharashtra Building & Other Construction Workers Welfare Board.",
+      "source": {
+        "source_id": "SRC-EACS-MH-001",
+        "publisher": "Maharashtra Building And Other Construction Workers Welfare Board (MBOCWW), Labour Department Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/eacs1t7a8t10",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EACS-MH-APPLICATION-01",
+      "scheme_id": "EACS-MH",
+      "scheme_name": "Educational Assistance to the Children Studying in 1st to 7th and 8th to 10th Class",
+      "jurisdiction": "IN-MH",
+      "language": "en",
+      "section": "application",
+      "text": "Step-1: The interested applicant downloads the application form from the MBOCWW official website. Step-2: In the application form, fill in all the mandatory fields, and attach copies of all the mandatory documents (self-attest, if required). Step-3: Submit the duly filled and signed application form along with the documents to the Labor Commissioner / Government Labor Officer. Step-4: Request a receipt or acknowledgment from the concerned authority to whom the application has been submitted. Ensure that the receipt contains essential details such as the date and time of submission, and a unique identification number (if applicable).",
+      "source": {
+        "source_id": "SRC-EACS-MH-001",
+        "publisher": "Maharashtra Building And Other Construction Workers Welfare Board (MBOCWW), Labour Department Maharashtra",
+        "url": "https://www.myscheme.gov.in/schemes/eacs1t7a8t10",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EACS-MH-BENEFIT-03",
+      "scheme_id": "EACS-MH",
+      "scheme_name": "Educational Assistance to the Children Studying in 1st to 7th and 8th to 10th Class",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "benefit",
+      "text": "दोन पाल्यांना १ ली ते ७ वी साठी प्रतिवर्षी रू. २५००/- किंवा इ. ८ वी ते १० वी साठी प्रतिवर्षी रू. ५०००/-",
+      "source": {
+        "source_id": "SRC-EACS-MH-002",
+        "publisher": "Maharashtra Building And Other Construction Workers Welfare Board (MBOCWW), Labour Department Maharashtra",
+        "url": "https://mahabocw.in/wp-content/uploads/2019/06/SCHEME_EDUCATION_FORM.pdf",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "PDF application form (scanned; read from page image); p. 2, Annexure B (प्रपत्र ब), scheme E-01"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EACS-MH-DOCUMENTS-01",
+      "scheme_id": "EACS-MH",
+      "scheme_name": "Educational Assistance to the Children Studying in 1st to 7th and 8th to 10th Class",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "documents",
+      "text": "महाराष्ट्र इमारत व इतर बांधकाम कामगार कल्याणकारी मंडळाचे ओळखपत्र\nबँकेचे पासबुक\nरहिवासी पुरावा (आधारकार्ड/पारपत्र/वाहनचालक परवाना/शिधापत्रिका/मागील महिन्याचे विद्युत देयक/ग्रामपंचायतीचा दाखला यापैकी एक)\nशाळा/कॉलेजमध्ये शिक्षण घेत असल्याचा पुरावा (बोनाफाईड प्रमाणपत्र/शाळेचे ओळखपत्र)",
+      "source": {
+        "source_id": "SRC-EACS-MH-002",
+        "publisher": "Maharashtra Building And Other Construction Workers Welfare Board (MBOCWW), Labour Department Maharashtra",
+        "url": "https://mahabocw.in/wp-content/uploads/2019/06/SCHEME_EDUCATION_FORM.pdf",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "PDF application form (scanned; read from page image); p. 1, Annexure A (प्रपत्र अ), items 1-4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EACS-MH-DOCUMENTS-02",
+      "scheme_id": "EACS-MH",
+      "scheme_name": "Educational Assistance to the Children Studying in 1st to 7th and 8th to 10th Class",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "documents",
+      "text": "७५% हजेरी बाबत शाळेचा दाखला",
+      "source": {
+        "source_id": "SRC-EACS-MH-002",
+        "publisher": "Maharashtra Building And Other Construction Workers Welfare Board (MBOCWW), Labour Department Maharashtra",
+        "url": "https://mahabocw.in/wp-content/uploads/2019/06/SCHEME_EDUCATION_FORM.pdf",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "PDF application form (scanned; read from page image); p. 2, Annexure B (प्रपत्र ब), scheme E-01"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EACS-MH-APPLICATION-02",
+      "scheme_id": "EACS-MH",
+      "scheme_name": "Educational Assistance to the Children Studying in 1st to 7th and 8th to 10th Class",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "मला शैक्षणिक योजनेचा लाभ मिळण्यासाठी खालील प्रपत्र अ व ब मधील विहित कागदपत्रे स्वयंसाक्षांकित करून सोबत कागदपत्रे सादर करित आहे.",
+      "source": {
+        "source_id": "SRC-EACS-MH-002",
+        "publisher": "Maharashtra Building And Other Construction Workers Welfare Board (MBOCWW), Labour Department Maharashtra",
+        "url": "https://mahabocw.in/wp-content/uploads/2019/06/SCHEME_EDUCATION_FORM.pdf",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "PDF application form (scanned; read from page image); p. 1, form instruction before Annexure A"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "EACS-MH-APPLICATION-03",
+      "scheme_id": "EACS-MH",
+      "scheme_name": "Educational Assistance to the Children Studying in 1st to 7th and 8th to 10th Class",
+      "jurisdiction": "IN-MH",
+      "language": "mr",
+      "section": "application",
+      "text": "नोंदीत सक्रिय (जिवीत) बांधकाम कामगाराने शैक्षणिक योजनांपैकी लाभाची मागणी केलेल्या योजनेकरिता आवश्यक सर्व कागदपत्रे जोडली आहेत.",
+      "source": {
+        "source_id": "SRC-EACS-MH-002",
+        "publisher": "Maharashtra Building And Other Construction Workers Welfare Board (MBOCWW), Labour Department Maharashtra",
+        "url": "https://mahabocw.in/wp-content/uploads/2019/06/SCHEME_EDUCATION_FORM.pdf",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "PDF application form (scanned; verified from page image); p. 2, office-use checklist, item 1"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

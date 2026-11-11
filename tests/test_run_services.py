@@ -37,7 +37,7 @@ def test_docker_image_copies_every_scheme_data_path_the_app_reads() -> None:
     root = Path(__file__).resolve().parents[1]
     dockerfile = (root / "Dockerfile").read_text(encoding="utf-8")
     for path in (
-        "data/schemes/passages.json",
+        "data/schemes/passages",
         "data/schemes/document_checklists",
         "data/schemes/document_evidence.json",
         "data/schemes/mock_forms",

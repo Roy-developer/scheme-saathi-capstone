@@ -115,7 +115,7 @@ def test_every_inventory_tool_succeeds_via_mcp_and_http_portal(monkeypatch) -> N
 
     database = Path.cwd() / f".phase1-tool-test-{uuid4().hex}.sqlite3"
     monkeypatch.setenv("SCHEME_SAATHI_PORTAL_DB", str(database))
-    passages = load_passages(PROJECT_ROOT / "data" / "schemes" / "passages.json")
+    passages = load_passages(PROJECT_ROOT / "data" / "schemes" / "passages" / "ignwps_mh_passages.json")
     monkeypatch.setattr(
         HybridSchemeRetriever, "search",
         lambda _self, *_args, **_kwargs: passages[:1],

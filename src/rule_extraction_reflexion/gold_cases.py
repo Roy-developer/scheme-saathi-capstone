@@ -31,6 +31,7 @@ MAPPING_REVIEW_FILE = (
 )
 REGISTRY_FILE = PROJECT_ROOT / "src" / "rules" / "fact_registry.json"
 GOLD_DRAFTS_DIR = PROJECT_ROOT / "data" / "schemes" / "rule_gold_drafts"
+GOLD_EVALUATION_DIR = PROJECT_ROOT / "data" / "schemes" / "rule_gold_evaluation"
 
 
 @dataclass(frozen=True)
@@ -111,11 +112,14 @@ def build_development_gold_cases() -> tuple[
     for scheme in selection["schemes"]:
         if scheme["split"] != "development":
             continue
-        draft = json.loads(
-            (GOLD_DRAFTS_DIR / Path(scheme["draft_file"]).name).read_text(
-                encoding="utf-8"
-            )
+        draft_name = Path(scheme["draft_file"]).name
+        evaluation_draft = GOLD_EVALUATION_DIR / draft_name
+        draft_path = (
+            evaluation_draft
+            if evaluation_draft.is_file()
+            else GOLD_DRAFTS_DIR / draft_name
         )
+        draft = json.loads(draft_path.read_text(encoding="utf-8"))
         for raw_rule in draft["rules"]:
             quote = raw_rule.get("source_quote")
             passage_id = raw_rule.get("source_passage_id")
@@ -145,6 +149,7 @@ def build_development_gold_cases() -> tuple[
                     )
                 overlay[field_id] = _evaluation_definition(field_review)
 
+    registry = GoldEvaluationFactRegistry(active, overlay)
     cases = []
     for (scheme_id, passage_id, quote), entries in grouped_rules.items():
         digest = hashlib.sha256(
@@ -157,7 +162,7 @@ def build_development_gold_cases() -> tuple[
                 field=raw["field"],
                 operator=raw["operator"],
                 value=raw["value"],
-                unit=raw.get("unit"),
+                unit=_gold_rule_unit(raw["field"], registry),
                 source_clause_id=clause_id,
                 source_text=quote,
             )
@@ -181,7 +186,6 @@ def build_development_gold_cases() -> tuple[
             topic_tags=(next(iter(families)),),
         ))
 
-    registry = GoldEvaluationFactRegistry(active, overlay)
     for case in cases:
         for rule in case.expected_rules:
             _validate_gold_rule(rule, registry)
@@ -228,3 +232,12 @@ def _validate_gold_rule(
             f"Gold rule {rule.rule_id} unit does not match reviewed fact "
             f"{rule.field}"
         )
+
+
+def _gold_rule_unit(field_id: str, registry: FactRegistryLike) -> str | None:
+    """Use only the canonical unit for numeric facts in evaluation targets."""
+
+    definition = registry.get(field_id)
+    if definition.value_type not in {"integer", "decimal"}:
+        return None
+    return definition.unit

@@ -34,7 +34,9 @@ def openrouter_chat_model(
     api_key: str,
     model: str = DEFAULT_CHAT_MODEL,
     *,
-    max_completion_tokens: int = MAX_COMPLETION_TOKENS,
+    timeout: float = MODEL_TIMEOUT_SECONDS,
+    max_tokens: int = MAX_COMPLETION_TOKENS,
+    max_completion_tokens: int | None = None,
     reasoning_effort: str | None = None,
 ) -> ChatOpenAI:
     """Build the chat model used for every OpenRouter call.
@@ -43,13 +45,17 @@ def openrouter_chat_model(
         api_key: The OpenRouter key (the standard chat key, not the free
             embeddings key).
         model: An OpenRouter ``provider/model`` name.
-        max_completion_tokens: Maximum response and reasoning tokens.
-        reasoning_effort: Optional OpenRouter reasoning-effort override.
+        timeout: Seconds to wait for a reply; slow free models need longer.
+        max_tokens: Reply cap. Reasoning models spend it on thinking first.
+        max_completion_tokens: Compatibility alias for ``max_tokens``.
+        reasoning_effort: OpenRouter ``reasoning.effort`` (for example "low")
+            to keep reasoning models short; None leaves the model default.
     """
 
-    extra_body: dict[str, object] = {
-        "max_tokens": max_completion_tokens,
-    }
+    effective_max_tokens = (
+        max_tokens if max_completion_tokens is None else max_completion_tokens
+    )
+    extra_body: dict[str, object] = {"max_tokens": effective_max_tokens}
     if reasoning_effort is not None:
         extra_body["reasoning"] = {"effort": reasoning_effort}
     return ChatOpenAI(
@@ -61,7 +67,7 @@ def openrouter_chat_model(
         # ChatOpenAI would send OpenAI's newer "max_completion_tokens"; send
         # OpenRouter's documented "max_tokens" so the cost cap always applies.
         extra_body=extra_body,
-        timeout=MODEL_TIMEOUT_SECONDS,
+        timeout=timeout,
         # Callers reserve one model call in the conversation budget before
         # calling. Automatic SDK retries would send extra, uncounted requests.
         max_retries=0,

@@ -34,8 +34,11 @@ def live_copy(tmp_path: Path) -> ProjectPaths:
     shutil.copytree(REAL_ROOT / "src", root / "src", ignore=shutil.ignore_patterns("__pycache__"))
     for folder in ("rule_extraction_sources", "document_checklists", "mock_forms"):
         shutil.copytree(REAL_ROOT / "data/schemes" / folder, root / "data/schemes" / folder)
-    for name in ("passages.json", "rule_extraction_cases_dev.json"):
-        shutil.copy(REAL_ROOT / "data/schemes" / name, root / "data/schemes" / name)
+    shutil.copytree(REAL_ROOT / "data/schemes/passages", root / "data/schemes/passages")
+    shutil.copy(
+        REAL_ROOT / "data/schemes/rule_extraction_cases_dev.json",
+        root / "data/schemes/rule_extraction_cases_dev.json",
+    )
     (root / "docs").mkdir()
     for review in (REAL_ROOT / "docs").glob("*_RULE_REVIEW_*.md"):
         shutil.copy(review, root / "docs" / review.name)
@@ -66,20 +69,7 @@ def before(live_copy: ProjectPaths) -> ProjectPaths:
         bundle["registry_sha256"] = old_sha
     paths.bundle_registry.write_bytes(_json_like(bundles_raw, bundles))
 
-    corpus_raw = paths.passages.read_bytes()
-    corpus = json.loads(corpus_raw)
-    source = json.loads(
-        (REAL_ROOT / "data/schemes/rule_extraction_sources/ignoaps_mh.json")
-        .read_bytes()
-    )
-    onboarded_passage_ids = {
-        passage["passage_id"] for passage in source["onboarding"]["passages"]
-    }
-    corpus["passages"] = [
-        passage for passage in corpus["passages"]
-        if passage["passage_id"] not in onboarded_passage_ids
-    ]
-    paths.passages.write_bytes(_json_like(corpus_raw, corpus))
+    paths.passages_file(SCHEME).unlink()
 
     cases = paths.cases.read_bytes().decode("utf-8")
     assert cases.count(CASE_MARKER) == 1
@@ -111,17 +101,16 @@ def test_onboard_rebuilds_the_hand_made_ignoaps_files_exactly(before: ProjectPat
 
     for relative in (
         f"src/rules/packages/{PACKAGE}",
+        "src/rules/data_provider.py",
         "data/schemes/rule_extraction_cases_dev.json",
     ):
         assert (before.root / relative).read_bytes() == _real(relative), relative
-
     actual_registry = json.loads(before.fact_registry.read_bytes())
     expected_registry = json.loads(_real("src/rules/fact_registry.json"))
     for registry in (actual_registry, expected_registry):
         for definition in registry["definitions"]:
             definition["source_refs"] = sorted(definition["source_refs"])
     assert actual_registry == expected_registry
-
     actual_bundles = json.loads(before.bundle_registry.read_bytes())["bundles"]
     expected_bundles = json.loads(_real("src/rules/bundle_registry.json"))["bundles"]
     registry_sha = hashlib.sha256(before.fact_registry.read_bytes()).hexdigest()
@@ -133,30 +122,11 @@ def test_onboard_rebuilds_the_hand_made_ignoaps_files_exactly(before: ProjectPat
     assert sorted(actual_bundles, key=lambda bundle: bundle["scheme_id"]) == sorted(
         expected_bundles, key=lambda bundle: bundle["scheme_id"]
     )
-
-    actual_corpus = json.loads(before.passages.read_bytes())
-    expected_corpus = json.loads(_real("data/schemes/passages.json"))
-    assert actual_corpus["corpus_version"] == expected_corpus["corpus_version"]
-    actual_other_passages = [
-        passage for passage in actual_corpus["passages"]
-        if passage["scheme_id"] != SCHEME
-    ]
-    expected_other_passages = [
-        passage for passage in expected_corpus["passages"]
-        if passage["scheme_id"] != SCHEME
-    ]
-    assert actual_other_passages == expected_other_passages
-    actual_scheme_passages = {
-        passage["passage_id"]: passage
-        for passage in actual_corpus["passages"]
-        if passage["scheme_id"] == SCHEME
-    }
-    expected_scheme_passages = {
-        passage["passage_id"]: passage
-        for passage in expected_corpus["passages"]
-        if passage["scheme_id"] == SCHEME
-    }
-    assert actual_scheme_passages == expected_scheme_passages
+    # The curated corpus file also holds the second source's passages, so onboarding
+    # is checked for the passages it writes from the source file, not byte for byte.
+    written = json.loads(before.passages_file(SCHEME).read_bytes())["passages"]
+    curated = json.loads(_real("data/schemes/passages/ignoaps_mh_passages.json"))["passages"]
+    assert {p["passage_id"] for p in written} <= {p["passage_id"] for p in curated}
     assert not (before.staged_packages / PACKAGE).exists()
 
 
@@ -239,10 +209,17 @@ def test_onboard_refuses_and_writes_nothing(before: ProjectPaths, spoil, message
     assert _files(before) == unchanged
 
 
+def _drop_comma(line: str) -> str:
+    """Drop the trailing comma, keeping any carriage return the file's line endings add."""
+
+    body = line.rstrip("\r")
+    return body.rstrip(",") + line[len(body):]
+
+
 def test_new_clause_is_added_to_the_cases_file_and_flagged_for_a_split(before: ProjectPaths) -> None:
     text = before.cases.read_bytes().decode("utf-8")
     lines = [line for line in text.split("\n") if CASE_MARKER not in line]
-    lines[-4] = lines[-4].rstrip(",")  # the last case line, before "  ]", "}" and the final newline
+    lines[-4] = _drop_comma(lines[-4])  # the last case line, before "  ]", "}" and the final newline
     before.cases.write_bytes("\n".join(lines).encode("utf-8"))
 
     plan = plan_onboarding(SCHEME, before)

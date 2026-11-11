@@ -129,50 +129,50 @@
       "query": "Does the central government send PM-KISAN money directly to farmers' bank accounts?",
       "relevant_passage_ids": [
         "PM-KISAN-IN-BENEFIT-01",
-        "PM-KISAN-IN-PAYMENT-01"
+        "PM-KISAN-IN-BENEFIT-04"
       ]
     },
     {
       "query_id": "PMKISAN-DEV-004",
       "query": "How is PM-KISAN income support transferred to beneficiary accounts?",
       "relevant_passage_ids": [
-        "PM-KISAN-IN-PAYMENT-01"
+        "PM-KISAN-IN-BENEFIT-04"
       ]
     },
     {
       "query_id": "PMKISAN-DEV-005",
       "query": "What payment transfer mechanism is named for PM-KISAN?",
       "relevant_passage_ids": [
-        "PM-KISAN-IN-PAYMENT-01"
+        "PM-KISAN-IN-BENEFIT-04"
       ]
     },
     {
       "query_id": "PMKISAN-DEV-006",
       "query": "Who identifies landholder farmer families for PM-KISAN benefits?",
       "relevant_passage_ids": [
-        "PM-KISAN-IN-IDENTIFICATION-02",
-        "PM-KISAN-IN-PORTAL-01"
+        "PM-KISAN-IN-ELIGIBILITY-01",
+        "PM-KISAN-IN-BENEFIT-05"
       ]
     },
     {
       "query_id": "PMKISAN-DEV-007",
       "query": "Are beneficiaries identified by State and Union Territory governments?",
       "relevant_passage_ids": [
-        "PM-KISAN-IN-PORTAL-01"
+        "PM-KISAN-IN-BENEFIT-05"
       ]
     },
     {
       "query_id": "PMKISAN-DEV-008",
       "query": "Which land records are used to identify PM-KISAN beneficiaries?",
       "relevant_passage_ids": [
-        "PM-KISAN-IN-IDENTIFICATION-01"
+        "PM-KISAN-IN-ELIGIBILITY-01"
       ]
     },
     {
       "query_id": "PMKISAN-DEV-009",
       "query": "What does the guideline say about cultivable land records for a farmer family?",
       "relevant_passage_ids": [
-        "PM-KISAN-IN-ELIGIBILITY-LAND-01"
+        "PM-KISAN-IN-ELIGIBILITY-01"
       ]
     },
     {
@@ -193,14 +193,14 @@
       "query_id": "PMKISAN-DEV-012",
       "query": "Is a person who paid income tax in the last assessment year listed as an exclusion?",
       "relevant_passage_ids": [
-        "PM-KISAN-IN-EXCLUSION-02"
+        "PM-KISAN-IN-EXCLUSION-01"
       ]
     },
     {
       "query_id": "PMKISAN-DEV-013",
       "query": "What do the PM-KISAN guidelines say about income-tax payers?",
       "relevant_passage_ids": [
-        "PM-KISAN-IN-EXCLUSION-02"
+        "PM-KISAN-IN-EXCLUSION-01"
       ]
     },
     {
@@ -316,7 +316,7 @@
       "query_language": "en",
       "relevant_passage_ids": [
         "IGNWPS-MH-ELIGIBILITY-01",
-        "PM-KISAN-IN-ELIGIBILITY-LAND-01"
+        "PM-KISAN-IN-ELIGIBILITY-01"
       ]
     },
     {
@@ -326,7 +326,7 @@
       "relevant_passage_ids": [
         "IGNWPS-MH-BENEFIT-01",
         "PM-KISAN-IN-BENEFIT-01",
-        "PM-KISAN-IN-PAYMENT-01"
+        "PM-KISAN-IN-BENEFIT-04"
       ]
     },
     {

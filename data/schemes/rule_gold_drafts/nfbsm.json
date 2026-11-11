@@ -2,7 +2,7 @@
   "scheme_id": "NFBSM-MH",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "human_reviewed",
+  "review_status": "pending_human_review",
   "rules": [
     {
       "rule_id": "NFBSM-MH-R01",
@@ -22,11 +22,11 @@
       "field": "deceased_breadwinner_age",
       "operator": "gte",
       "value": 18,
-      "unit": "years",
+      "unit": null,
       "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
       "source_quote": "in the age group of 18 to 59 years",
       "needs_human_review": false,
-      "note": "End values included (project owner decision 2026-11-10)."
+      "note": null
     },
     {
       "rule_id": "NFBSM-MH-R03",
@@ -34,11 +34,11 @@
       "field": "deceased_breadwinner_age",
       "operator": "lte",
       "value": 59,
-      "unit": "years",
+      "unit": null,
       "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
       "source_quote": "in the age group of 18 to 59 years",
       "needs_human_review": false,
-      "note": "End values included (project owner decision 2026-11-10)."
+      "note": null
     },
     {
       "rule_id": "NFBSM-MH-R04",
@@ -65,5 +65,7 @@
       "note": null
     }
   ],
-  "unresolved": []
+  "unresolved": [
+    "Whether the age limits of the deceased breadwinner include 18 and 59 is not stated."
+  ]
 }

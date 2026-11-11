@@ -2,7 +2,7 @@
   "scheme_id": "IGNWPS-MH",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "human_reviewed",
+  "review_status": "pending_human_review",
   "rules": [
     {
       "rule_id": "IGNWPS-MH-R01",
@@ -10,7 +10,7 @@
       "field": "age",
       "operator": "gte",
       "value": 40,
-      "unit": "years",
+      "unit": null,
       "source_passage_id": "IGNWPS-MH-ELIGIBILITY-01",
       "source_quote": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
       "needs_human_review": false,
@@ -22,7 +22,7 @@
       "field": "age",
       "operator": "lte",
       "value": 79,
-      "unit": "years",
+      "unit": null,
       "source_passage_id": "IGNWPS-MH-ELIGIBILITY-01",
       "source_quote": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
       "needs_human_review": false,

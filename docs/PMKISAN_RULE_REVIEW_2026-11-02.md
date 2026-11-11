@@ -14,7 +14,7 @@
 - Jurisdiction: India
 - Applicable-as-of date requested: 2026-11-02
 - Proposed rule-set version: `0.1.0-draft`
-- Input evidence: `data/schemes/passages.json`; proposed executable rules do not yet exist
+- Input evidence: `data/schemes/passages/pm_kisan_passages.json`; proposed executable rules do not yet exist
 - Review date: 2026-11-02
 - Review method: direct inspection of the official portal and linked official operational-guidelines PDF
 - Independent second-model review: performed 2026-11-02; reviewer/provider identity unavailable; findings summarized below

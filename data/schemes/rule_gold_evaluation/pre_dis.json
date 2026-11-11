@@ -1,0 +1,107 @@
+{
+  "scheme_id": "PRE-DIS-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "human_reviewed",
+  "rules": [
+    {
+      "rule_id": "PRE-DIS-IN-R01",
+      "kind": "eligibility",
+      "field": "is_citizen_of_india",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-02",
+      "source_quote": "Indian nationals only.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PRE-DIS-IN-R02",
+      "kind": "eligibility",
+      "field": "has_disability",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-03",
+      "source_quote": "Students with benchmark disability of 40% or more.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PRE-DIS-IN-R03",
+      "kind": "eligibility",
+      "field": "disability_percent",
+      "operator": "gte",
+      "value": 40,
+      "unit": "percent",
+      "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-03",
+      "source_quote": "Students with benchmark disability of 40% or more.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PRE-DIS-IN-R04",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 250000,
+      "unit": "INR per year",
+      "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-04",
+      "source_quote": "Family income up to Rs. 2.5 lakh per year.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PRE-DIS-IN-R05",
+      "kind": "eligibility",
+      "field": "is_student_in_class_9_or_10",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-01",
+      "source_quote": "Students studying in Class IX or X.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PRE-DIS-IN-R06",
+      "kind": "exclusion",
+      "field": "receives_other_scholarship_or_stipend",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-05",
+      "source_quote": "Student should not receive another scholarship/stipend.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PRE-DIS-IN-R07",
+      "kind": "eligibility",
+      "field": "family_members_receiving_scholarship",
+      "operator": "lte",
+      "value": 2,
+      "unit": "persons",
+      "source_passage_id": "PRE-DIS-IN-EXCLUSION-02",
+      "source_quote": "Scholarship will not be given to more than two students from a family.",
+      "needs_human_review": true,
+      "note": "Counting basis (includes this student?) and the twin exception need a person to confirm."
+    },
+    {
+      "rule_id": "PRE-DIS-IN-R08",
+      "kind": "exclusion",
+      "field": "is_repeating_class",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PRE-DIS-IN-EXCLUSION-04",
+      "source_quote": "If a student has to repeat a class",
+      "needs_human_review": false,
+      "note": null
+    }
+  ],
+  "unresolved": [
+    "NOTE: UDID Card and Aadhaar Card are listed under eligibility but as documents; has_aadhaar not encoded."
+  ]
+}

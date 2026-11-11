@@ -66,10 +66,19 @@ class ScriptedProvider(FakeChatModel):
 
     model_name: str = "fake-phase2-model"
 
-    def __init__(self, choices: list[ModelDecision]) -> None:
-        super().__init__()
+    def __init__(
+        self,
+        choices: list[ModelDecision],
+        description_facts: list[dict[str, object]] | None = None,
+    ) -> None:
+        super().__init__(description_facts=description_facts or [])
         self.choices = choices
         self.messages: list[list[dict[str, str]]] = []
+        self.reader_requests: list[dict[str, object]] = []
+
+    async def read_description(self, request):
+        self.reader_requests.append(request)
+        return await super().read_description(request)
 
     async def choose(self, _agent, _locale, messages, _actions):
         self.messages.append(messages)
@@ -194,6 +203,9 @@ def test_supervisor_uses_observation_to_choose_next_action():
 def test_intake_selects_each_action_from_the_prior_observation():
     class ObservationDrivenProvider(FakeChatModel):
         model_name: str = "fake-intake-observation-model"
+        description_facts: list[dict[str, object]] = [
+            {"fact_name": "is_widow", "value": True},
+        ]
 
         def __init__(self):
             super().__init__()
@@ -263,9 +275,14 @@ def test_intake_selects_each_action_from_the_prior_observation():
         "propose_profile_facts",
         "finish_intake",
     ]
-    assert [
-        event.action for event in journey.agent_trace
-    ] == provider.choices
+    assert [event.action for event in journey.agent_trace] == [
+        "propose_plan",
+        "finish_plan",
+        "read_initial_description",
+        "read_required_facts",
+        "propose_profile_facts",
+        "finish_intake",
+    ]
 
 
 def _interview_graph(
@@ -314,6 +331,10 @@ def test_react_intake_observes_allowed_tool_then_confirms_each_fact(caplog):
             action="finish_intake",
             arguments={"confirm": "return_to_supervisor"},
         ),
+    ], description_facts=[
+        {"fact_name": "is_widow", "value": True},
+        {"fact_name": "bpl_card_shown", "value": True},
+        {"fact_name": "date_of_birth", "value": "1984-05-01"},
     ])
     graph = _interview_graph(client, provider)
 
@@ -334,19 +355,24 @@ def test_react_intake_observes_allowed_tool_then_confirms_each_fact(caplog):
         assert journey.known_fact_names == ["application_date"]
         assert "Are you a widow?" in journey.question
         assert journey.react_status == "model_assisted"
-        assert journey.agent_budget["model_calls"] == 5
+        # The quarantined description reader is one extra, tool-free call.
+        assert journey.agent_budget["model_calls"] == 6
         assert journey.agent_budget["tool_calls"] == 5
         assert [event.action for event in journey.agent_trace] == [
             "propose_plan",
             "finish_plan",
+            "read_initial_description",
             "read_required_facts",
             "propose_profile_facts",
             "finish_intake",
         ]
         assert len(client.calls) == 1
         assert "observation" in provider.messages[3][-1]["content"]
-        assert "[REDACTED_EMAIL]" in provider.messages[2][0]["content"]
-        assert "[REDACTED_AADHAAR]" in provider.messages[2][0]["content"]
+        # Only the tool-free reader sees the (masked) description.
+        reader_text = provider.reader_requests[0]["description"]
+        assert "[REDACTED_EMAIL]" in reader_text
+        assert "[REDACTED_AADHAAR]" in reader_text
+        assert "Synthetic household facts" not in json.dumps(provider.messages)
         trace_text = json.dumps([
             event.model_dump(mode="json") for event in journey.agent_trace
         ])
@@ -408,7 +434,7 @@ def test_malformed_fact_proposal_is_not_confirmed_or_saved():
                 "facts": [{"fact_name": "is_widow", "value": ["yes"]}],
             },
         )] * 2,
-    ])
+    ], description_facts=[{"fact_name": "is_widow", "value": True}])
     client = FakeRuleClient()
     graph = _interview_graph(client, provider)
 
@@ -433,6 +459,9 @@ def test_model_failures_fall_back_to_the_fixed_question_flow():
         model_name: str = "fake-unavailable-model"
 
         async def choose(self, _agent, _locale, _messages, _actions):
+            raise AgentModelError("Synthetic provider failure.")
+
+        async def read_description(self, _request):
             raise AgentModelError("Synthetic provider failure.")
 
     graph = _interview_graph(FakeRuleClient(), UnavailableProvider())
@@ -586,7 +615,7 @@ def test_person_can_reject_initial_profile_proposal_without_mutation():
             action="finish_intake",
             arguments={"confirm": "return_to_supervisor"},
         ),
-    ])
+    ], description_facts=[{"fact_name": "is_widow", "value": True}])
     graph = _interview_graph(FakeRuleClient(), provider)
 
     async def scenario():
@@ -637,6 +666,9 @@ def test_initial_profile_proposal_cannot_replace_a_confirmed_fact():
             action="finish_intake",
             arguments={"confirm": "return_to_supervisor"},
         ),
+    ], description_facts=[
+        {"fact_name": "is_widow", "value": True},
+        {"fact_name": "bpl_card_shown", "value": True},
     ])
     graph = _interview_graph(FakeRuleClient(), provider)
 
@@ -1044,7 +1076,7 @@ def test_intake_reads_required_facts_from_the_real_rule_engine_server():
     provider = ScriptedProvider([
         ModelDecision(action="read_required_facts", arguments={"scheme_id": "IGNWPS-MH"}),
         ModelDecision(action="finish_intake", arguments={"confirm": "return_to_supervisor"}),
-    ])
+    ], description_facts=[{"fact_name": "is_widow", "value": True}])
 
     async def scenario():
         async with Client(rule_engine_server) as client:
@@ -1054,5 +1086,5 @@ def test_intake_reads_required_facts_from_the_real_rule_engine_server():
             )
 
     _proposals, _budget, trace, status = asyncio.run(scenario())
-    assert [event["status"] for event in trace][:1] == ["observed"], trace
+    assert [event["status"] for event in trace][:2] == ["completed", "observed"], trace
     assert status == "model_assisted"

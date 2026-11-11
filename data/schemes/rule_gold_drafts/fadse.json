@@ -2,7 +2,7 @@
   "scheme_id": "FADSE-MH",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "human_reviewed",
+  "review_status": "pending_human_review",
   "rules": [
     {
       "rule_id": "FADSE-MH-R01",
@@ -10,7 +10,7 @@
       "field": "disability_percent",
       "operator": "gte",
       "value": 40,
-      "unit": "percent",
+      "unit": null,
       "source_passage_id": "FADSE-MH-ELIGIBILITY-01",
       "source_quote": "Applicant should have a minimum 40% disability",
       "needs_human_review": false,
@@ -34,11 +34,11 @@
       "field": "age",
       "operator": "gte",
       "value": 18,
-      "unit": "years",
+      "unit": null,
       "source_passage_id": "FADSE-MH-ELIGIBILITY-03",
       "source_quote": "Applicant should be aged between 18 and 50 years",
-      "needs_human_review": false,
-      "note": "End values included (project owner decision 2026-11-10)."
+      "needs_human_review": true,
+      "note": "End values assumed included."
     },
     {
       "rule_id": "FADSE-MH-R04",
@@ -46,11 +46,11 @@
       "field": "age",
       "operator": "lte",
       "value": 50,
-      "unit": "years",
+      "unit": null,
       "source_passage_id": "FADSE-MH-ELIGIBILITY-03",
       "source_quote": "Applicant should be aged between 18 and 50 years",
-      "needs_human_review": false,
-      "note": "End values included (project owner decision 2026-11-10)."
+      "needs_human_review": true,
+      "note": "End values assumed included."
     },
     {
       "rule_id": "FADSE-MH-R05",
@@ -58,7 +58,7 @@
       "field": "annual_income_inr",
       "operator": "lt",
       "value": 100000,
-      "unit": "INR per year",
+      "unit": null,
       "source_passage_id": "FADSE-MH-ELIGIBILITY-04",
       "source_quote": "Applicant annual income should be below Rs 100000/-",
       "needs_human_review": false,
@@ -89,5 +89,7 @@
       "note": null
     }
   ],
-  "unresolved": []
+  "unresolved": [
+    "Whether the end ages 18 and 50 are included is not stated."
+  ]
 }

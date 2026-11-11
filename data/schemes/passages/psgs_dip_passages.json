@@ -1,0 +1,311 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "PSGS-DIP-IN-BENEFICIARY-01",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "Scheme being implemented by AICTE aimed at providing assistance for advancement of Girls pursuing technical education.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-001",
+        "publisher": "All India Council for Technical Education (AICTE)",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "AICTE Pragati Scholarship (Diploma) guidelines 2020-21; p. 2, para 1.0 Objective"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-ELIGIBILITY-01",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The girl candidate should be admitted to First year of Diploma level course\nOR\nSecond year of Diploma level course through lateral entry in any of the AICTE approved Institution of respective year.\nMaximum two girls child per family are eligible.\nFamily income from all sources should not be more than Rs. 8 lakh per annum during the current financial year. A valid income certificate issued by State/ UT Government need to be enclosed.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-001",
+        "publisher": "All India Council for Technical Education (AICTE)",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "AICTE Pragati Scholarship (Diploma) guidelines 2020-21; p. 2, para 2.0 Eligibility for scholarship"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-ELIGIBILITY-02",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The gap period between the year of passing the qualifying examination and the session of admission in diploma course should not be more than two years.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-001",
+        "publisher": "All India Council for Technical Education (AICTE)",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "AICTE Pragati Scholarship (Diploma) guidelines 2020-21; p. 4, para 11.0 Terms and conditions (1)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-BENEFIT-01",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Rs. 50,000/- per annum for every year of study i.e. maximum 3 years for first year admitted students and maximum 2 years for second year admitted students through lateral entry as lump sum amount towards payment of college fee, purchase of computer, stationeries, books, equipments, softwares etc. No other additional grant will be payable in lieu of hostel charges and medical charges etc.\nNo documentary proof need to be attached for the above while availing benefits.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-001",
+        "publisher": "All India Council for Technical Education (AICTE)",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "AICTE Pragati Scholarship (Diploma) guidelines 2020-21; p. 3, para 4.0 Amount of scholarship"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-BENEFIT-02",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "After selection, the awardee will be paid scholarship through DBT mode on annual basis.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-001",
+        "publisher": "All India Council for Technical Education (AICTE)",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "AICTE Pragati Scholarship (Diploma) guidelines 2020-21; p. 3, para 5.0 Mode of payment"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-BENEFIT-03",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "A total of 5,000 scholarships are earmarked per annum under this scheme for pursuing First year of Diploma level course OR Second year of Diploma level course through lateral entry in any of the AICTE approved Institutions.\nIn addition to 5,000 scholarships at point number 2, all eligible girls who submit online scholarship form, from following 13 Union Territories and North Eastern States i.e. Andaman and Nicobar Islands (UT), Jammu and Kashmir (UT), Ladakh (UT), Dadra and Nagar Haveli & Daman and Diu (UT), Lakshadweep (UT), Arunachal Pradesh, Assam, Manipur, Meghalaya, Mizoram, Nagaland, Sikkim & Tripura will be given scholarship by AICTE.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-001",
+        "publisher": "All India Council for Technical Education (AICTE)",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "AICTE Pragati Scholarship (Diploma) guidelines 2020-21; p. 2, para 3.0 Number of scholarships"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-BENEFIT-04",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The scholarship will be renewed for the next year of study on receipt of renewal through National Scholarship Portal by submitting passing certificate/ marksheet along with letter from the Head of the Institution on the online portal.\nStudent failing to get promoted to the next class/ level would forfeit the scholarship.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-001",
+        "publisher": "All India Council for Technical Education (AICTE)",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "AICTE Pragati Scholarship (Diploma) guidelines 2020-21; p. 4, para 10.0 Renewals"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-BENEFIT-05",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The selection of candidate will be carried out solely on the basis of merit of qualifying examination to peruse the Technical Diploma course from any of the AICTE approved institutions i.e. in First year or Second year (through lateral entry only) on the basis of percentage of marks obtained in the 10th / equivalent examination.\nState/ UT wise merit list will be prepared as per number of scholarships allotted in the point number 3.0 above.\nAge: In case qualifying examination percentile does not break ties, then the candidate of elder age will be ranked higher.\nAnnual family income: If above method do not break ties, and then the lower annual family income will settle on in higher ranking for the scholarships.\nAs per Government of India norms.\nIf there is any vacant seat in any of the reserved category (SC/ ST/ OBC), the same will be transferred to the General Category.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-001",
+        "publisher": "All India Council for Technical Education (AICTE)",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "AICTE Pragati Scholarship (Diploma) guidelines 2020-21; pp. 3-4, paras 7.0-9.0 Selection, ties and reservation"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-EXCLUSION-01",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "If a candidate failed/ drop out in subsequent year, she will not be eligible for further scholarship.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-001",
+        "publisher": "All India Council for Technical Education (AICTE)",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "AICTE Pragati Scholarship (Diploma) guidelines 2020-21; p. 4, para 11.0 Terms and conditions (5)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-EXCLUSION-02",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "The grant of scholarship is subject to the condition that the student does not receive any financial assistance in shape of scholarship/any emoluments, salary, stipend etc. from any other source during her course of study in the Institute. In case of receipt of any financial assistance from any other sources, the scholarship shall be discontinued and the entire amount of scholarship will have to be refunded to AICTE by D/Draft drawn in favour of “Member Secretary, AICTE” payable at New Delhi.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-001",
+        "publisher": "All India Council for Technical Education (AICTE)",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "AICTE Pragati Scholarship (Diploma) guidelines 2020-21; p. 4, para 11.0 Terms and conditions (6)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-APPLICATION-01",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The candidate fulfilling the eligibility conditions is required to apply online on National Scholarship Portal (NSP) after initiation of application process and notice to be published on AICTE website.\nThe host institution where the candidate is studying, required to verify the online application.\nDepartment of Technical Education (DTE) of respective State/ UT will verify these applications as second level of scrutiny.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-001",
+        "publisher": "All India Council for Technical Education (AICTE)",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "AICTE Pragati Scholarship (Diploma) guidelines 2020-21; p. 3, para 6.0 Procedure for applying"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-APPLICATION-02",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Applications will be invited once in a year through National e-Scholarship Portal of the Government of India.\nIncomplete applications will be summarily rejected. Only verified online applications will be considered for the award of scholarship.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-001",
+        "publisher": "All India Council for Technical Education (AICTE)",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "AICTE Pragati Scholarship (Diploma) guidelines 2020-21; p. 4, para 11.0 Terms and conditions (2), (4)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-APPLICATION-03",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Provisional list of shortlisted candidates will be uploaded on the AICTE web portal. In case, candidate has any query about merit list of scholarship, they may raise their grievances within a month. No query regarding merit list will be entertained after one-month duration from the date of publishing of merit list on AICTE website.\nQuery regarding non-payment of the scholarship due to invalid/wrong account number will be entertained only upto six months from the date of publishing of merit list on AICTE website.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-001",
+        "publisher": "All India Council for Technical Education (AICTE)",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/AICTE/AICTE_2011_G.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "AICTE Pragati Scholarship (Diploma) guidelines 2020-21; p. 4, para 11.0 Terms and conditions (11)-(12)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-APPLICATION-04",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1: Visit the Registration page of the National Scholarships Portal.\nStep 2: Guidelines for Registration will appear. Scroll to the bottom. Read carefully the undertaking. Accept the Terms. Click “Continue”.\nStep 3: A Registration Form will appear. (The fields marked as * are compulsory). Fill in the details and click “Register”. Your Application ID and password will be displayed. The same will also be sent as an SMS to your registered mobile number.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-002",
+        "publisher": "Ministry of Education",
+        "url": "https://www.myscheme.gov.in/schemes/psgs_dip",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, new registration"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-APPLICATION-05",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1: Visit the applicant Login page of the National Scholarships Portal Enter your Application ID and password.\nStep 2: Type the Captcha and click “Login”.\nStep 3: On the next screen, provide the OTP received on your registered mobile number. You will be directed to the Password Reset screen. Create a new password and confirm.\nStep 4: Click “Submit”. You will be directed to the “Applicant’s Dashboard”.\nStep 5: On the left pane, click “Application Form”. The fields marked as * are compulsory. Fill in the details and upload the documents. The verification of credentials of the students (caste, educational qualifications etc.) will be done through the DIGILOCKER facility of the MeitY, Govt. of India.\nStep 6: You can either click on “Save as Draft” to complete the application later. Else, click “Final Submit” to apply.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-002",
+        "publisher": "Ministry of Education",
+        "url": "https://www.myscheme.gov.in/schemes/psgs_dip",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, fresh application"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-APPLICATION-06",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The student can track their payment status from the template “Know Your Payment” in the Public Financial Management System (PFMS) Portal either by indicating their Aadhaar Number, Bank Account number or NSP Application ID.",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-002",
+        "publisher": "Ministry of Education",
+        "url": "https://www.myscheme.gov.in/schemes/psgs_dip",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online, track payment status"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PSGS-DIP-IN-DOCUMENTS-01",
+      "scheme_id": "PSGS-DIP-IN",
+      "scheme_name": "Pragati Scholarship Scheme for Girl Students (Technical Diploma)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Copy of the SSC/10th certificate.\nCopy of HSC/12th certificate (In case of degree level).\nCopy of ITI certificate (In case of lateral entry for diploma level).\nCopy of Diploma certificate (In case of lateral entry for Degree level).\nBank Passbook\nCategory Certificate\nAadhaar Card\nApplicant’s Passport-Size Photo\nStudy Certificate (Appendix-I)\nAnnual Family Income Certificate (Appendix II)\nParent’s Declaration (Appendix-III)\nBank Mandate Form (Appendix-IV)",
+      "source": {
+        "source_id": "SRC-PSGS-DIP-IN-002",
+        "publisher": "Ministry of Education",
+        "url": "https://www.myscheme.gov.in/schemes/psgs_dip",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

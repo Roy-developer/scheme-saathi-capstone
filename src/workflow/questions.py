@@ -9,15 +9,86 @@ from typing import Literal
 from src.rules.facts import FactDefinition, FactRegistry
 
 
+# One question per HouseholdProfile field. The picker returns a field name,
+# and intake looks up its question here.
+QUESTIONS: dict[str, str] = {
+    "date_of_birth": (
+        "What is your date of birth? Use YYYY-MM-DD, for example 1958-05-05."
+    ),
+    "application_date": (
+        "On what date are you applying? For example 30 October 2026."
+    ),
+    "is_widow": "Are you a widow?",
+    "bpl_card_shown": "Can you show a government BPL (Below Poverty Line) card?",
+    "landholding_family_in_state_records": (
+        "Does the farmer family have cultivable land in State/UT records?"
+    ),
+    "institutional_landholder": "Is the land held by an institution?",
+    "listed_public_office_member": (
+        "Does a family member hold or has held a listed public office, "
+        "such as minister, MP, MLA or mayor?"
+    ),
+    "excluded_government_employee_member": (
+        "Is a family member a serving or retired government employee "
+        "(other than the stated lower-grade exceptions)?"
+    ),
+    "pension_at_least_10000_excluding_stated_grades": (
+        "Does a family member receive a pension of Rs. 10,000 or more "
+        "per month?"
+    ),
+    "income_tax_paid_last_assessment_year": (
+        "Did a family member pay income tax in the last assessment year?"
+    ),
+    "registered_practicing_professional_member": (
+        "Is a family member a registered, practicing professional, such as "
+        "a doctor, engineer, lawyer or chartered accountant?"
+    ),
+    "nri_new_beneficiary": (
+        "Is this a new application from a farmer family that is NRI "
+        "(Non-Resident Indian)?"
+    ),
+}
+LOCALIZED_QUESTIONS: dict[str, dict[str, str]] = {
+    "hi": {
+        "date_of_birth": "आपकी जन्मतिथि क्या है? YYYY-MM-DD में लिखें, उदाहरण: 1958-05-05।",
+        "application_date": "आप किस तारीख को आवेदन कर रहे हैं?",
+        "is_widow": "क्या आवेदक विधवा हैं?",
+        "bpl_card_shown": "क्या आप सरकारी बीपीएल कार्ड दिखा सकते हैं?",
+        "landholding_family_in_state_records": "क्या किसान परिवार की खेती योग्य भूमि राज्य/केंद्रशासित प्रदेश के रिकॉर्ड में दर्ज है?",
+        "institutional_landholder": "क्या भूमि किसी संस्था के नाम पर है?",
+        "listed_public_office_member": "क्या परिवार का कोई सदस्य मंत्री, सांसद, विधायक या महापौर जैसे सूचीबद्ध पद पर है या रहा है?",
+        "excluded_government_employee_member": "क्या परिवार का कोई सदस्य निर्दिष्ट निम्न-श्रेणी अपवादों को छोड़कर सरकारी कर्मचारी है या रहा है?",
+        "pension_at_least_10000_excluding_stated_grades": "क्या परिवार के किसी सदस्य को हर महीने 10,000 रुपये या अधिक पेंशन मिलती है?",
+        "income_tax_paid_last_assessment_year": "क्या परिवार के किसी सदस्य ने पिछले आकलन वर्ष में आयकर दिया?",
+        "registered_practicing_professional_member": "क्या परिवार का कोई सदस्य पंजीकृत और कार्यरत डॉक्टर, इंजीनियर, वकील या चार्टर्ड अकाउंटेंट है?",
+        "nri_new_beneficiary": "क्या यह एनआरआई किसान परिवार का नया आवेदन है?",
+    },
+    "mr": {
+        "date_of_birth": "तुमची जन्मतारीख काय आहे? YYYY-MM-DD मध्ये लिहा, उदाहरण: 1958-05-05.",
+        "application_date": "तुम्ही कोणत्या तारखेला अर्ज करत आहात?",
+        "is_widow": "अर्जदार विधवा आहेत का?",
+        "bpl_card_shown": "तुम्ही सरकारी बीपीएल कार्ड दाखवू शकता का?",
+        "landholding_family_in_state_records": "शेतकरी कुटुंबाची लागवडीयोग्य जमीन राज्य/केंद्रशासित प्रदेशाच्या नोंदीत आहे का?",
+        "institutional_landholder": "जमीन एखाद्या संस्थेच्या नावावर आहे का?",
+        "listed_public_office_member": "कुटुंबातील कोणी मंत्री, खासदार, आमदार किंवा महापौर यांसारख्या सूचीबद्ध सार्वजनिक पदावर आहे किंवा होते का?",
+        "excluded_government_employee_member": "निर्दिष्ट कनिष्ठ श्रेणी अपवाद वगळता कुटुंबातील कोणी सरकारी कर्मचारी आहे किंवा होते का?",
+        "pension_at_least_10000_excluding_stated_grades": "कुटुंबातील कोणाला दरमहा 10,000 रुपये किंवा अधिक पेन्शन मिळते का?",
+        "income_tax_paid_last_assessment_year": "कुटुंबातील कोणी मागील निर्धारण वर्षात आयकर भरला का?",
+        "registered_practicing_professional_member": "कुटुंबातील कोणी नोंदणीकृत व कार्यरत डॉक्टर, अभियंता, वकील किंवा चार्टर्ड अकाउंटंट आहे का?",
+        "nri_new_beneficiary": "हा अनिवासी भारतीय शेतकरी कुटुंबाचा नवीन अर्ज आहे का?",
+    },
+}
+
+# Hint added before a question when the reply could not be understood.
 YES_NO_HINTS = {
     "en": 'Please answer "yes", "no" or "I don\'t know".',
     "hi": 'कृपया "हाँ", "नहीं" या "मुझे नहीं पता" में उत्तर दें।',
     "mr": 'कृपया "होय", "नाही" किंवा "माहित नाही" असे उत्तर द्या.',
 }
 DATE_HINTS = {
-    "en": 'Please give a date like 12 March 1981 or 12/03/1981, or say "I don\'t know".',
-    "hi": 'कृपया 12/03/1981 जैसी तारीख दें या "मुझे नहीं पता" कहें।',
-    "mr": 'कृपया 12/03/1981 अशी तारीख द्या किंवा "माहित नाही" असे सांगा.',
+    "en": 'Please give a date as YYYY-MM-DD, for example 1958-05-05, or say "I don\'t know".',
+    "hi": 'कृपया YYYY-MM-DD में तारीख दें, जैसे 1958-05-05, या "मुझे नहीं पता" कहें।',
+    "mr": 'कृपया YYYY-MM-DD मध्ये तारीख द्या, उदा. 1958-05-05, किंवा "माहित नाही" असे सांगा.',
 }
 UNCLEAR_REPLY_PREFIX = {
     "en": "I could not understand that.",

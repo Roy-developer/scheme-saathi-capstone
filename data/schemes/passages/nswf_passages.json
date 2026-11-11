@@ -1,0 +1,473 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "NSWF-IN-BENEFIT-01",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The components approved under the Scheme are i) Saving-cum Relief; ii) Development of Model Fishermen Villages; iii) Group Accident Insurance for active Fishermen and iv) Training & Extension.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 1, para 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-BENEFICIARY-01",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "The State/UT Governments are encouraged to submit proposals to cover as many fishermen possible during the financial year 2015-16 giving due preference to Below Poverty Line (BPL), women and Scheduled Caste /Scheduled Tribe beneficiaries.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 1, para 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-BENEFIT-02",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The Scheme is demand driven and will be implemented through respective State Government or its agencies. Expenditure on assistance will be shared on 50:50 basis by Government of India and State Governments in respect of all components of the scheme. In case of North-Eastern States, the cost sharing would be 75:25 basis. For UTs, the entire expenditure is borne by the Government of India.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); pp. 1-2, para 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-BENEFIT-03",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Under all the components of scheme, assistance in the form of grant-in-aid for identified activities shall be provided to an individual fishermen beneficiary, self-help groups, women fishermen groups, fishery cooperative societies.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 2, para 6"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-BENEFICIARY-02",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "It may be ensured that 16.2% and 8% of funds are targeted for SC & ST beneficiaries respectively under Scheduled Castes Special Plan (SCSP) as per the directives of Planning Commission. The SC beneficiaries may be both fishermen by caste and/or by profession. Also, 10% of funds should be earmarked for women beneficiaries.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 2, para 7"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-APPLICATION-01",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "It may be ensured that selection of beneficiaries under the scheme is fair and transparent for which selected beneficiaries may be linked with UID and the direct cash transfer for delivering the assistance through Aadhar card.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 2, para 8"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-ELIGIBILITY-01",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Beneficiary should be an active fisher identified by State Government;\nPreference should be given to fishers below poverty line and to landless fishers;\nFishers owning land or kutcha structure may also be considered for allotment of houses under the scheme.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 4, Annexure-I (1) Model Fishermen Villages, criteria i) to iii)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-BENEFIT-04",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "A Fishermen Village may consist of not less than 10 houses. There is no upper limit for number of houses to be constructed in a village, which would depend on number of eligible fishermen in that village. However, State should ensure equitable distribution of houses among all villages in proportion to the number of eligible fishers, as far as possible. The plinth area and cost of construction of a house would be limited to 35 Sq. mts and Rs.75000/- respectively. The ceiling on land and cost of construction indicate the upper limit.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 4, Annexure-I (1)(a) Housing"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-BENEFIT-05",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "A fishermen village would be provided with one tubewell for every 20 houses. Where a village consists of only 10 houses or more, but less than 20 houses, one tubewell may be provided for such a village. The cost of installation of a tubewell should not exceed Rs.40,000/-. However, for North-Eastern States, the cost of installation of a tubewell upto Rs. 45,000/- would be permissible as a special case for which State Government should furnish adequate justification.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 4, Annexure-I (1)(b) Drinking Water"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-BENEFIT-06",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "As a recreation and common working place, a fishermen village with at least 75 houses will be eligible to seek assistance for construction of a community hall if found necessary. The hall will be constructed on an area not exceeding 200 Sq. mts. Two toilets, one for gents and one for ladies and a tubewell will also be provided with a community hall. The total cost of the hall should not exceed Rs.2,00,000/-. The State/UTs should ensure optimum utilization of the community hall by permitting its utilization as a drying yard and also as mending shed.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 5, Annexure-I (1)(c) Common Facility"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-BENEFIT-07",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Under this component, fisherfolk/licensed/identified or registered with the State/UT Governments would be insured for Rs. 2,00,000/- against death or permanent total disability and Rs.1,00,000/- for partial permanent disability and a cover of Rs.10,000/- towards hospitalization expenses in the event of accident. The insurance cover will be for a period of 12 months and a policy would be taken out by FISHCOPFED in respect of all the participating States/UTs. The annual premium payable would not exceed Rs.65/- per head to be shared in the ratio of 50:50 between Central and State government. In case of North-Eastern States, amount of premium would be shared by the Centre and the North-Eastern States on 75:25 basis. In the case of Union Territories, 100% premium will be borne by the Central Government.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 5, Annexure-I (2)(i) Group Accident Insurance for Active Fishermen"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-BENEFIT-08",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "No contribution will be collected from the fishermen. The scheme would cover fishermen in both marine and inland sectors.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); pp. 5-6, Annexure-I (2)(i) Group Accident Insurance for Active Fishermen"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-BENEFIT-09",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "This component will be implemented uniformly for marine & inland fishermen. Relief is to be given to fishermen uniformly for 3 months of fishing ban period while seeking saving from them for 9 months. The fishermen contribution will be Rs. 900/- as in the case of marine fishermen under he existing scheme which would be collected over a period of 9 months. Contribution of Rs. 1800/- will be made by the Centre and the States on 50:50 basis. Thus the total contribution of Rs. 2700/- will be distributed to the fishermen in 3 equal monthly installments of Rs. 900/- each. In case of Union Territories, the contribution of Rs.1800/- will be borne by the Centre only. In case of North-Eastern States, the Governmental contribution of Rs.1800/- will be shared by the Centre & the States on 75:25 basis i.e. Rs.1350/- by the Centre and Rs.450/- by a North-Eastern States. The interest accrued on the saving of the fishermen will also be distributed with the 3rd installment.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 6, Annexure-I (3) Saving-cum-Relief, mode of implementation"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-ELIGIBILITY-02",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "For purpose of this component, an eligible fisherman means a person who is professionally engaged in full time fishing, is member of Cooperative Society/Federation/Welfare Society, lives below poverty line and is below 60 years of age. If any member of a fishermen family has regular employment or indulges in any other income generating activity, such family will not qualify to be beneficiary under this component.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 6, Annexure-I (3) Saving-cum-Relief"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-ELIGIBILITY-03",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Beneficiaries proposed to be covered under the component are engaged in active fishing in sea, member of cooperative society/ federation/ welfare society, lives below the poverty line, does not own mechanized fishing boat/ beach landing craft and below 60 years of age.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 9, proposal format 2. Saving-Cum-Relief, certificate"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-APPLICATION-02",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The president/Secretary of the Association shall collect the beneficiary contribution and entrust the same to an official of the State/UT Administration who shall deposit the fund every month in a Nationalized Bank in the name of Director of Fisheries of the respective State/UTs. The Director of Fisheries will draw the money during the lean season and distribute it to the beneficiaries adding Centre and State contribution in three equal installments. The States/UTs should ensure that under no circumstances collection of the beneficiary contribution is made in lump sum and also that the money is not distributed to the fishermen in lump sum.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); pp. 6-7, Annexure-I (3) Saving-cum-Relief"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-BENEFIT-10",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "If a Fishermen defaults in paying his contribution during the non-lean months, the Government's (both State and Centre) matching grant will be limited the number of months for which he has actually subscribed and will be refunded to the fishermen in equal installments during the lean months. The interest accrued will also be disbursed with the 3rd installment.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 7, Annexure-I (3) Saving-cum-Relief, default in contribution"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-BENEFIT-11",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "However, a default by any beneficiary in payment of monthly contribution, not exceeding beyond one month and twice during the fishing season, may be waived provided the amount is paid by the beneficiary with a default fee which is equal to the interest that would have otherwise accrued, had the contribution been paid on the due date(s).",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 7, Annexure-I (3) Saving-cum-Relief, default fee"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-BENEFIT-12",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Lean months in different States vary according to climatic conditions and monsoon weather. Therefore, Director of Fisheries of the respective States/UT's will have the discretion, based on the climatic changes and other valid reasons to decide which the lean months in a year are. However, lean months will be limited to only 3 months.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-001",
+        "publisher": "Department of Animal Husbandry, Dairying & Fisheries, Ministry of Agriculture, Government of India",
+        "url": "https://nitiforstates.gov.in/policy-viewer?id=SNCNAK000615",
+        "collected_at": "2026-11-08",
+        "publication_date": "2015-05-25",
+        "locator": "Administrative approval letter F.No.12035/01/2014-Fy (WU) dated 25 May 2015 (scanned; read from page image); p. 7, Annexure-I (3) Saving-cum-Relief, lean months"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-ELIGIBILITY-04",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "They must be engaged in full-time activities inland.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-002",
+        "publisher": "Ministry of Fisheries, Animal Husbandry and Dairying",
+        "url": "https://www.myscheme.gov.in/schemes/nswf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility Criteria for Inland Fishermen, point 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-ELIGIBILITY-05",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Their respective States and Union Territories must officially license marine fishermen.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-002",
+        "publisher": "Ministry of Fisheries, Animal Husbandry and Dairying",
+        "url": "https://www.myscheme.gov.in/schemes/nswf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility Criteria for Marine Fishermen, point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-ELIGIBILITY-06",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "They must involve themselves in full-time activities at sea.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-002",
+        "publisher": "Ministry of Fisheries, Animal Husbandry and Dairying",
+        "url": "https://www.myscheme.gov.in/schemes/nswf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility Criteria for Marine Fishermen, point 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-APPLICATION-03",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step-2: Next, the President or Secretary of the Association will collect the contribution and forward it to the Nationalised bank accounts selected by the Director of Fisheries.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-002",
+        "publisher": "Ministry of Fisheries, Animal Husbandry and Dairying",
+        "url": "https://www.myscheme.gov.in/schemes/nswf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-APPLICATION-04",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step-3: Then, the State and Central Government match the fishermen’s contributions as allotted for them.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-002",
+        "publisher": "Ministry of Fisheries, Animal Husbandry and Dairying",
+        "url": "https://www.myscheme.gov.in/schemes/nswf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-APPLICATION-05",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step-4: Once this scheme reaches maturity, the authorities will return funds with the total accrued interest.",
+      "source": {
+        "source_id": "SRC-NSWF-IN-002",
+        "publisher": "Ministry of Fisheries, Animal Husbandry and Dairying",
+        "url": "https://www.myscheme.gov.in/schemes/nswf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Offline, step 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "NSWF-IN-DOCUMENTS-01",
+      "scheme_id": "NSWF-IN",
+      "scheme_name": "National Scheme of Welfare of Fishermen",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Application in the specific format\nPhotograph of the applicant with spouse (if married)\nVessel registration certificate (duly issued by Directorate of Fisheries)\nCurrent net license payment receipt\nProfessional cum residential certificate\nRation card copy\nIncome certificate\nPhotograph",
+      "source": {
+        "source_id": "SRC-NSWF-IN-002",
+        "publisher": "Ministry of Fisheries, Animal Husbandry and Dairying",
+        "url": "https://www.myscheme.gov.in/schemes/nswf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

@@ -14,7 +14,7 @@ from src.api.scheme_search import load_passages
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 EVAL_SET_PATH = PROJECT_ROOT / "data" / "schemes" / "retrieval_eval_dev.json"
-CORPUS_PATH = PROJECT_ROOT / "data" / "schemes" / "passages.json"
+CORPUS_PATH = PROJECT_ROOT / "data" / "schemes" / "passages"
 
 
 class FakeRetriever:
@@ -58,6 +58,47 @@ def test_development_dataset_has_multilingual_and_cross_scheme_queries():
                 passage_schemes[passage_id]
                 for passage_id in query.relevant_passage_ids
             }) > 1
+
+
+ALL_SCHEMES_EVAL_PATH = (
+    PROJECT_ROOT / "data" / "schemes" / "retrieval_eval_all_schemes_dev.json"
+)
+
+
+def test_all_schemes_dataset_covers_the_full_corpus_independently():
+    original = load_evaluation_set(EVAL_SET_PATH, CORPUS_PATH)
+    extended = load_evaluation_set(ALL_SCHEMES_EVAL_PATH, CORPUS_PATH)
+    scheme_by_passage = {
+        passage.passage_id: passage.scheme_id for passage in load_passages(CORPUS_PATH)
+    }
+
+    def schemes(evaluation_set):
+        return {
+            scheme_by_passage[passage_id]
+            for query in evaluation_set.queries
+            for passage_id in query.relevant_passage_ids
+        }
+
+    assert len(extended.queries) >= 30
+    assert schemes(original) == set(scheme_by_passage.values())
+    assert schemes(extended) == set(scheme_by_passage.values())
+    assert sum(q.query_id.startswith("CROSS-") for q in extended.queries) >= 3
+
+
+def test_all_schemes_dataset_has_enough_queries_per_scheme():
+    extended = load_evaluation_set(ALL_SCHEMES_EVAL_PATH, CORPUS_PATH)
+    scheme_by_passage = {
+        passage.passage_id: passage.scheme_id for passage in load_passages(CORPUS_PATH)
+    }
+    counts: dict[str, int] = {}
+    for query in extended.queries:
+        if query.query_id.startswith("CROSS-"):
+            continue
+        scheme = scheme_by_passage[query.relevant_passage_ids[0]]
+        counts[scheme] = counts.get(scheme, 0) + 1
+
+    assert len(counts) == 40
+    assert min(counts.values()) >= 3
 
 
 def test_evaluator_reports_passage_recall_and_scheme_hit_rate():

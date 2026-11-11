@@ -74,11 +74,13 @@ lists using Reciprocal Rank Fusion, and reranks the candidates with a
 cross-encoder. The tool returns evidence for retrieval-augmented answers; it
 does not generate an answer or determine eligibility.
 
-The versioned corpus is `data/schemes/passages.json`. It currently contains
-792 English and Marathi passages across 42 schemes. The corpus labels passages
-as `reviewed` per the user's human-review attestation; that is not legal or
-policy approval. The PM-KISAN source-currentness caveats are recorded in the
-review workbook. Retrieval does not determine eligibility.
+The corpus is every `*.json` file in `data/schemes/passages/` (one file per
+scheme, loaded together; passage IDs must be unique across files). It contains
+the reviewed English and Marathi passages migrated from the versioned corpus.
+The `reviewed` label records the user's human-review attestation, not legal or
+policy approval. PM-KISAN source-currentness caveats are in the review
+workbook. This remains a technical pilot, not complete scheme coverage, and
+retrieval does not determine eligibility.
 
 To add a scheme, from its official source through to the app, follow
 `docs/RULE_EXTRACTION_REFLEXION_CODE_WALKTHROUGH.md`, section "From official PDF to live app, end to end".

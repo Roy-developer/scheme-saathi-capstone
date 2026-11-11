@@ -1,0 +1,41 @@
+{
+  "scheme_id": "RASSNB-MH",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "RASSNB-MH-R01",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "RASSNB-MH-ELIGIBILITY-02",
+      "source_quote": "The beneficiary must have resided in Maharashtra for at least 15 years.",
+      "needs_human_review": true,
+      "note": "The 15-year minimum residence period cannot be held by the profile; only residence in the state is encoded."
+    },
+    {
+      "rule_id": "RASSNB-MH-R02",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 300000,
+      "unit": "INR per year",
+      "source_passage_id": "RASSNB-MH-ELIGIBILITY-06",
+      "source_quote": "up to ₹1.20 lakh for rural areas and up to ₹3.00 lakh for urban areas",
+      "needs_human_review": true,
+      "note": "Limit differs by area: 120000 rural, 300000 urban. 300000 (the higher) is encoded; a rural applicant is limited to 120000."
+    }
+  ],
+  "unresolved": [
+    "MISSING FIELD: belongs to Scheduled Castes / Neo-Buddhist category.",
+    "MISSING FIELD: owns a plot of land or a temporary house (owns_land_in_own_name does not cover a temporary house).",
+    "MISSING FIELD: has not previously availed benefits from any other housing scheme.",
+    "MISSING FIELD: outside the priority list criteria of SEC-2011.",
+    "MISSING FIELD: rural versus urban residence, needed to apply the correct income limit.",
+    "MISSING FIELD: only one person per family receives the benefit.",
+    "MISSING FIELD: duration of residence in Maharashtra (15 years)."
+  ]
+}

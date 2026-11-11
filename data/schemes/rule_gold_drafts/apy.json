@@ -2,7 +2,7 @@
   "scheme_id": "APY-IN",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "human_reviewed",
+  "review_status": "pending_human_review",
   "rules": [
     {
       "rule_id": "APY-IN-R01",
@@ -10,11 +10,11 @@
       "field": "age",
       "operator": "gte",
       "value": 18,
-      "unit": "years",
+      "unit": null,
       "source_passage_id": "APY-IN-ELIGIBILITY-01",
       "source_quote": "The minimum age of joining APY is 18 years and maximum age is 40 years.",
       "needs_human_review": false,
-      "note": "End values included (project owner decision 2026-11-10)."
+      "note": null
     },
     {
       "rule_id": "APY-IN-R02",
@@ -22,11 +22,11 @@
       "field": "age",
       "operator": "lte",
       "value": 40,
-      "unit": "years",
+      "unit": null,
       "source_passage_id": "APY-IN-ELIGIBILITY-01",
       "source_quote": "The minimum age of joining APY is 18 years and maximum age is 40 years.",
       "needs_human_review": false,
-      "note": "End values included (project owner decision 2026-11-10)."
+      "note": null
     },
     {
       "rule_id": "APY-IN-R03",
@@ -65,5 +65,7 @@
       "note": "Applies from 1 October 2022."
     }
   ],
-  "unresolved": []
+  "unresolved": [
+    "Age limits are stated as 18 and 40 years; whether the end values are included is not stated."
+  ]
 }

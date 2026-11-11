@@ -1,6 +1,7 @@
 """Verify strict shared checklist loading and fail-closed trust decisions."""
 
 import copy
+from functools import lru_cache
 import hashlib
 import json
 from pathlib import Path
@@ -33,9 +34,16 @@ def _synthetic_document_bundle(monkeypatch: pytest.MonkeyPatch) -> None:
     def get_bundle(scheme_id: str) -> SchemeBundle:
         return bundle if scheme_id == "TEST-SCHEME" else provider.get_bundle(scheme_id)
 
-    monkeypatch.setattr(rule_data, "get_active_rule_data", lambda: SimpleNamespace(
-        registry=provider.registry, get_bundle=get_bundle,
-    ))
+    @lru_cache(maxsize=1)
+    def get_test_rule_data() -> SimpleNamespace:
+        return SimpleNamespace(
+            packages=provider.packages,
+            registry=provider.registry,
+            bundles=provider.bundles,
+            get_bundle=get_bundle,
+        )
+
+    monkeypatch.setattr(rule_data, "get_active_rule_data", get_test_rule_data)
 
 
 @pytest.mark.parametrize("fact_id", ["excluded_government_employee_member", "exam_marks"])

@@ -1,0 +1,48 @@
+{
+  "scheme_id": "PMUY2-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "pending_human_review",
+  "rules": [
+    {
+      "rule_id": "PMUY2-IN-R01",
+      "kind": "eligibility",
+      "field": "is_woman",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMUY2-IN-ELIGIBILITY-01",
+      "source_quote": "The applicant must be a woman who has attained 18 years of age.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PMUY2-IN-R02",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": null,
+      "source_passage_id": "PMUY2-IN-ELIGIBILITY-01",
+      "source_quote": "The applicant must be a woman who has attained 18 years of age.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PMUY2-IN-R03",
+      "kind": "eligibility",
+      "field": "is_below_poverty_line",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMUY2-IN-ELIGIBILITY-03",
+      "source_quote": "The adult woman must belong to a poor household",
+      "needs_human_review": true,
+      "note": "Passage says poor household via deprivation declaration; BPL is an approximation."
+    }
+  ],
+  "unresolved": [
+    "MISSING FIELD: household already has an LPG connection from any Oil Marketing Company.",
+    "MISSING FIELD: household category (SC, ST, PMAY-G, MBC, AAY, tea garden tribes, forest dweller, island resident, SECC household); any one qualifies."
+  ]
+}

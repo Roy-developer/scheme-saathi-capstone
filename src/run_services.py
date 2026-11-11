@@ -31,6 +31,8 @@ def service_commands(service: str) -> tuple[list[str], ...]:
         "0.0.0.0",
         "--server.port",
         "8501",
+        "--server.maxUploadSize",
+        "20",
     ]
     if service == "api":
         return (api,)

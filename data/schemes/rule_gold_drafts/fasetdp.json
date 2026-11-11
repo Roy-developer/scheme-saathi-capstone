@@ -2,7 +2,7 @@
   "scheme_id": "FASETDP-MH",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "human_reviewed",
+  "review_status": "pending_human_review",
   "rules": [
     {
       "rule_id": "FASETDP-MH-R01",
@@ -10,7 +10,7 @@
       "field": "disability_percent",
       "operator": "gte",
       "value": 40,
-      "unit": "percent",
+      "unit": null,
       "source_passage_id": "FASETDP-MH-ELIGIBILITY-01",
       "source_quote": "Applicant should have a minimum 40% disability",
       "needs_human_review": false,

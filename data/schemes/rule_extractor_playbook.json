@@ -1,0 +1,5 @@
+{
+  "frozen": false,
+  "note": "Reflexion playbook for the rule extractor. Add a lesson as 'pending'; only a person may set 'approved' (with reviewed_by) or 'rejected' (with rejection_reason). Only approved lessons reach the prompt. Learn lessons from development schemes only, then set frozen to true before the held-out run.",
+  "lessons": []
+}

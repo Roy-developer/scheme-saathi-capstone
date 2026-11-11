@@ -2,7 +2,7 @@
   "scheme_id": "IGNOAPS-MH",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "human_reviewed",
+  "review_status": "pending_human_review",
   "rules": [
     {
       "rule_id": "IGNOAPS-MH-R01",
@@ -10,7 +10,7 @@
       "field": "age",
       "operator": "gte",
       "value": 65,
-      "unit": "years",
+      "unit": null,
       "source_passage_id": "IGNOAPS-MH-ELIGIBILITY-01",
       "source_quote": "Eligible elderly individuals aged 65 and above",
       "needs_human_review": false,

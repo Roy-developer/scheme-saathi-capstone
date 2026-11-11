@@ -169,13 +169,13 @@
       "derivation": null,
       "questions": {
         "en": {
-          "text": "What is your date of birth? For example 12 March 1981 or 12/03/1981."
+          "text": "What is your date of birth? Use YYYY-MM-DD, for example 1958-05-05."
         },
         "hi": {
-          "text": "आपकी जन्मतिथि क्या है? उदाहरण: 12 मार्च 1981 या 12/03/1981।"
+          "text": "आपकी जन्मतिथि क्या है? YYYY-MM-DD में लिखें, उदाहरण: 1958-05-05।"
         },
         "mr": {
-          "text": "तुमची जन्मतारीख काय आहे? उदाहरण: 12 मार्च 1981 किंवा 12/03/1981."
+          "text": "तुमची जन्मतारीख काय आहे? YYYY-MM-DD मध्ये लिहा, उदाहरण: 1958-05-05."
         }
       },
       "question_review_status": "approved",

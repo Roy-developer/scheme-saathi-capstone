@@ -1,0 +1,383 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "PG-IGSSGC-IN-BENEFICIARY-01",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "Girl students who are admitted in the first year of PG courses in the following Universities / Colleges and happen to be the only girl child in the family:\nUniversities/Institutions/Colleges included under section 2(f) & and 12(B) of UGC Act.\nDeemed to be Universities included under Section 3 of the UGC Act, 1956 and eligible to receive grants-in-aid from UGC.\nUniversities/Institutions/College funded by Central/State Government.\nInstitutes of National Importance.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 2, para 3 Target Group"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-ELIGIBILITY-01",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Girl students without having any brother or the girl student who are twin daughters/ fraternal daughter may also apply for scholarship under the aforesaid scheme.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 2, para 3 Target Group"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-ELIGIBILITY-02",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Age limit: Girl students up to the age of 30 years at the time of admission in first year of PG courses are eligible.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 2, para 4 Eligibility, age limit"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-ELIGIBILITY-03",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The scheme is applicable to such single girl child who has taken admission in regular, full-time first year Masters Degree course in any designated university or a post graduate college.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 2, para 4 Eligibility"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-EXCLUSION-01",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "In a family if one son and one daughter is available then girl child will not be considered for scholarship under the scheme.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 2, para 3 Target Group"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-EXCLUSION-02",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "Those Deemed Universities which do not receive funds from the Central/ State Government are not eligible institutions under the scheme.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 2, para 3 Target Group"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-EXCLUSION-03",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "Admission to PG Course in Distance education mode is not covered under the scheme.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 2, para 4 Eligibility"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-BENEFIT-01",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Amount of fellowship: Rs.36,200/- p.a. for a period of two years only i.e. full duration of a PG course. No other additional grant will be payable in lieu of hostel charges and medical charges etc.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 3, para 5 Nature of Assistance"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-BENEFIT-02",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "3,000 fresh scholarships will be awarded every year. The awardee can avail of other scholarship also during the tenure of this scholarship.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 3, para 9 Selection Procedure"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-BENEFIT-03",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The scholar would be awarded from the date of joining the course as certified by the University/ Institution/ College.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 3, para 10 Joining"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-BENEFIT-04",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "After selection, the awardees will be paid scholarship on DBT mode on annual basis.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 4, para 11 Duration of Scholarship"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-BENEFIT-05",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The scholarship will be renewed for the next year of study on receipt of renewal. Students failing to get promoted to the next class/ level would forfeit the scholarship. Change in course of study will not be permitted. If the awardee changes the course of study, the scholarship will stand forfeited from the date of such a change.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 4, para 12 Renewals"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-APPLICATION-01",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The candidates fulfilling the eligibility conditions are required to apply online on National Scholarship Portal after initiation of application process and notice to be published on UGC website.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 3, para 6 Procedure for Applying"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-APPLICATION-02",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The host institution where the candidate is studying is required to verify the online application.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 3, para 6 Procedure for Applying"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-APPLICATION-03",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Applications will be invited once in a year on the National e-Scholarship Portal of the Government of India. Short notification will also be uploaded on the UGC website. Incomplete applications will be summarily rejected. Only verified online applications will be considered for award of scholarship.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 3, para 8 Procedure for Applying for the Scheme"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-DOCUMENTS-01",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Affidavit regarding Single girl child status may be uploaded as per format given in Annexure-II. Joining report as per Annexure-I has to be uploaded.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 3, para 8 Procedure for Applying for the Scheme"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-DOCUMENTS-02",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "(MUST BE ON Rs.50/- STAMP PAPER)\nSDM / First Class Magistrate / Gazetted Officer (not below the rank of Tehsildar) certifying the aforesaid declaration.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-001",
+        "publisher": "University Grants Commission",
+        "url": "https://scholarships.gov.in/public/schemeGuidelines/Guidelines_SGC1819.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "UGC guidelines PDF 2018-19; p. 6, Annexure-II Affidavit"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-ELIGIBILITY-04",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "1. The applicant must be a citizen of India.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-002",
+        "publisher": "Ministry of Education",
+        "url": "https://www.myscheme.gov.in/schemes/pg_igssgc",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-ELIGIBILITY-05",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "6. The candidate should be pursuing a non-professional course and be taking regular classes from a recognized institution.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-002",
+        "publisher": "Ministry of Education",
+        "url": "https://www.myscheme.gov.in/schemes/pg_igssgc",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 6"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-DOCUMENTS-03",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "1. Aadhaar Card\n2. Proof of admission into a recognized Master’s degree course in an institute located in India and recognized by the UGC.\n3. Joining report (as per format given in Annexure-I)\n4. Affidavit regarding Single girl child status (as per format given in Annexure-II)\n5. Copy of the Bank Passbook\n6. Birth Certificate or Class 10th Marksheet",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-002",
+        "publisher": "Ministry of Education",
+        "url": "https://www.myscheme.gov.in/schemes/pg_igssgc",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required, to be submitted by the Student"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PG-IGSSGC-IN-DOCUMENTS-04",
+      "scheme_id": "PG-IGSSGC-IN",
+      "scheme_name": "Post Graduate Indira Gandhi Scholarship For Single Girl Child",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "1. A progress Report after the completion of the first year along with the percentage of marks obtained by the candidates needs to be submitted by the institution.\n2. Funds Utilization Certificate also needs to be submitted by the Institution Authorities after completion of the First Year.",
+      "source": {
+        "source_id": "SRC-PG-IGSSGC-IN-002",
+        "publisher": "Ministry of Education",
+        "url": "https://www.myscheme.gov.in/schemes/pg_igssgc",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required, to be submitted by the Institution"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}

@@ -1,0 +1,509 @@
+{
+  "corpus_version": "0.0.1-draft",
+  "passages": [
+    {
+      "passage_id": "PMFBY-IN-BENEFICIARY-01",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "beneficiary",
+      "text": "All farmers growing notified crops in a notified area during the season who have insurable interest in the crop are eligible.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; p. 3, para 7 Farmers to be covered"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-BENEFIT-01",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "To provide insurance coverage and financial support to the farmers in the event of failure of any of the notified crop as a result of natural calamities, pests & diseases.\nTo stabilise the income of farmers to ensure their continuance in farming.\nTo encourage farmers to adopt innovative and modern agricultural practices.\nTo ensure flow of credit to the agriculture sector.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; p. 1, para 1 Objectives"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-ELIGIBILITY-01",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The enrolment under the scheme, subject to possession of insurable interest on the cultivation of the notified crop in the notified area, shall be compulsory for following categories of farmers:\nFarmers in the notified area who possess a Crop Loan account/KCC account (called as Loanee Farmers) to whom credit limit is sanctioned/renewed for the notified crop during the crop season.\nSuch other farmers whom the Government may decide to include from time to time.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; p. 4, para 7.1 Compulsory coverage"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-ELIGIBILITY-02",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Voluntary coverage may be obtained by all farmers not covered in 7.1 above, including Crop KCC/Crop Loan Account holders whose credit limit is not renewed.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; p. 4, para 7.2 Voluntary coverage"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-BENEFIT-02",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Comprehensive risk insurance is provided to cover yield losses due to non-preventable risks, such as\nNatural Fire and Lightning\nStorm, Hailstorm, Cyclone, Typhoon, Tempest, Hurricane, Tornado etc.\nFlood, Inundation and Landslide\nDrought, Dry spells\nPests/ Diseases etc.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; p. 4, para 8.1.1 Risks, yield losses"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-BENEFIT-03",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "In cases where majority of the insured farmers of a notified area, having intent to sow/plant and incurred expenditure for the purpose, are prevented from sowing/planting the insured crop due to adverse weather conditions, shall be eligible for indemnity claims upto a maximum of 25% of the sum-insured.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; p. 5, para 8.1.2 Risks, prevented sowing"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-BENEFIT-04",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Coverage is available upto a maximum period of 14 days from harvesting for those crops which are kept in “cut & spread” condition to dry in the field after harvesting, against specific perils of cyclone / cyclonic rains, unseasonal rains throughout the country.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; p. 5, para 8.1.3 Risks, post-harvest losses"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-BENEFIT-05",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Loss / damage resulting from occurrence of identified localized risks i.e. hailstorm, landslide, and Inundation affecting isolated farms in the notified area.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; p. 5, para 8.1.4 Risks, localised calamities"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-EXCLUSION-01",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "exclusion",
+      "text": "Risks and Losses arising out of following perils shall be excluded:- War & kindred perils, nuclear risks, riots, malicious damage, theft, act of enmity, grazed and/or destroyed by domestic and/or wild animals, In case of Post–Harvest losses the harvested crop bundled and heaped at a place before threshing, other preventable risks.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; p. 5, para 8.2 Exclusions"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-BENEFIT-06",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "In case of Loanee farmers under Compulsory Component, the Sum Insured would be equal to Scale of Finance for that crop as fixed by District Level Technical Committee (DLTC) which may extend up to the value of the threshold yield of the insured crop at the option of insured farmer.\nFor farmers covered on voluntary basis the sum-insured is upto the value of Threshold yield i.e threshold yield x (MSP or gate price) of the insured crop.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; pp. 5-6, para 9 Sum insured"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-BENEFIT-07",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Kharif Food & Oilseeds crops (all cereals, millets, & oilseeds, pulses) 2.0% of SI or Actuarial rate, whichever is less\nRabi Food & Oilseeds crops (all cereals, millets, & oilseeds, pulses) 1.5% of SI or Actuarial rate, whichever is less\nKharif & Rabi Annual Commercial / Annual Horticultural crops 5% of SI or Actuarial rate, whichever is less",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; p. 6, para 10.1 Premium rates, maximum insurance charges payable by farmer (% of Sum Insured)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-BENEFIT-08",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "The difference between premium rate and the rate of Insurance charges payable by farmers shall be treated as Rate of Normal Premium Subsidy, which shall be shared equally by the Centre and State.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; pp. 6-7, para 10.2 Premium subsidy"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-BENEFIT-09",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "Three levels of Indemnity, viz., 70%, 80% and 90% corresponding to crop Risk in the areas shall be available for all crops.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; p. 9, para 13.1 Indemnity level"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-BENEFIT-10",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "For coverage through Banks:-The claim amount along with particulars will be released to the individual Nodal Banks. The Banks at the grass-root level, in turn, shall credit the accounts of the individual farmers and display the particulars of beneficiaries on their notice board.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; p. 14, para 16.1 Settlement of claims"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-BENEFIT-11",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "For coverage through other insurance intermediaries: The claim amount will be released electronically to the individual Insured Bank Account.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; p. 14, para 16.2 Settlement of claims"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-APPLICATION-01",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "The seasonality discipline shall be same for loanee and non-loanee farmers. The cut-off date is uniform for both loanee and non-loanee cultivators.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; pp. 10-11, para 14 Calendar of activity"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-APPLICATION-02",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Cut-off date for receipt of Proposals of farmers (loanee & non-loanee). 31th July 31st December",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-001",
+        "publisher": "Department of Agriculture, Cooperation & Farmers Welfare, Ministry of Agriculture & Farmers Welfare, Government of India",
+        "url": "https://pmfby.gov.in/pdf/New%20Schemes-english_.pdf",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "PMFBY scheme guidelines PDF; p. 11, para 14 Calendar of activity, cut-off date for proposals (Kharif, Rabi)"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-ELIGIBILITY-03",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "All farmers, including tenant farmers and sharecroppers growing notified crops in notified areas.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmfby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-ELIGIBILITY-04",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Farmers must possess a valid and authenticated land ownership certificate or a valid land tenure agreement.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmfby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-ELIGIBILITY-05",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "Farmers must not have received compensation for the same crop loss from any other medium or source.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmfby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Eligibility, point 6"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-APPLICATION-03",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 1: Visit the Official Website of \"Pradhan Mantri Fasal Bima Yojana\".\nStep 2: At the top right corner of the homepage, click \"Farmer Corner\".\nIn the popup window, click \"Guest Farmer\". You will be taken to the Online Registration Form.\n*If already registered, skip to Step: 4.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmfby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online via CSCs, steps 1-2"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-APPLICATION-04",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 3: In the Registration Form, fill in the following mandatory fields (marked with a red asterisk):\n\"FARMER DETAILS\" Section: Full Name, Passbook Name, Relationship, Relative Name, Mobile No., Age, Caste Category, Gender, Farmer Type, Farmer Category,\n\"RESIDENTIAL DETAILS\" Section: State, District, Sub District, Residential Village/ Town, Address, PIN Code\n\"FARMER ID\" Section: ID Type, ID No,\n\"ACCOUNT DETAILS\" Section: IFSC, Bank Name, Branch Name, Savings Bank A/C No., Confirm Savings Bank A/C No..\nAt the bottom of the registration form, fill in the Captcha Code and click \"Create User\".",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmfby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online via CSCs, step 3"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-APPLICATION-05",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 4: Upon successful registration, click \"Farmer Corner (Apply for Crop Insurance Yourself)\".\nIn the popup window, click \"Login for Farmer\". You will be taken to the Login Page.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmfby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online via CSCs, step 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-APPLICATION-06",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 5: On the Login Page, provide your Mobile Number, fill the Captcha Code, then click \"Request for OTP\". Enter the OTP received on your registered Mobile Number, and click \"Submit\". You will be taken to the \"Farmer Application Form\".",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmfby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online via CSCs, step 5"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-APPLICATION-07",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 6: Fill in all the mandatory fields of the Application Form and upload all the mandatory documents in the specified format and size.\nClick \"Preview\" to carefully review all the information provided and the uploaded documents. Click \"Submit\" to submit your application. You'll receive a confirmation message.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmfby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online via CSCs, step 6"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-APPLICATION-08",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "Step 7: In the popup window, the following options will be displayed: \"Pay Later\" and \"Make Payment\". Select \"Pay Later\" if you intend to pay for the insurance at a later stage. Else, select \"Make Payment\".\nStep 8: Upon successful payment, you may print the receipt of the payment.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmfby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Application Process, Online via CSCs, steps 7-8"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-APPLICATION-09",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "You can track the application status on the PMFBY website through the ‘Application Status’ option on the home page.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmfby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Track Your Application"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "PMFBY-IN-DOCUMENTS-01",
+      "scheme_id": "PMFBY-IN",
+      "scheme_name": "Pradhan Mantri Fasal Bima Yojana (PMFBY)",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "documents",
+      "text": "Passport–sized Photograph\nPassbook\nIdentity Proof (Aadhaar Card/PAN Card/Voter ID/Bank Passbook with Photo, Kisan Photo Book/NREGA Job Card)\nAddress Proof (Aadhaar Card/PAN Card/Voter ID/Electricity Bill/Bank Passbook with Photo).\nEvidence of Land records, as per the State Records of Right (RoR), Land Possession Certificate (LPC), and other applicable agreements, contracts notified or permitted by the state.\nDeclaration about the crop sown/intended to be sown.",
+      "source": {
+        "source_id": "SRC-PMFBY-IN-002",
+        "publisher": "Ministry of Agriculture and Farmers Welfare",
+        "url": "https://www.myscheme.gov.in/schemes/pmfby",
+        "collected_at": "2026-11-08",
+        "publication_date": null,
+        "locator": "myScheme page; Documents Required"
+      },
+      "review_status": "reviewed"
+    }
+  ]
+}
