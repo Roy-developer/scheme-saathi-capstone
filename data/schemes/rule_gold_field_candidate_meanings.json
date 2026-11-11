@@ -1,0 +1,1155 @@
+{
+  "schema_version": "1.0",
+  "artifact_status": "candidate_definitions_pending_human_review_not_for_app_registry",
+  "source_inventory": "rule_gold_field_review_inventory.json",
+  "field_count": 42,
+  "review_policy": "These are evidence-based English wording candidates only. Candidate scope is intentionally unset; no localized questions, mappings, approvals, or app facts are created.",
+  "fields": [
+    {
+      "field_id": "annual_family_income_inr",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "The total annual income of the applicant's family from all sources, expressed in INR.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "gt",
+        "gte",
+        "lte"
+      ],
+      "observed_units": [
+        "INR",
+        "INR per year"
+      ],
+      "review_notes": [
+        "Confirm whose income counts and the applicable year/period; the cited schemes differ, and one clause specifically says parents' income."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PRE-DIS-IN",
+          "rule_id": "PRE-DIS-IN-R04",
+          "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-04",
+          "gold_source_quote": "Family income up to Rs. 2.5 lakh per year."
+        },
+        {
+          "scheme_id": "POST-DIS-IN",
+          "rule_id": "POST-DIS-IN-R04",
+          "source_passage_id": "POST-DIS-IN-ELIGIBILITY-04",
+          "gold_source_quote": "Family income up to Rs. 2.5 lakh per year."
+        },
+        {
+          "scheme_id": "PRE-ST-IN",
+          "rule_id": "PRE-ST-IN-R01",
+          "source_passage_id": "PRE-ST-IN-ELIGIBILITY-02",
+          "gold_source_quote": "family income from all sources should not exceed Rs.2,50,000/-"
+        },
+        {
+          "scheme_id": "TCE-SC-IN",
+          "rule_id": "TCE-SC-IN-R01",
+          "source_passage_id": "TCE-SC-IN-ELIGIBILITY-01",
+          "gold_source_quote": "total annual family income from all sources up to Rs. 8.00 lakh"
+        },
+        {
+          "scheme_id": "PMAY-U-IN",
+          "rule_id": "PMAY-U-IN-R01",
+          "source_passage_id": "PMAY-U-IN-EXCLUSION-01",
+          "gold_source_quote": "Annual Household Income is above ₹9,00,000"
+        },
+        {
+          "scheme_id": "PSGS-DIP-IN",
+          "rule_id": "PSGS-DIP-IN-R02",
+          "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-01",
+          "gold_source_quote": "Family income from all sources should not be more than Rs. 8 lakh per annum during the current financial year"
+        },
+        {
+          "scheme_id": "TFEFVS-MH",
+          "rule_id": "TFEFVS-MH-R01",
+          "source_passage_id": "TFEFVS-MH-ELIGIBILITY-02",
+          "gold_source_quote": "whose parents' income is between ₹ 1,00,000 to ₹ 4,50,000"
+        },
+        {
+          "scheme_id": "TFEFVS-MH",
+          "rule_id": "TFEFVS-MH-R02",
+          "source_passage_id": "TFEFVS-MH-ELIGIBILITY-02",
+          "gold_source_quote": "whose parents' income is between ₹ 1,00,000 to ₹ 4,50,000"
+        }
+      ]
+    },
+    {
+      "field_id": "annual_income_inr",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "The applicant's annual income, expressed in INR.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "lt"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "The cited clause does not specify which income sources or assessment period count."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "FADSE-MH",
+          "rule_id": "FADSE-MH-R05",
+          "source_passage_id": "FADSE-MH-ELIGIBILITY-04",
+          "gold_source_quote": "Applicant annual income should be below Rs 100000/-"
+        }
+      ]
+    },
+    {
+      "field_id": "availed_housing_scheme_last_20_years",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant has received a benefit under a Central, State, or Union Territory housing scheme during the preceding 20 years.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm whether the lookback applies to the applicant alone or all household members."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PMAY-U-IN",
+          "rule_id": "PMAY-U-IN-R05",
+          "source_passage_id": "PMAY-U-IN-EXCLUSION-01",
+          "gold_source_quote": "If they have availed benefit under any Housing scheme of Central/State/UT government in past 20 years."
+        }
+      ]
+    },
+    {
+      "field_id": "deceased_breadwinner_age",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "The deceased breadwinner's age, in years, for the family-benefit eligibility test.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "gte",
+        "lte"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm that age is measured at death and whether the scheme uses completed years."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "NFBSM-MH",
+          "rule_id": "NFBSM-MH-R02",
+          "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "in the age group of 18 to 59 years"
+        },
+        {
+          "scheme_id": "NFBSM-MH",
+          "rule_id": "NFBSM-MH-R03",
+          "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "in the age group of 18 to 59 years"
+        }
+      ]
+    },
+    {
+      "field_id": "family_members_receiving_scholarship",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "The number of members of the applicant's family receiving the relevant scholarship benefit.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "lte"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "The clauses vary between students, siblings, and girls per family; define who counts and which scheme benefit is counted."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PRE-DIS-IN",
+          "rule_id": "PRE-DIS-IN-R07",
+          "source_passage_id": "PRE-DIS-IN-EXCLUSION-02",
+          "gold_source_quote": "Scholarship will not be given to more than two students from a family."
+        },
+        {
+          "scheme_id": "POST-DIS-IN",
+          "rule_id": "POST-DIS-IN-R07",
+          "source_passage_id": "POST-DIS-IN-EXCLUSION-02",
+          "gold_source_quote": "Scholarship will not be given to more than two students from a family."
+        },
+        {
+          "scheme_id": "TCE-SC-IN",
+          "rule_id": "TCE-SC-IN-R05",
+          "source_passage_id": "TCE-SC-IN-EXCLUSION-01",
+          "gold_source_quote": "The benefit of the Scheme will not be provided to more than 2 siblings in a family."
+        },
+        {
+          "scheme_id": "PSGS-DIP-IN",
+          "rule_id": "PSGS-DIP-IN-R04",
+          "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-01",
+          "gold_source_quote": "Maximum two girls child per family are eligible."
+        }
+      ]
+    },
+    {
+      "field_id": "has_aadhaar",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the beneficiary has an Aadhaar card/number or Aadhaar Virtual ID.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "PMAY-U wording also requires Aadhaar/Virtual ID for family members; decide whether this is a person-level or household-level fact."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R04",
+          "source_passage_id": "PMKMDY-IN-ELIGIBILITY-05",
+          "gold_source_quote": "The applicant should possess an Aadhaar card."
+        },
+        {
+          "scheme_id": "PMAY-U-IN",
+          "rule_id": "PMAY-U-IN-R02",
+          "source_passage_id": "PMAY-U-IN-ELIGIBILITY-07",
+          "gold_source_quote": "All eligible beneficiaries (including family members) should have an Aadhaar/ Aadhaar Virtual ID"
+        }
+      ]
+    },
+    {
+      "field_id": "has_completed_vocational_training",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant has completed vocational training at a government or government-recognized institution.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [],
+      "evidence": [
+        {
+          "scheme_id": "FASETDP-MH",
+          "rule_id": "FASETDP-MH-R03",
+          "source_passage_id": "FASETDP-MH-ELIGIBILITY-03",
+          "gold_source_quote": "The applicant should have completed their Vocational Training in a Government or Government Recognized Institution."
+        }
+      ]
+    },
+    {
+      "field_id": "has_failed_or_dropped_out",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the student has failed or dropped out in a subsequent year of the course.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm which course/year and whether failure and dropout have the same policy treatment."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PSGS-DIP-IN",
+          "rule_id": "PSGS-DIP-IN-R06",
+          "source_passage_id": "PSGS-DIP-IN-EXCLUSION-01",
+          "gold_source_quote": "If a candidate failed/ drop out in subsequent year"
+        }
+      ]
+    },
+    {
+      "field_id": "is_admitted_to_aicte_diploma_first_year_or_lateral_entry",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant is admitted to the first year of a diploma course or enters its second year through lateral entry.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "The field ID says AICTE, but the cited quote does not; verify the institution/course accreditation requirement."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PSGS-DIP-IN",
+          "rule_id": "PSGS-DIP-IN-R03",
+          "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-01",
+          "gold_source_quote": "should be admitted to First year of Diploma level course OR Second year of Diploma level course through lateral entry"
+        }
+      ]
+    },
+    {
+      "field_id": "is_admitted_to_notified_institution_full_time",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the student has full-time admission to a prescribed course at an institution notified under the scheme.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [],
+      "evidence": [
+        {
+          "scheme_id": "TCE-SC-IN",
+          "rule_id": "TCE-SC-IN-R03",
+          "source_passage_id": "TCE-SC-IN-ELIGIBILITY-01",
+          "gold_source_quote": "having secured admission in a full-time prescribed course in any of the notified institutions"
+        }
+      ]
+    },
+    {
+      "field_id": "is_constitutional_post_holder",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant is a current or former holder of a constitutional post.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm which posts are included and whether the exclusion also covers family members."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R12",
+          "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+          "gold_source_quote": "Former and present holders of constitutional posts"
+        }
+      ]
+    },
+    {
+      "field_id": "is_covered_under_other_similar_insurance",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant is covered by another insurance scheme considered similar to this scheme.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Define which insurance schemes count as similar."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "AABYM-MH",
+          "rule_id": "AABYM-MH-R07",
+          "source_passage_id": "AABYM-MH-ELIGIBILITY-03",
+          "gold_source_quote": "should not be covered under any other similar insurance scheme"
+        }
+      ]
+    },
+    {
+      "field_id": "is_covered_under_other_social_security_scheme",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the farmer is covered by another statutory social-security scheme.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm the intended meaning of statutory social-security scheme and whether the rule applies to the farmer alone or family."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R10",
+          "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+          "gold_source_quote": "SMFs covered under any other statuary social security schemes"
+        }
+      ]
+    },
+    {
+      "field_id": "is_distance_education",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant's postgraduate course is delivered through distance-education mode.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [],
+      "evidence": [
+        {
+          "scheme_id": "PG-IGSSGC-IN",
+          "rule_id": "PG-IGSSGC-IN-R06",
+          "source_passage_id": "PG-IGSSGC-IN-EXCLUSION-03",
+          "gold_source_quote": "Admission to PG Course in Distance education mode is not covered under the scheme."
+        }
+      ]
+    },
+    {
+      "field_id": "is_enrolled_in_pm_sym_or_pm_lvm",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "candidate_english_meaning": "Whether the farmer has opted for PM-SYM or PM-LVM, as named in the cited PMKMDY exclusion clauses.",
+      "candidate_scope": "farmer",
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "The source passage contains separate exclusion clauses for both PM-SYM and PM-LVM; the gold evidence must quote both clauses."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R11",
+          "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+          "gold_source_quote": "Farmers who have opted for Pradhan Mantri Shram Yogi Maan Dhan Yojana (PM-SYM) administered by the Ministry of Labour & Employment\nFarmers who have opted for Pradhan Mantri Laghu Vyapari Maan-dhan Yojana (PM-LVM) administered by the Ministry of Labour & Employment"
+        }
+      ]
+    },
+    {
+      "field_id": "is_family_member_of_deceased_breadwinner",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant is a family member or dependent of the deceased breadwinner.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm the scheme's definition of family member/dependent."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "NFBSM-MH",
+          "rule_id": "NFBSM-MH-R05",
+          "source_passage_id": "NFBSM-MH-ELIGIBILITY-03",
+          "gold_source_quote": "The applicant should be a family member or dependent of the deceased breadwinner"
+        }
+      ]
+    },
+    {
+      "field_id": "is_first_year_student",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the student is in the first year of the course for which a fresh scholarship is sought.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm the relevant course and how lateral entry is treated."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "TCE-SC-IN",
+          "rule_id": "TCE-SC-IN-R04",
+          "source_passage_id": "TCE-SC-IN-ELIGIBILITY-03",
+          "gold_source_quote": "Fresh scholarship will be awarded only to 1st year students."
+        }
+      ]
+    },
+    {
+      "field_id": "is_government_employee",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the relevant person is a serving or retired officer or employee of the Central or a State Government.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm whether this fact is about the applicant, farmer, or any household member, and preserve any stated exceptions."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R13",
+          "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+          "gold_source_quote": "All serving or retired officers and employees of Central/ State Government"
+        }
+      ]
+    },
+    {
+      "field_id": "is_institutional_account_holder",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the bank account holder is an institution rather than an individual.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "This describes the account holder, not necessarily an applicant attribute; confirm how to collect and scope it."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PMSBY-IN",
+          "rule_id": "PMSBY-IN-R04",
+          "source_passage_id": "PMSBY-IN-ELIGIBILITY-05",
+          "gold_source_quote": "All bank account holders other than institutional account holders are eligible"
+        },
+        {
+          "scheme_id": "PMJJBY-IN",
+          "rule_id": "PMJJBY-IN-R04",
+          "source_passage_id": "PMJJBY-IN-ELIGIBILITY-05",
+          "gold_source_quote": "All bank account holders other than institutional account holders are eligible"
+        }
+      ]
+    },
+    {
+      "field_id": "is_labourer",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant works as a labourer.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "The cited AABYM clause specifically refers to landless labourers; coordinate this fact with the separate land-ownership condition."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "AABYM-MH",
+          "rule_id": "AABYM-MH-R05",
+          "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "land less labourers"
+        }
+      ]
+    },
+    {
+      "field_id": "is_only_girl_child",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the student is the single girl child in the family.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm the scheme definition of single girl child, including whether it excludes siblings/other children."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PG-IGSSGC-IN",
+          "rule_id": "PG-IGSSGC-IN-R04",
+          "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-03",
+          "gold_source_quote": "single girl child"
+        }
+      ]
+    },
+    {
+      "field_id": "is_professional_course",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the course pursued by the applicant is classified as a professional course.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "The source distinguishes professional from non-professional courses but provides no course taxonomy."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PG-IGSSGC-IN",
+          "rule_id": "PG-IGSSGC-IN-R07",
+          "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-05",
+          "gold_source_quote": "should be pursuing a non-professional course"
+        }
+      ]
+    },
+    {
+      "field_id": "is_registered_professional",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "candidate_english_meaning": "Whether the farmer is a doctor, engineer, lawyer, chartered accountant, or architect, is registered with a professional body, and carries out that profession by undertaking practice.",
+      "candidate_scope": "farmer",
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "The full cited clause specifies registration with professional bodies and carrying out the profession by undertaking practice."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R14",
+          "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+          "gold_source_quote": "Professionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practice."
+        }
+      ]
+    },
+    {
+      "field_id": "is_regular_full_time_pg_first_year",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the student is enrolled in the first year of a regular, full-time postgraduate master's degree course.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [],
+      "evidence": [
+        {
+          "scheme_id": "PG-IGSSGC-IN",
+          "rule_id": "PG-IGSSGC-IN-R05",
+          "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-03",
+          "gold_source_quote": "regular, full-time first year Masters Degree course"
+        }
+      ]
+    },
+    {
+      "field_id": "is_repeating_class",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the student is repeating a class.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm whether this applies to any class or only the current course/year under each scheme."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PRE-DIS-IN",
+          "rule_id": "PRE-DIS-IN-R08",
+          "source_passage_id": "PRE-DIS-IN-EXCLUSION-04",
+          "gold_source_quote": "If a student has to repeat a class"
+        },
+        {
+          "scheme_id": "POST-DIS-IN",
+          "rule_id": "POST-DIS-IN-R08",
+          "source_passage_id": "POST-DIS-IN-EXCLUSION-04",
+          "gold_source_quote": "If a student has to repeat a class"
+        },
+        {
+          "scheme_id": "PRE-ST-IN",
+          "rule_id": "PRE-ST-IN-R07",
+          "source_passage_id": "PRE-ST-IN-EXCLUSION-01",
+          "gold_source_quote": "If a student has to repeat a class"
+        }
+      ]
+    },
+    {
+      "field_id": "is_resident_of_india",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant is a resident of India.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm the scheme's legal meaning of resident; do not substitute citizenship."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "IGNDPS-IN",
+          "rule_id": "IGNDPS-IN-R02",
+          "source_passage_id": "IGNDPS-IN-ELIGIBILITY-02",
+          "gold_source_quote": "The applicant should be a resident of India."
+        }
+      ]
+    },
+    {
+      "field_id": "is_scheduled_caste",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the student belongs to a Scheduled Caste.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [],
+      "evidence": [
+        {
+          "scheme_id": "TCE-SC-IN",
+          "rule_id": "TCE-SC-IN-R02",
+          "source_passage_id": "TCE-SC-IN-ELIGIBILITY-01",
+          "gold_source_quote": "Those SC students"
+        }
+      ]
+    },
+    {
+      "field_id": "is_scheduled_tribe",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the student belongs to a Scheduled Tribe.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [],
+      "evidence": [
+        {
+          "scheme_id": "PRE-ST-IN",
+          "rule_id": "PRE-ST-IN-R03",
+          "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+          "gold_source_quote": "Applicant student should belong to the Scheduled Tribe"
+        }
+      ]
+    },
+    {
+      "field_id": "is_student_in_class_9_or_10",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the student is studying in Class IX or Class X.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "One cited clause says IX or X; preserve that range rather than interpreting it as both classes simultaneously."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PRE-DIS-IN",
+          "rule_id": "PRE-DIS-IN-R05",
+          "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-01",
+          "gold_source_quote": "Students studying in Class IX or X."
+        },
+        {
+          "scheme_id": "PRE-ST-IN",
+          "rule_id": "PRE-ST-IN-R04",
+          "source_passage_id": "PRE-ST-IN-BENEFICIARY-01",
+          "gold_source_quote": "ST children studying in classes IX and X"
+        }
+      ]
+    },
+    {
+      "field_id": "is_student_in_post_matric_course",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the student is enrolled in post-matric education, including the cited Class XI/XII or other recognized post-matric course contexts.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "The cited schemes use different educational levels and course wording; confirm whether these should be separate facts."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "POST-DIS-IN",
+          "rule_id": "POST-DIS-IN-R05",
+          "source_passage_id": "POST-DIS-IN-ELIGIBILITY-01",
+          "gold_source_quote": "Students in Class 11 or 12."
+        },
+        {
+          "scheme_id": "TFEFVS-MH",
+          "rule_id": "TFEFVS-MH-R05",
+          "source_passage_id": "TFEFVS-MH-BENEFIT-01",
+          "gold_source_quote": "at Post Matriculation Education in recognized educational institutions"
+        }
+      ]
+    },
+    {
+      "field_id": "is_studying_in_recognised_school",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the student studies at a government school or a school recognized by the government.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm the relevant government/recognition authority for the scheme."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PRE-ST-IN",
+          "rule_id": "PRE-ST-IN-R05",
+          "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+          "gold_source_quote": "The student should be studying in a Government School or in a School recognized by Government"
+        }
+      ]
+    },
+    {
+      "field_id": "is_vjnt",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant belongs to the Vimukta Jatis and Nomadic Tribes (VJNT) category.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm the official category name and authority/document used to establish it."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "TFEFVS-MH",
+          "rule_id": "TFEFVS-MH-R03",
+          "source_passage_id": "TFEFVS-MH-ELIGIBILITY-01",
+          "gold_source_quote": "He should belong to the Vimukta Jatis & Nomadic Tribes(VJNT) category."
+        }
+      ]
+    },
+    {
+      "field_id": "is_woman",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant is a woman/girl for the scheme's eligibility condition.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "The schemes refer to girls/women in different contexts; confirm terminology and any age/course limits belong in separate rules."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PG-IGSSGC-IN",
+          "rule_id": "PG-IGSSGC-IN-R02",
+          "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-02",
+          "gold_source_quote": "Girl students up to the age of 30 years at the time of admission in first year of PG courses are eligible."
+        },
+        {
+          "scheme_id": "PSGS-DIP-IN",
+          "rule_id": "PSGS-DIP-IN-R01",
+          "source_passage_id": "PSGS-DIP-IN-BENEFICIARY-01",
+          "gold_source_quote": "aimed at providing assistance for advancement of Girls pursuing technical education"
+        }
+      ]
+    },
+    {
+      "field_id": "land_holding_hectares",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "The area of cultivable land held by the farmer, expressed in hectares.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "lte"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm whether the measure is individual or family holding and how jointly held/non-cultivable land is treated."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R08",
+          "source_passage_id": "PMKMDY-IN-ELIGIBILITY-02",
+          "gold_source_quote": "owns cultivable land upto 2 hectare"
+        }
+      ]
+    },
+    {
+      "field_id": "lives_in_rural_area",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant lives in a rural area.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm the official rural-area classification and whether residence or place of work is intended."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "AABYM-MH",
+          "rule_id": "AABYM-MH-R06",
+          "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "in rural areas"
+        }
+      ]
+    },
+    {
+      "field_id": "lives_in_urban_area",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant lives in an urban area.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm the official urban-area classification and whether residence or place of work is intended."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PMAY-U-IN",
+          "rule_id": "PMAY-U-IN-R03",
+          "source_passage_id": "PMAY-U-IN-ELIGIBILITY-01",
+          "gold_source_quote": "living in urban areas"
+        }
+      ]
+    },
+    {
+      "field_id": "number_of_failures",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "The number of academic failures recorded for the student in the relevant course.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "lte"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "The cited passage says one failure but does not state the course/year or counting period."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "TFEFVS-MH",
+          "rule_id": "TFEFVS-MH-R04",
+          "source_passage_id": "TFEFVS-MH-ELIGIBILITY-03",
+          "gold_source_quote": "Students with one failure"
+        }
+      ]
+    },
+    {
+      "field_id": "owned_cultivable_land_on_2019_02_01",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the relevant beneficiary/family owned cultivable land as of 1 February 2019.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "The currently linked quote establishes the cut-off date but does not itself establish ownership; link the ownership clause and confirm person/family scope."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PM-KISAN-IN",
+          "rule_id": "PM-KISAN-IN-R09",
+          "source_passage_id": "PM-KISAN-IN-ELIGIBILITY-03",
+          "gold_source_quote": "The cut-off date for determination of eligibility of beneficiaries under the scheme shall be 01.02.2019"
+        }
+      ]
+    },
+    {
+      "field_id": "owns_cultivable_land",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant or relevant family owns cultivable land.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "The schemes differ on person/family scope, land-record evidence, and relevant date; do not treat these as one reusable fact without review."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PM-KISAN-IN",
+          "rule_id": "PM-KISAN-IN-R01",
+          "source_passage_id": "PM-KISAN-IN-ELIGIBILITY-01",
+          "gold_source_quote": "who owns cultivable land as per land records of the concerned State/UT"
+        },
+        {
+          "scheme_id": "AABYM-MH",
+          "rule_id": "AABYM-MH-R04",
+          "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "land less labourers"
+        },
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R03",
+          "source_passage_id": "PMKMDY-IN-ELIGIBILITY-02",
+          "gold_source_quote": "a farmer who owns cultivable land upto 2 hectare"
+        }
+      ]
+    },
+    {
+      "field_id": "owns_pucca_house_anywhere",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the applicant or relevant household owns a pucca house anywhere in India.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "Confirm whether ownership by any family member counts and the scheme definition of pucca house."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PMAY-U-IN",
+          "rule_id": "PMAY-U-IN-R04",
+          "source_passage_id": "PMAY-U-IN-EXCLUSION-01",
+          "gold_source_quote": "If the user owns a pucca house anywhere in India"
+        }
+      ]
+    },
+    {
+      "field_id": "qualifying_exam_gap_years",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "The number of years between the qualifying examination and the relevant diploma-course admission.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "lte"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "The cited quote gives a maximum gap but not the exact start/end dates or counting convention."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PSGS-DIP-IN",
+          "rule_id": "PSGS-DIP-IN-R05",
+          "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-02",
+          "gold_source_quote": "should not be more than two years"
+        }
+      ]
+    },
+    {
+      "field_id": "receives_other_scholarship_or_stipend",
+      "review_status": "pending_human_review",
+      "candidate_english_meaning": "Whether the student receives another scholarship, stipend, or similar financial assistance.",
+      "candidate_scope": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "review_notes": [
+        "The exclusions differ: some cover any other scholarship, others a similar scheme or financial assistance; confirm whether separate facts are needed."
+      ],
+      "evidence": [
+        {
+          "scheme_id": "PRE-DIS-IN",
+          "rule_id": "PRE-DIS-IN-R06",
+          "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-05",
+          "gold_source_quote": "Student should not receive another scholarship/stipend."
+        },
+        {
+          "scheme_id": "POST-DIS-IN",
+          "rule_id": "POST-DIS-IN-R06",
+          "source_passage_id": "POST-DIS-IN-ELIGIBILITY-05",
+          "gold_source_quote": "The student should not receive another post-scholarship or stipend."
+        },
+        {
+          "scheme_id": "PRE-ST-IN",
+          "rule_id": "PRE-ST-IN-R06",
+          "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+          "gold_source_quote": "The student should not be getting any other scholarship."
+        },
+        {
+          "scheme_id": "TCE-SC-IN",
+          "rule_id": "TCE-SC-IN-R06",
+          "source_passage_id": "TCE-SC-IN-EXCLUSION-03",
+          "gold_source_quote": "precluded from availing any other scholarship benefits of similar scheme"
+        },
+        {
+          "scheme_id": "PSGS-DIP-IN",
+          "rule_id": "PSGS-DIP-IN-R07",
+          "source_passage_id": "PSGS-DIP-IN-EXCLUSION-02",
+          "gold_source_quote": "does not receive any financial assistance in shape of scholarship"
+        }
+      ]
+    }
+  ]
+}

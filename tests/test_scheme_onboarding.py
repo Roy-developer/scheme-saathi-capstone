@@ -1,7 +1,8 @@
 """Test `scheme_rules.py onboard` offline, on temporary copies of the project.
 
 The main check rebuilds the state IGNOAPS was in before it was onboarded by
-hand, runs the command, and requires exactly the files that were made by hand.
+hand, runs the command, and checks the same scheme data while preserving the
+rest of the larger passage corpus.
 """
 
 import hashlib
@@ -67,7 +68,17 @@ def before(live_copy: ProjectPaths) -> ProjectPaths:
 
     corpus_raw = paths.passages.read_bytes()
     corpus = json.loads(corpus_raw)
-    corpus["passages"] = [p for p in corpus["passages"] if p["scheme_id"] != SCHEME]
+    source = json.loads(
+        (REAL_ROOT / "data/schemes/rule_extraction_sources/ignoaps_mh.json")
+        .read_bytes()
+    )
+    onboarded_passage_ids = {
+        passage["passage_id"] for passage in source["onboarding"]["passages"]
+    }
+    corpus["passages"] = [
+        passage for passage in corpus["passages"]
+        if passage["passage_id"] not in onboarded_passage_ids
+    ]
     paths.passages.write_bytes(_json_like(corpus_raw, corpus))
 
     cases = paths.cases.read_bytes().decode("utf-8")
@@ -100,12 +111,52 @@ def test_onboard_rebuilds_the_hand_made_ignoaps_files_exactly(before: ProjectPat
 
     for relative in (
         f"src/rules/packages/{PACKAGE}",
-        "src/rules/bundle_registry.json",
-        "src/rules/fact_registry.json",
-        "data/schemes/passages.json",
         "data/schemes/rule_extraction_cases_dev.json",
     ):
         assert (before.root / relative).read_bytes() == _real(relative), relative
+
+    actual_registry = json.loads(before.fact_registry.read_bytes())
+    expected_registry = json.loads(_real("src/rules/fact_registry.json"))
+    for registry in (actual_registry, expected_registry):
+        for definition in registry["definitions"]:
+            definition["source_refs"] = sorted(definition["source_refs"])
+    assert actual_registry == expected_registry
+
+    actual_bundles = json.loads(before.bundle_registry.read_bytes())["bundles"]
+    expected_bundles = json.loads(_real("src/rules/bundle_registry.json"))["bundles"]
+    registry_sha = hashlib.sha256(before.fact_registry.read_bytes()).hexdigest()
+    for bundle in actual_bundles:
+        assert bundle["registry_sha256"] == registry_sha
+        bundle["registry_sha256"] = "<registry-sha>"
+    for bundle in expected_bundles:
+        bundle["registry_sha256"] = "<registry-sha>"
+    assert sorted(actual_bundles, key=lambda bundle: bundle["scheme_id"]) == sorted(
+        expected_bundles, key=lambda bundle: bundle["scheme_id"]
+    )
+
+    actual_corpus = json.loads(before.passages.read_bytes())
+    expected_corpus = json.loads(_real("data/schemes/passages.json"))
+    assert actual_corpus["corpus_version"] == expected_corpus["corpus_version"]
+    actual_other_passages = [
+        passage for passage in actual_corpus["passages"]
+        if passage["scheme_id"] != SCHEME
+    ]
+    expected_other_passages = [
+        passage for passage in expected_corpus["passages"]
+        if passage["scheme_id"] != SCHEME
+    ]
+    assert actual_other_passages == expected_other_passages
+    actual_scheme_passages = {
+        passage["passage_id"]: passage
+        for passage in actual_corpus["passages"]
+        if passage["scheme_id"] == SCHEME
+    }
+    expected_scheme_passages = {
+        passage["passage_id"]: passage
+        for passage in expected_corpus["passages"]
+        if passage["scheme_id"] == SCHEME
+    }
+    assert actual_scheme_passages == expected_scheme_passages
     assert not (before.staged_packages / PACKAGE).exists()
 
 

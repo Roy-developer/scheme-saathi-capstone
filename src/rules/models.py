@@ -77,7 +77,7 @@ class Rule(RulePackageModel):
 
     rule_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$")
     field: RuleFact
-    operator: Literal["eq", "gte", "lte"]
+    operator: Literal["eq", "gt", "gte", "lt", "lte"]
     value: StrictBool | StrictInt | StrictFloat | StrictStr
     unit: str | None = Field(default=None, max_length=80)
     source_clause_id: str = Field(
@@ -101,7 +101,7 @@ class Rule(RulePackageModel):
             # Age needs a minimum or maximum with a realistic whole number.
             # type(...) is int rejects True/False, which Python treats as 1/0.
             valid = (
-                self.operator in {"gte", "lte"}
+                self.operator in {"gt", "gte", "lt", "lte"}
                 and type(self.value) is int
                 and 0 <= self.value <= 125
             )
@@ -111,7 +111,7 @@ class Rule(RulePackageModel):
         else:
             # Generic registered-fact compatibility is checked by the
             # provider against its pinned registry before activation.
-            valid = self.operator in {"eq", "gte", "lte"}
+            valid = self.operator in {"eq", "gt", "gte", "lt", "lte"}
         if not valid:
             raise ValueError(
                 f"Invalid operator or value for rule field '{self.field}'"
@@ -150,6 +150,9 @@ class RulePackage(RulePackageModel):
         "approved_for_mock_portal",
         "mock_baseline_pending_human_rule_approval",
     ]
+    fact_intake_mode: Literal["model_assisted", "deterministic_only"] = (
+        "model_assisted"
+    )
     reviewer_name: str
     reviewed_at: date
     approval_scope: Literal["synthetic_mock_portal_only"]
@@ -195,8 +198,22 @@ class RulePackage(RulePackageModel):
         if age_rules and self.age_as_of is None:
             raise ValueError("Age rules require age_as_of")
         # A minimum above the maximum (e.g. 80 to 40) would reject everyone.
-        minimums = [rule.value for rule in age_rules if rule.operator == "gte"]
-        maximums = [rule.value for rule in age_rules if rule.operator == "lte"]
-        if minimums and maximums and max(minimums) > min(maximums):
-            raise ValueError("Minimum age cannot exceed maximum age")
+        lower_bounds = [
+            (rule.value, rule.operator == "gt")
+            for rule in age_rules
+            if rule.operator in {"gt", "gte"}
+        ]
+        upper_bounds = [
+            (rule.value, rule.operator == "lt")
+            for rule in age_rules
+            if rule.operator in {"lt", "lte"}
+        ]
+        if lower_bounds and upper_bounds:
+            maximum_lower = max(lower_bounds, key=lambda bound: (bound[0], bound[1]))
+            minimum_upper = min(upper_bounds, key=lambda bound: (bound[0], not bound[1]))
+            if maximum_lower[0] > minimum_upper[0] or (
+                maximum_lower[0] == minimum_upper[0]
+                and (maximum_lower[1] or minimum_upper[1])
+            ):
+                raise ValueError("Minimum age cannot exceed maximum age")
         return self

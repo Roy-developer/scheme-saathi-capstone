@@ -37,7 +37,8 @@ Rules always describe who QUALIFIES for the scheme.
 Write the lesson so a future extractor knows exactly what to do:
 - instruction: one or two sentences that name the mistake and the correct way
   to write the rule. Example of the style: "When a clause gives a range such as
-  '40 to 79', write gte for the lower number and lte for the upper number."
+  '40 to 79', write gte for the lower number and lte for the upper number;
+  preserve strict 'above'/'below' wording with gt/lt."
   Do not write vague advice such as "ensure accuracy" or "be consistent".
 - when_to_apply: the kind of clause wording that should trigger the lesson,
   not this particular scheme.
@@ -110,7 +111,11 @@ async def run_reflexion_case(
         registry,
         playbook=playbook,
     )
-    differences = compare_rules(case.expected_rules, proposed_rules)
+    differences = compare_rules(
+        case.expected_rules,
+        proposed_rules,
+        boolean_exclusion_rule_ids=case.boolean_exclusion_rule_ids,
+    )
     if not differences:
         return ReflexionResult(
             proposed_rules=proposed_rules,

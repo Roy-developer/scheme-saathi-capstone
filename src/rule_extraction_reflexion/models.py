@@ -4,7 +4,16 @@ from datetime import datetime, timezone
 import re
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictBool,
+    StrictFloat,
+    StrictInt,
+    StrictStr,
+    model_validator,
+)
 
 from src.rules.models import Rule
 
@@ -26,14 +35,51 @@ class SourceClause(StrictModel):
     location: str | None = Field(default=None, max_length=200)
 
 
+class ExtractedRule(StrictModel):
+    """Minimal model proposal; source metadata and policy labels are code-owned."""
+
+    field: str = Field(min_length=1, max_length=80)
+    operator: Literal["eq", "gt", "gte", "lt", "lte"]
+    value: StrictBool | StrictInt | StrictFloat | StrictStr
+    unit: str | None = Field(default=None, max_length=80)
+    source_clause_id: str = Field(
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9_.:/()-]{0,119}$"
+    )
+
+
 class RuleExtractionOutput(StrictModel):
-    """Model-proposed rules; these are not approved or executable policy.
+    """Compact model proposals; never approved or executable policy."""
 
-    The model's rule IDs are replaced by meaning-based IDs during validation
-    (extractor._validate_extracted_rules), which also rejects duplicates.
-    """
+    rules: tuple[ExtractedRule, ...] = ()
 
-    rules: tuple[Rule, ...] = ()
+    @model_validator(mode="before")
+    @classmethod
+    def compact_legacy_rules(cls, value: object) -> object:
+        """Accept existing test fixtures but discard code-owned rule metadata."""
+
+        if not isinstance(value, dict) or not isinstance(
+            value.get("rules"), (tuple, list)
+        ):
+            return value
+        compact_rules = []
+        fields = set(ExtractedRule.model_fields)
+        known_rule_fields = set(Rule.model_fields)
+        for item in value["rules"]:
+            if isinstance(item, Rule):
+                compact_rules.append(
+                    {name: getattr(item, name) for name in fields}
+                )
+            elif isinstance(item, dict):
+                unknown = set(item) - known_rule_fields
+                if unknown:
+                    compact_rules.append(item)
+                else:
+                    compact_rules.append(
+                        {name: item[name] for name in fields if name in item}
+                    )
+            else:
+                compact_rules.append(item)
+        return {**value, "rules": compact_rules}
 
 
 class LessonText(StrictModel):
@@ -130,6 +176,7 @@ class RuleExtractionCase(StrictModel):
     case_id: str = Field(min_length=1, max_length=120)
     clauses: tuple[SourceClause, ...] = Field(min_length=1)
     expected_rules: tuple[Rule, ...] = ()
+    boolean_exclusion_rule_ids: tuple[str, ...] = ()
     allowed_fact_ids: tuple[str, ...] = Field(min_length=1)
     # Required: lessons learned from this case carry these tags, and later
     # cases find lessons by them. A case without tags could never reuse one.
@@ -145,6 +192,19 @@ class RuleExtractionCase(StrictModel):
             raise ValueError("Allowed fact IDs cannot be blank")
         if len(fact_ids) != len(set(fact_ids)):
             raise ValueError("Allowed fact IDs must be unique")
+        if len(self.boolean_exclusion_rule_ids) != len(
+            set(self.boolean_exclusion_rule_ids)
+        ):
+            raise ValueError("Boolean exclusion rule IDs must be unique")
+        expected_by_id = {rule.rule_id: rule for rule in self.expected_rules}
+        if not set(self.boolean_exclusion_rule_ids) <= set(expected_by_id):
+            raise ValueError("Boolean exclusion IDs must reference expected rules")
+        if any(
+            expected_by_id[rule_id].operator != "eq"
+            or type(expected_by_id[rule_id].value) is not bool
+            for rule_id in self.boolean_exclusion_rule_ids
+        ):
+            raise ValueError("Boolean exclusions must be eq rules with boolean values")
         if len(self.topic_tags) != len(set(self.topic_tags)) or any(
             not TAG_PATTERN.fullmatch(tag) for tag in self.topic_tags
         ):

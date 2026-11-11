@@ -3,18 +3,18 @@
 Each command calls one function of ``src/rule_extraction_reflexion``; nothing
 here re-implements prompts, checks or comparison.
 
-    evaluate  measure extraction on cases (paid; never learns)   -> evaluate_cases
-    learn     propose lessons from "learn" cases (paid)          -> run_reflexion_case
+    evaluate  measure extraction on cases (model calls; never learns) -> evaluate_cases
+    learn     propose lessons from "learn" cases (model calls)    -> run_reflexion_case
     lessons   list stored lessons and their reviews (free)
     review    approve or reject one lesson (free)                -> review_lesson
     freeze    save approved lessons as a playbook version (free) -> freeze_playbook
     export-playbook  write a frozen playbook to a file for git (free) -> export_playbook
-    extract   draft rules for a NEW scheme with no approved rules (paid) -> extract_rules
+    extract   draft rules for a NEW scheme with no approved rules (model calls) -> extract_rules
     onboard   put a scheme into the app (free)    -> plan_onboarding
 
 Examples (PowerShell, from the repo root):
 
-    python -m src.rule_extraction_reflexion.scheme_rules evaluate --runs 3                 # prints the cost, then:
+    python -m src.rule_extraction_reflexion.scheme_rules evaluate --runs 3                 # prints call count, then:
     python -m src.rule_extraction_reflexion.scheme_rules evaluate --runs 3 --yes
     python -m src.rule_extraction_reflexion.scheme_rules learn --yes
     python -m src.rule_extraction_reflexion.scheme_rules lessons
@@ -34,8 +34,9 @@ Cases come from data/schemes/rule_extraction_cases_dev.json: one entry per
 approved clause, with its topic tags and split. Clause text, approved rules and
 allowed facts are read from the rule package itself. Lessons, reviews and
 playbooks are kept in data/runtime/reflexion_lessons.sqlite3 (not committed).
-Paid commands use the project's OpenRouter key and model from .env and do
-nothing until --yes is given.
+Model calls use the free OpenRouter key and rule-extraction model from .env.
+The default model is Nemotron 3.5 Lightning's free route. Calls are counted
+before execution and nothing is sent until --yes is given.
 """
 
 import argparse
@@ -44,6 +45,7 @@ import hashlib
 from collections.abc import Callable
 from datetime import datetime, timezone
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -52,8 +54,8 @@ from langchain_core.language_models.chat_models import BaseChatModel
 from langgraph.store.sqlite.aio import AsyncSqliteStore
 from pydantic import ValidationError
 
-from src.config import openrouter_chat_settings
-from src.llm_client import DEFAULT_CHAT_MODEL, openrouter_chat_model
+from src.config import load_project_dotenv
+from src.llm_client import openrouter_chat_model
 from src.rules.facts import FactRegistry
 from src.rules.models import RulePackage
 from src.rule_extraction_reflexion.onboarding import (
@@ -73,6 +75,8 @@ from src.rule_extraction_reflexion.playbook import (
 )
 from src.rule_extraction_reflexion.reflexion import run_reflexion_case
 
+load_project_dotenv()
+
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 RULES_DIR = PROJECT_ROOT / "src" / "rules"
 CASES_FILE = PROJECT_ROOT / "data" / "schemes" / "rule_extraction_cases_dev.json"
@@ -81,6 +85,8 @@ REPORT_DIR = PROJECT_ROOT / "data" / "runtime" / "reflexion_reports"
 DRAFT_DIR = PROJECT_ROOT / "data" / "runtime" / "reflexion_drafts"
 PLAYBOOK_DIR = PROJECT_ROOT / "data" / "schemes" / "playbooks"
 SPLITS = ("learn", "check")
+DEFAULT_EXTRACTION_MODEL = "nvidia/nemotron-3.5-lightning:free"
+NEMOTRON_COMPLETION_TOKENS = 2048
 
 
 def load_case_file(path: Path | None = None) -> dict:
@@ -155,10 +161,20 @@ def load_registry(rules_dir: Path = RULES_DIR) -> FactRegistry:
 
 
 def project_model() -> tuple[BaseChatModel, str]:
-    """The project's OpenRouter chat model, built the way the app builds it."""
-    api_key, model_name = openrouter_chat_settings(DEFAULT_CHAT_MODEL)
+    """Build the rule-extraction model with the free OpenRouter credential."""
+    api_key = os.getenv("OPENROUTER_API_KEY_FREE") or os.getenv("OPEN_ROUTER_FREE")
+    model_name = os.getenv(
+        "OPENROUTER_RULE_EXTRACTION_MODEL", DEFAULT_EXTRACTION_MODEL,
+    )
     if not api_key:
-        raise SystemExit("OPENROUTER_API_KEY is not set in the project .env")
+        raise SystemExit("OPENROUTER_API_KEY_FREE is not set in the project .env")
+    if model_name == DEFAULT_EXTRACTION_MODEL:
+        return openrouter_chat_model(
+            api_key,
+            model_name,
+            max_completion_tokens=NEMOTRON_COMPLETION_TOKENS,
+            reasoning_effort="none",
+        ), model_name
     return openrouter_chat_model(api_key, model_name), model_name
 
 
@@ -419,10 +435,12 @@ def onboard(
     return plan
 
 
-def _confirm_paid(calls: int, yes: bool) -> bool:
-    """Paid commands state their cost and run only with --yes."""
-    print(f"This makes up to {calls} OpenRouter model call(s) with the project key "
-          f"(gpt-4o-mini: well under 1 US cent per 10 calls).")
+def _confirm_model_calls(calls: int, yes: bool) -> bool:
+    """State the model-call count and run only with --yes."""
+    model_name = os.getenv(
+        "OPENROUTER_RULE_EXTRACTION_MODEL", DEFAULT_EXTRACTION_MODEL,
+    )
+    print(f"This makes up to {calls} OpenRouter model call(s) using {model_name}.")
     if not yes:
         print("Nothing was sent. Add --yes to run it.")
     return yes
@@ -432,14 +450,14 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     commands = parser.add_subparsers(dest="command", required=True)
 
-    evaluate_cmd = commands.add_parser("evaluate", help="Measure extraction (paid; never learns).")
+    evaluate_cmd = commands.add_parser("evaluate", help="Measure extraction with model calls; never learns.")
     evaluate_cmd.add_argument("--split", choices=SPLITS, help="Only this split (default: every case).")
     evaluate_cmd.add_argument("--playbook", help="Frozen playbook version to use.")
     evaluate_cmd.add_argument("--runs", type=int, default=1)
-    evaluate_cmd.add_argument("--yes", action="store_true", help="Spend the calls.")
+    evaluate_cmd.add_argument("--yes", action="store_true", help="Send the model calls.")
 
-    learn_cmd = commands.add_parser("learn", help="Propose lessons from learn cases (paid).")
-    learn_cmd.add_argument("--yes", action="store_true", help="Spend the calls.")
+    learn_cmd = commands.add_parser("learn", help="Propose lessons from learn cases with model calls.")
+    learn_cmd.add_argument("--yes", action="store_true", help="Send the model calls.")
 
     commands.add_parser("lessons", help="List stored lessons and reviews.")
 
@@ -458,10 +476,10 @@ def main(argv: list[str] | None = None) -> None:
     export_cmd = commands.add_parser("export-playbook", help="Write a frozen playbook to a file for git.")
     export_cmd.add_argument("version", help="For example 1.0.0")
 
-    extract_cmd = commands.add_parser("extract", help="Draft rules for a new scheme (paid; never policy).")
+    extract_cmd = commands.add_parser("extract", help="Draft rules for a new scheme with model calls; never policy.")
     extract_cmd.add_argument("source_file", type=Path, help="A file in data/schemes/rule_extraction_sources/")
     extract_cmd.add_argument("--playbook", help="Frozen playbook version to use.")
-    extract_cmd.add_argument("--yes", action="store_true", help="Spend the calls.")
+    extract_cmd.add_argument("--yes", action="store_true", help="Send the model calls.")
 
     onboard_cmd = commands.add_parser("onboard", help="Put a scheme into the app.")
     onboard_cmd.add_argument("scheme_id", help="For example IGNOAPS-MH")
@@ -473,7 +491,7 @@ def main(argv: list[str] | None = None) -> None:
 
     if args.command == "evaluate":
         cases = build_cases(args.split)
-        if _confirm_paid(len(cases) * args.runs, args.yes):
+        if _confirm_model_calls(len(cases) * args.runs, args.yes):
             model, name = project_model()
             print(f"model: {name}\n")
             asyncio.run(evaluate(model, cases, load_registry(),
@@ -484,7 +502,7 @@ def main(argv: list[str] | None = None) -> None:
             raise SystemExit("No clause has split \"learn\" in rule_extraction_cases_dev.json. "
                              "Assign the split first; check clauses are never learned from.")
         # One extraction per case, plus one reflection call when it differs.
-        if _confirm_paid(2 * len(cases), args.yes):
+        if _confirm_model_calls(2 * len(cases), args.yes):
             model, name = project_model()
             print(f"model: {name}\n")
             asyncio.run(learn(model, cases, load_registry()))
@@ -502,7 +520,7 @@ def main(argv: list[str] | None = None) -> None:
         asyncio.run(export(args.version))
     elif args.command == "extract":
         source, cases = build_source_cases(args.source_file)
-        if _confirm_paid(len(cases), args.yes):
+        if _confirm_model_calls(len(cases), args.yes):
             model, name = project_model()
             print(f"model: {name}\n")
             asyncio.run(extract(model, source, cases, load_registry(),

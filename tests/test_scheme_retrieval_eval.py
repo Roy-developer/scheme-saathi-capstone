@@ -36,18 +36,18 @@ class FakeRetriever:
 def test_development_dataset_has_multilingual_and_cross_scheme_queries():
     evaluation_set = load_evaluation_set(EVAL_SET_PATH, CORPUS_PATH)
 
-    assert len(evaluation_set.queries) == 43
+    assert len(evaluation_set.queries) == 199
     assert evaluation_set.split == "development"
     assert evaluation_set.protected is False
-    assert len({query.query_id for query in evaluation_set.queries}) == 43
+    assert len({query.query_id for query in evaluation_set.queries}) == 199
     assert {
         language: sum(query.query_language == language for query in evaluation_set.queries)
         for language in ("en", "hi", "mr")
-    } == {"en": 33, "hi": 5, "mr": 5}
+    } == {"en": 189, "hi": 5, "mr": 5}
     assert sum(
         query.query_id.startswith("CROSS-")
         for query in evaluation_set.queries
-    ) == 3
+    ) == 8
     passage_schemes = {
         passage.passage_id: passage.scheme_id
         for passage in load_passages(CORPUS_PATH)

@@ -93,6 +93,7 @@ from src.workflow.intake import (
     interpret_free_text_answer,
     rewrite_scheme_query,
 )
+from src.workflow.input_guardrails import is_prompt_injection
 from src.workflow.question_picker import (
     pick_shared_registered_fact,
 )
@@ -312,6 +313,7 @@ class JourneyState(TypedDict, total=False):
     registry_intake: bool
     registry_dependencies: str | None
     dependency_review_required: bool
+    fact_intake_mode: Literal["model_assisted", "deterministic_only"]
     fact_questions: dict[str, str]
     pending_answer: str | None
     pending_registered_answer: dict[str, Any] | None
@@ -435,6 +437,42 @@ MODE_ACKNOWLEDGEMENTS: dict[str, dict[str, str]] = {
         ),
     },
 }
+
+INPUT_GUARDRAIL_MESSAGES: dict[str, str] = {
+    "en": (
+        "I can help with government benefit schemes and eligibility, but I can't "
+        "follow instructions to change my role or reveal internal instructions. "
+        "Please ask a scheme-related question."
+    ),
+    "hi": (
+        "मैं सरकारी लाभ योजनाओं और पात्रता में मदद कर सकता हूँ, लेकिन अपनी भूमिका "
+        "बदलने या आंतरिक निर्देश बताने वाले निर्देशों का पालन नहीं कर सकता। कृपया "
+        "योजना से जुड़ा प्रश्न पूछें।"
+    ),
+    "mr": (
+        "मी सरकारी लाभ योजना आणि पात्रता याबद्दल मदत करू शकतो; पण माझी भूमिका "
+        "बदलण्याच्या किंवा अंतर्गत सूचना उघड करण्याच्या सूचनांचे पालन करू शकत "
+        "नाही. कृपया योजनेशी संबंधित प्रश्न विचारा."
+    ),
+}
+
+
+def _guardrail_response(
+    conversation_id: UUID,
+    locale: Literal["en", "hi", "mr"],
+    mode: Literal["citizen", "csc"],
+) -> JourneyResponse:
+    """Return a localized refusal without persisting or forwarding the input."""
+
+    return JourneyResponse(
+        conversation_id=conversation_id,
+        plan="",
+        status="invalid_input",
+        message=INPUT_GUARDRAIL_MESSAGES[locale],
+        locale=locale,
+        mode=mode,
+        mode_acknowledgement=MODE_ACKNOWLEDGEMENTS[mode][locale],
+    )
 
 
 async def _evaluate_with_mcp(
@@ -894,6 +932,10 @@ def build_journey_graph(
                 "profile_proposals": proposals,
                 "profile_description": None,
                 "initial_description_processed": True,
+                "fact_intake_mode": (
+                    "deterministic_only"
+                    if deterministic_fact_intake else "model_assisted"
+                ),
                 "agent_budget": agent_budget,
                 "agent_trace": trace_events,
                 "react_status": react_status,
@@ -974,7 +1016,22 @@ def build_journey_graph(
             fact for package in packages for fact in package.required_facts
             if fact in allowed_facts
         ))
-        if description and not state.get("initial_description_processed"):
+        intake_scheme_ids = set(state.get("candidate_scheme_ids") or [])
+        if not intake_scheme_ids and state.get("scheme_id"):
+            intake_scheme_ids.add(state["scheme_id"])
+        intake_packages = [
+            package for package in packages
+            if package.scheme_id in intake_scheme_ids
+        ]
+        deterministic_fact_intake = any(
+            package.fact_intake_mode == "deterministic_only"
+            for package in intake_packages
+        )
+        if (
+            description
+            and not state.get("initial_description_processed")
+            and not deterministic_fact_intake
+        ):
             (
                 proposals, agent_budget, description_trace, react_status,
             ) = await propose_initial_registered_facts(
@@ -1044,6 +1101,7 @@ def build_journey_graph(
                 reply = pending_registered_answer.get("reply")
                 if (
                     definition.value_type in {"boolean", "date"}
+                        and not deterministic_fact_intake
                     and isinstance(reply, str)
                     and pending_fact not in attempted
                 ):
@@ -1158,6 +1216,7 @@ def build_journey_graph(
             **discovery_updates,
             **progress(),
             "registry_intake": True,
+            "fact_intake_mode": "model_assisted",
             "fact_questions": {
                 fact_id: registry_question_for(
                     fact_registry.get(fact_id), state.get("locale", "en")
@@ -2431,6 +2490,13 @@ async def run_journey(
     input always starts the graph again from START.
     """
 
+    if any(is_prompt_injection(text or "") for text in (
+        request.query, request.profile_description,
+    )):
+        return _guardrail_response(
+            request.conversation_id, request.locale, request.mode
+        )
+
     # Start state for this request. Keys from an earlier request in the same
     # conversation are saved in the checkpoint, so every per-request key is
     # reset here; otherwise an old plan, profile or answer could leak in.
@@ -2577,16 +2643,25 @@ async def resume_journey(
 
     config = _thread_config(conversation_id)
     snapshot = await graph.aget_state(config)
+    saved = snapshot.values or {}
+    if is_prompt_injection(message):
+        if not snapshot.interrupts:
+            raise JourneyNotWaitingError(str(conversation_id))
+        response = _to_response(conversation_id, saved)
+        return response.model_copy(update={
+            "status": "awaiting_answer",
+            "message": INPUT_GUARDRAIL_MESSAGES[
+                saved.get("locale", "en")
+            ],
+        })
     refused = await _check_registry_dependencies(
         graph, conversation_id, snapshot.values or {}
     )
     if refused is not None:
         return refused
-    # snapshot.interrupts is non-empty only while ask_user is paused.
     if not snapshot.interrupts:
         raise JourneyNotWaitingError(str(conversation_id))
 
-    saved = snapshot.values or {}
     pending_fact = saved.get("pending_fact")
     registry = getattr(graph, "fact_registry", None)
     definition = registry.get(pending_fact)
@@ -2618,7 +2693,8 @@ async def resume_journey(
         answer["value"] = encode_wire_value(parsed.value)
     elif parsed.kind == "invalid":
         answer["error"] = parsed.error
-        answer["reply"] = mask_sensitive_text(message)
+        if saved.get("fact_intake_mode") != "deterministic_only":
+            answer["reply"] = mask_sensitive_text(message)
     decision = None
     if confirming:
         decision = parse_confirmation(message, saved.get("locale", "en"))
@@ -2629,6 +2705,9 @@ async def resume_journey(
         "safe_text": (
             unknown_answer_label(saved.get("locale", "en"))
             if parsed.kind == "unknown" or decision == "unknown"
+            else ""
+            if parsed.kind == "invalid"
+            and definition.privacy.sensitivity != "ordinary"
             else mask_sensitive_text(message)
         ),
     }

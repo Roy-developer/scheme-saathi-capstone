@@ -481,10 +481,22 @@ class HouseholdProfile(StrictDataModel):
         return cls.model_validate(restored).validate_against(registry)
 
     def validate_against(self, registry: FactRegistry) -> "HouseholdProfile":
-        """Validate all supplied IDs, versions, types, and bounds."""
+        """Validate all supplied IDs, versions, types, and bounds.
+
+        Older fact stores remain readable as long as they carry the same major
+        registry line and a non-newer semver version. That keeps checkpoints and
+        synthetic development fixtures compatible while still rejecting a store
+        from a different major registry.
+        """
 
         if self.registry_version != registry.registry_version:
-            raise ValueError("Fact store uses an incompatible registry version")
+            store_parts = tuple(int(part) for part in self.registry_version.split("."))
+            registry_parts = tuple(int(part) for part in registry.registry_version.split("."))
+            if len(store_parts) != 3 or len(registry_parts) != 3:
+                raise ValueError("Fact store uses an incompatible registry version")
+            if store_parts[0] != registry_parts[0] or store_parts > registry_parts:
+                raise ValueError("Fact store uses an incompatible registry version")
+            self = self.model_copy(update={"registry_version": registry.registry_version})
         for fact_id, state in self.facts.items():
             definition = registry.get(fact_id)
             if definition.derived_from:

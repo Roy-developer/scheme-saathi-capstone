@@ -1,0 +1,93 @@
+{
+  "scheme_id": "AABYM-MH",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "human_reviewed",
+  "rules": [
+    {
+      "rule_id": "AABYM-MH-R01",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": null,
+      "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+      "source_quote": "This scheme is meant for land less labourers in rural areas in the age Group of 18-59 years.",
+      "needs_human_review": false,
+      "note": "End values included (project owner decision 2026-11-10)."
+    },
+    {
+      "rule_id": "AABYM-MH-R02",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 59,
+      "unit": null,
+      "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+      "source_quote": "This scheme is meant for land less labourers in rural areas in the age Group of 18-59 years.",
+      "needs_human_review": false,
+      "note": "End values included (project owner decision 2026-11-10)."
+    },
+    {
+      "rule_id": "AABYM-MH-R03",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "AABYM-MH-ELIGIBILITY-02",
+      "source_quote": "The applicant should be a resident of Maharashtra.",
+      "needs_human_review": false,
+      "note": "State is Maharashtra."
+    },
+    {
+      "rule_id": "AABYM-MH-R04",
+      "kind": "eligibility",
+      "field": "owns_cultivable_land",
+      "operator": "eq",
+      "value": false,
+      "unit": null,
+      "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+      "source_quote": "land less labourers",
+      "needs_human_review": true,
+      "note": "'Land less' is mapped to not owning cultivable land; a reviewer should confirm the mapping."
+    },
+    {
+      "rule_id": "AABYM-MH-R05",
+      "kind": "eligibility",
+      "field": "is_labourer",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+      "source_quote": "land less labourers",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "AABYM-MH-R06",
+      "kind": "eligibility",
+      "field": "lives_in_rural_area",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+      "source_quote": "in rural areas",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "AABYM-MH-R07",
+      "kind": "exclusion",
+      "field": "is_covered_under_other_similar_insurance",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "AABYM-MH-ELIGIBILITY-03",
+      "source_quote": "should not be covered under any other similar insurance scheme",
+      "needs_human_review": false,
+      "note": null
+    }
+  ],
+  "unresolved": []
+}

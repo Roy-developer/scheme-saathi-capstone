@@ -52,7 +52,11 @@ async def evaluate_cases(
             registry,
             playbook=playbook,
         )
-        differences = compare_rules(case.expected_rules, proposed)
+        differences = compare_rules(
+            case.expected_rules,
+            proposed,
+            boolean_exclusion_rule_ids=case.boolean_exclusion_rule_ids,
+        )
         case_differences = tuple(
             RuleDifference(rule_id=rule_id, attributes=tuple(attributes))
             for rule_id, attributes in sorted(differences.items())

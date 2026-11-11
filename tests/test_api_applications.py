@@ -233,6 +233,23 @@ def test_synthetic_application_requires_exact_approval(tmp_path, monkeypatch) ->
         )
         assert changed_report_draft.status_code == 409
 
+        invalid_form_draft = client.post(
+            f"/api/v1/journey/{conversation_id}/drafts",
+            json={
+                "scheme_id": "IGNWPS-MH",
+                "documents": documents,
+                "profile_name": "Synthetic Example",
+                "document_metadata": {
+                    "identity_proof": {"name": "Synthetic Example"},
+                },
+                "form_values": {"date_of_birth": "1986-01-01"},
+            },
+        )
+        assert invalid_form_draft.status_code == 422
+        assert invalid_form_draft.json()["detail"] == (
+            "The submitted synthetic form values are invalid."
+        )
+
         draft_response = client.post(
             f"/api/v1/journey/{conversation_id}/drafts",
             json={

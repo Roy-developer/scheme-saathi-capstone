@@ -1,0 +1,72 @@
+{
+  "scheme_id": "TFEFVS-MH",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "human_reviewed",
+  "rules": [
+    {
+      "rule_id": "TFEFVS-MH-R01",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "gte",
+      "value": 100000,
+      "unit": "INR per year",
+      "source_passage_id": "TFEFVS-MH-ELIGIBILITY-02",
+      "source_quote": "whose parents' income is between ₹ 1,00,000 to ₹ 4,50,000",
+      "needs_human_review": true,
+      "note": "Lower bound of the parents' income band; whether the end values are included is not stated. Income is the parents' income, mapped to family income."
+    },
+    {
+      "rule_id": "TFEFVS-MH-R02",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 450000,
+      "unit": "INR per year",
+      "source_passage_id": "TFEFVS-MH-ELIGIBILITY-02",
+      "source_quote": "whose parents' income is between ₹ 1,00,000 to ₹ 4,50,000",
+      "needs_human_review": true,
+      "note": "Upper bound of the parents' income band; whether the end values are included is not stated."
+    },
+    {
+      "rule_id": "TFEFVS-MH-R03",
+      "kind": "eligibility",
+      "field": "is_vjnt",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "TFEFVS-MH-ELIGIBILITY-01",
+      "source_quote": "He should belong to the Vimukta Jatis & Nomadic Tribes(VJNT) category.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "TFEFVS-MH-R04",
+      "kind": "eligibility",
+      "field": "number_of_failures",
+      "operator": "lte",
+      "value": 1,
+      "unit": null,
+      "source_passage_id": "TFEFVS-MH-ELIGIBILITY-03",
+      "source_quote": "Students with one failure",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "TFEFVS-MH-R05",
+      "kind": "eligibility",
+      "field": "is_student_in_post_matric_course",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "TFEFVS-MH-BENEFIT-01",
+      "source_quote": "at Post Matriculation Education in recognized educational institutions",
+      "needs_human_review": false,
+      "note": null
+    }
+  ],
+  "unresolved": [
+    "Passages say students 'not covered under the Government of India Scholarship' are eligible; it is unclear whether those covered are excluded. Not encoded.",
+    "The Rs 1,00,000 lower income bound (R01) looks unusual; confirm with the official source."
+  ]
+}

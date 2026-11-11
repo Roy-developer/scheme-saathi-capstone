@@ -90,19 +90,24 @@ Open `.env` in your editor and replace the example values:
 ```dotenv
 OPENROUTER_API_KEY=your_openrouter_chat_key_here
 OPENROUTER_CHAT_MODEL=openai/gpt-4o-mini
-OPENROUTER_API_KEY_FREE=your_openrouter_embedding_key_here
-OPENROUTER_EMBEDDING_MODEL=voyageai/voyage-4
+OPENROUTER_API_KEY_FREE=your_openrouter_reranking_key_here
+SCHEME_SAATHI_EMBEDDING_BACKEND=fastembed
+SCHEME_SAATHI_EMBEDDING_MODEL=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+OPENROUTER_EMBEDDING_MODEL=mongodb/voyage-4
 ```
 
 | Setting | Used for |
 |---|---|
 | `OPENROUTER_API_KEY` | Rewording search queries and understanding free-text interview replies |
-| `OPENROUTER_API_KEY_FREE` | Search embeddings and hosted reranking |
-| The two model settings | Which chat and embedding models to call |
+| `OPENROUTER_API_KEY_FREE` | Hosted search reranking or OpenRouter embeddings |
+| `SCHEME_SAATHI_EMBEDDING_BACKEND` | `fastembed` locally with OpenRouter fallback, or `openrouter` in cloud |
+| `SCHEME_SAATHI_EMBEDDING_MODEL` | Local FastEmbed model used for vector search |
+| `OPENROUTER_EMBEDDING_MODEL` | OpenRouter model used in hosted mode or as a local-cache fallback |
 
 Use authorized OpenRouter keys with access and credit for those models.
-**The name `_FREE` does not mean requests are free.** Chat, embedding and
-reranking requests may cost money. Never put actual keys in screenshots,
+**The name `_FREE` does not mean requests are free.** Chat, hosted reranking,
+and OpenRouter embeddings may cost money; cached FastEmbed embeddings run locally.
+Never put actual keys in screenshots,
 chat messages, source files, commits or pull requests. `.env` is ignored
 by Git.
 

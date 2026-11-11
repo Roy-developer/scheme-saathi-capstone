@@ -53,8 +53,12 @@ def _rule_is_met(rule: Rule, value: object, registry: FactRegistry) -> bool:
     expected = definition.validate_value(rule.value)
     if rule.operator == "eq":
         return value == expected
+    if rule.operator == "gt":
+        return value > expected  # type: ignore[operator]
     if rule.operator == "gte":
         return value >= expected  # type: ignore[operator]
+    if rule.operator == "lt":
+        return value < expected  # type: ignore[operator]
     return value <= expected  # type: ignore[operator]
 
 

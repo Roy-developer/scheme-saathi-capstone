@@ -148,6 +148,26 @@ def test_rule_sets_report_changed_attributes_by_rule_id(
     }
 
 
+def test_boolean_exclusion_matches_equivalent_positive_eligibility_form() -> None:
+    excluded = Rule(
+        rule_id="synthetic-exclusion",
+        field="is_institutional_account_holder",
+        operator="eq",
+        value=True,
+        source_clause_id="synthetic-clause-1",
+    )
+    eligible_form = excluded.model_copy(update={"value": False})
+
+    assert compare_rules([excluded], [eligible_form]) == {
+        excluded.rule_id: ["value"],
+    }
+    assert compare_rules(
+        [excluded],
+        [eligible_form],
+        boolean_exclusion_rule_ids=(excluded.rule_id,),
+    ) == {}
+
+
 def test_rule_sets_reject_two_rules_with_the_same_meaning(expected_rule: Rule) -> None:
     """Two rules with one meaning cannot silently overwrite each other."""
     duplicate = Rule(

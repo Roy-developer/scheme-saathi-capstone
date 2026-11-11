@@ -75,25 +75,32 @@ cross-encoder. The tool returns evidence for retrieval-augmented answers; it
 does not generate an answer or determine eligibility.
 
 The versioned corpus is `data/schemes/passages.json`. It currently contains
-17 English passages across IGNWPS-MH, PM-KISAN-IN and IGNOAPS-MH. Their `reviewed` status
-was set per the user's human-review attestation; it is not legal or policy
-approval. The PM-KISAN source-currentness caveats are recorded in the review
-workbook. This remains a technical pilot, not the complete 40–60-scheme
-corpus, and retrieval does not determine eligibility.
+792 English and Marathi passages across 42 schemes. The corpus labels passages
+as `reviewed` per the user's human-review attestation; that is not legal or
+policy approval. The PM-KISAN source-currentness caveats are recorded in the
+review workbook. Retrieval does not determine eligibility.
 
 To add a scheme, from its official source through to the app, follow
 `docs/RULE_EXTRACTION_REFLEXION_CODE_WALKTHROUGH.md`, section "From official PDF to live app, end to end".
 
-The current pilot uses the OpenRouter `voyageai/voyage-4` multilingual
-embedding model. The deployed API uses OpenRouter's hosted
-`cohere/rerank-v3.5` model for reranking, while local retrieval evaluation can
+The local pilot uses FastEmbed's
+`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` model for
+multilingual embeddings when it is present in the local cache. If it is
+missing, search falls back to OpenRouter Voyage-4 using
+`OPENROUTER_API_KEY_FREE`. Use
+`SCHEME_SAATHI_EMBEDDING_BACKEND=fastembed` for local-first behavior or
+`openrouter` to always use the hosted model. The deployed cloud API should set
+it to `openrouter` and use `OPENROUTER_EMBEDDING_MODEL=mongodb/voyage-4`. The
+deployed API uses OpenRouter's hosted `cohere/rerank-v3.5` model for reranking,
+while local retrieval evaluation can
 use the multilingual BGE reranker v2 M3 INT8 model. Copy
 `.env.example` to `.env`; configure `OPENROUTER_API_KEY` for intake query
-rewrites and `OPENROUTER_API_KEY_FREE` for embeddings (`OPEN_ROUTER_FREE` is
-also accepted as an embedding-key alias). `.env` is ignored by Git and loaded
-by `src.config`; the MCP child process receives only the embedding credential.
-Hosted reranking uses that same embedding credential and incurs OpenRouter
-usage charges. The journey search returns at most 5 passages and drops any
+rewrites and `OPENROUTER_API_KEY_FREE` for hosted reranking (`OPEN_ROUTER_FREE`
+is also accepted as a key alias). `SCHEME_SAATHI_EMBEDDING_MODEL` overrides
+the local model; `.env` is ignored by Git and loaded by `src.config`. The MCP
+child process receives the selected backend, model settings and API key.
+OpenRouter Voyage embeddings and hosted reranking may incur usage charges.
+The journey search returns at most 5 passages and drops any
 with a Cohere rerank score below 0.3 (`HOSTED_RERANK_MIN_SCORE`), a value
 chosen from the 43-query development set (keeps 94% of relevant passages,
 drops about 90% of the rest); revisit it if the reranker or corpus changes.
@@ -103,8 +110,9 @@ scores at least 0.2 (`HOSTED_RERANK_FALLBACK_MIN_SCORE`), or at least 0.12
 both rank its scheme first. Both values were calibrated on 75 development
 questions; see the "Search fallback calibration" section of
 [`docs/RETRIEVAL_IMPROVEMENT_BACKLOG.md`](docs/RETRIEVAL_IMPROVEMENT_BACKLOG.md).
-The first search embeds the public passage corpus through OpenRouter, and the
-local BGE reranker model is downloaded if it is not cached.
+When the local model is available, the public passage corpus is embedded
+locally. The local BGE reranker model is also downloaded if selected and not
+cached.
 The Qdrant index is rebuilt in memory when the MCP server starts; persistent
 vector storage remains future work.
 
@@ -166,7 +174,7 @@ approval and a shared, demo-only document checklist loader. Source-backed
 checklists still require human evidence review and approval. Phase 5 guardrails
 and long-term memory remain incomplete.
 
-A 43-query, synthetic, unprotected development set is available at
+A 199-query, synthetic, unprotected development set is available at
 `data/schemes/retrieval_eval_dev.json`. Run its Recall@5 baseline with:
 
 ```powershell
@@ -175,20 +183,18 @@ python scripts/evaluate_scheme_retrieval.py --k 5 --skip-reranker --output data/
 
 The local cross-encoder may fail to initialize on memory-constrained machines.
 For a separately labeled BM25 + vector + RRF baseline that does not load it,
-pass `--skip-reranker`. The current BM25 + vector + RRF baseline, without the
-reranker, achieved 83.7% passage Recall@5 and 100% scheme hit rate. Recall@5
-by query language was English 97.0%, Hindi 20.0%, and Marathi 60.0%. These
-multilingual results expose a retrieval gap; do not describe the pilot as
-validated for Hindi or Marathi. The 13 added Hindi, Marathi, and cross-scheme
-queries have provisional corpus-grounded labels and still require bilingual
-domain review. All metrics are synthetic development results, not a protected
-evaluation or evidence of production quality.
+pass `--skip-reranker`. The command writes a fresh result report; previously
+saved reports for smaller or older versions of the query set are not current
+benchmarks. The 156 added English queries received AI model-assisted label
+review, while the original Hindi and Marathi labels remain provisional and
+require bilingual domain review. All metrics from this synthetic development
+set are not a protected evaluation or evidence of production quality.
 
 The curation workbook is `data/schemes/scheme_passages_review_v0.4_human_attested.xlsx`.
 After editing it, regenerate the runtime corpus with:
 
 ```powershell
-python scripts/export_scheme_dataset.py --corpus-version 0.3.0
+python scripts/export_scheme_dataset.py --corpus-version 0.3.1
 ```
 
 The exporter requires reviewed passage statuses, valid source references,

@@ -19,9 +19,9 @@ from src.api.app import app
 from src.api.scheme_search import SchemePassage
 from src.mcp_servers.tools.eligibility import evaluate_registered_profile
 from src.mcp_servers.tools import applications, documents
-from src.rules.data_provider import RulePackageProvider
+from src.rules.data_provider import RulePackageProvider, _validate_rule
 from src.rules.facts import FactDefinition, FactRegistry, FactState, HouseholdProfile
-from src.rules.models import RulePackage
+from src.rules.models import Rule, RulePackage
 from fake_chat_model import FakeChatModel, ModelDecision
 from src.workflow.errors import MCPToolError
 from src.workflow.journey import (
@@ -1694,6 +1694,38 @@ def test_every_registry_question_is_readable_in_every_language():
             assert "??" not in question["text"], (fact["fact_id"], locale)
 
 
+def test_pmkmdy_historical_land_record_fact_is_separate_and_mock_scoped():
+    root = Path(__file__).resolve().parents[1]
+    registry = FactRegistry.model_validate_json(
+        (root / "src" / "rules" / "fact_registry.json").read_bytes()
+    )
+    fact = registry.get("applicant_name_in_land_records_on_2019_08_01")
+    gold = json.loads(
+        (
+            root / "data" / "schemes" / "rule_gold_drafts" / "pmkmdy.json"
+        ).read_text(encoding="utf-8")
+    )
+    rule = next(item for item in gold["rules"] if item["rule_id"] == "PMKMDY-IN-R09")
+
+    assert fact.scope == "person"
+    assert fact.value_type == "boolean"
+    assert fact.period == "as_of:2019-08-01"
+    assert fact.privacy.policy_id == "synthetic-mock-minimum-data"
+    assert fact.privacy.sensitivity == "sensitive"
+    assert rule["field"] == fact.fact_id
+    assert rule["source_passage_id"] == "PMKMDY-IN-ELIGIBILITY-04"
+    _validate_rule(
+        Rule(
+            rule_id=rule["rule_id"],
+            field=rule["field"],
+            operator=rule["operator"],
+            value=rule["value"],
+            source_clause_id=rule["source_passage_id"],
+        ),
+        registry,
+    )
+
+
 def test_every_packaged_rule_carries_its_exact_source_clause():
     """Every rule records its official text, where it is, and the fact's unit.
 
@@ -1753,4 +1785,3 @@ def test_development_only_bundle_is_still_refused_even_when_approved_records_exi
 
     with pytest.raises(ValueError, match="Development-only bundles"):
         RulePackageProvider(tmp_path / "packages")
-

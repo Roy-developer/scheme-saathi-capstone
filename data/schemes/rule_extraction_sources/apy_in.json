@@ -1,0 +1,44 @@
+{
+  "scheme_id": "APY-IN",
+  "scheme_name": "Atal Pension Yojana",
+  "status": "source_text_for_drafting_only",
+  "note": "The APY eligibility and exclusion passages below are already present in data/schemes/passages.json. This source record supports rule drafting and Reflexion traceability; it intentionally has no onboarding passages block to avoid duplicating the existing corpus entries. The cited 2023 PDF was approved for synthetic mock use, but later eligibility circulars were not independently ruled out.",
+  "source": {
+    "publisher": "Department of Financial Services, Ministry of Finance, Government of India",
+    "source_url": "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf",
+    "retrieved": "2026-11-11",
+    "publication_date": null
+  },
+  "reviewer_decisions": {
+    "reviewer": "Roy-developer",
+    "date": "2026-11-11",
+    "scope": "Synthetic mock only; joining ages are inclusive; the income-tax-payer exclusion is scoped to APY joining on or after 2022-10-01.",
+    "currentness": "The 2023 scheme-details PDF is the newest detailed eligibility source found. The January 2026 continuation notice does not restate eligibility; later eligibility circulars were not independently ruled out."
+  },
+  "cases": [
+    {
+      "clause_id": "APY-IN-ELIGIBILITY-01",
+      "text": "APY is open to all citizens of India who have a savings bank account. The minimum age of joining APY is 18 years and maximum age is 40 years.",
+      "location": "Page 2, section 3",
+      "allowed_fact_ids": [
+        "age",
+        "apy_is_citizen_of_india",
+        "apy_has_savings_bank_account"
+      ],
+      "topic_tags": [
+        "inclusion_clause"
+      ]
+    },
+    {
+      "clause_id": "APY-IN-EXCLUSION-01",
+      "text": "From 1st October, 2022, any citizen who is or has been an income-tax payer, is not eligible to join APY.",
+      "location": "Page 2, section 3",
+      "allowed_fact_ids": [
+        "apy_is_or_has_been_income_tax_payer"
+      ],
+      "topic_tags": [
+        "exclusion_clause"
+      ]
+    }
+  ]
+}

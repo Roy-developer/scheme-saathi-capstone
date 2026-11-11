@@ -71,6 +71,40 @@ def test_clause_without_context_is_shown_as_approved() -> None:
     assert case.clauses[0].text == case.expected_rules[0].source_text
 
 
+def test_project_model_uses_free_nemotron_credential_by_default(monkeypatch) -> None:
+    monkeypatch.setenv("OPENROUTER_API_KEY_FREE", "free-key")
+    monkeypatch.delenv("OPEN_ROUTER_FREE", raising=False)
+    monkeypatch.delenv("OPENROUTER_RULE_EXTRACTION_MODEL", raising=False)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "standard-chat-key")
+    calls = []
+    expected_model = object()
+
+    def build_model(api_key, model_name, **options):
+        calls.append((api_key, model_name, options))
+        return expected_model
+
+    monkeypatch.setattr(scheme_rules, "openrouter_chat_model", build_model)
+
+    model, model_name = scheme_rules.project_model()
+
+    assert model is expected_model
+    assert model_name == "nvidia/nemotron-3.5-lightning:free"
+    assert calls == [(
+        "free-key",
+        "nvidia/nemotron-3.5-lightning:free",
+        {"max_completion_tokens": 2048, "reasoning_effort": "none"},
+    )]
+
+
+def test_project_model_does_not_fall_back_to_standard_chat_key(monkeypatch) -> None:
+    monkeypatch.delenv("OPENROUTER_API_KEY_FREE", raising=False)
+    monkeypatch.delenv("OPEN_ROUTER_FREE", raising=False)
+    monkeypatch.setenv("OPENROUTER_API_KEY", "standard-chat-key")
+
+    with pytest.raises(SystemExit, match="OPENROUTER_API_KEY_FREE"):
+        scheme_rules.project_model()
+
+
 def test_unknown_context_name_is_reported(tmp_path) -> None:
     data = scheme_rules.load_case_file()
     data["cases"][0]["context"] = ["NO-SUCH-HEADING"]

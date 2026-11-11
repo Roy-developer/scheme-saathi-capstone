@@ -363,9 +363,21 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
                         service_environment["OPENROUTER_API_KEY_FREE"] = (
                             embedding_credential
                         )
-                    if embedding_model := os.getenv("OPENROUTER_EMBEDDING_MODEL"):
-                        service_environment["OPENROUTER_EMBEDDING_MODEL"] = (
+                    if embedding_backend := os.getenv(
+                        "SCHEME_SAATHI_EMBEDDING_BACKEND"
+                    ):
+                        service_environment["SCHEME_SAATHI_EMBEDDING_BACKEND"] = (
+                            embedding_backend
+                        )
+                    if embedding_model := os.getenv("SCHEME_SAATHI_EMBEDDING_MODEL"):
+                        service_environment["SCHEME_SAATHI_EMBEDDING_MODEL"] = (
                             embedding_model
+                        )
+                    if openrouter_embedding_model := os.getenv(
+                        "OPENROUTER_EMBEDDING_MODEL"
+                    ):
+                        service_environment["OPENROUTER_EMBEDDING_MODEL"] = (
+                            openrouter_embedding_model
                         )
                 elif service_name == "mock-portal":
                     service_environment["SCHEME_SAATHI_PORTAL_URL"] = PORTAL_URL
@@ -855,8 +867,8 @@ async def create_application_draft(
         )
     except ValueError as error:
         raise HTTPException(
-            status_code=409,
-            detail="The active synthetic form mapping is unavailable.",
+            status_code=422,
+            detail="The submitted synthetic form values are invalid.",
         ) from error
     if form_preview["status"] == "unavailable":
         raise HTTPException(

@@ -59,7 +59,7 @@ def _validate_rule(
         )
     elif definition.value_type == "date":
         compatible = False
-        if rule.operator in {"eq", "gte", "lte"} and type(rule.value) is str:
+        if rule.operator in {"eq", "gt", "gte", "lt", "lte"} and type(rule.value) is str:
             try:
                 from datetime import date
 
@@ -69,7 +69,7 @@ def _validate_rule(
                 compatible = False
     elif definition.value_type in {"integer", "decimal"}:
         compatible = (
-            rule.operator in {"eq", "gte", "lte"}
+            rule.operator in {"eq", "gt", "gte", "lt", "lte"}
             and type(rule.value) in (int, float)
         )
         if definition.value_type == "integer":
@@ -84,7 +84,7 @@ def _validate_rule(
             compatible = rule.value >= definition.minimum
         if compatible and definition.maximum is not None:
             compatible = rule.value <= definition.maximum
-        if compatible and rule.operator in {"gte", "lte"}:
+        if compatible and rule.operator in {"gt", "gte", "lt", "lte"}:
             if definition.value_type == "integer":
                 compatible = type(rule.value) is int
     else:

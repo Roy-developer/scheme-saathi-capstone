@@ -1,0 +1,2756 @@
+{
+  "schema_version": "1.0",
+  "artifact_status": "evidence_inventory_only_not_an_approved_fact_catalog",
+  "source_selection_version": "0.2.0",
+  "source_corpus_version": "0.3.2",
+  "field_count": 62,
+  "rule_count": 143,
+  "operator_support_includes": [
+    "eq",
+    "gt",
+    "gte",
+    "lt",
+    "lte"
+  ],
+  "review_policy": "Owner-approved mapping and mock-only registry decisions are recorded per field; existing age/widow facts are available by exact registry IDs. New fact definitions and unresolved mappings remain pending. This evidence inventory does not approve any additional facts or authorize production use.",
+  "fields": [
+    {
+      "field_id": "age",
+      "review_status": "existing_registry_fact_available",
+      "coverage_status": "current_registry_exact_id",
+      "candidate_catalog_entry": {
+        "action": "use_existing",
+        "fact_id": "age"
+      },
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "gte",
+        "lte"
+      ],
+      "observed_units": [
+        "years"
+      ],
+      "occurrences": [
+        {
+          "scheme_id": "IGNWPS-IN",
+          "rule_id": "IGNWPS-IN-R01",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 40,
+          "unit": "years",
+          "source_passage_id": "IGNWPS-IN-ELIGIBILITY-01",
+          "gold_source_quote": "The applicant must be a widow in the age group of 40-79 years.",
+          "official_passage_text": "The applicant must be a widow in the age group of 40-79 years."
+        },
+        {
+          "scheme_id": "IGNWPS-IN",
+          "rule_id": "IGNWPS-IN-R02",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 79,
+          "unit": "years",
+          "source_passage_id": "IGNWPS-IN-ELIGIBILITY-01",
+          "gold_source_quote": "The applicant must be a widow in the age group of 40-79 years.",
+          "official_passage_text": "The applicant must be a widow in the age group of 40-79 years."
+        },
+        {
+          "scheme_id": "IGNWPS-MH",
+          "rule_id": "IGNWPS-MH-R01",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 40,
+          "unit": "years",
+          "source_passage_id": "IGNWPS-MH-ELIGIBILITY-01",
+          "gold_source_quote": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
+          "official_passage_text": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme."
+        },
+        {
+          "scheme_id": "IGNWPS-MH",
+          "rule_id": "IGNWPS-MH-R02",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 79,
+          "unit": "years",
+          "source_passage_id": "IGNWPS-MH-ELIGIBILITY-01",
+          "gold_source_quote": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
+          "official_passage_text": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme."
+        },
+        {
+          "scheme_id": "NSAP-IGNOAPS-IN",
+          "rule_id": "NSAP-IGNOAPS-IN-R03",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 60,
+          "unit": "years",
+          "source_passage_id": "NSAP-IGNOAPS-IN-ELIGIBILITY-03",
+          "gold_source_quote": "The applicant should be at least 60 years of age.",
+          "official_passage_text": "The applicant should be at least 60 years of age."
+        },
+        {
+          "scheme_id": "IGNOAPS-MH",
+          "rule_id": "IGNOAPS-MH-R01",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 65,
+          "unit": "years",
+          "source_passage_id": "IGNOAPS-MH-ELIGIBILITY-01",
+          "gold_source_quote": "Eligible elderly individuals aged 65 and above",
+          "official_passage_text": "Eligible elderly individuals aged 65 and above, whose names are on the Below Poverty Line (BPL) list, receive monthly financial assistance under the Indira Gandhi National Old Age Pension Scheme."
+        },
+        {
+          "scheme_id": "IGNDPSM-MH",
+          "rule_id": "IGNDPSM-MH-R01",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 18,
+          "unit": "years",
+          "source_passage_id": "IGNDPSM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "A Disable person in the age group of 18 to 79 years is eligible under this Scheme.",
+          "official_passage_text": "A Disable person in the age group of 18 to 79 years is eligible under this Scheme."
+        },
+        {
+          "scheme_id": "IGNDPSM-MH",
+          "rule_id": "IGNDPSM-MH-R02",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 79,
+          "unit": "years",
+          "source_passage_id": "IGNDPSM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "A Disable person in the age group of 18 to 79 years is eligible under this Scheme.",
+          "official_passage_text": "A Disable person in the age group of 18 to 79 years is eligible under this Scheme."
+        },
+        {
+          "scheme_id": "IGNDPS-IN",
+          "rule_id": "IGNDPS-IN-R01",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 18,
+          "unit": "years",
+          "source_passage_id": "IGNDPS-IN-ELIGIBILITY-01",
+          "gold_source_quote": "The age of the applicant should be 18 years and above.",
+          "official_passage_text": "The age of the applicant should be 18 years and above."
+        },
+        {
+          "scheme_id": "FADSE-MH",
+          "rule_id": "FADSE-MH-R03",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 18,
+          "unit": "years",
+          "source_passage_id": "FADSE-MH-ELIGIBILITY-03",
+          "gold_source_quote": "Applicant should be aged between 18 and 50 years",
+          "official_passage_text": "Applicant should be aged between 18 and 50 years"
+        },
+        {
+          "scheme_id": "FADSE-MH",
+          "rule_id": "FADSE-MH-R04",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 50,
+          "unit": "years",
+          "source_passage_id": "FADSE-MH-ELIGIBILITY-03",
+          "gold_source_quote": "Applicant should be aged between 18 and 50 years",
+          "official_passage_text": "Applicant should be aged between 18 and 50 years"
+        },
+        {
+          "scheme_id": "APY-IN",
+          "rule_id": "APY-IN-R01",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 18,
+          "unit": "years",
+          "source_passage_id": "APY-IN-ELIGIBILITY-01",
+          "gold_source_quote": "The minimum age of joining APY is 18 years and maximum age is 40 years.",
+          "official_passage_text": "APY is open to all citizens of India who have a savings bank account. The minimum age of joining APY is 18 years and maximum age is 40 years."
+        },
+        {
+          "scheme_id": "APY-IN",
+          "rule_id": "APY-IN-R02",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 40,
+          "unit": "years",
+          "source_passage_id": "APY-IN-ELIGIBILITY-01",
+          "gold_source_quote": "The minimum age of joining APY is 18 years and maximum age is 40 years.",
+          "official_passage_text": "APY is open to all citizens of India who have a savings bank account. The minimum age of joining APY is 18 years and maximum age is 40 years."
+        },
+        {
+          "scheme_id": "PMSBY-IN",
+          "rule_id": "PMSBY-IN-R01",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 18,
+          "unit": "years",
+          "source_passage_id": "PMSBY-IN-ELIGIBILITY-01",
+          "gold_source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 70 years are entitled to join.",
+          "official_passage_text": "All individual account holders of participating banks/ Post office in the age group of 18 to 70 years are entitled to join."
+        },
+        {
+          "scheme_id": "PMSBY-IN",
+          "rule_id": "PMSBY-IN-R02",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 70,
+          "unit": "years",
+          "source_passage_id": "PMSBY-IN-ELIGIBILITY-01",
+          "gold_source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 70 years are entitled to join.",
+          "official_passage_text": "All individual account holders of participating banks/ Post office in the age group of 18 to 70 years are entitled to join."
+        },
+        {
+          "scheme_id": "PMJJBY-IN",
+          "rule_id": "PMJJBY-IN-R01",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 18,
+          "unit": "years",
+          "source_passage_id": "PMJJBY-IN-ELIGIBILITY-01",
+          "gold_source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 50 years are eligible to join.",
+          "official_passage_text": "All individual account holders of participating banks/ Post office in the age group of 18 to 50 years are eligible to join."
+        },
+        {
+          "scheme_id": "PMJJBY-IN",
+          "rule_id": "PMJJBY-IN-R02",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 50,
+          "unit": "years",
+          "source_passage_id": "PMJJBY-IN-ELIGIBILITY-01",
+          "gold_source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 50 years are eligible to join.",
+          "official_passage_text": "All individual account holders of participating banks/ Post office in the age group of 18 to 50 years are eligible to join."
+        },
+        {
+          "scheme_id": "AABYM-MH",
+          "rule_id": "AABYM-MH-R01",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 18,
+          "unit": null,
+          "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "This scheme is meant for land less labourers in rural areas in the age Group of 18-59 years.",
+          "official_passage_text": "This scheme is meant for land less labourers in rural areas in the age Group of 18-59 years."
+        },
+        {
+          "scheme_id": "AABYM-MH",
+          "rule_id": "AABYM-MH-R02",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 59,
+          "unit": null,
+          "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "This scheme is meant for land less labourers in rural areas in the age Group of 18-59 years.",
+          "official_passage_text": "This scheme is meant for land less labourers in rural areas in the age Group of 18-59 years."
+        },
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R01",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 18,
+          "unit": null,
+          "source_passage_id": "PMKMDY-IN-ELIGIBILITY-01",
+          "gold_source_quote": "who are of the age of 18 years and above and upto the age of 40 years",
+          "official_passage_text": "All Small and Marginal Farmers (SMFs) in all States and Union Territories of the country, who are of the age of 18 years and above and upto the age of 40 years, and who do not fall within the purview of the exclusion criteria as mentioned in the guidelines, are eligible to avail the benefits of this Scheme by joining it."
+        },
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R02",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 40,
+          "unit": null,
+          "source_passage_id": "PMKMDY-IN-ELIGIBILITY-01",
+          "gold_source_quote": "who are of the age of 18 years and above and upto the age of 40 years",
+          "official_passage_text": "All Small and Marginal Farmers (SMFs) in all States and Union Territories of the country, who are of the age of 18 years and above and upto the age of 40 years, and who do not fall within the purview of the exclusion criteria as mentioned in the guidelines, are eligible to avail the benefits of this Scheme by joining it."
+        },
+        {
+          "scheme_id": "PG-IGSSGC-IN",
+          "rule_id": "PG-IGSSGC-IN-R01",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 30,
+          "unit": null,
+          "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-02",
+          "gold_source_quote": "Girl students up to the age of 30 years at the time of admission in first year of PG courses are eligible.",
+          "official_passage_text": "Age limit: Girl students up to the age of 30 years at the time of admission in first year of PG courses are eligible."
+        }
+      ]
+    },
+    {
+      "field_id": "annual_family_income_inr",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "gt",
+        "gte",
+        "lte"
+      ],
+      "observed_units": [
+        "INR",
+        "INR per year"
+      ],
+      "occurrences": [
+        {
+          "scheme_id": "PRE-DIS-IN",
+          "rule_id": "PRE-DIS-IN-R04",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 250000,
+          "unit": "INR per year",
+          "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-04",
+          "gold_source_quote": "Family income up to Rs. 2.5 lakh per year.",
+          "official_passage_text": "UDID Card.\nAadhaar Card.\nFamily income up to Rs. 2.5 lakh per year."
+        },
+        {
+          "scheme_id": "POST-DIS-IN",
+          "rule_id": "POST-DIS-IN-R04",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 250000,
+          "unit": "INR per year",
+          "source_passage_id": "POST-DIS-IN-ELIGIBILITY-04",
+          "gold_source_quote": "Family income up to Rs. 2.5 lakh per year.",
+          "official_passage_text": "UDID Card.\nAadhaar Card.\nFamily income up to Rs. 2.5 lakh per year."
+        },
+        {
+          "scheme_id": "PRE-ST-IN",
+          "rule_id": "PRE-ST-IN-R01",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 250000,
+          "unit": "INR",
+          "source_passage_id": "PRE-ST-IN-ELIGIBILITY-02",
+          "gold_source_quote": "family income from all sources should not exceed Rs.2,50,000/-",
+          "official_passage_text": "The applicant student's family income from all sources should not exceed Rs.2,50,000/- (Rs. two lakh fifty thousand) per annum."
+        },
+        {
+          "scheme_id": "TCE-SC-IN",
+          "rule_id": "TCE-SC-IN-R01",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 800000,
+          "unit": "INR per year",
+          "source_passage_id": "TCE-SC-IN-ELIGIBILITY-01",
+          "gold_source_quote": "total annual family income from all sources up to Rs. 8.00 lakh",
+          "official_passage_text": "Those SC students having total annual family income from all sources up to Rs. 8.00 lakh and having secured admission in a full-time prescribed course in any of the notified institutions according to the general selection criteria prescribed by the concerned institution, will be eligible for scholarship under the Scheme to the extent of the number of scholarships (slots) allocated to the institution for the course. Income declaration of self-employed parents/guardian should be in the form of a certificate issued by revenue officer not below the rank of Tehsildar. Employed parents/guardians are required to obtain income certificate from their employer. Employed parents/guardians should obtain consolidated certificate from revenue officer for any other additional source of income."
+        },
+        {
+          "scheme_id": "PMAY-U-IN",
+          "rule_id": "PMAY-U-IN-R01",
+          "kind": "exclusion",
+          "operator": "gt",
+          "value": 900000,
+          "unit": "INR per year",
+          "source_passage_id": "PMAY-U-IN-EXCLUSION-01",
+          "gold_source_quote": "Annual Household Income is above ₹9,00,000",
+          "official_passage_text": "User would not be Eligible for the schemes in cases:\nAnnual Household Income is above ₹9,00,000\nIf the user owns a pucca house anywhere in India\nIf they have availed benefit under any Housing scheme of Central/State/UT government in past 20 years."
+        },
+        {
+          "scheme_id": "PSGS-DIP-IN",
+          "rule_id": "PSGS-DIP-IN-R02",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 800000,
+          "unit": "INR per year",
+          "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-01",
+          "gold_source_quote": "Family income from all sources should not be more than Rs. 8 lakh per annum during the current financial year",
+          "official_passage_text": "The girl candidate should be admitted to First year of Diploma level course\nOR\nSecond year of Diploma level course through lateral entry in any of the AICTE approved Institution of respective year.\nMaximum two girls child per family are eligible.\nFamily income from all sources should not be more than Rs. 8 lakh per annum during the current financial year. A valid income certificate issued by State/ UT Government need to be enclosed."
+        },
+        {
+          "scheme_id": "TFEFVS-MH",
+          "rule_id": "TFEFVS-MH-R01",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 100000,
+          "unit": "INR per year",
+          "source_passage_id": "TFEFVS-MH-ELIGIBILITY-02",
+          "gold_source_quote": "whose parents' income is between ₹ 1,00,000 to ₹ 4,50,000",
+          "official_passage_text": "Reimbursement will be sanctioned to the students, whose parents' income is between ₹ 1,00,000 to ₹ 4,50,000."
+        },
+        {
+          "scheme_id": "TFEFVS-MH",
+          "rule_id": "TFEFVS-MH-R02",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 450000,
+          "unit": "INR per year",
+          "source_passage_id": "TFEFVS-MH-ELIGIBILITY-02",
+          "gold_source_quote": "whose parents' income is between ₹ 1,00,000 to ₹ 4,50,000",
+          "official_passage_text": "Reimbursement will be sanctioned to the students, whose parents' income is between ₹ 1,00,000 to ₹ 4,50,000."
+        }
+      ]
+    },
+    {
+      "field_id": "annual_income_inr",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "lt"
+      ],
+      "observed_units": [
+        "INR per year"
+      ],
+      "occurrences": [
+        {
+          "scheme_id": "FADSE-MH",
+          "rule_id": "FADSE-MH-R05",
+          "kind": "eligibility",
+          "operator": "lt",
+          "value": 100000,
+          "unit": "INR per year",
+          "source_passage_id": "FADSE-MH-ELIGIBILITY-04",
+          "gold_source_quote": "Applicant annual income should be below Rs 100000/-",
+          "official_passage_text": "Applicant annual income should be below Rs 100000/-"
+        }
+      ]
+    },
+    {
+      "field_id": "applicant_name_in_land_records_on_2019_08_01",
+      "review_status": "owner_approved_mock_fact",
+      "coverage_status": "current_registry_exact_id",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R09",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMKMDY-IN-ELIGIBILITY-04",
+          "gold_source_quote": "name should appear in land records as on 01.08.2019",
+          "official_passage_text": "The applicant’s name should appear in land records as on 01.08.2019."
+        }
+      ],
+      "approved_fact_id": "applicant_name_in_land_records_on_2019_08_01"
+    },
+    {
+      "field_id": "availed_housing_scheme_last_20_years",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PMAY-U-IN",
+          "rule_id": "PMAY-U-IN-R05",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMAY-U-IN-EXCLUSION-01",
+          "gold_source_quote": "If they have availed benefit under any Housing scheme of Central/State/UT government in past 20 years.",
+          "official_passage_text": "User would not be Eligible for the schemes in cases:\nAnnual Household Income is above ₹9,00,000\nIf the user owns a pucca house anywhere in India\nIf they have availed benefit under any Housing scheme of Central/State/UT government in past 20 years."
+        }
+      ]
+    },
+    {
+      "field_id": "consents_to_auto_debit",
+      "review_status": "candidate_fact_pending_human_review",
+      "coverage_status": "reference_catalog_candidate_new_fact",
+      "candidate_catalog_entry": {
+        "action": "new",
+        "scope": "person",
+        "value_type": "boolean",
+        "sensitivity": "sensitive",
+        "meaning": "Does the applicant agree to the contribution being deducted automatically from their savings account?",
+        "questions": {
+          "en": {
+            "text": "Do you agree to the contribution being deducted automatically (auto-debit) from your savings account?"
+          },
+          "hi": {
+            "text": "क्या आप अपने बचत खाते से अंशदान अपने-आप कटने (ऑटो-डेबिट) के लिए सहमत हैं?"
+          },
+          "mr": {
+            "text": "तुमच्या बचत खात्यातून योगदान आपोआप वजा (ऑटो-डेबिट) होण्यास तुम्ही सहमत आहात का?"
+          }
+        }
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PMSBY-IN",
+          "rule_id": "PMSBY-IN-R05",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMSBY-IN-ELIGIBILITY-03",
+          "gold_source_quote": "who give their consent to join / enable auto-debit",
+          "official_passage_text": "Individual bank/ Post office account holders of the participating banks/ Post office aged between 18 and 70 years who give their consent to join / enable auto-debit, as per the above modality, will be enrolled into the scheme."
+        },
+        {
+          "scheme_id": "PMJJBY-IN",
+          "rule_id": "PMJJBY-IN-R05",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMJJBY-IN-ELIGIBILITY-03",
+          "gold_source_quote": "who give their consent to join / enable auto-debit",
+          "official_passage_text": "Individual bank/ Post office account holders of the participating banks/ Post office aged between 18 years (completed) and 50 years (age nearer birthday) who give their consent to join / enable auto-debit, as per the above modality, will be enrolled into the scheme."
+        }
+      ]
+    },
+    {
+      "field_id": "deceased_breadwinner_age",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "gte",
+        "lte"
+      ],
+      "observed_units": [
+        "years"
+      ],
+      "occurrences": [
+        {
+          "scheme_id": "NFBSM-MH",
+          "rule_id": "NFBSM-MH-R02",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 18,
+          "unit": "years",
+          "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "in the age group of 18 to 59 years",
+          "official_passage_text": "Under this Scheme in case of accidental or natural death of a primary bread winner in the BPL Family in the age group of 18 to 59 years, the affected family is provided with one time lump sum financial assistance of Rs. 20,000/- is provided."
+        },
+        {
+          "scheme_id": "NFBSM-MH",
+          "rule_id": "NFBSM-MH-R03",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 59,
+          "unit": "years",
+          "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "in the age group of 18 to 59 years",
+          "official_passage_text": "Under this Scheme in case of accidental or natural death of a primary bread winner in the BPL Family in the age group of 18 to 59 years, the affected family is provided with one time lump sum financial assistance of Rs. 20,000/- is provided."
+        }
+      ]
+    },
+    {
+      "field_id": "disability_percent",
+      "review_status": "candidate_fact_pending_human_review",
+      "coverage_status": "reference_catalog_candidate_new_fact",
+      "candidate_catalog_entry": {
+        "action": "new",
+        "scope": "person",
+        "value_type": "integer",
+        "unit": "percent",
+        "minimum": 0,
+        "maximum": 100,
+        "sensitivity": "highly_sensitive",
+        "meaning": "Disability percentage as shown on the applicant's disability certificate.",
+        "questions": {
+          "en": {
+            "text": "What disability percentage is shown on your disability certificate?"
+          },
+          "hi": {
+            "text": "आपके दिव्यांगता प्रमाणपत्र में दिव्यांगता कितने प्रतिशत लिखी है?"
+          },
+          "mr": {
+            "text": "तुमच्या दिव्यांगत्व प्रमाणपत्रावर दिव्यांगत्व किती टक्के नमूद आहे?"
+          }
+        }
+      },
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "gte"
+      ],
+      "observed_units": [
+        "percent"
+      ],
+      "occurrences": [
+        {
+          "scheme_id": "IGNDPSM-MH",
+          "rule_id": "IGNDPSM-MH-R05",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 80,
+          "unit": "percent",
+          "source_passage_id": "IGNDPSM-MH-ELIGIBILITY-04",
+          "gold_source_quote": "The percentage of the disability should be 80% or more.",
+          "official_passage_text": "The percentage of the disability should be 80% or more."
+        },
+        {
+          "scheme_id": "IGNDPS-IN",
+          "rule_id": "IGNDPS-IN-R04",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 80,
+          "unit": "percent",
+          "source_passage_id": "IGNDPS-IN-BENEFICIARY-01",
+          "gold_source_quote": "with disability 80% or more",
+          "official_passage_text": "Any disabled person whose age is more than 18 years, and with disability 80% or more belonging to the poverty line can apply for this scheme."
+        },
+        {
+          "scheme_id": "FADSE-MH",
+          "rule_id": "FADSE-MH-R01",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 40,
+          "unit": "percent",
+          "source_passage_id": "FADSE-MH-ELIGIBILITY-01",
+          "gold_source_quote": "Applicant should have a minimum 40% disability",
+          "official_passage_text": "Applicant should have a minimum 40% disability"
+        },
+        {
+          "scheme_id": "FASETDP-MH",
+          "rule_id": "FASETDP-MH-R01",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 40,
+          "unit": "percent",
+          "source_passage_id": "FASETDP-MH-ELIGIBILITY-01",
+          "gold_source_quote": "Applicant should have a minimum 40% disability",
+          "official_passage_text": "Applicant should have a minimum 40% disability"
+        },
+        {
+          "scheme_id": "PRE-DIS-IN",
+          "rule_id": "PRE-DIS-IN-R03",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 40,
+          "unit": "percent",
+          "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-03",
+          "gold_source_quote": "Students with benchmark disability of 40% or more.",
+          "official_passage_text": "Students with benchmark disability of 40% or more."
+        },
+        {
+          "scheme_id": "POST-DIS-IN",
+          "rule_id": "POST-DIS-IN-R03",
+          "kind": "eligibility",
+          "operator": "gte",
+          "value": 40,
+          "unit": "percent",
+          "source_passage_id": "POST-DIS-IN-ELIGIBILITY-03",
+          "gold_source_quote": "Students with a benchmark disability of 40% or more.",
+          "official_passage_text": "Students with a benchmark disability of 40% or more."
+        }
+      ]
+    },
+    {
+      "field_id": "family_has_constitutional_post_holder",
+      "review_status": "owner_approved_reuse",
+      "coverage_status": "reference_catalog_candidate_mapping",
+      "candidate_catalog_entry": {
+        "action": "use_existing",
+        "fact_id": "listed_public_office_member",
+        "reviewer_check": "Confirm the registry wording covers the same office holders."
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PM-KISAN-IN",
+          "rule_id": "PM-KISAN-IN-R04",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PM-KISAN-IN-EXCLUSION-04",
+          "gold_source_quote": "Former and present holders of constitutional posts",
+          "official_passage_text": "The following categories of beneficiaries of higher economic status shall not be eligible for benefit under the scheme:\nAll Institutional Land holders; and\nFarmer families in which one or more of its members belong to following categories :\nFormer and present holders of constitutional posts\nFormer and present Ministers / State Ministers and former / present Members of Lok Sabha / Rajya Sabha / State Legislative Assemblies / State Legislative Councils, former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central / State Government Ministries / Offices / Departments and their field units, Central or State PSEs and Attached offices / Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll superannuated / retired pensioners whose monthly pension is Rs.10,000/- or more (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practices."
+        }
+      ],
+      "approved_fact_id": "listed_public_office_member"
+    },
+    {
+      "field_id": "family_has_government_employee",
+      "review_status": "owner_approved_reuse",
+      "coverage_status": "reference_catalog_candidate_mapping",
+      "candidate_catalog_entry": {
+        "action": "use_existing",
+        "fact_id": "excluded_government_employee_member",
+        "reviewer_check": "Confirm wording and the Class IV / Group D carve-out."
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PM-KISAN-IN",
+          "rule_id": "PM-KISAN-IN-R05",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PM-KISAN-IN-EXCLUSION-04",
+          "gold_source_quote": "All serving or retired officers and employees of Central / State Government",
+          "official_passage_text": "The following categories of beneficiaries of higher economic status shall not be eligible for benefit under the scheme:\nAll Institutional Land holders; and\nFarmer families in which one or more of its members belong to following categories :\nFormer and present holders of constitutional posts\nFormer and present Ministers / State Ministers and former / present Members of Lok Sabha / Rajya Sabha / State Legislative Assemblies / State Legislative Councils, former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central / State Government Ministries / Offices / Departments and their field units, Central or State PSEs and Attached offices / Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll superannuated / retired pensioners whose monthly pension is Rs.10,000/- or more (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practices."
+        }
+      ],
+      "approved_fact_id": "excluded_government_employee_member"
+    },
+    {
+      "field_id": "family_has_pensioner_monthly_10000_or_more",
+      "review_status": "owner_approved_reuse",
+      "coverage_status": "reference_catalog_candidate_mapping",
+      "candidate_catalog_entry": {
+        "action": "use_existing",
+        "fact_id": "pension_at_least_10000_excluding_stated_grades"
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PM-KISAN-IN",
+          "rule_id": "PM-KISAN-IN-R06",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PM-KISAN-IN-EXCLUSION-04",
+          "gold_source_quote": "All superannuated / retired pensioners whose monthly pension is Rs.10,000/- or more",
+          "official_passage_text": "The following categories of beneficiaries of higher economic status shall not be eligible for benefit under the scheme:\nAll Institutional Land holders; and\nFarmer families in which one or more of its members belong to following categories :\nFormer and present holders of constitutional posts\nFormer and present Ministers / State Ministers and former / present Members of Lok Sabha / Rajya Sabha / State Legislative Assemblies / State Legislative Councils, former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central / State Government Ministries / Offices / Departments and their field units, Central or State PSEs and Attached offices / Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll superannuated / retired pensioners whose monthly pension is Rs.10,000/- or more (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practices."
+        }
+      ],
+      "approved_fact_id": "pension_at_least_10000_excluding_stated_grades"
+    },
+    {
+      "field_id": "family_has_registered_professional",
+      "review_status": "owner_approved_reuse",
+      "coverage_status": "reference_catalog_candidate_mapping",
+      "candidate_catalog_entry": {
+        "action": "use_existing",
+        "fact_id": "registered_practicing_professional_member"
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PM-KISAN-IN",
+          "rule_id": "PM-KISAN-IN-R07",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PM-KISAN-IN-EXCLUSION-04",
+          "gold_source_quote": "Professionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects",
+          "official_passage_text": "The following categories of beneficiaries of higher economic status shall not be eligible for benefit under the scheme:\nAll Institutional Land holders; and\nFarmer families in which one or more of its members belong to following categories :\nFormer and present holders of constitutional posts\nFormer and present Ministers / State Ministers and former / present Members of Lok Sabha / Rajya Sabha / State Legislative Assemblies / State Legislative Councils, former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central / State Government Ministries / Offices / Departments and their field units, Central or State PSEs and Attached offices / Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll superannuated / retired pensioners whose monthly pension is Rs.10,000/- or more (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practices."
+        }
+      ],
+      "approved_fact_id": "registered_practicing_professional_member"
+    },
+    {
+      "field_id": "family_members_receiving_scholarship",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "lte"
+      ],
+      "observed_units": [
+        "persons"
+      ],
+      "occurrences": [
+        {
+          "scheme_id": "PRE-DIS-IN",
+          "rule_id": "PRE-DIS-IN-R07",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 2,
+          "unit": "persons",
+          "source_passage_id": "PRE-DIS-IN-EXCLUSION-02",
+          "gold_source_quote": "Scholarship will not be given to more than two students from a family.",
+          "official_passage_text": "Scholarship will not be given to more than two students from a family. Provided in case the second child is a twin, the scholarship will be admissible to both."
+        },
+        {
+          "scheme_id": "POST-DIS-IN",
+          "rule_id": "POST-DIS-IN-R07",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 2,
+          "unit": "persons",
+          "source_passage_id": "POST-DIS-IN-EXCLUSION-02",
+          "gold_source_quote": "Scholarship will not be given to more than two students from a family.",
+          "official_passage_text": "Scholarship will not be given to more than two students from a family. Provided in case the second child is a twin, the scholarship will be admissible to both."
+        },
+        {
+          "scheme_id": "TCE-SC-IN",
+          "rule_id": "TCE-SC-IN-R05",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 2,
+          "unit": null,
+          "source_passage_id": "TCE-SC-IN-EXCLUSION-01",
+          "gold_source_quote": "The benefit of the Scheme will not be provided to more than 2 siblings in a family.",
+          "official_passage_text": "The benefit of the Scheme will not be provided to more than 2 siblings in a family. The students will submit an affidavit in the Institution to certify that he/she is not the third sibling of the family who is availing benefit under the Scheme."
+        },
+        {
+          "scheme_id": "PSGS-DIP-IN",
+          "rule_id": "PSGS-DIP-IN-R04",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 2,
+          "unit": null,
+          "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-01",
+          "gold_source_quote": "Maximum two girls child per family are eligible.",
+          "official_passage_text": "The girl candidate should be admitted to First year of Diploma level course\nOR\nSecond year of Diploma level course through lateral entry in any of the AICTE approved Institution of respective year.\nMaximum two girls child per family are eligible.\nFamily income from all sources should not be more than Rs. 8 lakh per annum during the current financial year. A valid income certificate issued by State/ UT Government need to be enclosed."
+        }
+      ]
+    },
+    {
+      "field_id": "has_aadhaar",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R04",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMKMDY-IN-ELIGIBILITY-05",
+          "gold_source_quote": "The applicant should possess an Aadhaar card.",
+          "official_passage_text": "The applicant should possess an Aadhaar card."
+        },
+        {
+          "scheme_id": "PMAY-U-IN",
+          "rule_id": "PMAY-U-IN-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMAY-U-IN-ELIGIBILITY-07",
+          "gold_source_quote": "All eligible beneficiaries (including family members) should have an Aadhaar/ Aadhaar Virtual ID",
+          "official_passage_text": "All eligible beneficiaries (including family members) should have an Aadhaar/ Aadhaar Virtual ID integrated with the details of beneficiaries."
+        }
+      ]
+    },
+    {
+      "field_id": "has_completed_vocational_training",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "FASETDP-MH",
+          "rule_id": "FASETDP-MH-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "FASETDP-MH-ELIGIBILITY-03",
+          "gold_source_quote": "The applicant should have completed their Vocational Training in a Government or Government Recognized Institution.",
+          "official_passage_text": "The applicant should have completed their Vocational Training in a Government or Government Recognized Institution."
+        }
+      ]
+    },
+    {
+      "field_id": "has_disability",
+      "review_status": "candidate_fact_pending_human_review",
+      "coverage_status": "reference_catalog_candidate_new_fact",
+      "candidate_catalog_entry": {
+        "action": "new",
+        "scope": "person",
+        "value_type": "boolean",
+        "sensitivity": "highly_sensitive",
+        "meaning": "Does the applicant have a physical or mental disability?",
+        "questions": {
+          "en": {
+            "text": "Do you have a physical or mental disability?"
+          },
+          "hi": {
+            "text": "क्या आपको कोई शारीरिक या मानसिक दिव्यांगता है?"
+          },
+          "mr": {
+            "text": "तुम्हाला शारीरिक किंवा मानसिक दिव्यांगत्व आहे का?"
+          }
+        }
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "IGNDPSM-MH",
+          "rule_id": "IGNDPSM-MH-R04",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "IGNDPSM-MH-ELIGIBILITY-03",
+          "gold_source_quote": "The applicant should be a person with a disability.",
+          "official_passage_text": "The applicant should be a person with a disability."
+        },
+        {
+          "scheme_id": "IGNDPS-IN",
+          "rule_id": "IGNDPS-IN-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "IGNDPS-IN-ELIGIBILITY-03",
+          "gold_source_quote": "The applicant should be a physically or mentally disabled person.",
+          "official_passage_text": "The applicant should be a physically or mentally disabled person."
+        },
+        {
+          "scheme_id": "FADSE-MH",
+          "rule_id": "FADSE-MH-R07",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "FADSE-MH-ELIGIBILITY-06",
+          "gold_source_quote": "The applicant should be a Person with Disability",
+          "official_passage_text": "The applicant should be a Person with Disability (Visually Handicapped, Low Vision, Hearing Impaired, Orthopedically Handicapped, etc)."
+        },
+        {
+          "scheme_id": "FASETDP-MH",
+          "rule_id": "FASETDP-MH-R05",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "FASETDP-MH-ELIGIBILITY-05",
+          "gold_source_quote": "The applicant should be a Person with Disability",
+          "official_passage_text": "The applicant should be a Person with Disability (Visually Handicapped, Low Vision, Hearing Impaired, Orthopedically Handicapped, etc)."
+        },
+        {
+          "scheme_id": "PRE-DIS-IN",
+          "rule_id": "PRE-DIS-IN-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-03",
+          "gold_source_quote": "Students with benchmark disability of 40% or more.",
+          "official_passage_text": "Students with benchmark disability of 40% or more."
+        },
+        {
+          "scheme_id": "POST-DIS-IN",
+          "rule_id": "POST-DIS-IN-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "POST-DIS-IN-ELIGIBILITY-03",
+          "gold_source_quote": "Students with a benchmark disability of 40% or more.",
+          "official_passage_text": "Students with a benchmark disability of 40% or more."
+        }
+      ]
+    },
+    {
+      "field_id": "has_failed_or_dropped_out",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PSGS-DIP-IN",
+          "rule_id": "PSGS-DIP-IN-R06",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PSGS-DIP-IN-EXCLUSION-01",
+          "gold_source_quote": "If a candidate failed/ drop out in subsequent year",
+          "official_passage_text": "If a candidate failed/ drop out in subsequent year, she will not be eligible for further scholarship."
+        }
+      ]
+    },
+    {
+      "field_id": "has_savings_bank_account",
+      "review_status": "candidate_fact_pending_human_review",
+      "coverage_status": "reference_catalog_candidate_new_fact",
+      "candidate_catalog_entry": {
+        "action": "new",
+        "scope": "person",
+        "value_type": "boolean",
+        "sensitivity": "sensitive",
+        "meaning": "Does the applicant have a savings bank account?",
+        "questions": {
+          "en": {
+            "text": "Do you have a savings bank account?"
+          },
+          "hi": {
+            "text": "क्या आपका बचत बैंक खाता है?"
+          },
+          "mr": {
+            "text": "तुमचे बचत बँक खाते आहे का?"
+          }
+        }
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "APY-IN",
+          "rule_id": "APY-IN-R04",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "APY-IN-ELIGIBILITY-01",
+          "gold_source_quote": "APY is open to all citizens of India who have a savings bank account.",
+          "official_passage_text": "APY is open to all citizens of India who have a savings bank account. The minimum age of joining APY is 18 years and maximum age is 40 years."
+        },
+        {
+          "scheme_id": "PMSBY-IN",
+          "rule_id": "PMSBY-IN-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMSBY-IN-ELIGIBILITY-01",
+          "gold_source_quote": "All individual account holders of participating banks/ Post office",
+          "official_passage_text": "All individual account holders of participating banks/ Post office in the age group of 18 to 70 years are entitled to join."
+        },
+        {
+          "scheme_id": "PMJJBY-IN",
+          "rule_id": "PMJJBY-IN-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMJJBY-IN-ELIGIBILITY-01",
+          "gold_source_quote": "All individual account holders of participating banks/ Post office",
+          "official_passage_text": "All individual account holders of participating banks/ Post office in the age group of 18 to 50 years are eligible to join."
+        },
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R05",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMKMDY-IN-ELIGIBILITY-06",
+          "gold_source_quote": "The applicant should have a savings bank account or PM-KISAN account.",
+          "official_passage_text": "The applicant should have a savings bank account or PM-KISAN account."
+        },
+        {
+          "scheme_id": "PRE-ST-IN",
+          "rule_id": "PRE-ST-IN-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+          "gold_source_quote": "The student should have a valid account in a Scheduled Bank, linked with Aadhaar and mobile number.",
+          "official_passage_text": "Applicant student should belong to the Scheduled Tribe, so specified in relation to the State/Union Territory to which he/she actually belongs (Domicile State).\nThe student should be studying in a Government School or in a School recognized by Government or a Central/State Board of Secondary Education.\nThe family income of student from all sources should not exceed Rs. 2.5 lakh per annum.\nThe student should have a valid account in a Scheduled Bank, linked with Aadhaar and mobile number.\nThe student should not be getting any other scholarship."
+        }
+      ]
+    },
+    {
+      "field_id": "is_admitted_to_aicte_diploma_first_year_or_lateral_entry",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PSGS-DIP-IN",
+          "rule_id": "PSGS-DIP-IN-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-01",
+          "gold_source_quote": "should be admitted to First year of Diploma level course OR Second year of Diploma level course through lateral entry",
+          "official_passage_text": "The girl candidate should be admitted to First year of Diploma level course\nOR\nSecond year of Diploma level course through lateral entry in any of the AICTE approved Institution of respective year.\nMaximum two girls child per family are eligible.\nFamily income from all sources should not be more than Rs. 8 lakh per annum during the current financial year. A valid income certificate issued by State/ UT Government need to be enclosed."
+        }
+      ]
+    },
+    {
+      "field_id": "is_admitted_to_notified_institution_full_time",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "TCE-SC-IN",
+          "rule_id": "TCE-SC-IN-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "TCE-SC-IN-ELIGIBILITY-01",
+          "gold_source_quote": "having secured admission in a full-time prescribed course in any of the notified institutions",
+          "official_passage_text": "Those SC students having total annual family income from all sources up to Rs. 8.00 lakh and having secured admission in a full-time prescribed course in any of the notified institutions according to the general selection criteria prescribed by the concerned institution, will be eligible for scholarship under the Scheme to the extent of the number of scholarships (slots) allocated to the institution for the course. Income declaration of self-employed parents/guardian should be in the form of a certificate issued by revenue officer not below the rank of Tehsildar. Employed parents/guardians are required to obtain income certificate from their employer. Employed parents/guardians should obtain consolidated certificate from revenue officer for any other additional source of income."
+        }
+      ]
+    },
+    {
+      "field_id": "is_below_poverty_line",
+      "review_status": "candidate_fact_pending_human_review",
+      "coverage_status": "reference_catalog_candidate_new_fact",
+      "candidate_catalog_entry": {
+        "action": "new",
+        "scope": "family",
+        "value_type": "boolean",
+        "sensitivity": "sensitive",
+        "meaning": "Does the applicant's household live below the poverty line (BPL) according to the criteria of the Government of India?",
+        "reviewer_check": "The registry already has name_on_bpl_list and bpl_card_shown. Decide whether to reuse one of them for this scheme instead.",
+        "questions": {
+          "en": {
+            "text": "Does your family live below the poverty line (BPL)?",
+            "help_text": "If you are not sure, answer 'don't know'."
+          },
+          "hi": {
+            "text": "क्या आपका परिवार गरीबी रेखा से नीचे (बीपीएल) है?",
+            "help_text": "अगर आपको पक्का नहीं पता, तो 'पता नहीं' चुनें।"
+          },
+          "mr": {
+            "text": "तुमचे कुटुंब दारिद्र्यरेषेखाली (बीपीएल) आहे का?",
+            "help_text": "तुम्हाला खात्री नसेल, तर 'माहीत नाही' निवडा."
+          }
+        }
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "IGNWPS-IN",
+          "rule_id": "IGNWPS-IN-R04",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "IGNWPS-IN-ELIGIBILITY-02",
+          "gold_source_quote": "The applicant should belong to a household living below the poverty line",
+          "official_passage_text": "The applicant should belong to a household living below the poverty line according to the criteria prescribed by the Govt. of India"
+        },
+        {
+          "scheme_id": "IGNWPS-MH",
+          "rule_id": "IGNWPS-MH-R04",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "IGNWPS-MH-ELIGIBILITY-01",
+          "gold_source_quote": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
+          "official_passage_text": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme."
+        },
+        {
+          "scheme_id": "NSAP-IGNOAPS-IN",
+          "rule_id": "NSAP-IGNOAPS-IN-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "NSAP-IGNOAPS-IN-ELIGIBILITY-02",
+          "gold_source_quote": "The applicant should be living Below Poverty Line.",
+          "official_passage_text": "The applicant should be living Below Poverty Line."
+        },
+        {
+          "scheme_id": "IGNOAPS-MH",
+          "rule_id": "IGNOAPS-MH-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "IGNOAPS-MH-ELIGIBILITY-01",
+          "gold_source_quote": "whose names are on the Below Poverty Line (BPL) list",
+          "official_passage_text": "Eligible elderly individuals aged 65 and above, whose names are on the Below Poverty Line (BPL) list, receive monthly financial assistance under the Indira Gandhi National Old Age Pension Scheme."
+        },
+        {
+          "scheme_id": "IGNDPS-IN",
+          "rule_id": "IGNDPS-IN-R05",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "IGNDPS-IN-ELIGIBILITY-06",
+          "gold_source_quote": "The applicant should belong to the Below Poverty Line.",
+          "official_passage_text": "The applicant should belong to the Below Poverty Line."
+        },
+        {
+          "scheme_id": "NFBSM-MH",
+          "rule_id": "NFBSM-MH-R01",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "primary bread winner in the BPL Family",
+          "official_passage_text": "Under this Scheme in case of accidental or natural death of a primary bread winner in the BPL Family in the age group of 18 to 59 years, the affected family is provided with one time lump sum financial assistance of Rs. 20,000/- is provided."
+        }
+      ]
+    },
+    {
+      "field_id": "is_citizen_of_india",
+      "review_status": "candidate_fact_pending_human_review",
+      "coverage_status": "reference_catalog_candidate_new_fact",
+      "candidate_catalog_entry": {
+        "action": "new",
+        "scope": "person",
+        "value_type": "boolean",
+        "sensitivity": "ordinary",
+        "meaning": "Is the applicant a citizen of India?",
+        "questions": {
+          "en": {
+            "text": "Are you a citizen of India?"
+          },
+          "hi": {
+            "text": "क्या आप भारत के नागरिक हैं?"
+          },
+          "mr": {
+            "text": "तुम्ही भारताचे नागरिक आहात का?"
+          }
+        }
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "NSAP-IGNOAPS-IN",
+          "rule_id": "NSAP-IGNOAPS-IN-R01",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "NSAP-IGNOAPS-IN-ELIGIBILITY-01",
+          "gold_source_quote": "The applicant should be a citizen of India.",
+          "official_passage_text": "The applicant should be a citizen of India."
+        },
+        {
+          "scheme_id": "FADSE-MH",
+          "rule_id": "FADSE-MH-R06",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "FADSE-MH-ELIGIBILITY-05",
+          "gold_source_quote": "The applicant should be a citizen of India.",
+          "official_passage_text": "The applicant should be a citizen of India."
+        },
+        {
+          "scheme_id": "FASETDP-MH",
+          "rule_id": "FASETDP-MH-R04",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "FASETDP-MH-ELIGIBILITY-04",
+          "gold_source_quote": "The applicant should be a citizen of India.",
+          "official_passage_text": "The applicant should be a citizen of India."
+        },
+        {
+          "scheme_id": "APY-IN",
+          "rule_id": "APY-IN-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "APY-IN-ELIGIBILITY-01",
+          "gold_source_quote": "APY is open to all citizens of India who have a savings bank account.",
+          "official_passage_text": "APY is open to all citizens of India who have a savings bank account. The minimum age of joining APY is 18 years and maximum age is 40 years."
+        },
+        {
+          "scheme_id": "PRE-DIS-IN",
+          "rule_id": "PRE-DIS-IN-R01",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-02",
+          "gold_source_quote": "Indian nationals only.",
+          "official_passage_text": "Indian nationals only."
+        },
+        {
+          "scheme_id": "POST-DIS-IN",
+          "rule_id": "POST-DIS-IN-R01",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "POST-DIS-IN-ELIGIBILITY-02",
+          "gold_source_quote": "Indian nationals only.",
+          "official_passage_text": "Indian nationals only."
+        },
+        {
+          "scheme_id": "PG-IGSSGC-IN",
+          "rule_id": "PG-IGSSGC-IN-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-04",
+          "gold_source_quote": "The applicant must be a citizen of India.",
+          "official_passage_text": "1. The applicant must be a citizen of India."
+        }
+      ]
+    },
+    {
+      "field_id": "is_constitutional_post_holder",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R12",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+          "gold_source_quote": "Former and present holders of constitutional posts",
+          "official_passage_text": "The following categories of farmers have been brought under the exclusion criteria:\nSMFs covered under any other statuary social security schemes such as National Pension Scheme (NPS), Employees’ State Insurance Corporation scheme, Employees’ Fund Organization Scheme etc.\nFarmers who have opted for Pradhan Mantri Shram Yogi Maan Dhan Yojana (PM-SYM) administered by the Ministry of Labour & Employment\nFarmers who have opted for Pradhan Mantri Laghu Vyapari Maan-dhan Yojana (PM-LVM) administered by the Ministry of Labour & Employment\nFurther, the following categories of beneficiaries of higher economic status shall not be eligible for benefits under the scheme:\nAll Institutional Land holders; and\nFormer and present holders of constitutional posts\nFormer and present Ministers/ State Ministers and former/present Members of Lok Sabha/ Rajya Sabha/ State Legislative Assemblies/ State Legislative Councils,former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central/ State Government Ministries/ Offices/Departments and their field units, Central or State PSEs and Attached offices/ Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV/Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practice."
+        }
+      ]
+    },
+    {
+      "field_id": "is_covered_under_other_similar_insurance",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "AABYM-MH",
+          "rule_id": "AABYM-MH-R07",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "AABYM-MH-ELIGIBILITY-03",
+          "gold_source_quote": "should not be covered under any other similar insurance scheme",
+          "official_passage_text": "The applicant should not be covered under any other similar insurance scheme."
+        }
+      ]
+    },
+    {
+      "field_id": "is_covered_under_other_social_security_scheme",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R10",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+          "gold_source_quote": "SMFs covered under any other statuary social security schemes",
+          "official_passage_text": "The following categories of farmers have been brought under the exclusion criteria:\nSMFs covered under any other statuary social security schemes such as National Pension Scheme (NPS), Employees’ State Insurance Corporation scheme, Employees’ Fund Organization Scheme etc.\nFarmers who have opted for Pradhan Mantri Shram Yogi Maan Dhan Yojana (PM-SYM) administered by the Ministry of Labour & Employment\nFarmers who have opted for Pradhan Mantri Laghu Vyapari Maan-dhan Yojana (PM-LVM) administered by the Ministry of Labour & Employment\nFurther, the following categories of beneficiaries of higher economic status shall not be eligible for benefits under the scheme:\nAll Institutional Land holders; and\nFormer and present holders of constitutional posts\nFormer and present Ministers/ State Ministers and former/present Members of Lok Sabha/ Rajya Sabha/ State Legislative Assemblies/ State Legislative Councils,former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central/ State Government Ministries/ Offices/Departments and their field units, Central or State PSEs and Attached offices/ Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV/Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practice."
+        }
+      ]
+    },
+    {
+      "field_id": "is_distance_education",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PG-IGSSGC-IN",
+          "rule_id": "PG-IGSSGC-IN-R06",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PG-IGSSGC-IN-EXCLUSION-03",
+          "gold_source_quote": "Admission to PG Course in Distance education mode is not covered under the scheme.",
+          "official_passage_text": "Admission to PG Course in Distance education mode is not covered under the scheme."
+        }
+      ]
+    },
+    {
+      "field_id": "is_enrolled_in_pm_sym_or_pm_lvm",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R11",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+          "gold_source_quote": "Farmers who have opted for Pradhan Mantri Shram Yogi Maan Dhan Yojana (PM-SYM) administered by the Ministry of Labour & Employment\nFarmers who have opted for Pradhan Mantri Laghu Vyapari Maan-dhan Yojana (PM-LVM) administered by the Ministry of Labour & Employment",
+          "official_passage_text": "The following categories of farmers have been brought under the exclusion criteria:\nSMFs covered under any other statuary social security schemes such as National Pension Scheme (NPS), Employees’ State Insurance Corporation scheme, Employees’ Fund Organization Scheme etc.\nFarmers who have opted for Pradhan Mantri Shram Yogi Maan Dhan Yojana (PM-SYM) administered by the Ministry of Labour & Employment\nFarmers who have opted for Pradhan Mantri Laghu Vyapari Maan-dhan Yojana (PM-LVM) administered by the Ministry of Labour & Employment\nFurther, the following categories of beneficiaries of higher economic status shall not be eligible for benefits under the scheme:\nAll Institutional Land holders; and\nFormer and present holders of constitutional posts\nFormer and present Ministers/ State Ministers and former/present Members of Lok Sabha/ Rajya Sabha/ State Legislative Assemblies/ State Legislative Councils,former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central/ State Government Ministries/ Offices/Departments and their field units, Central or State PSEs and Attached offices/ Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV/Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practice."
+        }
+      ]
+    },
+    {
+      "field_id": "is_family_member_of_deceased_breadwinner",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "NFBSM-MH",
+          "rule_id": "NFBSM-MH-R05",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "NFBSM-MH-ELIGIBILITY-03",
+          "gold_source_quote": "The applicant should be a family member or dependent of the deceased breadwinner",
+          "official_passage_text": "The applicant should be a family member or dependent of the deceased breadwinner (an earning member of the family on whom the family primarily depended for income)."
+        }
+      ]
+    },
+    {
+      "field_id": "is_first_year_student",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "TCE-SC-IN",
+          "rule_id": "TCE-SC-IN-R04",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "TCE-SC-IN-ELIGIBILITY-03",
+          "gold_source_quote": "Fresh scholarship will be awarded only to 1st year students.",
+          "official_passage_text": "Fresh scholarship will be awarded only to 1st year students. Students of 2nd/3rd/4th year will not be eligible for selection for fresh scholarship."
+        }
+      ]
+    },
+    {
+      "field_id": "is_government_employee",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R13",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+          "gold_source_quote": "All serving or retired officers and employees of Central/ State Government",
+          "official_passage_text": "The following categories of farmers have been brought under the exclusion criteria:\nSMFs covered under any other statuary social security schemes such as National Pension Scheme (NPS), Employees’ State Insurance Corporation scheme, Employees’ Fund Organization Scheme etc.\nFarmers who have opted for Pradhan Mantri Shram Yogi Maan Dhan Yojana (PM-SYM) administered by the Ministry of Labour & Employment\nFarmers who have opted for Pradhan Mantri Laghu Vyapari Maan-dhan Yojana (PM-LVM) administered by the Ministry of Labour & Employment\nFurther, the following categories of beneficiaries of higher economic status shall not be eligible for benefits under the scheme:\nAll Institutional Land holders; and\nFormer and present holders of constitutional posts\nFormer and present Ministers/ State Ministers and former/present Members of Lok Sabha/ Rajya Sabha/ State Legislative Assemblies/ State Legislative Councils,former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central/ State Government Ministries/ Offices/Departments and their field units, Central or State PSEs and Attached offices/ Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV/Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practice."
+        }
+      ]
+    },
+    {
+      "field_id": "is_income_tax_payer",
+      "review_status": "candidate_fact_pending_human_review",
+      "coverage_status": "reference_catalog_candidate_new_fact",
+      "candidate_catalog_entry": {
+        "action": "new",
+        "scope": "person",
+        "value_type": "boolean",
+        "sensitivity": "sensitive",
+        "meaning": "Is, or has the applicant ever been, an income tax payer?",
+        "reviewer_check": "The registry has income_tax_paid_last_assessment_year (PM-KISAN); this scheme asks about being a payer at any time.",
+        "questions": {
+          "en": {
+            "text": "Are you, or have you ever been, an income tax payer?"
+          },
+          "hi": {
+            "text": "क्या आप आयकर दाता हैं, या कभी रहे हैं?"
+          },
+          "mr": {
+            "text": "तुम्ही आयकर भरता का, किंवा कधी भरत होता का?"
+          }
+        }
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PM-KISAN-IN",
+          "rule_id": "PM-KISAN-IN-R03",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PM-KISAN-IN-EXCLUSION-04",
+          "gold_source_quote": "All Persons who paid Income Tax in last assessment year.",
+          "official_passage_text": "The following categories of beneficiaries of higher economic status shall not be eligible for benefit under the scheme:\nAll Institutional Land holders; and\nFarmer families in which one or more of its members belong to following categories :\nFormer and present holders of constitutional posts\nFormer and present Ministers / State Ministers and former / present Members of Lok Sabha / Rajya Sabha / State Legislative Assemblies / State Legislative Councils, former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central / State Government Ministries / Offices / Departments and their field units, Central or State PSEs and Attached offices / Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll superannuated / retired pensioners whose monthly pension is Rs.10,000/- or more (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practices."
+        },
+        {
+          "scheme_id": "APY-IN",
+          "rule_id": "APY-IN-R05",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "APY-IN-EXCLUSION-01",
+          "gold_source_quote": "any citizen who is or has been an income-tax payer, is not eligible to join APY",
+          "official_passage_text": "From 1st October, 2022, any citizen who is or has been an income-tax payer, is not eligible to join APY."
+        },
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R07",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+          "gold_source_quote": "All Persons who paid Income Tax in last assessment year.",
+          "official_passage_text": "The following categories of farmers have been brought under the exclusion criteria:\nSMFs covered under any other statuary social security schemes such as National Pension Scheme (NPS), Employees’ State Insurance Corporation scheme, Employees’ Fund Organization Scheme etc.\nFarmers who have opted for Pradhan Mantri Shram Yogi Maan Dhan Yojana (PM-SYM) administered by the Ministry of Labour & Employment\nFarmers who have opted for Pradhan Mantri Laghu Vyapari Maan-dhan Yojana (PM-LVM) administered by the Ministry of Labour & Employment\nFurther, the following categories of beneficiaries of higher economic status shall not be eligible for benefits under the scheme:\nAll Institutional Land holders; and\nFormer and present holders of constitutional posts\nFormer and present Ministers/ State Ministers and former/present Members of Lok Sabha/ Rajya Sabha/ State Legislative Assemblies/ State Legislative Councils,former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central/ State Government Ministries/ Offices/Departments and their field units, Central or State PSEs and Attached offices/ Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV/Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practice."
+        }
+      ]
+    },
+    {
+      "field_id": "is_institutional_account_holder",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PMSBY-IN",
+          "rule_id": "PMSBY-IN-R04",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMSBY-IN-ELIGIBILITY-05",
+          "gold_source_quote": "All bank account holders other than institutional account holders are eligible",
+          "official_passage_text": "All bank account holders other than institutional account holders are eligible for subscribing to PMSBY scheme."
+        },
+        {
+          "scheme_id": "PMJJBY-IN",
+          "rule_id": "PMJJBY-IN-R04",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMJJBY-IN-ELIGIBILITY-05",
+          "gold_source_quote": "All bank account holders other than institutional account holders are eligible",
+          "official_passage_text": "All bank account holders other than institutional account holders are eligible for subscribing to PMJJBY scheme."
+        }
+      ]
+    },
+    {
+      "field_id": "is_institutional_landholder",
+      "review_status": "owner_approved_reuse",
+      "coverage_status": "reference_catalog_candidate_mapping",
+      "candidate_catalog_entry": {
+        "action": "use_existing",
+        "fact_id": "institutional_landholder"
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PM-KISAN-IN",
+          "rule_id": "PM-KISAN-IN-R02",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PM-KISAN-IN-EXCLUSION-04",
+          "gold_source_quote": "All Institutional Land holders",
+          "official_passage_text": "The following categories of beneficiaries of higher economic status shall not be eligible for benefit under the scheme:\nAll Institutional Land holders; and\nFarmer families in which one or more of its members belong to following categories :\nFormer and present holders of constitutional posts\nFormer and present Ministers / State Ministers and former / present Members of Lok Sabha / Rajya Sabha / State Legislative Assemblies / State Legislative Councils, former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central / State Government Ministries / Offices / Departments and their field units, Central or State PSEs and Attached offices / Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll superannuated / retired pensioners whose monthly pension is Rs.10,000/- or more (Excluding Multi Tasking Staff / Class IV / Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practices."
+        },
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R06",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+          "gold_source_quote": "All Institutional Land holders",
+          "official_passage_text": "The following categories of farmers have been brought under the exclusion criteria:\nSMFs covered under any other statuary social security schemes such as National Pension Scheme (NPS), Employees’ State Insurance Corporation scheme, Employees’ Fund Organization Scheme etc.\nFarmers who have opted for Pradhan Mantri Shram Yogi Maan Dhan Yojana (PM-SYM) administered by the Ministry of Labour & Employment\nFarmers who have opted for Pradhan Mantri Laghu Vyapari Maan-dhan Yojana (PM-LVM) administered by the Ministry of Labour & Employment\nFurther, the following categories of beneficiaries of higher economic status shall not be eligible for benefits under the scheme:\nAll Institutional Land holders; and\nFormer and present holders of constitutional posts\nFormer and present Ministers/ State Ministers and former/present Members of Lok Sabha/ Rajya Sabha/ State Legislative Assemblies/ State Legislative Councils,former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central/ State Government Ministries/ Offices/Departments and their field units, Central or State PSEs and Attached offices/ Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV/Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practice."
+        }
+      ],
+      "approved_fact_id": "institutional_landholder"
+    },
+    {
+      "field_id": "is_labourer",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "AABYM-MH",
+          "rule_id": "AABYM-MH-R05",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "land less labourers",
+          "official_passage_text": "This scheme is meant for land less labourers in rural areas in the age Group of 18-59 years."
+        }
+      ]
+    },
+    {
+      "field_id": "is_name_in_land_records",
+      "review_status": "owner_approved_reuse",
+      "coverage_status": "reference_catalog_candidate_mapping",
+      "candidate_catalog_entry": {
+        "action": "use_existing",
+        "fact_id": "landholding_family_in_state_records",
+        "reviewer_check": "Registry fact is about the family's land in State/UT records; confirm it matches this clause."
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PM-KISAN-IN",
+          "rule_id": "PM-KISAN-IN-R10",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PM-KISAN-IN-ELIGIBILITY-02",
+          "gold_source_quote": "whose names are entered into the land records",
+          "official_passage_text": "The benefit shall be paid to only those farmers’ families whose names are entered into the land records. Exception has, however, been made for North-East States and Jharkhand in this regard."
+        }
+      ],
+      "approved_fact_id": "landholding_family_in_state_records"
+    },
+    {
+      "field_id": "is_nri",
+      "review_status": "owner_approved_reuse",
+      "coverage_status": "reference_catalog_candidate_mapping",
+      "candidate_catalog_entry": {
+        "action": "use_existing",
+        "fact_id": "nri_new_beneficiary",
+        "reviewer_check": "Registry fact is limited to new PM-KISAN beneficiaries."
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PM-KISAN-IN",
+          "rule_id": "PM-KISAN-IN-R08",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PM-KISAN-IN-EXCLUSION-05",
+          "gold_source_quote": "Non-resident Indians (NRIs)",
+          "official_passage_text": "In case of new beneficiaries being uploaded on the PM-KISAN Portal, all land holding farmers’ families who are Non-resident Indians (NRIs) in terms of the provisions of the Income Tax Act, 1961 shall be excluded from any benefit under the Scheme."
+        }
+      ],
+      "approved_fact_id": "nri_new_beneficiary"
+    },
+    {
+      "field_id": "is_only_girl_child",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PG-IGSSGC-IN",
+          "rule_id": "PG-IGSSGC-IN-R04",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-03",
+          "gold_source_quote": "single girl child",
+          "official_passage_text": "The scheme is applicable to such single girl child who has taken admission in regular, full-time first year Masters Degree course in any designated university or a post graduate college."
+        }
+      ]
+    },
+    {
+      "field_id": "is_professional_course",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PG-IGSSGC-IN",
+          "rule_id": "PG-IGSSGC-IN-R07",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": false,
+          "unit": null,
+          "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-05",
+          "gold_source_quote": "should be pursuing a non-professional course",
+          "official_passage_text": "6. The candidate should be pursuing a non-professional course and be taking regular classes from a recognized institution."
+        }
+      ]
+    },
+    {
+      "field_id": "is_receiving_other_pension",
+      "review_status": "candidate_fact_pending_human_review",
+      "coverage_status": "reference_catalog_candidate_new_fact",
+      "candidate_catalog_entry": {
+        "action": "new",
+        "scope": "person",
+        "value_type": "boolean",
+        "sensitivity": "sensitive",
+        "meaning": "Is the applicant already receiving a pension under any social security scheme?",
+        "questions": {
+          "en": {
+            "text": "Are you already receiving a pension under any other social security scheme?"
+          },
+          "hi": {
+            "text": "क्या आपको किसी अन्य सामाजिक सुरक्षा योजना के तहत पहले से पेंशन मिल रही है?"
+          },
+          "mr": {
+            "text": "तुम्हाला इतर कोणत्याही सामाजिक सुरक्षा योजनेअंतर्गत आधीच पेन्शन मिळते का?"
+          }
+        }
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "IGNOAPS-MH",
+          "rule_id": "IGNOAPS-MH-R04",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": false,
+          "unit": null,
+          "source_passage_id": "IGNOAPS-MH-ELIGIBILITY-03",
+          "gold_source_quote": "The applicant should not be receiving pension benefits under any social security scheme.",
+          "official_passage_text": "The applicant should not be receiving pension benefits under any social security scheme."
+        },
+        {
+          "scheme_id": "IGNDPSM-MH",
+          "rule_id": "IGNDPSM-MH-R06",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": false,
+          "unit": null,
+          "source_passage_id": "IGNDPSM-MH-ELIGIBILITY-05",
+          "gold_source_quote": "The applicant should not be receiving pension benefits under any other social security scheme.",
+          "official_passage_text": "The applicant should not be receiving pension benefits under any other social security scheme."
+        }
+      ]
+    },
+    {
+      "field_id": "is_registered_professional",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R14",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMKMDY-IN-EXCLUSION-01",
+          "gold_source_quote": "Professionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practice.",
+          "official_passage_text": "The following categories of farmers have been brought under the exclusion criteria:\nSMFs covered under any other statuary social security schemes such as National Pension Scheme (NPS), Employees’ State Insurance Corporation scheme, Employees’ Fund Organization Scheme etc.\nFarmers who have opted for Pradhan Mantri Shram Yogi Maan Dhan Yojana (PM-SYM) administered by the Ministry of Labour & Employment\nFarmers who have opted for Pradhan Mantri Laghu Vyapari Maan-dhan Yojana (PM-LVM) administered by the Ministry of Labour & Employment\nFurther, the following categories of beneficiaries of higher economic status shall not be eligible for benefits under the scheme:\nAll Institutional Land holders; and\nFormer and present holders of constitutional posts\nFormer and present Ministers/ State Ministers and former/present Members of Lok Sabha/ Rajya Sabha/ State Legislative Assemblies/ State Legislative Councils,former and present Mayors of Municipal Corporations, former and present Chairpersons of District Panchayats.\nAll serving or retired officers and employees of Central/ State Government Ministries/ Offices/Departments and their field units, Central or State PSEs and Attached offices/ Autonomous Institutions under Government as well as regular employees of the Local Bodies (Excluding Multi Tasking Staff / Class IV/Group D employees)\nAll Persons who paid Income Tax in last assessment year.\nProfessionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies and carrying out profession by undertaking practice."
+        }
+      ]
+    },
+    {
+      "field_id": "is_regular_full_time_pg_first_year",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PG-IGSSGC-IN",
+          "rule_id": "PG-IGSSGC-IN-R05",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-03",
+          "gold_source_quote": "regular, full-time first year Masters Degree course",
+          "official_passage_text": "The scheme is applicable to such single girl child who has taken admission in regular, full-time first year Masters Degree course in any designated university or a post graduate college."
+        }
+      ]
+    },
+    {
+      "field_id": "is_remarried",
+      "review_status": "candidate_fact_pending_human_review",
+      "coverage_status": "reference_catalog_candidate_new_fact",
+      "candidate_catalog_entry": {
+        "action": "new",
+        "scope": "person",
+        "value_type": "boolean",
+        "sensitivity": "sensitive",
+        "meaning": "Has the applicant remarried?",
+        "questions": {
+          "en": {
+            "text": "Have you remarried?"
+          },
+          "hi": {
+            "text": "क्या आपने पुनर्विवाह किया है?"
+          },
+          "mr": {
+            "text": "तुम्ही पुनर्विवाह केला आहे का?"
+          }
+        }
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "IGNWPS-IN",
+          "rule_id": "IGNWPS-IN-R05",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "IGNWPS-IN-EXCLUSION-01",
+          "gold_source_quote": "In case of remarriage of widow",
+          "official_passage_text": "Pension will be discontinued\nIn case of remarriage of widow\nOnce the widow moves above poverty line"
+        }
+      ]
+    },
+    {
+      "field_id": "is_repeating_class",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PRE-DIS-IN",
+          "rule_id": "PRE-DIS-IN-R08",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PRE-DIS-IN-EXCLUSION-04",
+          "gold_source_quote": "If a student has to repeat a class",
+          "official_passage_text": "If a student has to repeat a class, he/she would not get any scholarship for that class for a second (or subsequent) year."
+        },
+        {
+          "scheme_id": "POST-DIS-IN",
+          "rule_id": "POST-DIS-IN-R08",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "POST-DIS-IN-EXCLUSION-04",
+          "gold_source_quote": "If a student has to repeat a class",
+          "official_passage_text": "If a student has to repeat a class, he/she would not get any scholarship for that class for a second (or subsequent) year."
+        },
+        {
+          "scheme_id": "PRE-ST-IN",
+          "rule_id": "PRE-ST-IN-R07",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PRE-ST-IN-EXCLUSION-01",
+          "gold_source_quote": "If a student has to repeat a class",
+          "official_passage_text": "Scholarship for studying in any class will be available for only one year. If a student has to repeat a class, he/she would not get scholarship for the same class twice. The student can renew scholarship for the next class when he/she is promoted."
+        }
+      ]
+    },
+    {
+      "field_id": "is_resident_of_india",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "IGNDPS-IN",
+          "rule_id": "IGNDPS-IN-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "IGNDPS-IN-ELIGIBILITY-02",
+          "gold_source_quote": "The applicant should be a resident of India.",
+          "official_passage_text": "The applicant should be a resident of India."
+        }
+      ]
+    },
+    {
+      "field_id": "is_resident_of_state",
+      "review_status": "candidate_fact_pending_human_review",
+      "coverage_status": "reference_catalog_candidate_new_fact",
+      "candidate_catalog_entry": {
+        "action": "new",
+        "scope": "person",
+        "value_type": "boolean",
+        "sensitivity": "ordinary",
+        "meaning": "Is the applicant a resident of Maharashtra?",
+        "reviewer_check": "State-specific. If schemes of other states are added, this needs a state variable instead.",
+        "questions": {
+          "en": {
+            "text": "Do you live in Maharashtra?"
+          },
+          "hi": {
+            "text": "क्या आप महाराष्ट्र में रहते हैं?"
+          },
+          "mr": {
+            "text": "तुम्ही महाराष्ट्रात राहता का?"
+          }
+        }
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "IGNOAPS-MH",
+          "rule_id": "IGNOAPS-MH-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "IGNOAPS-MH-ELIGIBILITY-02",
+          "gold_source_quote": "The applicant should be a resident of Maharashtra.",
+          "official_passage_text": "The applicant should be a resident of Maharashtra."
+        },
+        {
+          "scheme_id": "IGNDPSM-MH",
+          "rule_id": "IGNDPSM-MH-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "IGNDPSM-MH-ELIGIBILITY-02",
+          "gold_source_quote": "The applicant should be a resident of Maharashtra.",
+          "official_passage_text": "The applicant should be a resident of Maharashtra."
+        },
+        {
+          "scheme_id": "FADSE-MH",
+          "rule_id": "FADSE-MH-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "FADSE-MH-ELIGIBILITY-02",
+          "gold_source_quote": "Applicant should be Domicile of Maharashtra",
+          "official_passage_text": "Applicant should be Domicile of Maharashtra"
+        },
+        {
+          "scheme_id": "FASETDP-MH",
+          "rule_id": "FASETDP-MH-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "FASETDP-MH-ELIGIBILITY-02",
+          "gold_source_quote": "Applicant should be Domicile of Maharashtra",
+          "official_passage_text": "Applicant should be Domicile of Maharashtra"
+        },
+        {
+          "scheme_id": "NFBSM-MH",
+          "rule_id": "NFBSM-MH-R04",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "NFBSM-MH-ELIGIBILITY-02",
+          "gold_source_quote": "The applicant should be a resident of Maharashtra.",
+          "official_passage_text": "The applicant should be a resident of Maharashtra."
+        },
+        {
+          "scheme_id": "AABYM-MH",
+          "rule_id": "AABYM-MH-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "AABYM-MH-ELIGIBILITY-02",
+          "gold_source_quote": "The applicant should be a resident of Maharashtra.",
+          "official_passage_text": "The applicant should be a resident of Maharashtra."
+        }
+      ]
+    },
+    {
+      "field_id": "is_scheduled_caste",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "TCE-SC-IN",
+          "rule_id": "TCE-SC-IN-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "TCE-SC-IN-ELIGIBILITY-01",
+          "gold_source_quote": "Those SC students",
+          "official_passage_text": "Those SC students having total annual family income from all sources up to Rs. 8.00 lakh and having secured admission in a full-time prescribed course in any of the notified institutions according to the general selection criteria prescribed by the concerned institution, will be eligible for scholarship under the Scheme to the extent of the number of scholarships (slots) allocated to the institution for the course. Income declaration of self-employed parents/guardian should be in the form of a certificate issued by revenue officer not below the rank of Tehsildar. Employed parents/guardians are required to obtain income certificate from their employer. Employed parents/guardians should obtain consolidated certificate from revenue officer for any other additional source of income."
+        }
+      ]
+    },
+    {
+      "field_id": "is_scheduled_tribe",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PRE-ST-IN",
+          "rule_id": "PRE-ST-IN-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+          "gold_source_quote": "Applicant student should belong to the Scheduled Tribe",
+          "official_passage_text": "Applicant student should belong to the Scheduled Tribe, so specified in relation to the State/Union Territory to which he/she actually belongs (Domicile State).\nThe student should be studying in a Government School or in a School recognized by Government or a Central/State Board of Secondary Education.\nThe family income of student from all sources should not exceed Rs. 2.5 lakh per annum.\nThe student should have a valid account in a Scheduled Bank, linked with Aadhaar and mobile number.\nThe student should not be getting any other scholarship."
+        }
+      ]
+    },
+    {
+      "field_id": "is_student_in_class_9_or_10",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PRE-DIS-IN",
+          "rule_id": "PRE-DIS-IN-R05",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-01",
+          "gold_source_quote": "Students studying in Class IX or X.",
+          "official_passage_text": "Students studying in Class IX or X."
+        },
+        {
+          "scheme_id": "PRE-ST-IN",
+          "rule_id": "PRE-ST-IN-R04",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PRE-ST-IN-BENEFICIARY-01",
+          "gold_source_quote": "ST children studying in classes IX and X",
+          "official_passage_text": "To support ST children studying in classes IX and X so that the incidence of drop-out, especially in transition from elementary to secondary stage is minimized, and ST students can have a better chance of progressing to the post-matric stage of education."
+        }
+      ]
+    },
+    {
+      "field_id": "is_student_in_post_matric_course",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "POST-DIS-IN",
+          "rule_id": "POST-DIS-IN-R05",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "POST-DIS-IN-ELIGIBILITY-01",
+          "gold_source_quote": "Students in Class 11 or 12.",
+          "official_passage_text": "Students in Class 11 or 12.\nStudents in Diploma, Degree or Post-Graduate courses."
+        },
+        {
+          "scheme_id": "TFEFVS-MH",
+          "rule_id": "TFEFVS-MH-R05",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "TFEFVS-MH-BENEFIT-01",
+          "gold_source_quote": "at Post Matriculation Education in recognized educational institutions",
+          "official_passage_text": "Under the scheme,\nTuition Fees,\nAdmission Fees\nTerm Fees\nLibrary Fees\nLaboratory Fees\nGymkhana Fees, and\nExamination Fees\nAll the students belonging to V.J. and N.T. are being reimbursed for the payment of these mentioned 7 fees at Post Matriculation Education in recognized educational institutions. Students with one failure and those not covered under the Government of India Scholarship are also held eligible for such reimbursement."
+        }
+      ]
+    },
+    {
+      "field_id": "is_studying_in_recognised_school",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PRE-ST-IN",
+          "rule_id": "PRE-ST-IN-R05",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+          "gold_source_quote": "The student should be studying in a Government School or in a School recognized by Government",
+          "official_passage_text": "Applicant student should belong to the Scheduled Tribe, so specified in relation to the State/Union Territory to which he/she actually belongs (Domicile State).\nThe student should be studying in a Government School or in a School recognized by Government or a Central/State Board of Secondary Education.\nThe family income of student from all sources should not exceed Rs. 2.5 lakh per annum.\nThe student should have a valid account in a Scheduled Bank, linked with Aadhaar and mobile number.\nThe student should not be getting any other scholarship."
+        }
+      ]
+    },
+    {
+      "field_id": "is_vjnt",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "TFEFVS-MH",
+          "rule_id": "TFEFVS-MH-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "TFEFVS-MH-ELIGIBILITY-01",
+          "gold_source_quote": "He should belong to the Vimukta Jatis & Nomadic Tribes(VJNT) category.",
+          "official_passage_text": "He should belong to the Vimukta Jatis & Nomadic Tribes(VJNT) category."
+        }
+      ]
+    },
+    {
+      "field_id": "is_widow",
+      "review_status": "existing_registry_fact_available",
+      "coverage_status": "current_registry_exact_id",
+      "candidate_catalog_entry": {
+        "action": "use_existing",
+        "fact_id": "is_widow"
+      },
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "IGNWPS-IN",
+          "rule_id": "IGNWPS-IN-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "IGNWPS-IN-ELIGIBILITY-01",
+          "gold_source_quote": "The applicant must be a widow in the age group of 40-79 years.",
+          "official_passage_text": "The applicant must be a widow in the age group of 40-79 years."
+        },
+        {
+          "scheme_id": "IGNWPS-MH",
+          "rule_id": "IGNWPS-MH-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "IGNWPS-MH-ELIGIBILITY-01",
+          "gold_source_quote": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme.",
+          "official_passage_text": "A widow in age group of 40 to 79 years whose family falls under Below Poverty Line is eligible under this Scheme."
+        }
+      ]
+    },
+    {
+      "field_id": "is_woman",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PG-IGSSGC-IN",
+          "rule_id": "PG-IGSSGC-IN-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PG-IGSSGC-IN-ELIGIBILITY-02",
+          "gold_source_quote": "Girl students up to the age of 30 years at the time of admission in first year of PG courses are eligible.",
+          "official_passage_text": "Age limit: Girl students up to the age of 30 years at the time of admission in first year of PG courses are eligible."
+        },
+        {
+          "scheme_id": "PSGS-DIP-IN",
+          "rule_id": "PSGS-DIP-IN-R01",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PSGS-DIP-IN-BENEFICIARY-01",
+          "gold_source_quote": "aimed at providing assistance for advancement of Girls pursuing technical education",
+          "official_passage_text": "Scheme being implemented by AICTE aimed at providing assistance for advancement of Girls pursuing technical education."
+        }
+      ]
+    },
+    {
+      "field_id": "land_holding_hectares",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "lte"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R08",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 2,
+          "unit": null,
+          "source_passage_id": "PMKMDY-IN-ELIGIBILITY-02",
+          "gold_source_quote": "owns cultivable land upto 2 hectare",
+          "official_passage_text": "“Small and Marginal Farmer” or “SMF” means a farmer who owns cultivable land upto 2 hectare as per land records of the concerned State/UT”."
+        }
+      ]
+    },
+    {
+      "field_id": "lives_in_rural_area",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "AABYM-MH",
+          "rule_id": "AABYM-MH-R06",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "in rural areas",
+          "official_passage_text": "This scheme is meant for land less labourers in rural areas in the age Group of 18-59 years."
+        }
+      ]
+    },
+    {
+      "field_id": "lives_in_urban_area",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PMAY-U-IN",
+          "rule_id": "PMAY-U-IN-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMAY-U-IN-ELIGIBILITY-01",
+          "gold_source_quote": "living in urban areas",
+          "official_passage_text": "Families belonging to EWS/LIG/MIG category, living in urban areas, having no pucca house anywhere in the country, are eligible to purchase or construct a house under PMAY-U 2.0. A beneficiary will be eligible for availing benefit under any one vertical of the scheme."
+        }
+      ]
+    },
+    {
+      "field_id": "number_of_failures",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "lte"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "TFEFVS-MH",
+          "rule_id": "TFEFVS-MH-R04",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 1,
+          "unit": null,
+          "source_passage_id": "TFEFVS-MH-ELIGIBILITY-03",
+          "gold_source_quote": "Students with one failure",
+          "official_passage_text": "Students with one failure and those not covered under the Government of India Scholarship are also held eligible for such reimbursement."
+        }
+      ]
+    },
+    {
+      "field_id": "owned_cultivable_land_on_2019_02_01",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PM-KISAN-IN",
+          "rule_id": "PM-KISAN-IN-R09",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PM-KISAN-IN-ELIGIBILITY-03",
+          "gold_source_quote": "The cut-off date for determination of eligibility of beneficiaries under the scheme shall be 01.02.2019",
+          "official_passage_text": "The cut-off date for determination of eligibility of beneficiaries under the scheme shall be 01.02.2019 and no changes thereafter shall be considered for eligibility of benefit under the scheme for next 5 years. However, this date is not applicable when transfer of ownership of cultivable land takes place on account of succession due to death."
+        }
+      ]
+    },
+    {
+      "field_id": "owns_cultivable_land",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PM-KISAN-IN",
+          "rule_id": "PM-KISAN-IN-R01",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PM-KISAN-IN-ELIGIBILITY-01",
+          "gold_source_quote": "who owns cultivable land as per land records of the concerned State/UT",
+          "official_passage_text": "A landholder farmer’s family is defined as “a family comprising of husband, wife and minor children who owns cultivable land as per land records of the concerned State/UT”. The existing land-ownership system will be used for identification of beneficiaries for calculation of benefit."
+        },
+        {
+          "scheme_id": "AABYM-MH",
+          "rule_id": "AABYM-MH-R04",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": false,
+          "unit": null,
+          "source_passage_id": "AABYM-MH-ELIGIBILITY-01",
+          "gold_source_quote": "land less labourers",
+          "official_passage_text": "This scheme is meant for land less labourers in rural areas in the age Group of 18-59 years."
+        },
+        {
+          "scheme_id": "PMKMDY-IN",
+          "rule_id": "PMKMDY-IN-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMKMDY-IN-ELIGIBILITY-02",
+          "gold_source_quote": "a farmer who owns cultivable land upto 2 hectare",
+          "official_passage_text": "“Small and Marginal Farmer” or “SMF” means a farmer who owns cultivable land upto 2 hectare as per land records of the concerned State/UT”."
+        }
+      ]
+    },
+    {
+      "field_id": "owns_pucca_house_anywhere",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PMAY-U-IN",
+          "rule_id": "PMAY-U-IN-R04",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PMAY-U-IN-EXCLUSION-01",
+          "gold_source_quote": "If the user owns a pucca house anywhere in India",
+          "official_passage_text": "User would not be Eligible for the schemes in cases:\nAnnual Household Income is above ₹9,00,000\nIf the user owns a pucca house anywhere in India\nIf they have availed benefit under any Housing scheme of Central/State/UT government in past 20 years."
+        }
+      ]
+    },
+    {
+      "field_id": "qualifying_exam_gap_years",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "integer"
+      ],
+      "observed_operators": [
+        "lte"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PSGS-DIP-IN",
+          "rule_id": "PSGS-DIP-IN-R05",
+          "kind": "eligibility",
+          "operator": "lte",
+          "value": 2,
+          "unit": null,
+          "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-02",
+          "gold_source_quote": "should not be more than two years",
+          "official_passage_text": "The gap period between the year of passing the qualifying examination and the session of admission in diploma course should not be more than two years."
+        }
+      ]
+    },
+    {
+      "field_id": "receives_other_scholarship_or_stipend",
+      "review_status": "candidate_definition_pending_human_review",
+      "coverage_status": "missing_from_reference_catalog",
+      "candidate_catalog_entry": null,
+      "observed_value_types": [
+        "boolean"
+      ],
+      "observed_operators": [
+        "eq"
+      ],
+      "observed_units": [],
+      "occurrences": [
+        {
+          "scheme_id": "PRE-DIS-IN",
+          "rule_id": "PRE-DIS-IN-R06",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PRE-DIS-IN-ELIGIBILITY-05",
+          "gold_source_quote": "Student should not receive another scholarship/stipend.",
+          "official_passage_text": "Student should not receive another scholarship/stipend."
+        },
+        {
+          "scheme_id": "POST-DIS-IN",
+          "rule_id": "POST-DIS-IN-R06",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "POST-DIS-IN-ELIGIBILITY-05",
+          "gold_source_quote": "The student should not receive another post-scholarship or stipend.",
+          "official_passage_text": "The student should not receive another post-scholarship or stipend."
+        },
+        {
+          "scheme_id": "PRE-ST-IN",
+          "rule_id": "PRE-ST-IN-R06",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PRE-ST-IN-ELIGIBILITY-01",
+          "gold_source_quote": "The student should not be getting any other scholarship.",
+          "official_passage_text": "Applicant student should belong to the Scheduled Tribe, so specified in relation to the State/Union Territory to which he/she actually belongs (Domicile State).\nThe student should be studying in a Government School or in a School recognized by Government or a Central/State Board of Secondary Education.\nThe family income of student from all sources should not exceed Rs. 2.5 lakh per annum.\nThe student should have a valid account in a Scheduled Bank, linked with Aadhaar and mobile number.\nThe student should not be getting any other scholarship."
+        },
+        {
+          "scheme_id": "TCE-SC-IN",
+          "rule_id": "TCE-SC-IN-R06",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "TCE-SC-IN-EXCLUSION-03",
+          "gold_source_quote": "precluded from availing any other scholarship benefits of similar scheme",
+          "official_passage_text": "The selected candidate shall be precluded from availing any other scholarship benefits of similar scheme of the Centre or State Governments."
+        },
+        {
+          "scheme_id": "PSGS-DIP-IN",
+          "rule_id": "PSGS-DIP-IN-R07",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "PSGS-DIP-IN-EXCLUSION-02",
+          "gold_source_quote": "does not receive any financial assistance in shape of scholarship",
+          "official_passage_text": "The grant of scholarship is subject to the condition that the student does not receive any financial assistance in shape of scholarship/any emoluments, salary, stipend etc. from any other source during her course of study in the Institute. In case of receipt of any financial assistance from any other sources, the scholarship shall be discontinued and the entire amount of scholarship will have to be refunded to AICTE by D/Draft drawn in favour of “Member Secretary, AICTE” payable at New Delhi."
+        }
+      ]
+    }
+  ]
+}
