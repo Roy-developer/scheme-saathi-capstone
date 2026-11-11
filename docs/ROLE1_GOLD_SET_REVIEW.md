@@ -39,7 +39,7 @@ Schemes 16 and 17 are hand-drafted with new fact names (quotes verified). They n
 | Item | Asked | Actual | Status |
 |---|---|---|---|
 | Schemes listed with URL and collection date | 40-60 | 42 | Met. MJPJAY-MH has only a myScheme URL. |
-| Gold schemes (development) | 15 | 23 (all 23 reviewed) | Met. EACS-MH, NSMNY-MH, IGNWPSM-MH, BFFL-MH added 2026-11-11; all have genuine official URLs and 0 unresolved flags. |
+| Gold schemes (development) | 15 | 23 | Met on count. 15 reviewed by Nidhi Kaushik; TMDVSO-MH, WMCL-IN, FAISHL-IN, IPMWCD-IN, EACS-MH, NSMNY-MH, IGNWPSM-MH and BFFL-MH are `pending_human_review` until she reviews them line by line. |
 | Held-out schemes | set by Role 5 | 9 (8 reviewed, 1 pending) | Policy check done; 1 does not fit yet. |
 | Gold rules | not fixed | 89 development, 62 held-out | Quotes verified. |
 | Personas | 60 | 77 (31 + 3 + 26 + 17) | Met. 34 on live schemes run (33 match); 43 typed_facts-only (not run). 17 added 2026-11-11 for 6 new development gold schemes. |
@@ -93,4 +93,4 @@ Of the 60 development personas, 34 expected verdicts concern the 3 live schemes 
 | Date | 2026-11-11 |
 | Commit reviewed | `b6fe75d` |
 | Decision on flagged rules (section 2) | Proposed decisions accepted; section 3 requests go to the gold-set owner |
-| Overall | Accepted for all 23 development schemes. Section 3 changes were applied 2026-11-11. All 23 have human_reviewed status in rule_gold_selection.json and their draft files. |
+| Overall | Accepted for the 15 original development schemes. Section 3 changes were applied 2026-11-11. The other 8 development schemes (rows 16-23) are `pending_human_review` in rule_gold_selection.json and their draft files until reviewed by Nidhi Kaushik. |

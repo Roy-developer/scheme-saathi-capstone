@@ -2,7 +2,7 @@
   "scheme_id": "NSMNY-MH",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "human_reviewed",
+  "review_status": "pending_human_review",
   "rules": [
     {
       "rule_id": "NSMNY-MH-R01",
@@ -14,7 +14,7 @@
       "source_passage_id": "NSMNY-MH-ELIGIBILITY-04",
       "source_quote": "Cultivable land holding farmers families",
       "needs_human_review": false,
-      "note": "Reviewed by Nidhi Kaushik (Role 1) 2026-11-11. Official source: nsmny.mahait.org. Other exclusions (govt employees, pensioners, professionals, NRIs, office holders) not encoded; caseworker."
+      "note": null
     },
     {
       "rule_id": "NSMNY-MH-R02",

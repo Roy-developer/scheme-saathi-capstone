@@ -57,7 +57,7 @@ def test_gold_draft_rules_quote_their_passages_exactly(path):
 
     # A scheme may have no expressible rule yet; it must then say why.
     assert rule_set.rules or rule_set.unresolved
-    assert rule_set.review_status == "pending_human_review"
+    assert rule_set.review_status in {"pending_human_review", "human_reviewed"}
     assert check_grounding(rule_set, PASSAGES) == []
 
 
