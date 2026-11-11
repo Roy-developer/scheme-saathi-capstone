@@ -272,10 +272,9 @@ def test_eligibility_observation_selects_clarification_or_safe_referral(unavaila
 
 
 def test_discovery_uses_supported_inputs_without_inferred_state_or_gender(monkeypatch):
-    unknown = discovery_input({}, None, "hi")
+    unknown = discovery_input(HouseholdProfile(), "hi")
     assert unknown.model_dump() == {"query": "", "language": "hi", "limit": 20}
-    profile = HouseholdProfile(**PROFILE)
-    known = discovery_input(profile.model_dump(), profile.age, "mr")
+    known = discovery_input(HouseholdProfile(**PROFILE), "mr")
     assert known.query == "widow pension age 40"
     assert known.language == "mr"
     calls = []

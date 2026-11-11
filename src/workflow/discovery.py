@@ -3,7 +3,7 @@
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Literal
 
-from collections.abc import Mapping
+from src.rules.models import HouseholdProfile
 
 MAX_DISCOVERY_CALLS = 4
 MAX_CANDIDATES = 20
@@ -104,36 +104,34 @@ def discovery_message(code: str, locale: str) -> str:
     return DISCOVERY_MESSAGES[locale].get(code, DISCOVERY_MESSAGES[locale]["tool_error"])
 
 
-def discovery_input(
-    facts: Mapping[str, object], age: int | None, locale: str,
-) -> DiscoveryInput:
+def discovery_input(profile: HouseholdProfile, locale: str) -> DiscoveryInput:
     """Use confirmed category/age hints and the explicitly selected UI language.
 
     The current profile has no state or gender, and retrieval supports neither
     an age nor a gender filter. Do not invent these filters from widow status.
     """
 
-    terms = discovery_query(facts)
-    if terms and age is not None:
-        terms += f" age {age}"
+    terms = discovery_query(profile)
+    if terms and profile.age is not None:
+        terms += f" age {profile.age}"
     return DiscoveryInput(query=terms, language=locale)
 
 
-def discovery_query(facts: Mapping[str, object]) -> str:
+def discovery_query(profile: HouseholdProfile) -> str:
     """Use only confirmed positive facts; an unknown fact never becomes a filter."""
 
     return " ".join(
         term for fact, term in RELEVANT_FACT_TERMS.items()
-        if facts.get(fact) is True
+        if getattr(profile, fact) is True
     )
 
 
-def discovery_signature(facts: Mapping[str, object], age: int | None) -> str:
+def discovery_signature(profile: HouseholdProfile) -> str:
     """Represent changes including corrections to false or unknown, without PII."""
 
     return "|".join([
-        *(f"{fact}:{facts.get(fact)}" for fact in RELEVANT_FACT_TERMS),
-        f"age:{age}",
+        *(f"{fact}:{getattr(profile, fact)}" for fact in RELEVANT_FACT_TERMS),
+        f"age:{profile.age}",
     ])
 
 

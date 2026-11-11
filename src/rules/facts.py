@@ -5,7 +5,6 @@ from decimal import Decimal, InvalidOperation
 from graphlib import CycleError, TopologicalSorter
 import math
 import re
-from collections.abc import Mapping
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
@@ -416,29 +415,6 @@ class TypedFactStore(StrictDataModel):
 
     registry_version: str
     facts: dict[str, FactState]
-
-    @classmethod
-    def from_answers(
-        cls, answers: Mapping[str, object], registry: FactRegistry,
-    ) -> "TypedFactStore":
-        """Build a store from confirmed answers keyed by fact ID; None means unknown."""
-
-        facts = {}
-        for fact_id, value in answers.items():
-            if value is None:
-                continue
-            definition = registry.get(fact_id)
-            if definition.value_type == "date" and isinstance(value, str):
-                value = date.fromisoformat(value)
-            facts[fact_id] = FactState(
-                status="known",
-                value=definition.validate_value(value),
-                definition_version=definition.version,
-                provenance="user_reported",
-            )
-        return cls(
-            registry_version=registry.registry_version, facts=facts,
-        ).validate_against(registry)
 
     def to_wire(self, registry: FactRegistry | None = None) -> dict[str, object]:
         """Serialize checkpoint/MCP values without losing decimal precision."""

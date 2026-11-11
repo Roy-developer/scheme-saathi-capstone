@@ -476,19 +476,6 @@ NO_PENDING_QUESTION: dict[str, Any] = {
 }
 
 
-def confirmed_answers(values: Mapping[str, Any]) -> dict[str, object]:
-    """Return the confirmed answers saved on a draft, keyed by fact ID."""
-
-    typed = values.get("typed_facts")
-    if values.get("registry_intake") and typed:
-        return {
-            fact_id: fact["value"]
-            for fact_id, fact in typed.get("facts", {}).items()
-            if fact.get("status") == "known"
-        }
-    return HouseholdProfile.model_validate(values.get("profile") or {}).model_dump(mode="json")
-
-
 def _with_fact(
     profile: HouseholdProfile, fact: str, value: object,
 ) -> tuple[HouseholdProfile, str | None]:
@@ -682,8 +669,7 @@ def build_journey_graph(
 
     async def discover_candidates(
         state: JourneyState,
-        facts: Mapping[str, object],
-        age: int | None,
+        profile: HouseholdProfile,
     ) -> dict[str, Any]:
         """Rediscover candidates from explicitly confirmed supported profile facts."""
 
@@ -692,8 +678,8 @@ def build_journey_graph(
             return updates
         candidates = state.get("candidate_scheme_ids", [])
         locale = state.get("locale", "en")
-        signature = discovery_signature(facts, age)
-        search = discovery_input(facts, age, locale)
+        signature = discovery_signature(profile)
+        search = discovery_input(profile, locale)
         query = search.query
         if signature == state.get("discovery_signature", "") or not query:
             return updates
@@ -780,60 +766,6 @@ def build_journey_graph(
             )
         updates["discovery_notices"] = list(dict.fromkeys(notices))
         return updates
-
-    def registered_evaluation_input(
-        scheme_id: str | None, answers: dict[str, object], packages: list[RulePackage],
-    ) -> dict[str, Any]:
-        """Check a complete set of answers sent with an evaluate request."""
-
-        allowed = {
-            fact_id for package in packages
-            for fact_id in (rule_bundles or {})[package.scheme_id].fact_ids
-        }
-        invalid = sorted(
-            fact_id for fact_id, value in answers.items()
-            if fact_id not in allowed or not _valid_answer(fact_id, value)
-        )
-        store = None
-        if not invalid:
-            try:
-                store = TypedFactStore.from_answers(answers, fact_registry)
-            except (KeyError, TypeError, ValueError):
-                pass
-        if store is None:
-            return {
-                "status": "invalid_input",
-                "message": (
-                    "Some profile answers are missing or invalid. Review "
-                    "the highlighted fields and try again."
-                ),
-                "missing_fields": invalid,
-                "validation_errors": invalid,
-                "eligibility_result": None,
-                "handoffs": _report_to_supervisor("intake", "invalid_input"),
-            }
-        return {
-            "scheme_id": scheme_id,
-            "profile": answers,
-            "typed_facts": store.to_wire(fact_registry),
-            "registry_intake": True,
-            "status": "ready_for_eligibility",
-            "missing_fields": [],
-            "eligibility_result": None,
-            "conversation": [
-                {"role": "user", "content": f"Check eligibility for {scheme_id}."}
-            ],
-            "handoffs": _report_to_supervisor("intake", "ready_for_eligibility"),
-        }
-
-    def _valid_answer(fact_id: str, value: object) -> bool:
-        """Return whether one supplied answer fits its registered fact."""
-
-        try:
-            TypedFactStore.from_answers({fact_id: value}, fact_registry)
-        except (KeyError, TypeError, ValueError):
-            return False
-        return True
 
     async def registered_intake_result(
         state: JourneyState,
@@ -1166,18 +1098,7 @@ def build_journey_graph(
         }
         profile = HouseholdProfile.model_validate(bridged_profile)
         profile_data = profile.model_dump(mode="json") if bridged_profile else {}
-        discovery_updates = await discover_candidates(
-            state,
-            {
-                fact_id: fact.value for fact_id, fact in store.facts.items()
-                if fact.status == "known"
-            },
-            (
-                store.value("age", fact_registry)
-                if any(item.fact_id == "age" for item in fact_registry.definitions)
-                else None
-            ),
-        )
+        discovery_updates = await discover_candidates(state, profile)
         if discovery_updates.get("candidate_scheme_ids"):
             packages = [
                 rule_packages[candidate]
@@ -1408,7 +1329,7 @@ def build_journey_graph(
             return task_failure("documents", "This scheme has no current eligible result.")
         tool_failed = False
         prior_input = state.get("document_input_reports", {}).get(scheme_id, {})
-        current_answers = confirmed_answers(state)
+        current_profile = HouseholdProfile.model_validate(state.get("profile") or {})
         if task.operation == "check_documents" or task.operation == "create_draft":
             documents = arguments.get("documents", {})
             profile_name = arguments.get("profile_name")
@@ -1421,11 +1342,15 @@ def build_journey_graph(
             profile_name = prior_input.get("profile_name")
             document_metadata = prior_input.get("document_metadata", {})
             typed_facts = state.get("typed_facts")
-        profile_date_of_birth = current_answers.get("date_of_birth")
+        profile_date_of_birth = (
+            current_profile.date_of_birth.isoformat()
+            if current_profile.date_of_birth is not None
+            else None
+        )
         # Sent to the checker and also part of the report fingerprint.
         profile_conditions = {
-            "is_widow": current_answers.get("is_widow"),
-            "bpl_card_shown": current_answers.get("bpl_card_shown"),
+            "is_widow": current_profile.is_widow,
+            "bpl_card_shown": current_profile.bpl_card_shown,
         }
 
         async def inspect() -> dict[str, object]:
@@ -1606,18 +1531,18 @@ def build_journey_graph(
                         or verdict.get("result") != "eligible"
                     ):
                         return fail("This scheme has no current eligible profile.")
-                    saved_answers = confirmed_answers(state)
+                    profile = HouseholdProfile.model_validate(profile_data)
                     if record and (
-                        record["draft"]["profile"] != saved_answers
+                        record["draft"]["profile"] != profile.model_dump(mode="json")
                         or record["draft"]["rule_package_version"] != package.package_version
                     ):
                         return fail("Answers or scheme rules changed. Create a new draft.")
                     if task.operation != "edit_draft":
-                        confirmed_facts: HouseholdProfile | TypedFactStore = (
-                            restore_typed_store(state["typed_facts"])
-                            if state.get("registry_intake") and state.get("typed_facts")
-                            else HouseholdProfile.model_validate(profile_data)
-                        )
+                        confirmed_facts: HouseholdProfile | TypedFactStore = profile
+                        if state.get("registry_intake") and state.get("typed_facts"):
+                            confirmed_facts = restore_typed_store(
+                                state["typed_facts"]
+                            )
                         current_verdict = await eligibility_tool(
                             specialist_client("eligibility"),
                             scheme_id,
@@ -1629,7 +1554,7 @@ def build_journey_graph(
                             )
                     if task.operation == "create_draft":
                         arguments.update({
-                            "profile": saved_answers,
+                            "profile": profile.model_dump(mode="json"),
                             "rule_package_version": package.package_version,
                             "deciding_rule_ids": current_verdict.deciding_rule_ids,
                             "checklist_fingerprint": assessment[
@@ -1893,10 +1818,6 @@ def build_journey_graph(
                     "intake", "need_information"
                 ),
             }
-        if not interview and any(
-            uses_registered_questions(candidate.scheme_id) for candidate in packages
-        ):
-            return registered_evaluation_input(scheme_id, dict(profile_data), packages)
         profile_data = dict(profile_data or {})
         if interview and not profile_data.get("application_date"):
             # People apply "today"; asking them for it would be odd.
@@ -2175,9 +2096,7 @@ def build_journey_graph(
             if profile_proposals:
                 return ask_next_proposal(profile=profile.model_dump(mode="json"))
 
-            discovery_updates.update(
-                await discover_candidates(state, profile.model_dump(), profile.age)
-            )
+            discovery_updates.update(await discover_candidates(state, profile))
             candidates = discovery_updates.get("candidate_scheme_ids", candidates)
             packages = [
                 rule_packages[candidate] for candidate in candidates
