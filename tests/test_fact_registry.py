@@ -473,7 +473,7 @@ def test_decimal_answer_keeps_precision_through_journey_interrupt_and_checkpoint
             for item in (value if isinstance(value, list) else [value])
         ]
         assert all(
-            item["safe_text"] == "0.[REDACTED_ACCOUNT]"
+            item["safe_text"] == "[REDACTED_ACCOUNT]"
             for item in resume_payloads
         )
         assert all(

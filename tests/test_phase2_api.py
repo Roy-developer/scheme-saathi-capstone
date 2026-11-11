@@ -20,6 +20,9 @@ class FakeModel(FakeChatModel):
     """Provide one complete planner/intake action trace offline."""
 
     model_name: str = "fake-api-model"
+    description_facts: list[dict[str, object]] = [
+        {"fact_name": "is_widow", "value": True},
+    ]
 
     def __init__(self) -> None:
         super().__init__()

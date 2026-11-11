@@ -41,6 +41,26 @@ def portal_database_path() -> Path:
     return PROJECT_ROOT / "data" / "runtime" / "portal.sqlite3"
 
 
+def upload_directory() -> Path:
+    """Return the folder that holds uploaded synthetic document files."""
+
+    configured = os.getenv("SCHEME_SAATHI_UPLOAD_DIR")
+    if configured:
+        path = Path(configured)
+        return path if path.is_absolute() else PROJECT_ROOT / path
+    return PROJECT_ROOT / "data" / "runtime" / "uploads"
+
+
+def upload_database_path() -> Path:
+    """Return the SQLite file with upload records and issue resolutions."""
+
+    configured = os.getenv("SCHEME_SAATHI_UPLOAD_DB")
+    if configured:
+        path = Path(configured)
+        return path if path.is_absolute() else PROJECT_ROOT / path
+    return upload_directory().parent / "uploads.sqlite3"
+
+
 def test_rule_package_directory() -> Path | None:
     """Return an explicitly injected development package directory only in pytest."""
 

@@ -478,6 +478,9 @@ def test_failed_node_search_reservation_survives_sqlite_process_restart():
 def test_new_discovery_fact_from_description_is_not_searched_until_confirmed():
     class Model(FakeChatModel):
         model_name: str = "offline-description"
+        description_facts: list[dict[str, object]] = [
+            {"fact_name": "landholding_family_in_state_records", "value": True},
+        ]
 
         def __init__(self):
             super().__init__()

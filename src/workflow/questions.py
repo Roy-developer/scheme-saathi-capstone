@@ -14,8 +14,7 @@ from src.rules.models import BOOL_FACTS
 # and intake looks up its question here.
 QUESTIONS: dict[str, str] = {
     "date_of_birth": (
-        "What is your date of birth? For example 12 March 1981 or "
-        "12/03/1981."
+        "What is your date of birth? Use YYYY-MM-DD, for example 1958-05-05."
     ),
     "application_date": (
         "On what date are you applying? For example 30 October 2026."
@@ -52,7 +51,7 @@ QUESTIONS: dict[str, str] = {
 }
 LOCALIZED_QUESTIONS: dict[str, dict[str, str]] = {
     "hi": {
-        "date_of_birth": "आपकी जन्मतिथि क्या है? उदाहरण: 12 मार्च 1981 या 12/03/1981।",
+        "date_of_birth": "आपकी जन्मतिथि क्या है? YYYY-MM-DD में लिखें, उदाहरण: 1958-05-05।",
         "application_date": "आप किस तारीख को आवेदन कर रहे हैं?",
         "is_widow": "क्या आवेदक विधवा हैं?",
         "bpl_card_shown": "क्या आप सरकारी बीपीएल कार्ड दिखा सकते हैं?",
@@ -66,7 +65,7 @@ LOCALIZED_QUESTIONS: dict[str, dict[str, str]] = {
         "nri_new_beneficiary": "क्या यह एनआरआई किसान परिवार का नया आवेदन है?",
     },
     "mr": {
-        "date_of_birth": "तुमची जन्मतारीख काय आहे? उदाहरण: 12 मार्च 1981 किंवा 12/03/1981.",
+        "date_of_birth": "तुमची जन्मतारीख काय आहे? YYYY-MM-DD मध्ये लिहा, उदाहरण: 1958-05-05.",
         "application_date": "तुम्ही कोणत्या तारखेला अर्ज करत आहात?",
         "is_widow": "अर्जदार विधवा आहेत का?",
         "bpl_card_shown": "तुम्ही सरकारी बीपीएल कार्ड दाखवू शकता का?",
@@ -88,9 +87,9 @@ YES_NO_HINTS = {
     "mr": 'कृपया "होय", "नाही" किंवा "माहित नाही" असे उत्तर द्या.',
 }
 DATE_HINTS = {
-    "en": 'Please give a date like 12 March 1981 or 12/03/1981, or say "I don\'t know".',
-    "hi": 'कृपया 12/03/1981 जैसी तारीख दें या "मुझे नहीं पता" कहें।',
-    "mr": 'कृपया 12/03/1981 अशी तारीख द्या किंवा "माहित नाही" असे सांगा.',
+    "en": 'Please give a date as YYYY-MM-DD, for example 1958-05-05, or say "I don\'t know".',
+    "hi": 'कृपया YYYY-MM-DD में तारीख दें, जैसे 1958-05-05, या "मुझे नहीं पता" कहें।',
+    "mr": 'कृपया YYYY-MM-DD मध्ये तारीख द्या, उदा. 1958-05-05, किंवा "माहित नाही" असे सांगा.',
 }
 INTEGER_REPLY_PATTERN = re.compile(r"[+-]?[0-9]+")
 DECIMAL_REPLY_PATTERN = re.compile(

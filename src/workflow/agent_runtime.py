@@ -3,6 +3,7 @@
 from collections.abc import Awaitable, Callable, Mapping
 from dataclasses import dataclass
 import json
+import re
 import time
 from typing import TypeVar
 
@@ -42,11 +43,49 @@ _CallResult = TypeVar("_CallResult")
 # caught before the shorter phone and account patterns see part of it).
 # The same rules feed PIIMiddleware for agents and mask_sensitive_text for
 # everything else (traces, intake text, search queries).
+#
+# Digits may be grouped by up to three spaces, dots or hyphens
+# ("2345.6789.0123", "2345 - 6789 - 0123"). A number glued to a letter,
+# underscore or hyphen is part of an ID (draft UUIDs, hex fingerprints,
+# rule IDs), and a number starting with a date (12.05.2024, 2024-05-12) is
+# a date, so neither is masked: agents must pass IDs back verbatim.
+# Exception: a number glued to a known label ("Aadhaar-234567890123",
+# "आधार234567890123") is masked. Labels are whole words with letters that
+# never appear in hex IDs, so draft UUIDs and fingerprints stay intact.
+_PII_LABELS = (
+    "aadhaar", "aadhar", "uid", "account", "acct", "mobile", "phone",
+    "आधार", "खाता", "मोबाइल", "फोन", "फ़ोन",
+)
+_AFTER_LABEL = "|".join(
+    rf"(?<=(?<![\w-])(?i:{re.escape(label)}){sep})"
+    for label in _PII_LABELS
+    for sep in ("", "-", "_", ":")
+)
+_NOT_INSIDE_ID = rf"(?:(?<![\w-])|{_AFTER_LABEL})"
+_NOT_A_DATE = (
+    r"(?!(?:\d{1,2}[./-]\d{1,2}[./-]\d{2,4}|\d{4}[./-]\d{1,2}[./-]\d{1,2})(?!\d))"
+    r"(?!(?<=\d[./-])(?:\d{1,2}[./-])?\d{1,4}(?!\d))"   # nor the rest of one
+)
+_DIGIT_GAP = r"[\s.\-]{0,3}"
+_ID_END = r"(?![\w-])"
+# Exactly 12 digits make an Aadhaar. A longer grouped number (a 16-digit
+# card or account, "0012 3456 7890 1234") is left to the account rule so
+# no group of it stays visible.
+_NOT_PART_OF_LONGER_NUMBER = (
+    rf"(?<!\d)(?<!\d[\s.\-])(?<!\d[\s.\-]{{2}})(?<!\d[\s.\-]{{3}})"
+)
 PII_RULES = (
     RedactionRule("email"),
-    RedactionRule("aadhaar", detector=r"(?<!\d)(?:\d[ -]?){11}\d(?!\d)"),
-    RedactionRule("phone", detector=r"(?<!\d)(?:\+?91[ -]?)?[6-9]\d{9}(?!\d)"),
-    RedactionRule("account", detector=r"(?<!\d)(?:\d[ -]?){8,17}\d(?!\d)"),
+    RedactionRule("aadhaar", detector=(
+        _NOT_PART_OF_LONGER_NUMBER + _NOT_INSIDE_ID + _NOT_A_DATE
+        + rf"(?:\d{_DIGIT_GAP}){{11}}\d" + _ID_END + rf"(?!{_DIGIT_GAP}\d)"
+    )),
+    RedactionRule("phone", detector=(
+        _NOT_INSIDE_ID + r"(?:\+?91[ -]?)?[6-9]\d{9}" + _ID_END
+    )),
+    RedactionRule("account", detector=(
+        _NOT_INSIDE_ID + _NOT_A_DATE + rf"(?:\d{_DIGIT_GAP}){{8,17}}\d" + _ID_END
+    )),
 )
 _RESOLVED_PII_RULES = tuple(rule.resolve() for rule in PII_RULES)
 
@@ -166,8 +205,8 @@ async def run_agent(
         model: The chat model (ChatOpenAI in production, a fake in tests).
         agent: Prompt identity, such as ``intake`` or ``supervisor``.
         locale: Supported prompt language.
-        context: Minimal task data. PIIMiddleware masks identifiers before
-            the model sees it.
+        context: Minimal task data. PIIMiddleware masks identifiers in it,
+            and in every tool result, before the model sees them.
         tools: The only actions this agent may take (its allow-list).
         budget: Conversation counters from the graph state; ``_read_budget``
             merges in reservations saved in the LangGraph Store.
@@ -183,7 +222,11 @@ async def run_agent(
         system_prompt=system_prompt,
         middleware=[
             *(
-                PIIMiddleware(rule.pii_type, detector=rule.detector, strategy="redact")
+                # Mask the task message and every tool result before the model.
+                PIIMiddleware(
+                    rule.pii_type, detector=rule.detector, strategy="redact",
+                    apply_to_tool_results=True,
+                )
                 for rule in PII_RULES
             ),
             ModelCallLimitMiddleware(run_limit=max_steps, exit_behavior="end"),

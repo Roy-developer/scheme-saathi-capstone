@@ -654,7 +654,7 @@ def test_registry_decimal_question_submits_exact_text_at_precision_boundary() ->
         course_widget = next(
             widget
             for widget in app.selectbox
-            if widget.label == "Type your answer (yes / no / don't know, a date like 12 March 1981, or your own words)"
+            if widget.label == "Type your answer (yes / no / don't know, a date like 1958-05-05, or your own words)"
         )
         course_widget.set_value("Science")
         next(button for button in app.button if button.label == "Send answer").click().run()
@@ -895,6 +895,8 @@ def test_document_action_updates_supervisor_plan_for_both_pilots(
     ), patch(
         "src.ui.api_client.list_application_drafts", return_value=[]
     ), patch(
+        "src.ui.api_client.list_document_files", return_value={"files": []}
+    ), patch(
         "src.ui.api_client.assess_documents",
         return_value={**assessment, "plan_detail": document_plan},
     ) as assess:
@@ -1015,6 +1017,14 @@ def test_phase4_rejection_edit_and_receipt_copy_is_localized(
     drafts = [draft]
     with patch("src.ui.api_client.get_journey_state", return_value=saved), patch(
         "src.ui.api_client.list_application_drafts", return_value=drafts,
+    ), patch(
+        "src.ui.api_client.list_document_files", return_value={"files": []}
+    ), patch(
+        "src.ui.api_client.check_documents_report",
+        return_value={
+            "overall": "incomplete", "groups": [], "notice": "Synthetic.",
+            "missing_labels": [],
+        },
     ):
         app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS)
         app.query_params["conversation"] = str(conversation_id)
@@ -1023,6 +1033,10 @@ def test_phase4_rejection_edit_and_receipt_copy_is_localized(
         app.selectbox[0].set_value(locale).run()
         assert not app.exception
         assert any(rejected_notice in item.value for item in app.error)
+        assert any(
+            item.value in {"Document checker", "दस्तावेज़ जाँच", "कागदपत्र तपासणी"}
+            for item in app.subheader
+        )
         next(button for button in app.button if button.label == reopen).click().run()
         assert not app.exception
         assert any(item.label == reference for item in app.text_input)
@@ -1095,6 +1109,8 @@ def test_document_dates_accept_everyday_formats_and_explain_unreadable_ones() ->
         "src.ui.api_client.get_journey_state", return_value=saved
     ), patch(
         "src.ui.api_client.list_application_drafts", return_value=[]
+    ), patch(
+        "src.ui.api_client.list_document_files", return_value={"files": []}
     ), patch(
         "src.ui.api_client.assess_documents", return_value=assessment,
     ) as assess:

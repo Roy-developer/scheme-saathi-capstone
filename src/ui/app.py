@@ -22,12 +22,24 @@ from src.ui.api_client import (
     ApplicationApiError,
     JourneyApiError,
     assess_documents,
+    check_documents_report,
     create_application_draft,
     decide_application_draft,
+    delete_document_file,
+    document_readiness,
     edit_application_draft,
+    extract_document_suggestion,
     forget_journey,
+    get_document_suggestion,
     get_journey_state,
     list_application_drafts,
+    list_document_files,
+    reopen_document_issue,
+    remove_document_review,
+    resolve_document_issue,
+    review_document_file,
+    fetch_document_file,
+    upload_document,
     correct_journey_answer,
     run_journey,
     send_journey_message,
@@ -124,7 +136,7 @@ COPY = {
         "load_checklist": "Load demo document checklist",
         "update_checklist": "Update and recheck checklist",
         "prepare_draft": "Prepare synthetic draft",
-        "demo_warning": "Demo checklist only. These are not verified official document requirements; no files are uploaded or authenticated.",
+        "demo_warning": "Demo checklist only. These are not verified official document requirements. Uploaded files are stored but not read or authenticated.",
         "synthetic_application": "Synthetic application",
         "resolve_mismatch": "Mismatch found. Correct the entered fields and recheck, or ask a human caseworker.",
         "new_draft": "Start a new draft using current answers",
@@ -199,7 +211,7 @@ COPY = {
         "agent_no_calls": "No model calls have run; the deterministic flow is active.",
         "interview_start": "Start questions",
         "interview_restart": "Start again",
-        "interview_reply": "Type your answer (yes / no / don't know, a date like 12 March 1981, or your own words)",
+        "interview_reply": "Type your answer (yes / no / don't know, a date like 1958-05-05, or your own words)",
         "send_answer": "Send answer",
         "interview_error": "Could not continue the conversation",
         "widow_mode": "How do you want to check?",
@@ -279,7 +291,7 @@ COPY = {
         "load_checklist": "प्रदर्शन दस्तावेज़ सूची लोड करें",
         "update_checklist": "सूची अपडेट करके फिर जाँचें",
         "prepare_draft": "कृत्रिम मसौदा तैयार करें",
-        "demo_warning": "केवल प्रदर्शन सूची। ये आधिकारिक रूप से सत्यापित आवश्यकताएँ नहीं हैं; कोई फ़ाइल अपलोड या प्रमाणित नहीं होती।",
+        "demo_warning": "केवल प्रदर्शन सूची। ये आधिकारिक रूप से सत्यापित आवश्यकताएँ नहीं हैं; अपलोड की गई फ़ाइलें सहेजी जाती हैं, पर पढ़ी या प्रमाणित नहीं की जातीं।",
         "synthetic_application": "कृत्रिम आवेदन",
         "resolve_mismatch": "अंतर मिला। दर्ज जानकारी सुधारकर फिर जाँचें या मानव केसवर्कर से पूछें।",
         "new_draft": "वर्तमान उत्तरों से नया मसौदा शुरू करें",
@@ -354,7 +366,7 @@ COPY = {
         "agent_no_calls": "कोई मॉडल कॉल नहीं हुई; नियतात्मक प्रवाह सक्रिय है।",
         "interview_start": "प्रश्न शुरू करें",
         "interview_restart": "फिर से शुरू करें",
-        "interview_reply": "अपना उत्तर लिखें (हाँ / नहीं / मुझे नहीं पता, या 12/03/1981 जैसी तारीख)",
+        "interview_reply": "अपना उत्तर लिखें (हाँ / नहीं / मुझे नहीं पता, या 1958-05-05 जैसी तारीख)",
         "send_answer": "उत्तर भेजें",
         "interview_error": "बातचीत जारी नहीं रह सकी",
         "widow_mode": "आप कैसे जाँच करना चाहते हैं?",
@@ -434,7 +446,7 @@ COPY = {
         "load_checklist": "प्रात्यक्षिक कागदपत्रांची यादी लोड करा",
         "update_checklist": "यादी अद्ययावत करून पुन्हा तपासा",
         "prepare_draft": "कृत्रिम मसुदा तयार करा",
-        "demo_warning": "फक्त प्रात्यक्षिक यादी. या अधिकृतरीत्या पडताळलेल्या आवश्यकता नाहीत; कोणतीही फाइल अपलोड किंवा प्रमाणित होत नाही.",
+        "demo_warning": "फक्त प्रात्यक्षिक यादी. या अधिकृतरीत्या पडताळलेल्या आवश्यकता नाहीत; अपलोड केलेल्या फाइल्स जतन होतात, पण वाचल्या किंवा प्रमाणित केल्या जात नाहीत.",
         "synthetic_application": "कृत्रिम अर्ज",
         "resolve_mismatch": "तफावत आढळली. नोंद दुरुस्त करून पुन्हा तपासा किंवा मानवी केसवर्करला विचारा.",
         "new_draft": "सध्याच्या उत्तरांवरून नवीन मसुदा सुरू करा",
@@ -509,7 +521,7 @@ COPY = {
         "agent_no_calls": "मॉडेल कॉल झालेला नाही; निर्धारक प्रवाह सक्रिय आहे.",
         "interview_start": "प्रश्न सुरू करा",
         "interview_restart": "पुन्हा सुरू करा",
-        "interview_reply": "तुमचे उत्तर लिहा (होय / नाही / माहित नाही किंवा 12/03/1981 अशी तारीख)",
+        "interview_reply": "तुमचे उत्तर लिहा (होय / नाही / माहित नाही किंवा 1958-05-05 अशी तारीख)",
         "send_answer": "उत्तर पाठवा",
         "interview_error": "संभाषण पुढे नेता आले नाही",
         "widow_mode": "तुम्हाला कशी तपासणी करायची आहे?",
@@ -965,6 +977,7 @@ def render_candidate_interview(
                     st.info(text["finder_info_only"])
                 if verdict["result"] == "eligible":
                     render_application_flow(scheme_id, text)
+        render_document_readiness(text)
 
 
 def save_application_progress(result: dict) -> dict:
@@ -1018,6 +1031,589 @@ def _document_metadata_from_session(
     return metadata
 
 
+MAX_UPLOAD_MB = 20
+UPLOAD_TYPES = ["pdf", "jpg", "jpeg", "png"]
+
+CHECKER_COPY = {
+    "en": {
+        "tab_upload": "Upload documents",
+        "tab_checker": "Document checker",
+        "upload_label": "Upload file (PDF, JPG or PNG, up to 20 MB)",
+        "upload_too_big": "This file is larger than 20 MB.",
+        "upload_ok": "Stored",
+        "upload_remove": "Remove file",
+        "upload_notice": (
+            "Synthetic demo files only. Do not upload real personal documents. "
+            "Files are stored for this conversation and deleted when you forget it."
+        ),
+        "run_check": "Run document check",
+        "check_notice": "Run the check after uploading or changing documents.",
+        "overall_complete": "All required documents are in place.",
+        "overall_complete_with_acknowledged_warnings": (
+            "All required documents are in place; some warnings were acknowledged."
+        ),
+        "overall_needs_attention": "Some documents need attention.",
+        "overall_incomplete": "Some required documents are missing.",
+        "overall_requirements_unverified": "Requirements for this scheme are not verified.",
+        "state_in_place": "In place",
+        "state_missing": "Missing",
+        "state_needs_attention": "Needs attention",
+        "state_acknowledged": "Acknowledged",
+        "state_not_applicable": "Not applicable",
+        "state_unknown": "Unknown",
+        "issue_name_mismatch": "The name entered differs from the confirmed profile name.",
+        "issue_date_of_birth_mismatch": "The date entered differs from the profile.",
+        "issue_cannot_compare": "No name or date entered, so nothing could be compared.",
+        "issue_file_problem": "The stored file is damaged or missing. Upload it again.",
+        "issue_no_file": "Marked as available but no file is uploaded.",
+        "issue_same_file_reused": "The same file is attached to more than one required document. Check it really covers each one.",
+        "issue_file_name_mismatch": "The name read from the file differs from the confirmed profile name.",
+        "issue_file_date_of_birth_mismatch": "The date of birth read from the file differs from the profile.",
+        "missing_list": "Still needed",
+        "resolve_reason": "Reason for accepting this warning (required)",
+        "resolve_button": "Acknowledge warning",
+        "reopen_button": "Reopen",
+        "resolve_hint": "Or fix the document or the typed name/date and run the check again.",
+        "acknowledged_by": "Acknowledged",
+        "resolve_error": "Could not complete this action.",
+        "readiness_title": "Document readiness by scheme",
+        "readiness_state_ready": "Documents ready",
+        "readiness_state_partial": "Some documents on file",
+        "readiness_state_none": "No documents on file",
+        "readiness_state_unverified": "Requirements not verified",
+        "readiness_count": "required document groups in place",
+        "readiness_need": "Still needed",
+        "readiness_button": "Show document readiness",
+        "suggest_read": "Read name and date from file",
+        "review_name": "Reviewer name (person who checked this file)",
+        "review_note": "Note (optional)",
+        "review_button": "Mark as reviewed",
+        "review_done": "Reviewed by",
+        "review_undo": "Remove review",
+        "view_file": "View uploaded file",
+        "reviewer_code_label": "Reviewer access code (reviewers only)",
+        "reviewer_code_needed": "Enter the reviewer access code to view files and sign off documents.",
+        "download_file": "Download file",
+        "view_pdf_hint": "PDF files cannot be previewed here. Download it to read it.",
+        "view_error": "The file could not be loaded.",
+        "under_review_title": "Under review",
+        "under_review_body": (
+            "Your synthetic application was submitted and is now under human "
+            "review. A reviewer checks each document below and signs it off."
+        ),
+        "review_complete": "Human review complete. Every uploaded document is signed off and no warning is open.",
+        "review_pending": "Waiting for a reviewer to check the documents below.",
+        "suggest_found": "Suggested from file (name · date of birth)",
+        "suggest_none": "No name or date could be read. Please type them.",
+        "suggest_notice": (
+            "Suggested only. Check it against the document; it is not verified "
+            "and not proof the document is genuine."
+        ),
+        "suggest_accept": "Use these values (you can still edit them)",
+    },
+    "hi": {
+        "suggest_read": "फ़ाइल से नाम और तिथि पढ़ें",
+        "review_name": "समीक्षक का नाम (जिसने फ़ाइल जाँची)",
+        "review_note": "टिप्पणी (वैकल्पिक)",
+        "review_button": "समीक्षित के रूप में चिह्नित करें",
+        "review_done": "समीक्षक",
+        "review_undo": "समीक्षा हटाएँ",
+        "view_file": "अपलोड की गई फ़ाइल देखें",
+        "reviewer_code_label": "समीक्षक एक्सेस कोड (केवल समीक्षकों के लिए)",
+        "reviewer_code_needed": "फ़ाइलें देखने और दस्तावेज़ों पर हस्ताक्षर के लिए समीक्षक एक्सेस कोड डालें।",
+        "download_file": "फ़ाइल डाउनलोड करें",
+        "view_pdf_hint": "PDF यहाँ नहीं दिखाई जा सकती। पढ़ने के लिए डाउनलोड करें।",
+        "view_error": "फ़ाइल लोड नहीं हो सकी।",
+        "under_review_title": "समीक्षा जारी है",
+        "under_review_body": (
+            "आपका नकली आवेदन जमा हो गया है और अब मानव समीक्षा में है। समीक्षक "
+            "नीचे हर दस्तावेज़ जाँचकर उस पर हस्ताक्षर करता है।"
+        ),
+        "review_complete": "मानव समीक्षा पूरी। हर अपलोड किए दस्तावेज़ पर हस्ताक्षर हैं और कोई चेतावनी खुली नहीं।",
+        "review_pending": "नीचे के दस्तावेज़ों की समीक्षक द्वारा जाँच की प्रतीक्षा है।",
+        "suggest_found": "फ़ाइल से सुझाया गया (नाम · जन्म तिथि)",
+        "suggest_none": "नाम या तिथि नहीं पढ़ी जा सकी। कृपया स्वयं टाइप करें।",
+        "suggest_notice": "केवल सुझाव। दस्तावेज़ से मिलान करें; यह सत्यापित नहीं है और असली होने का प्रमाण नहीं।",
+        "suggest_accept": "ये मान उपयोग करें (आप बदल सकते हैं)",
+        "issue_file_name_mismatch": "फ़ाइल से पढ़ा गया नाम पुष्टि किए गए प्रोफ़ाइल नाम से अलग है।",
+        "issue_file_date_of_birth_mismatch": "फ़ाइल से पढ़ी गई जन्म तिथि प्रोफ़ाइल से अलग है।",
+        "tab_upload": "दस्तावेज़ अपलोड करें",
+        "tab_checker": "दस्तावेज़ जाँच",
+        "upload_label": "फ़ाइल अपलोड करें (PDF, JPG या PNG, 20 MB तक)",
+        "upload_too_big": "यह फ़ाइल 20 MB से बड़ी है।",
+        "upload_remove": "फ़ाइल हटाएँ",
+        "run_check": "दस्तावेज़ जाँच चलाएँ",
+        "overall_complete": "सभी आवश्यक दस्तावेज़ मौजूद हैं।",
+        "overall_incomplete": "कुछ आवश्यक दस्तावेज़ गायब हैं।",
+        "overall_needs_attention": "कुछ दस्तावेज़ों पर ध्यान देना है।",
+        "state_in_place": "मौजूद",
+        "state_missing": "गायब",
+        "readiness_title": "योजना के अनुसार दस्तावेज़ तैयारी",
+        "readiness_need": "अभी चाहिए",
+    },
+    "mr": {
+        "tab_upload": "कागदपत्रे अपलोड करा",
+        "tab_checker": "कागदपत्र तपासणी",
+        "suggest_read": "फाइलमधून नाव आणि तारीख वाचा",
+        "review_name": "तपासणाऱ्याचे नाव (ज्याने फाइल तपासली)",
+        "review_note": "टीप (ऐच्छिक)",
+        "review_button": "तपासले म्हणून नोंदवा",
+        "review_done": "तपासणारा",
+        "review_undo": "तपासणी काढा",
+        "view_file": "अपलोड केलेली फाइल पहा",
+        "reviewer_code_label": "तपासणीकर्ता प्रवेश कोड (फक्त तपासणीकर्त्यांसाठी)",
+        "reviewer_code_needed": "फाइल पाहण्यासाठी आणि कागदपत्रांवर सही करण्यासाठी तपासणीकर्ता प्रवेश कोड टाका.",
+        "download_file": "फाइल डाउनलोड करा",
+        "view_pdf_hint": "PDF येथे दाखवता येत नाही. वाचण्यासाठी डाउनलोड करा.",
+        "view_error": "फाइल लोड करता आली नाही.",
+        "under_review_title": "तपासणी सुरू आहे",
+        "under_review_body": (
+            "तुमचा नमुना अर्ज सादर झाला आहे आणि आता मानवी तपासणीत आहे. तपासणारा "
+            "खालील प्रत्येक कागदपत्र तपासून त्यावर सही करतो."
+        ),
+        "review_complete": "मानवी तपासणी पूर्ण. प्रत्येक अपलोड केलेल्या कागदपत्रावर सही आहे आणि कोणताही इशारा उघडा नाही.",
+        "review_pending": "खालील कागदपत्रे तपासणाऱ्याकडून तपासली जाण्याची प्रतीक्षा आहे.",
+        "suggest_found": "फाइलमधून सुचवलेले (नाव · जन्मतारीख)",
+        "suggest_none": "नाव किंवा तारीख वाचता आली नाही. कृपया स्वतः टाइप करा.",
+        "suggest_notice": "फक्त सूचना. कागदपत्राशी पडताळा; हे सत्यापित नाही आणि खरे असल्याचा पुरावा नाही.",
+        "suggest_accept": "ही मूल्ये वापरा (तुम्ही बदलू शकता)",
+        "issue_file_name_mismatch": "फाइलमधून वाचलेले नाव निश्चित केलेल्या प्रोफाइल नावाशी जुळत नाही.",
+        "issue_file_date_of_birth_mismatch": "फाइलमधून वाचलेली जन्मतारीख प्रोफाइलशी जुळत नाही.",
+        "upload_label": "फाइल अपलोड करा (PDF, JPG किंवा PNG, 20 MB पर्यंत)",
+        "upload_too_big": "ही फाइल 20 MB पेक्षा मोठी आहे.",
+        "upload_remove": "फाइल काढा",
+        "run_check": "कागदपत्र तपासणी चालवा",
+        "overall_complete": "सर्व आवश्यक कागदपत्रे उपलब्ध आहेत.",
+        "overall_incomplete": "काही आवश्यक कागदपत्रे गहाळ आहेत.",
+        "overall_needs_attention": "काही कागदपत्रांकडे लक्ष द्यावे लागेल.",
+        "state_in_place": "उपलब्ध",
+        "state_missing": "गहाळ",
+        "readiness_title": "योजनेनुसार कागदपत्र तयारी",
+        "readiness_need": "अजून हवे",
+    },
+}
+
+
+def ct(key: str) -> str:
+    """Look up checker text, falling back to English for untranslated keys."""
+
+    locale = st.session_state.get("journey_locale", "en")
+    return CHECKER_COPY.get(locale, {}).get(key) or CHECKER_COPY["en"][key]
+
+
+def _on_document_upload(scheme_id: str, document_id: str) -> None:
+    """Send a newly chosen file to the API and mark the document available."""
+
+    uploaded = st.session_state.get(_uploader_key(scheme_id, document_id))
+    if uploaded is None:
+        return
+    if uploaded.size > MAX_UPLOAD_MB * 1024 * 1024:
+        st.session_state[f"upl-msg-{document_id}"] = ("error", ct("upload_too_big"))
+        return
+    try:
+        upload_document(
+            st.session_state.conversation_id,
+            document_id,
+            uploaded.name,
+            uploaded.getvalue(),
+        )
+    except ApplicationApiError as error:
+        st.session_state[f"upl-msg-{document_id}"] = ("error", str(error))
+        return
+    st.session_state[f"upl-msg-{document_id}"] = ("ok", uploaded.name)
+    st.session_state[f"doc-{scheme_id}-{document_id}"] = "available"
+
+
+def _uploader_key(scheme_id: str, document_id: str) -> str:
+    version = st.session_state.get("upl-version", {}).get(document_id, 0)
+    return f"upl-{scheme_id}-{document_id}-{version}"
+
+
+def _on_document_remove(scheme_id: str, document_id: str) -> None:
+    try:
+        delete_document_file(st.session_state.conversation_id, document_id)
+    except ApplicationApiError as error:
+        st.session_state[f"upl-msg-{document_id}"] = ("error", str(error))
+        return
+    versions = st.session_state.setdefault("upl-version", {})
+    versions[document_id] = versions.get(document_id, 0) + 1
+    st.session_state.pop(f"upl-msg-{document_id}", None)
+    st.session_state[f"doc-{scheme_id}-{document_id}"] = "missing"
+
+
+def _stored_files() -> dict[str, dict]:
+    try:
+        listing = list_document_files(st.session_state.conversation_id)
+    except ApplicationApiError:
+        return {}
+    return {item["document_id"]: item for item in listing.get("files", [])}
+
+
+def _render_document_uploader(
+    scheme_id: str, document_id: str, stored: dict | None
+) -> None:
+    """One upload control per document, with the stored file shown beneath."""
+
+    st.file_uploader(
+        ct("upload_label"),
+        type=UPLOAD_TYPES,
+        key=_uploader_key(scheme_id, document_id),
+        on_change=_on_document_upload,
+        args=(scheme_id, document_id),
+    )
+    message = st.session_state.get(f"upl-msg-{document_id}")
+    if message and message[0] == "error":
+        st.error(message[1])
+    if stored:
+        st.caption(
+            f'{ct("upload_ok")}: {stored["original_name"]} · '
+            f'{stored["size_bytes"] // 1024} KB'
+        )
+        st.button(
+            ct("upload_remove"),
+            key=f"upl-rm-{scheme_id}-{document_id}",
+            on_click=_on_document_remove,
+            args=(scheme_id, document_id),
+        )
+        _render_suggestion(scheme_id, document_id)
+
+
+def _on_extract(document_id: str) -> None:
+    try:
+        extract_document_suggestion(st.session_state.conversation_id, document_id)
+    except ApplicationApiError as error:
+        st.session_state[f"sug-err-{document_id}"] = str(error)
+    else:
+        st.session_state.pop(f"sug-err-{document_id}", None)
+
+
+def _on_accept_suggestion(
+    scheme_id: str, document_id: str, name: str | None, dob: str | None
+) -> None:
+    """Copy confirmed suggestion values into the typed inputs the checker reads."""
+
+    if name:
+        st.session_state[f"doc-name-{scheme_id}-{document_id}"] = name
+    if dob:
+        st.session_state[f"doc-date-{scheme_id}-{document_id}"] = dob
+
+
+def _render_suggestion(scheme_id: str, document_id: str) -> None:
+    """Optional 'read values from the file' step; a person must accept the result."""
+
+    try:
+        info = get_document_suggestion(st.session_state.conversation_id, document_id)
+    except ApplicationApiError:
+        return
+    if not info.get("enabled"):
+        return
+    st.button(
+        ct("suggest_read"),
+        key=f"sug-read-{scheme_id}-{document_id}",
+        on_click=_on_extract,
+        args=(document_id,),
+    )
+    if st.session_state.get(f"sug-err-{document_id}"):
+        st.warning(st.session_state[f"sug-err-{document_id}"])
+    suggestion = info.get("suggestion")
+    if suggestion is None:
+        return
+    if not suggestion.get("name") and not suggestion.get("date_of_birth"):
+        st.caption(ct("suggest_none"))
+        return
+    st.info(
+        f'{ct("suggest_found")}: {suggestion.get("name") or "—"} · '
+        f'{suggestion.get("date_of_birth") or "—"}'
+    )
+    st.caption(ct("suggest_notice"))
+    st.button(
+        ct("suggest_accept"),
+        key=f"sug-accept-{scheme_id}-{document_id}",
+        on_click=_on_accept_suggestion,
+        args=(
+            scheme_id, document_id,
+            suggestion.get("name"), suggestion.get("date_of_birth"),
+        ),
+    )
+
+
+def _checker_inputs(
+    scheme_id: str, items: list[dict[str, object]]
+) -> tuple[dict[str, str], str | None, dict]:
+    return (
+        _document_statuses_from_session(scheme_id, items),
+        st.session_state.get(f"profile-name-{scheme_id}") or None,
+        _document_metadata_from_session(scheme_id, items),
+    )
+
+
+def _run_checker(
+    scheme_id: str, items: list[dict[str, object]], flow_state: dict, action=None
+) -> None:
+    """Fetch a fresh checker report, optionally after an acknowledge/reopen."""
+
+    conversation_id = st.session_state.conversation_id
+    try:
+        statuses, name, metadata = _checker_inputs(scheme_id, items)
+        if action is None:
+            report = check_documents_report(
+                conversation_id, scheme_id, statuses, name, metadata
+            )
+        else:
+            report = action(conversation_id, scheme_id, statuses, name, metadata)
+        flow_state["checker"] = report
+        flow_state["checker_error"] = None
+    except DocumentDateError:
+        flow_state["checker_error"] = COPY[
+            st.session_state.get("journey_locale", "en")
+        ]["document_date_invalid"]
+    except ApplicationApiError as error:
+        flow_state["checker_error"] = str(error)
+
+
+def _reviewer_code() -> str | None:
+    return st.session_state.get("reviewer-code") or None
+
+
+def _reviewer_locked() -> bool:
+    """True when a reviewer code is required and none has been entered."""
+
+    return bool(st.session_state.get("reviewer_required")) and not _reviewer_code()
+
+
+def _render_file_view(scheme_id: str, document: dict) -> None:
+    """Let the reviewer open the stored file; it is fetched only when asked for."""
+
+    if _reviewer_locked():
+        return
+    upload = document["upload"]
+    document_id = document["document_id"]
+    if not st.checkbox(
+        f'{ct("view_file")}: {upload["original_name"]}',
+        key=f"view-{scheme_id}-{document_id}",
+    ):
+        return
+    try:
+        content = fetch_document_file(
+            st.session_state.conversation_id, document_id, _reviewer_code()
+        )
+    except ApplicationApiError as error:
+        st.error(str(error) if "reviewer" in str(error) else ct("view_error"))
+        return
+    if upload["content_type"].startswith("image/"):
+        st.image(content, caption=upload["original_name"])
+    else:
+        st.caption(ct("view_pdf_hint"))
+    st.download_button(
+        ct("download_file"),
+        data=content,
+        file_name=upload["original_name"],
+        mime=upload["content_type"],
+        key=f"dl-{scheme_id}-{document_id}",
+    )
+
+
+def _render_review(
+    scheme_id: str,
+    document: dict,
+    items: list[dict[str, object]],
+    flow_state: dict,
+) -> None:
+    """Reviewer sign-off: records who looked at the file; it gates nothing."""
+
+    document_id = document["document_id"]
+    key = f"{scheme_id}-{document_id}"
+    if _reviewer_locked():
+        return
+    review = document.get("review")
+    if review:
+        st.caption(
+            f'{ct("review_done")}: {review["reviewer_name"]} · '
+            f'{review["reviewed_at"]}'
+            + (f' · {review["note"]}' if review.get("note") else "")
+        )
+        if st.button(ct("review_undo"), key=f"rev-undo-{key}"):
+            try:
+                remove_document_review(
+                    st.session_state.conversation_id, document_id, _reviewer_code()
+                )
+            except ApplicationApiError as error:
+                flow_state["checker_error"] = str(error)
+            else:
+                _run_checker(scheme_id, items, flow_state)
+            st.rerun()
+        return
+    reviewer = st.text_input(ct("review_name"), key=f"rev-name-{key}")
+    note = st.text_input(ct("review_note"), key=f"rev-note-{key}")
+    if st.button(ct("review_button"), key=f"rev-save-{key}"):
+        try:
+            review_document_file(
+                st.session_state.conversation_id, document_id, reviewer, note,
+                _reviewer_code(),
+            )
+        except ApplicationApiError as error:
+            flow_state["checker_error"] = str(error)
+        else:
+            _run_checker(scheme_id, items, flow_state)
+        st.rerun()
+
+
+def render_submitted_review(scheme_id: str, flow_state: dict) -> None:
+    """After submission: show 'under review' and open the human review step."""
+
+    st.subheader(ct("under_review_title"))
+    if "checker" not in flow_state:
+        _run_checker(scheme_id, [], flow_state)
+    report = flow_state.get("checker")
+    uploaded = [
+        document
+        for group in (report or {}).get("groups", [])
+        for document in group["documents"]
+        if document.get("upload")
+    ]
+    done = (
+        bool(uploaded)
+        and all(document.get("review") for document in uploaded)
+        and report["overall"]
+        in {"complete", "complete_with_acknowledged_warnings"}
+    )
+    if done:
+        st.success(ct("review_complete"))
+    else:
+        st.info(ct("under_review_body"))
+        st.caption(ct("review_pending"))
+    render_document_checker(scheme_id, [], flow_state)
+
+
+def render_rejected_documents(scheme_id: str, flow_state: dict) -> None:
+    """A rejected draft still lets the reviewer open the files and the checker."""
+
+    st.subheader(ct("tab_checker"))
+    if "checker" not in flow_state:
+        _run_checker(scheme_id, [], flow_state)
+    render_document_checker(scheme_id, [], flow_state)
+
+
+def render_document_checker(
+    scheme_id: str, items: list[dict[str, object]], flow_state: dict
+) -> None:
+    """The checker tab: status of every required document and a way to resolve warnings."""
+
+    locale = st.session_state.get("journey_locale", "en")
+    st.caption(ct("check_notice"))
+    try:
+        required = bool(
+            list_document_files(st.session_state.conversation_id).get(
+                "reviewer_code_required"
+            )
+        )
+    except ApplicationApiError:
+        required = False
+    st.session_state["reviewer_required"] = required
+    if required:
+        st.text_input(
+            ct("reviewer_code_label"), type="password", key="reviewer-code"
+        )
+        if _reviewer_locked():
+            st.info(ct("reviewer_code_needed"))
+    if st.button(ct("run_check"), key=f"chk-run-{scheme_id}", type="primary"):
+        _run_checker(scheme_id, items, flow_state)
+    if flow_state.get("checker_error"):
+        st.error(flow_state["checker_error"])
+    report = flow_state.get("checker")
+    if not report:
+        return
+    overall = report["overall"]
+    banner = {
+        "complete": st.success,
+        "complete_with_acknowledged_warnings": st.success,
+        "needs_attention": st.warning,
+        "incomplete": st.warning,
+    }.get(overall, st.info)
+    banner(ct(f"overall_{overall}"))
+    st.caption(report["notice"])
+    for group in report["groups"]:
+        label = group["labels"].get(locale, group["label"])
+        st.markdown(f'**{label}** — {ct("state_" + group["state"])}')
+        for document in group["documents"]:
+            doc_label = document["labels"].get(locale, document["label"])
+            st.write(f'{doc_label}: {ct("state_" + document["state"])}')
+            if document.get("upload"):
+                _render_file_view(scheme_id, document)
+                _render_review(scheme_id, document, items, flow_state)
+            for issue in document["issues"]:
+                key = f'{scheme_id}-{issue["issue_id"]}'
+                if issue["acknowledged"]:
+                    resolution = issue["resolution"] or {}
+                    st.caption(
+                        f'{ct("acknowledged_by")}: {resolution.get("reason", "")}'
+                    )
+                    if st.button(ct("reopen_button"), key=f"chk-reopen-{key}"):
+                        _run_checker(
+                            scheme_id, items, flow_state,
+                            lambda *args, issue=issue: reopen_document_issue(
+                                args[0], args[1], issue["document_id"],
+                                issue["code"], *args[2:],
+                            ),
+                        )
+                        st.rerun()
+                    continue
+                st.warning(ct(f'issue_{issue["code"]}'))
+                if issue["can_acknowledge"]:
+                    reason = st.text_input(
+                        ct("resolve_reason"), key=f"chk-reason-{key}"
+                    )
+                    if st.button(ct("resolve_button"), key=f"chk-resolve-{key}"):
+                        if len(reason.strip()) < 3:
+                            flow_state["checker_error"] = ct("resolve_reason")
+                        else:
+                            _run_checker(
+                                scheme_id, items, flow_state,
+                                lambda *args, issue=issue, reason=reason: (
+                                    resolve_document_issue(
+                                        args[0], args[1], issue["document_id"],
+                                        issue["code"], reason.strip(), *args[2:],
+                                    )
+                                ),
+                            )
+                        st.rerun()
+                else:
+                    st.caption(ct("resolve_hint"))
+    if report["missing_labels"]:
+        st.markdown(f'**{ct("missing_list")}**')
+        for labels in report["missing_labels"]:
+            st.write(f'- {labels.get(locale, labels.get("en", ""))}')
+
+
+def render_document_readiness(text: dict[str, str]) -> None:
+    """Rank schemes by documents already on file; this is not an eligibility result."""
+
+    locale = st.session_state.get("journey_locale", "en")
+    st.subheader(ct("readiness_title"))
+    if not st.button(ct("readiness_button"), key="readiness-run"):
+        return
+    try:
+        result = document_readiness(st.session_state.conversation_id)
+    except ApplicationApiError as error:
+        st.error(str(error))
+        return
+    st.caption(result["notice"])
+    for scheme in result["schemes"]:
+        with st.container(border=True):
+            st.markdown(
+                f'**{scheme["scheme_id"]}** — '
+                f'{ct("readiness_state_" + scheme["state"])}'
+            )
+            st.caption(
+                f'{scheme["in_place"]}/{scheme["required"]} '
+                f'{ct("readiness_count")} · {scheme["eligibility"]}'
+            )
+            for labels in scheme["missing_labels"]:
+                st.write(
+                    f'- {ct("readiness_need")}: {labels.get(locale, labels.get("en", ""))}'
+                )
+
+
 def _render_document_groups(
     scheme_id: str,
     assessment: dict[str, object],
@@ -1057,6 +1653,7 @@ def _render_document_groups(
                 )
                 st.write(f'{text["source_quote"]}: {citation["exact_quote"]}')
 
+    stored_files = _stored_files() if assessment.get("groups") else {}
     visible_items: list[dict[str, object]] = []
     for group in assessment.get("groups", []):
         labels = group.get("labels", {})
@@ -1099,6 +1696,7 @@ def _render_document_groups(
                 text["document_date"],
                 key=f"doc-date-{scheme_id}-{document_id}",
             )
+            _render_document_uploader(scheme_id, document_id, stored_files.get(document_id))
             visible_items.append(item)
     return visible_items
 
@@ -1271,37 +1869,43 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                     st.warning(text["requirements_changed"])
                 if assessment.get("discrepancies"):
                     st.warning(text["resolve_mismatch"])
-                st.text_input(
-                    text["profile_name"],
-                    key=f"profile-name-{scheme_id}",
+                tab_upload, tab_checker = st.tabs(
+                    [ct("tab_upload"), ct("tab_checker")]
                 )
-                visible_items = _render_document_groups(
-                    scheme_id, assessment, text
-                )
-                if assessment.get("groups") and st.button(
-                    text["update_checklist"],
-                    key=f"docs-update-{scheme_id}",
-                ):
-                    statuses = _document_statuses_from_session(
-                        scheme_id, visible_items
+                with tab_upload:
+                    st.text_input(
+                        text["profile_name"],
+                        key=f"profile-name-{scheme_id}",
                     )
-                    try:
-                        metadata = _document_metadata_from_session(
+                    visible_items = _render_document_groups(
+                        scheme_id, assessment, text
+                    )
+                    if assessment.get("groups") and st.button(
+                        text["update_checklist"],
+                        key=f"docs-update-{scheme_id}",
+                    ):
+                        statuses = _document_statuses_from_session(
                             scheme_id, visible_items
                         )
-                        flow_state["assessment"] = save_application_progress(
-                            assess_documents(
-                                conversation_id, scheme_id, statuses,
-                                st.session_state.get(f"profile-name-{scheme_id}") or None,
-                                metadata,
+                        try:
+                            metadata = _document_metadata_from_session(
+                                scheme_id, visible_items
                             )
-                        )
-                        flow_state["error"] = None
-                    except DocumentDateError:
-                        flow_state["error"] = text["document_date_invalid"]
-                    except ApplicationApiError:
-                        flow_state["error"] = text["application_error"]
-                    st.rerun()
+                            flow_state["assessment"] = save_application_progress(
+                                assess_documents(
+                                    conversation_id, scheme_id, statuses,
+                                    st.session_state.get(f"profile-name-{scheme_id}") or None,
+                                    metadata,
+                                )
+                            )
+                            flow_state["error"] = None
+                        except DocumentDateError:
+                            flow_state["error"] = text["document_date_invalid"]
+                        except ApplicationApiError:
+                            flow_state["error"] = text["application_error"]
+                        st.rerun()
+                with tab_checker:
+                    render_document_checker(scheme_id, visible_items, flow_state)
                 if (
                     assessment["status"] == "checklist_complete"
                     and not assessment.get("report_stale")
@@ -1408,6 +2012,7 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                 st.success(
                     f'{text["submitted"]} {text["receipt_label"]}: {draft["receipt_id"]}'
                 )
+                render_submitted_review(scheme_id, flow_state)
             elif draft.get("stale"):
                 st.warning(discovery_message(
                     "stale_draft", st.session_state.journey_locale,
@@ -1435,13 +2040,19 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                     )
                     if assessment.get("discrepancies"):
                         st.warning(text["mismatch_help"])
-                    st.text_input(
-                        text["profile_name"],
-                        key=f"profile-name-{scheme_id}",
+                    tab_upload, tab_checker = st.tabs(
+                        [ct("tab_upload"), ct("tab_checker")]
                     )
-                    visible_items = _render_document_groups(
-                        scheme_id, assessment, text
-                    )
+                    with tab_upload:
+                        st.text_input(
+                            text["profile_name"],
+                            key=f"profile-name-{scheme_id}",
+                        )
+                        visible_items = _render_document_groups(
+                            scheme_id, assessment, text
+                        )
+                    with tab_checker:
+                        render_document_checker(scheme_id, visible_items, flow_state)
                     if assessment.get("groups") and st.button(
                         text["recheck_documents"],
                         key=f"docs-correct-{scheme_id}",
@@ -1491,6 +2102,7 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                 ):
                     flow_state["edit_mode"] = True
                     st.rerun()
+                render_rejected_documents(scheme_id, flow_state)
             else:
                 if flow_state.get("edit_mode"):
                     reference = st.text_input(
