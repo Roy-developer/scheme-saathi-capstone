@@ -2,7 +2,7 @@
   "dataset_version": "1.1.0",
   "split": "development",
   "protected": false,
-  "annotation_note": "Development-only synthetic boundary personas for IGNWPS-MH, PM-KISAN-IN, and IGNOAPS-MH. Expected outcomes were written before harness scoring. IGNOAPS personas use typed_facts (name_on_bpl_list). Dual independent labelling with Role 1 remains pending. Not held-out; not the final 60-set.",
+  "annotation_note": "Development-only synthetic boundary personas for IGNWPS-MH, PM-KISAN-IN, and IGNOAPS-MH. Expected outcomes were written before harness scoring. IGNOAPS personas use typed_facts (name_on_bpl_list). Dual independent labelling with Role 1 remains pending. Not held-out; not the final 60-set. | Personas R1-* (29) added by Role 1: 3 on live schemes and 26 boundary personas on gold development schemes. R1-GOLD-* verdicts are computed from the draft gold rules in data/schemes/rule_gold_drafts/; exclusion-kind rules apply when their fact is true, and each eligible verdict has its exclusion facts set to false. Single-labelled plus a model-assisted check; needs independent human review. Not held-out.",
   "personas": [
     {
       "persona_id": "IGNWPS-DEV-001",
@@ -1017,6 +1017,917 @@
           "labeller_id": "role5-seed",
           "scheme_id": "IGNOAPS-MH",
           "result": "need_more_information",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-IGNOAPS-003",
+      "boundary_family": "ignoaps-age-central-vs-state",
+      "split": "development",
+      "protected": false,
+      "description": "Aged 60 (central NSAP threshold) but under the Maharashtra threshold of 65; name on BPL list.",
+      "typed_facts": {
+        "date_of_birth": "1966-11-11",
+        "application_date": "2026-11-11",
+        "name_on_bpl_list": true
+      },
+      "expected_by_scheme": {
+        "IGNOAPS-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01"
+          ],
+          "note": "The Maharashtra page says 65; the central guideline says 60. The reviewed Maharashtra package uses 65."
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi",
+          "scheme_id": "IGNOAPS-MH",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-IGNOAPS-006",
+      "boundary_family": "ignoaps-two-failures",
+      "split": "development",
+      "protected": false,
+      "description": "Aged 64 and name not on the BPL list: both rules fail.",
+      "typed_facts": {
+        "date_of_birth": "1962-11-11",
+        "application_date": "2026-11-11",
+        "name_on_bpl_list": false
+      },
+      "expected_by_scheme": {
+        "IGNOAPS-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01",
+            "IGNOAPS-MH-BPL-LIST-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi",
+          "scheme_id": "IGNOAPS-MH",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-PMKISAN-004",
+      "boundary_family": "pmkisan-two-exclusions",
+      "split": "development",
+      "protected": false,
+      "description": "Landholding family with a government-employee member and a pension of Rs 10,000 or more.",
+      "profile": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": true,
+        "pension_at_least_10000_excluding_stated_grades": true,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "expected_by_scheme": {
+        "PM-KISAN-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PMKISAN-GOV-EMPLOYEE-01",
+            "PMKISAN-PENSION-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi",
+          "scheme_id": "PM-KISAN-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-001",
+      "boundary_family": "nsap-age-lower",
+      "split": "development",
+      "protected": false,
+      "description": "Aged 59, BPL citizen: one year below the central age threshold of 60.",
+      "typed_facts": {
+        "is_citizen_of_india": true,
+        "is_below_poverty_line": true,
+        "age": 59
+      },
+      "expected_by_scheme": {
+        "NSAP-IGNOAPS-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "NSAP-IGNOAPS-IN-R03"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "NSAP-IGNOAPS-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-002",
+      "boundary_family": "nsap-age-lower",
+      "split": "development",
+      "protected": false,
+      "description": "Aged exactly 60, BPL citizen.",
+      "typed_facts": {
+        "is_citizen_of_india": true,
+        "is_below_poverty_line": true,
+        "age": 60
+      },
+      "expected_by_scheme": {
+        "NSAP-IGNOAPS-IN": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "NSAP-IGNOAPS-IN-R01",
+            "NSAP-IGNOAPS-IN-R02",
+            "NSAP-IGNOAPS-IN-R03"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "NSAP-IGNOAPS-IN",
+          "result": "eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-003",
+      "boundary_family": "ignwps-in-age-lower",
+      "split": "development",
+      "protected": false,
+      "description": "Widow aged 39, BPL.",
+      "typed_facts": {
+        "age": 39,
+        "is_widow": true,
+        "is_below_poverty_line": true
+      },
+      "expected_by_scheme": {
+        "IGNWPS-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNWPS-IN-R01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "IGNWPS-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-004",
+      "boundary_family": "ignwps-in-age-upper",
+      "split": "development",
+      "protected": false,
+      "description": "Widow aged 80, BPL: above the 79 limit.",
+      "typed_facts": {
+        "age": 80,
+        "is_widow": true,
+        "is_below_poverty_line": true
+      },
+      "expected_by_scheme": {
+        "IGNWPS-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNWPS-IN-R02"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "IGNWPS-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-005",
+      "boundary_family": "igndps-disability-pct",
+      "split": "development",
+      "protected": false,
+      "description": "Disability of 79%: just below the 80% threshold.",
+      "typed_facts": {
+        "age": 40,
+        "is_resident_of_india": true,
+        "has_disability": true,
+        "disability_percent": 79,
+        "is_below_poverty_line": true
+      },
+      "expected_by_scheme": {
+        "IGNDPS-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNDPS-IN-R04"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "IGNDPS-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-006",
+      "boundary_family": "igndps-disability-pct",
+      "split": "development",
+      "protected": false,
+      "description": "Disability of exactly 80%.",
+      "typed_facts": {
+        "age": 40,
+        "is_resident_of_india": true,
+        "has_disability": true,
+        "disability_percent": 80,
+        "is_below_poverty_line": true
+      },
+      "expected_by_scheme": {
+        "IGNDPS-IN": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNDPS-IN-R01",
+            "IGNDPS-IN-R02",
+            "IGNDPS-IN-R03",
+            "IGNDPS-IN-R04",
+            "IGNDPS-IN-R05"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "IGNDPS-IN",
+          "result": "eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-007",
+      "boundary_family": "igndpsm-age-upper",
+      "split": "development",
+      "protected": false,
+      "description": "Disabled person aged 80: above the 79 limit.",
+      "typed_facts": {
+        "age": 80,
+        "is_resident_of_state": true,
+        "has_disability": true,
+        "disability_percent": 85,
+        "is_receiving_other_pension": false
+      },
+      "expected_by_scheme": {
+        "IGNDPSM-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNDPSM-MH-R02"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "IGNDPSM-MH",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-008",
+      "boundary_family": "igndpsm-other-pension",
+      "split": "development",
+      "protected": false,
+      "description": "Aged 50 with 85% disability but already receiving another pension.",
+      "typed_facts": {
+        "age": 50,
+        "is_resident_of_state": true,
+        "has_disability": true,
+        "disability_percent": 85,
+        "is_receiving_other_pension": true
+      },
+      "expected_by_scheme": {
+        "IGNDPSM-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNDPSM-MH-R06"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "IGNDPSM-MH",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-009",
+      "boundary_family": "nfbsm-breadwinner-age-lower",
+      "split": "development",
+      "protected": false,
+      "description": "Breadwinner died aged 17: below the 18 limit.",
+      "typed_facts": {
+        "is_below_poverty_line": true,
+        "deceased_breadwinner_age": 17,
+        "is_resident_of_state": true,
+        "is_family_member_of_deceased_breadwinner": true
+      },
+      "expected_by_scheme": {
+        "NFBSM-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "NFBSM-MH-R02"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "NFBSM-MH",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-010",
+      "boundary_family": "nfbsm-breadwinner-age-upper",
+      "split": "development",
+      "protected": false,
+      "description": "Breadwinner died aged 59: inside the 59 limit.",
+      "typed_facts": {
+        "is_below_poverty_line": true,
+        "deceased_breadwinner_age": 59,
+        "is_resident_of_state": true,
+        "is_family_member_of_deceased_breadwinner": true
+      },
+      "expected_by_scheme": {
+        "NFBSM-MH": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "NFBSM-MH-R01",
+            "NFBSM-MH-R02",
+            "NFBSM-MH-R03",
+            "NFBSM-MH-R04",
+            "NFBSM-MH-R05"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "NFBSM-MH",
+          "result": "eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-011",
+      "boundary_family": "nfbsm-breadwinner-age-upper",
+      "split": "development",
+      "protected": false,
+      "description": "Breadwinner died aged 60: above the 59 limit.",
+      "typed_facts": {
+        "is_below_poverty_line": true,
+        "deceased_breadwinner_age": 60,
+        "is_resident_of_state": true,
+        "is_family_member_of_deceased_breadwinner": true
+      },
+      "expected_by_scheme": {
+        "NFBSM-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "NFBSM-MH-R03"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "NFBSM-MH",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-012",
+      "boundary_family": "apy-age-upper",
+      "split": "development",
+      "protected": false,
+      "description": "Aged 41: above the 40 limit.",
+      "typed_facts": {
+        "age": 41,
+        "is_citizen_of_india": true,
+        "has_savings_bank_account": true
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-R02"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "APY-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-013",
+      "boundary_family": "apy-age-upper",
+      "split": "development",
+      "protected": false,
+      "description": "Aged exactly 40 with a savings bank account.",
+      "typed_facts": {
+        "age": 40,
+        "is_citizen_of_india": true,
+        "has_savings_bank_account": true,
+        "is_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-R01",
+            "APY-IN-R02",
+            "APY-IN-R03",
+            "APY-IN-R04"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "APY-IN",
+          "result": "eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-014",
+      "boundary_family": "pmsby-age-upper",
+      "split": "development",
+      "protected": false,
+      "description": "Aged 71: above the 70 limit.",
+      "typed_facts": {
+        "age": 71,
+        "has_savings_bank_account": true,
+        "consents_to_auto_debit": true
+      },
+      "expected_by_scheme": {
+        "PMSBY-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PMSBY-IN-R02"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "PMSBY-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-015",
+      "boundary_family": "pmjjby-age-upper",
+      "split": "development",
+      "protected": false,
+      "description": "Aged exactly 50 with a savings account and auto-debit consent.",
+      "typed_facts": {
+        "age": 50,
+        "has_savings_bank_account": true,
+        "consents_to_auto_debit": true,
+        "is_institutional_account_holder": false
+      },
+      "expected_by_scheme": {
+        "PMJJBY-IN": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PMJJBY-IN-R01",
+            "PMJJBY-IN-R02",
+            "PMJJBY-IN-R03",
+            "PMJJBY-IN-R05"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "PMJJBY-IN",
+          "result": "eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-016",
+      "boundary_family": "predis-income",
+      "split": "development",
+      "protected": false,
+      "description": "Family income Rs 2,50,001: Re 1 over the Rs 2,50,000 limit.",
+      "typed_facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 50,
+        "annual_family_income_inr": 250001,
+        "is_student_in_class_9_or_10": true,
+        "family_members_receiving_scholarship": 1
+      },
+      "expected_by_scheme": {
+        "PRE-DIS-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PRE-DIS-IN-R04"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "PRE-DIS-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-017",
+      "boundary_family": "fadse-income",
+      "split": "development",
+      "protected": false,
+      "description": "Annual income exactly Rs 1,00,000: the rule is strictly below 1,00,000.",
+      "typed_facts": {
+        "disability_percent": 60,
+        "is_resident_of_state": true,
+        "age": 30,
+        "annual_income_inr": 100000,
+        "is_citizen_of_india": true,
+        "has_disability": true
+      },
+      "expected_by_scheme": {
+        "FADSE-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "FADSE-MH-R05"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "FADSE-MH",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-018",
+      "boundary_family": "postdis-income",
+      "split": "development",
+      "protected": false,
+      "description": "Student with 50% disability, family income exactly 250000: at the upper limit.",
+      "typed_facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 50,
+        "annual_family_income_inr": 250000,
+        "is_student_in_post_matric_course": true,
+        "family_members_receiving_scholarship": 1,
+        "receives_other_scholarship_or_stipend": false,
+        "is_repeating_class": false
+      },
+      "expected_by_scheme": {
+        "POST-DIS-IN": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "POST-DIS-IN-R04"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "POST-DIS-IN",
+          "result": "eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-019",
+      "boundary_family": "postdis-income",
+      "split": "development",
+      "protected": false,
+      "description": "Student with 50% disability, family income 250001: one rupee over the limit.",
+      "typed_facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 50,
+        "annual_family_income_inr": 250001,
+        "is_student_in_post_matric_course": true,
+        "family_members_receiving_scholarship": 1
+      },
+      "expected_by_scheme": {
+        "POST-DIS-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "POST-DIS-IN-R04"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "POST-DIS-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-020",
+      "boundary_family": "postdis-siblings",
+      "split": "development",
+      "protected": false,
+      "description": "Student with 50% disability; three family members already receive a scholarship (limit 2).",
+      "typed_facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 50,
+        "annual_family_income_inr": 200000,
+        "is_student_in_post_matric_course": true,
+        "family_members_receiving_scholarship": 3
+      },
+      "expected_by_scheme": {
+        "POST-DIS-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "POST-DIS-IN-R07"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "POST-DIS-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-021",
+      "boundary_family": "postdis-disability-pct",
+      "split": "development",
+      "protected": false,
+      "description": "Student with 39% disability: one point below the 40% threshold.",
+      "typed_facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 39,
+        "annual_family_income_inr": 200000,
+        "is_student_in_post_matric_course": true,
+        "family_members_receiving_scholarship": 1
+      },
+      "expected_by_scheme": {
+        "POST-DIS-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "POST-DIS-IN-R03"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "POST-DIS-IN",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-022",
+      "boundary_family": "fasetdp-disability-pct",
+      "split": "development",
+      "protected": false,
+      "description": "Maharashtra resident, trained, 40% disability: at the threshold.",
+      "typed_facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 40,
+        "is_resident_of_state": true,
+        "has_completed_vocational_training": true
+      },
+      "expected_by_scheme": {
+        "FASETDP-MH": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "FASETDP-MH-R01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "FASETDP-MH",
+          "result": "eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-023",
+      "boundary_family": "fasetdp-disability-pct",
+      "split": "development",
+      "protected": false,
+      "description": "Maharashtra resident, trained, 39% disability: one point below the threshold.",
+      "typed_facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 39,
+        "is_resident_of_state": true,
+        "has_completed_vocational_training": true
+      },
+      "expected_by_scheme": {
+        "FASETDP-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "FASETDP-MH-R01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "FASETDP-MH",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-024",
+      "boundary_family": "fadse-age-lower",
+      "split": "development",
+      "protected": false,
+      "description": "Person with 50% disability aged 17: one year below the minimum age of 18.",
+      "typed_facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 50,
+        "is_resident_of_state": true,
+        "age": 17,
+        "annual_income_inr": 80000
+      },
+      "expected_by_scheme": {
+        "FADSE-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "FADSE-MH-R03"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "FADSE-MH",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-025",
+      "boundary_family": "fadse-age-upper",
+      "split": "development",
+      "protected": false,
+      "description": "Person with 50% disability aged 51: one year above the maximum age of 50.",
+      "typed_facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 50,
+        "is_resident_of_state": true,
+        "age": 51,
+        "annual_income_inr": 80000
+      },
+      "expected_by_scheme": {
+        "FADSE-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "FADSE-MH-R04"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "FADSE-MH",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-026",
+      "boundary_family": "predis-siblings",
+      "split": "development",
+      "protected": false,
+      "description": "Pre-matric student with 50% disability; three family members already receive a scholarship (limit 2).",
+      "typed_facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 50,
+        "annual_family_income_inr": 200000,
+        "is_student_in_class_9_or_10": true,
+        "family_members_receiving_scholarship": 3
+      },
+      "expected_by_scheme": {
+        "PRE-DIS-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PRE-DIS-IN-R07"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi-draft",
+          "scheme_id": "PRE-DIS-IN",
+          "result": "not_eligible",
           "status": "single"
         }
       ]
