@@ -146,6 +146,9 @@ The sign-off above is kept as written. This amendment extends it.
   years) and `IGNOAPS-MH-BPL-LIST-01` (name_on_bpl_list eq true).
 - **Still pending:** native-speaker review of the question wording, privacy
   review, and human labels for the provisional development tests.
+- **Update 2026-11-09:** `Roy-developer` set the question and privacy status of all
+  registered facts to approved for the synthetic mock. No separate native-speaker
+  or privacy review was performed.
 - **Still open:** the central age of 60 versus the Maharashtra page's 65,
   citizenship, and non-receipt of another pension. The app lists these as
   unresolved checks. The result is a mock and not a government decision.
@@ -162,3 +165,9 @@ The sign-off above is kept as written. This amendment extends it.
 - **Correction:** "no independent second-model review was performed" under
   Overall disposition was written before that review took place. The review is
   summarized above.
+
+## Update 2026-11-09: document checklist
+
+The demo checklist was replaced by version `v2` and approved at the reviewer's
+instruction, using the best official text available, which may not be current.
+It cites a Chhatrapati Sambhajinagar district page (undated, and describing the older National Old Age Pension Scheme) and a Department of Rural Development evaluation of NSAP based on discussions with beneficiaries. Hindi and Marathi labels have had no native-speaker review.

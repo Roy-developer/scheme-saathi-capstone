@@ -53,9 +53,8 @@ def test_one_conversation_cannot_access_another_conversations_draft(
     attacker = uuid4()
     documents = {
         "identity_proof": "available",
-        "age_proof": "available",
+        "bank_account_proof": "available",
         "widow_status_proof": "available",
-        "bpl_proof": "available",
     }
 
     with TestClient(app) as client:

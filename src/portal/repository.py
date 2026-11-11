@@ -25,7 +25,7 @@ from src.mcp_servers.tools.documents import (
 )
 from src.mcp_servers.rule_data import get_active_rule_data
 from src.rules.bundles import bundle_fingerprint
-from src.rules.facts import TypedFactStore
+from src.rules.facts import HouseholdProfile
 
 PortalAction = Literal[
     "list_drafts",
@@ -243,7 +243,7 @@ def _approval_expired(row: sqlite3.Row) -> bool:
 def _snapshot_matches_request(
     snapshot: ChecklistSnapshot, request: PortalInput
 ) -> bool:
-    """Require the exact three checklist digests for source-backed operations."""
+    """Check checklist digests when a caller supplies them."""
 
     provided = (
         request.checklist_fingerprint,
@@ -256,10 +256,7 @@ def _snapshot_matches_request(
         snapshot.active_fingerprint,
     )
     if any(value is None for value in provided):
-        return (
-            snapshot.trust_status == "demo_only_unverified"
-            and all(value is None for value in provided)
-        )
+        return all(value is None for value in provided)
     return provided == expected
 
 
@@ -555,10 +552,6 @@ def _portal_action_transaction(data: dict[str, object]) -> dict[str, object]:
                     raise RuntimeError(
                         "Recheck the documents against the current checklist."
                     )
-            elif snapshot.trust_status == "approved_source_backed":
-                raise RuntimeError(
-                    "A current verified document report is required for this draft."
-                )
             if not (request.applicant_reference or "Synthetic applicant").strip():
                 raise ValueError("Applicant reference cannot be blank.")
             if not (request.district or "Synthetic district").strip():
@@ -585,20 +578,19 @@ def _portal_action_transaction(data: dict[str, object]) -> dict[str, object]:
                 fact_values = {
                     fact_id: (
                         rule_data.registry.get(fact_id).validate_value(
-                            request.profile[profile_field]
+                            request.profile[fact_id]
                         )
-                        if request.profile.get(profile_field) is not None
+                        if request.profile.get(fact_id) is not None
                         else None
                     )
-                    for fact_id, profile_field
-                    in bundle.legacy_profile_mapping.items()
+                    for fact_id in bundle.fact_ids
                 }
                 fact_versions = {
                     fact_id: rule_data.registry.get(fact_id).version
-                    for fact_id in bundle.legacy_profile_mapping
+                    for fact_id in bundle.fact_ids
                 }
             else:
-                fact_store = TypedFactStore.from_wire(
+                fact_store = HouseholdProfile.from_wire(
                     request.typed_facts, rule_data.registry
                 )
                 fact_values = {

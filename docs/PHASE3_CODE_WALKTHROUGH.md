@@ -1,5 +1,12 @@
 # Phase 3 code walkthrough: one conversation, several schemes, safe re-checks
 
+> **Current design (2026-11-09).** IGNWPS, PM-KISAN and IGNOAPS all run on one
+> registry path. The household's answers are held in a typed `HouseholdProfile`
+> (`src/rules/facts.py`), validated against the fact registry and kept in the
+> journey state under `typed_facts`. Where this guide describes fixed profile
+> fields, a legacy adapter, `legacy_compatibility` or profile mappings, it is
+> describing how the first two pilots worked in this phase.
+
 This guide follows the **current** Phase 3 code. It starts with a search
 result, then follows one family through bounded re-searching, a shared
 interview, a rule-engine check for each scheme, a corrected answer, the
@@ -188,7 +195,7 @@ a promise of future form generation.
 | Fact meaning, scope (person/family), type, unit, period, limits | The parser that reads an answer by type |
 | Questions and choice labels in English, Hindi, Marathi | The rule engine and operators |
 | Which facts and rule package a scheme bundle uses, with hashes | The supervisor, budgets, approval and stale marks |
-| Rules (`<scheme>.vN.json`) | Typed store validation (`TypedFactStore.validate_against`) |
+| Rules (`<scheme>.vN.json`) | Typed store validation (`HouseholdProfile.validate_against`) |
 
 The golden rule is unchanged: a model never decides eligibility. At load
 time `RulePackageProvider` checks each rule against its fact (operator, type,
@@ -279,7 +286,7 @@ no saved change. It is retryable (`test_combined_date_answer_reasks_safely_and_i
 Three pins stop an old answer from quietly meaning something new:
 
 1. **Definition pin.** Every stored fact records its `definition_version`.
-   `TypedFactStore.from_wire(...)` and `validate_against` fail if the loaded
+   `HouseholdProfile.from_wire(...)` and `validate_against` fail if the loaded
    definition differs, instead of reading the old value in new terms.
 2. **Scope/bundle pin.** `registry_dependencies()` hashes the *content* of the
    registry, every bundle and every rule package (not just version numbers).
@@ -344,7 +351,7 @@ interpretation, and `eligibility_agent` sets the specialist model to `None`
 when the scheme is registered (a code comment says registry review metadata
 is not permission to disclose applicant-derived verdicts or missing-fact
 names to a model). The test
-`test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure`
+`test_registry_questions_drive_typed_journey_and_resume`
 (line 738) uses a spy planner model and checks that a synthetic answer typed
 in the conversation never appears in what the model was shown. That is one
 tested instance of the rule, not a proof for every path. The privacy metadata
@@ -774,7 +781,7 @@ rerun them; the table lists the ones that matter for Phase 3.
 |---|---|
 | `test_novel_pending_bundle_cannot_masquerade_as_legacy_compatibility` (571) | Only the exact pinned pilots can use the legacy label |
 | `test_explicit_development_loader_accepts_pending_synthetic_bundle` (592) | Synthetic bundle loads only on explicit request |
-| `test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure` (738) | Typed questions, resume, and a spy model not shown an answer |
+| `test_registry_questions_drive_typed_journey_and_resume` (738) | Typed questions, resume, and a spy model not shown an answer |
 | `test_unknown_registry_fact_is_not_reasked_and_saved_definitions_fail_closed` (840) | Unknown stays declined; changed definition cannot reinterpret saved facts |
 | `test_registry_question_metadata_flows_through_journey_http_api` (905) | API sends widget metadata; validation errors; refresh |
 | `test_data_only_multischeme_discovery_sharing_and_typed_correction_through_http` (1044) | Injected search, shared question once, separate scope/period IDs, typed correction (not real retrieval) |

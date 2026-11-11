@@ -1,5 +1,12 @@
 # Phase 2 code walkthrough: a supervisor and a chat that asks questions
 
+> **Current design (2026-11-09).** IGNWPS, PM-KISAN and IGNOAPS all run on one
+> registry path. The household's answers are held in a typed `HouseholdProfile`
+> (`src/rules/facts.py`), validated against the fact registry and kept in the
+> journey state under `typed_facts`. Where this guide describes fixed profile
+> fields, a legacy adapter, `legacy_compatibility` or profile mappings, it is
+> describing how the first two pilots worked in this phase.
+
 This guide explains what Phase 2 built, in plain English. It is written for a
 new developer who has not seen this code before, and who might want to build
 Phase 2 again from scratch. It follows one conversation from the chat box to
@@ -179,7 +186,7 @@ write and test each one alone, in a few minutes, before touching LangGraph.
 
 | Word | Meaning in this project |
 |---|---|
-| **Fact** | One field of `HouseholdProfile`, e.g. `is_widow` or `date_of_birth` |
+| **Fact** | One entry in `HouseholdProfile`, defined in the fact registry, e.g. `is_widow` or `date_of_birth` |
 | **Node** | One step in the graph; an `async` function that gets the state and returns changes |
 | **Edge** | An arrow between nodes. A *conditional* edge picks the next node by reading the state |
 | **State** | The shared dictionary every node reads (`JourneyState`) |
@@ -231,8 +238,8 @@ change the result. This is the main idea of Phase 2.
 ## Step 1: The question picker (`src/workflow/question_picker.py`)
 
 > The registry revision added a sibling, `pick_next_registered_fact`, with the
-> same idea over a `TypedFactStore` (see Step 4B). The text below describes
-> `pick_next_fact`, which the legacy pilots still use.
+> same idea over the typed `HouseholdProfile` (see Step 4B): `pick_next_registered_fact`
+> and, for several schemes, `pick_shared_registered_fact`.
 
 ### What it is
 
@@ -240,7 +247,7 @@ A "picker" is a function that **picks** the next question. It answers one
 question: *"Given what we know so far, what should we ask next, if anything?"*
 
 ```python
-def pick_next_fact(profile, package, skipped_facts=frozenset()) -> str | None:
+def pick_next_registered_fact(profile, package, skipped_facts=frozenset()) -> str | None:
 ```
 
 - **In:** the profile so far (unknown facts are `None`), the scheme's rule
@@ -536,7 +543,7 @@ A few small files build a **fence** around the model using standard LangChain v1
 | [`src/workflow/agent_runtime.py`](../src/workflow/agent_runtime.py) | `run_agent(...)`: builds one LangChain `create_agent` with the middleware stack and runs it. Also `PII_RULES` / `mask_sensitive_text` |
 | [`src/workflow/agent_middleware.py`](../src/workflow/agent_middleware.py) | Saathi's two middleware classes: `DurableBudgetMiddleware` (shared budget) and `ScrubbedTraceMiddleware` (privacy-safe trace) |
 | [`src/workflow/supervisor_agent.py`](../src/workflow/supervisor_agent.py) | The plan specialist: `propose_supervisor_plan` |
-| [`src/workflow/intake_agent.py`](../src/workflow/intake_agent.py) | The initial fact-proposal specialist: `propose_initial_profile_facts` |
+| [`src/workflow/intake_agent.py`](../src/workflow/intake_agent.py) | The initial fact-proposal specialist: `propose_initial_registered_facts` |
 
 The graph gets a model through `build_journey_graph(..., model_provider=...)`. In [`src/api/app.py`](../src/api/app.py) (`lifespan`) the API calls `openrouter_chat_model(api_key, model_name)` if `OPENROUTER_API_KEY` is set, and passes `None` otherwise; with `None` every model step is skipped. Tests pass a `FakeChatModel` subclass ([`tests/fake_chat_model.py`](../tests/fake_chat_model.py)) or use the `fake_openrouter` fixture in `tests/conftest.py`, so no test calls a real model.
 
@@ -674,9 +681,9 @@ The `summary` is a fixed sentence such as *"Typed action completed; its observat
 
 ### Agent 2: the intake agent's fact proposal
 
-> **Legacy pilots only.** This agent proposes `HouseholdProfile` fields. A registry-backed scheme (Step 4B) never runs it; those facts are answered one by one by the person, with no model call.
+> This agent now proposes registered facts through `propose_initial_registered_facts`. Each proposal is shown to the person, and only a confirmed value is saved in `HouseholdProfile`.
 
-`propose_initial_profile_facts(...)` gives the model three tools:
+`propose_initial_registered_facts(...)` gives the model three tools:
 
 1. `read_required_facts(scheme_id)` calls the MCP `required_facts` tool as the `intake` role. It accepts the answer only if every name is a fact the rule package declares. The model also gets `required_fact_names` in its context, but this tool call is what fills the code's `required_facts` set; **proposing before reading is rejected**. The real MCP server returns the list as `{"result": [...]}`, which is what the code reads. The three tool descriptions say "Step 1, always first", "Step 2, only after read_required_facts" and "Step 3": without that, the live model skipped the reading step and intake fell back to the fixed questions.
 2. `propose_profile_facts(facts)` takes at most 12 `{fact_name, value}` items. For each one, code checks, in order:
@@ -820,7 +827,7 @@ Then the interview logic (**New** parts marked):
 
 ```
 First visit only, and only if a description was typed (New):
-└── propose_initial_profile_facts(...)       the fenced model step (Step 3B)
+└── propose_initial_registered_facts(...)       the fenced model step (Step 3B)
       ├── facts proposed → ask the FIRST one as a yes/no confirmation     ─► pause
       └── none / fallback → carry on with the normal questions below
 
@@ -840,7 +847,7 @@ Is there a pending question AND a reply?
 └── no  → (first visit: nothing to read yet)
 
 any proposals still waiting? → confirm the next one                       ─► pause
-next_fact = pick_next_fact(profile, package, skipped)           (code only)
+next_fact = pick_next_registered_fact(profile, package, skipped)           (code only)
 ├── a fact → status "awaiting_answer", question = question_for(fact, locale) ─► pause
 └── None   → status "ready_for_eligibility", report to the supervisor
 ```
@@ -979,9 +986,8 @@ running**; the conversation only exists as saved state in SQLite.
 
 ### Why this exists
 
-The first Phase 2 could only ask facts that were hard-coded fields of
-`HouseholdProfile` (`is_widow`, `date_of_birth`, ...) with hard-coded question
-text in `questions.py`. Every new scheme would have needed new Python for its
+The first Phase 2 could only ask facts that were hard-coded Python fields
+(`is_widow`, `date_of_birth`, ...) with hard-coded question text in `questions.py`. Every new scheme would have needed new Python for its
 questions, its answer reader and its screen widget.
 
 The revised Phase 2 moves that into **data**. A fact is described once in
@@ -997,18 +1003,17 @@ uses them.
 ### Two paths, chosen by one function
 
 `build_journey_graph(...)` now also takes `fact_registry` and `rule_bundles`.
-The inner function `uses_registered_questions(scheme_id)` returns true only when
-both are given **and** the scheme's bundle has an empty `legacy_profile_mapping`.
+Every scheme uses this one path:
 
-| Path | Used by | Facts live in | Questions from | Free-text model help |
-|---|---|---|---|---|
-| **Legacy adapter** | The two pilots, `IGNWPS-MH` and `PM-KISAN-IN` (their bundles carry a profile mapping, and `data_provider.py` pins their exact files and hashes) | `HouseholdProfile` | `questions.py` tables (`question_for`, `parse_answer`) | Yes: the bounded model layer of Steps 3B and 4, unchanged |
-| **Registry** | A bundle with no legacy mapping | `TypedFactStore` in the `typed_facts` state key | The registry (`registry_question_for`, `parse_registered_answer`) | **No model call at all** |
+| | |
+|---|---|
+| Facts live in | `HouseholdProfile`, under the `typed_facts` state key |
+| Questions from | The registry (`registry_question_for`, `parse_registered_answer`) |
+| Free-text help | A reply the code cannot read goes to the bounded model once per fact. The model only proposes a value, and the person confirms it |
+| Description at the start | `propose_initial_registered_facts` proposes facts, confirmed one by one |
 
-The pilots behave exactly as before. The `intake_agent` node calls
-`registered_intake_result` only when `interview` is true, there is one scheme
-(not `multi`), and `uses_registered_questions` is true. Everything else falls
-through to the old code.
+`intake_agent` calls `registered_intake_result` for every interview, and
+`registered_evaluation_input` for a request that sends its answers up front.
 
 ### What a fact definition says (`src/rules/facts.py`)
 
@@ -1070,8 +1075,8 @@ Money-like numbers must not become binary floats. `0.12345678901234567` as a
 JSON number would be rounded by Python's `float`, which could flip an answer
 across a rule threshold. So:
 
-- `TypedFactStore.to_wire` writes a known decimal as `{"$decimal": "0.12345678901234567"}`.
-- `TypedFactStore.from_wire` restores **only** that exact shape (one key, a string
+- `HouseholdProfile.to_wire` writes a known decimal as `{"$decimal": "0.12345678901234567"}`.
+- `HouseholdProfile.from_wire` restores **only** that exact shape (one key, a string
   that matches `DECIMAL_TEXT_PATTERN`). A bare string such as
   `"0.12345678901234567"` is rejected (`Decimal facts require a numeric value`);
   `FactDefinition.validate_value` also rejects a decimal *string*.
@@ -1143,7 +1148,7 @@ What each saved piece holds:
 
 | Saved key | Holds |
 |---|---|
-| `typed_facts` | The `TypedFactStore` wire form: decimals tagged, dates as ISO text |
+| `typed_facts` | The `HouseholdProfile` wire form: decimals tagged, dates as ISO text |
 | `pending_registered_answer` | The small `answer` dict above, then reset to `None` |
 | `conversation` | Masked text of the reply |
 | `skipped_facts` | Fact IDs the person declined; never asked again |
@@ -1207,6 +1212,11 @@ these typed answers to a model.
 
 ### Privacy: pending policy means no model sees the fact
 
+> **Update 2026-11-09:** the reviewer approved the question and privacy status of
+> all registered facts for the synthetic mock, and the privacy check was removed.
+> The registry path now uses the same model help as the legacy path: a proposal
+> is only saved after the person confirms it.
+
 Every new `FactDefinition` carries a `PrivacyPolicy`. A registry fact whose
 policy is `pending` must not be disclosed to a model. The code keeps this simple
 and structural: the registry path has **no model call for facts**. The
@@ -1214,12 +1224,6 @@ and structural: the registry path has **no model call for facts**. The
 not consulted to enable any alternate path; no approved-policy model path
 exists yet.
 
-- `registered_intake_result` never calls `propose_initial_profile_facts` or
-  `interpret_free_text_answer`. A description typed by the user is ignored by
-  this path and cleared (`profile_description: None`,
-  `initial_description_processed: True`) the first time intake returns. It
-  is masked, and sits in the checkpoint written after the supervisor node until
-  then.
 - The supervisor's plan proposal (`propose_supervisor_plan`) sends only plan step
   names; the test spy checks that the description text never appears in the
   messages sent to the model.
@@ -1265,7 +1269,7 @@ production activation, a real scheme, or reviewed policy.
 | Test | What it proves |
 |---|---|
 | `test_registry_question_parser_is_strict_and_localized` | Decimal bounds and localized HI/MR bound hints, `NaN`, `8_0`; integer `81.0` invalid; Hindi label to code; Devanagari date digits; bounded display-only text and localized unknown |
-| `test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure` | Real graph: widget metadata, repeated question on `100.01`, choice labels, refresh via `get_journey`, verdict `eligible`, description not in the model's messages |
+| `test_registry_questions_drive_typed_journey_and_resume` | Real graph: widget metadata, repeated question on `100.01`, choice labels, refresh via `get_journey`, verdict `eligible`, description not in the model's messages |
 | `test_unknown_registry_fact_is_not_reasked_and_saved_definitions_fail_closed` | "I don't know" is declined and listed missing; a changed registry version gives `invalid_input` |
 | `test_registry_question_metadata_flows_through_journey_http_api` | Same flow over HTTP with `TestClient` (Marathi) |
 | `test_decimal_checkpoint_roundtrip_preserves_verdict_boundary` | `$decimal` wire form keeps a verdict at a 17-digit threshold; bare strings are rejected |
@@ -1392,7 +1396,7 @@ proposal is asked: the BPL card.
   *"Please confirm with "yes" or "no"…"*.
 
 **9. Back to the fixed flow.** When no proposals remain, **code** takes over:
-`pick_next_fact` asks the next blank fact the rules still need (Step 1), with
+`pick_next_registered_fact` asks the next blank fact the rules still need (Step 1), with
 `question_for(fact, locale)`. Each answer pauses and resumes as before.
 
 **10. The verdict.** When nothing useful is left to ask, intake sends a typed
@@ -1923,7 +1927,7 @@ unset to test the C0 path for free.
 
 | File | Change |
 |---|---|
-| `src/workflow/question_picker.py` | **New**: `pick_next_fact` |
+| `src/workflow/question_picker.py` | **New**: `pick_next_registered_fact` |
 | `src/workflow/agent_config.py`, `agent_runtime.py`, `supervisor_agent.py`, `intake_agent.py` | **New**: limits and prompts; `run_agent` with its middleware, masking and trace; separate plan and fact-proposal specialists |
 | `src/workflow/questions.py` | **New**: `QUESTIONS`/`LOCALIZED_QUESTIONS`, accepted words, date formats, `ParsedAnswer`, `parse_answer`, `parse_interpreted_answer`, `fact_confirmation` |
 | `src/workflow/supervisor.py` | **New**: `build_initial_plan`, `advance_plan`, `plan_summary`, `SUCCESS_STATUSES`, localized `PLAN_GOALS` |
@@ -1932,7 +1936,7 @@ unset to test the C0 path for free.
 | `src/ui/api_client.py` | New `send_journey_message`, `get_journey_state`; shared `_send` |
 | `src/ui/app.py` | Chat, plan checklist, widow mode choice, refresh restore, language/mode/CSC controls, description box, fallback caption, text in 3 languages; PM-KISAN form removed |
 | Tests | New `test_question_picker.py`, `test_questions.py`, `test_supervisor.py`, `test_planning_and_intake_agents.py`, `test_phase2_api.py`, `test_fact_registry.py` (registry interview); new cases in the journey, API and UI tests |
-| `src/rules/facts.py`, `src/rules/data_provider.py`, `src/rules/bundles.py` | Registry models, `TypedFactStore` wire form, bundle activation (from the registry revision; see Phase 1) |
+| `src/rules/facts.py`, `src/rules/data_provider.py`, `src/rules/bundles.py` | Registry models, `HouseholdProfile` wire form, bundle activation (from the registry revision; see Phase 1) |
 | `src/workflow/questions.py` (revision) | Adds `registry_question_for`, `registered_question_details`, `parse_registered_answer` |
 | `src/workflow/question_picker.py` (revision) | Adds `pick_next_registered_fact` |
 | `src/workflow/journey.py` (revision) | `uses_registered_questions`, `restore_typed_store`, `registered_intake_result`, `QuestionPresentation`, payload parsing in `resume_journey`, registry-aware `ask_user` and `eligibility_agent` |

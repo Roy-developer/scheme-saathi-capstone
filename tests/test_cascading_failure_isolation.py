@@ -45,7 +45,7 @@ from fake_chat_model import FakeChatModel, ModelDecision
 from src.api.eligibility import evaluate_mock_eligibility
 from src.mcp_servers.tools import applications, documents
 from src.rules.data_provider import RulePackageProvider
-from src.rules.models import HouseholdProfile
+from src.rules.facts import HouseholdProfile
 from src.workflow.eligibility_agent import run_eligibility_specialist
 from src.workflow.errors import MCPToolError
 from src.workflow.journey import (
@@ -58,6 +58,7 @@ from src.workflow.journey import (
 )
 
 PACKAGES = RulePackageProvider().packages
+REGISTRY = RulePackageProvider().registry
 SCHEME = "IGNWPS-MH"
 ELIGIBLE_PROFILE = {
     "date_of_birth": "1986-01-01",
@@ -70,9 +71,8 @@ DOCUMENT_REPORT = {
     "scheme_id": SCHEME,
     "documents": {
         "identity_proof": "available",
-        "age_proof": "available",
+        "bank_account_proof": "available",
         "widow_status_proof": "available",
-        "bpl_proof": "available",
     },
 }
 
@@ -157,7 +157,8 @@ def _not_eligible_rule_check(rule_calls):
     async def rule_check():
         rule_calls.append(True)
         return evaluate_mock_eligibility(
-            HouseholdProfile(**NOT_ELIGIBLE_PROFILE), PACKAGES[SCHEME]
+            HouseholdProfile.from_answers(NOT_ELIGIBLE_PROFILE, REGISTRY),
+            PACKAGES[SCHEME],
         )
     return rule_check
 
@@ -214,7 +215,8 @@ def test_rule_tool_verdict_for_a_different_scheme_is_discarded():
     async def wrong_scheme():
         # An "eligible" verdict, but for a different scheme than the task.
         return evaluate_mock_eligibility(
-            HouseholdProfile(**ELIGIBLE_PROFILE), PACKAGES["PM-KISAN-IN"]
+            HouseholdProfile.from_answers(ELIGIBLE_PROFILE, REGISTRY),
+            PACKAGES["PM-KISAN-IN"],
         ).model_copy(update={"result": "eligible"})
 
     result, *_ = asyncio.run(run_eligibility_specialist(
@@ -312,7 +314,9 @@ def test_wrong_intake_proposal_is_not_evaluated_until_the_citizen_confirms():
         answered = await resume_journey(graph, initial.conversation_id, "no")
         # The citizen's answer, not the intake guess, reached the rule engine.
         assert answered.candidate_verdicts[SCHEME].result == "not_eligible"
-        assert rule_calls and all(p["is_widow"] is False for _, p in rule_calls)
+        assert rule_calls and all(
+            p["facts"]["is_widow"]["value"] is False for _, p in rule_calls
+        )
 
     asyncio.run(scenario())
 
@@ -343,7 +347,8 @@ def test_poisoned_eligible_verdict_is_rederived_before_any_portal_write(portal):
             await run_application_task(graph, journey_id, "create_draft", DOCUMENT_REPORT)
         assert caught.value.status_code == 409
         # The refusal came from a fresh rule-engine call on the saved profile...
-        assert len(rule_calls) == 1 and rule_calls[0][1]["is_widow"] is False
+        assert len(rule_calls) == 1
+        assert rule_calls[0][1]["facts"]["is_widow"]["value"] is False
         # Current behaviour worth knowing: the documents step gates only on
         # the saved verdict, so the poisoned claim *did* let it run a
         # read-only checklist check. It is the application step's own rule
@@ -364,7 +369,7 @@ def test_poisoned_eligible_verdict_is_rederived_before_any_portal_write(portal):
 def test_approved_draft_cannot_be_submitted_after_the_profile_changes(portal):
     """Still-eligible but different profile: the old draft is not trusted."""
 
-    tool, _ = portal
+    tool, calls = portal
     graph = _graph(tool, MemorySaver())
 
     async def scenario():
@@ -376,9 +381,9 @@ def test_approved_draft_cannot_be_submitted_after_the_profile_changes(portal):
         # flow, so no portal reconciliation is triggered). It stays eligible.
         config = {"configurable": {"thread_id": str(journey_id)}}
         snapshot = await graph.aget_state(config)
-        await graph.aupdate_state(config, {
-            "profile": {**snapshot.values["profile"], "date_of_birth": "1980-06-15"},
-        })
+        typed_facts = json.loads(json.dumps(snapshot.values["typed_facts"]))
+        typed_facts["facts"]["date_of_birth"]["value"] = "1980-06-15"
+        await graph.aupdate_state(config, {"typed_facts": typed_facts})
 
         # The submit path re-checks the documents against the *current*
         # profile first; the new date of birth changes the document report
@@ -398,9 +403,9 @@ def test_approved_draft_cannot_be_submitted_after_the_profile_changes(portal):
 
 
 def test_approval_under_old_rules_is_dead_once_the_rule_package_changes(portal):
-    """bind_rules sees a new rule fingerprint and revokes the approval."""
+    """A rule-package change blocks submission before it reaches the portal."""
 
-    tool, _ = portal
+    tool, calls = portal
     checkpointer = MemorySaver()
     graph = _graph(tool, checkpointer)
 
@@ -417,12 +422,18 @@ def test_approval_under_old_rules_is_dead_once_the_rule_package_changes(portal):
         }
         updated_graph = _graph(tool, checkpointer, packages=changed)
 
-        with pytest.raises(ApplicationTaskError, match="stale") as caught:
+        with pytest.raises(
+            ApplicationTaskError,
+            match="different fact definition or scheme dependency",
+        ) as caught:
             await run_application_task(updated_graph, journey_id, "submit", identity)
         assert caught.value.status_code == 409
         [draft] = _drafts(journey_id)
-        assert draft["stale"] is True
         assert not draft["receipt_id"]
-        assert draft["approved"] is False
+        assert not any(
+            arguments.get("action") == "submit"
+            for name, arguments in calls
+            if name == "mock_portal"
+        )
 
     asyncio.run(scenario())

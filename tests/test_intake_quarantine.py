@@ -14,16 +14,17 @@ from langchain_core.outputs import ChatGeneration, ChatResult
 
 from fake_chat_model import FakeChatModel, ModelDecision
 from src.rules.data_provider import RulePackageProvider
-from src.rules.models import HouseholdProfile
+from src.rules.facts import HouseholdProfile
 from src.workflow.agent_config import MAX_CONVERSATION_MODEL_CALLS
 from src.workflow.injection_guard import REDACTION_MARK
 from src.workflow.intake_agent import (
     DESCRIPTION_READER_PROMPT,
-    propose_initial_profile_facts,
+    propose_initial_registered_facts,
 )
 
 
 PACKAGES = RulePackageProvider().packages
+REGISTRY = RulePackageProvider().registry
 SCHEME = "IGNWPS-MH"
 # The regex guard catches the first sentence; the second gets past it.
 PLANTED = (
@@ -73,9 +74,10 @@ class RecordingModel(FakeChatModel):
 
 
 def _run(model, description=PLANTED, budget=None, client=None):
-    return asyncio.run(propose_initial_profile_facts(
-        model, client or RuleClient(), "intake", "journey-1", SCHEME, description,
-        HouseholdProfile(), PACKAGES[SCHEME].required_facts, "en", budget,
+    return asyncio.run(propose_initial_registered_facts(
+        model, client or RuleClient(), "intake", SCHEME, description,
+        HouseholdProfile.from_answers({}, REGISTRY), REGISTRY,
+        PACKAGES[SCHEME].required_facts, "en", budget,
     ))
 
 

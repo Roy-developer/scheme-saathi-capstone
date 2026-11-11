@@ -65,7 +65,7 @@ def run_red_team_check(attack: RedTeamCase) -> dict[str, Any]:
             if check.typed_facts is not None:
                 facts = typed_fact_store(check.typed_facts, provider.registry)
             else:
-                facts = profile_from_mapping(check.profile or {})
+                facts = profile_from_mapping(check.profile or {}, provider.registry)
             verdict = evaluate_mock_eligibility(
                 facts, package, registry=provider.registry
             )

@@ -36,7 +36,7 @@ from src.documents.uploads import (
     UploadStore,
 )
 from src.mcp_servers.tools.documents import assess_document_metadata
-from src.rules.models import HouseholdProfile
+from src.rules.facts import HouseholdProfile
 
 router = APIRouter(prefix="/api/v1/journey/{conversation_id}/documents")
 
@@ -129,12 +129,28 @@ def _scheme_report(
 
     if scheme_id not in request.app.state.rule_packages:
         raise HTTPException(status_code=409, detail="This scheme is information-only.")
+    registry = request.app.state.fact_registry
+    typed_facts = values.get("typed_facts")
     try:
-        profile = HouseholdProfile.model_validate(values.get("profile") or {})
-    except ValueError as error:
+        profile = (
+            HouseholdProfile.from_wire(typed_facts, registry)
+            if typed_facts
+            else HouseholdProfile.from_answers(values.get("profile") or {}, registry)
+        )
+    except (KeyError, TypeError, ValueError) as error:
         raise HTTPException(
             status_code=409, detail="The saved profile is invalid."
         ) from error
+
+    def known_value(fact_id: str) -> object | None:
+        fact = profile.facts.get(fact_id)
+        return fact.value if fact is not None and fact.status == "known" else None
+
+    def known_boolean(fact_id: str) -> bool | None:
+        value = known_value(fact_id)
+        return value if type(value) is bool else None
+
+    date_of_birth = known_value("date_of_birth")
     if not inputs.documents and not inputs.document_metadata:
         # After submission the form is gone; reuse what the person last sent.
         saved = (values.get("document_input_reports") or {}).get(scheme_id)
@@ -144,7 +160,6 @@ def _scheme_report(
                 profile_name=saved.get("profile_name"),
                 document_metadata=saved.get("document_metadata") or {},
             )
-    registry = request.app.state.fact_registry
     bundle = request.app.state.rule_bundles.get(scheme_id)
     store = _store(request)
     uploads = store.list_uploads(str(conversation_id))
@@ -176,15 +191,15 @@ def _scheme_report(
                 for document_id, metadata in inputs.document_metadata.items()
             },
             profile_date_of_birth=(
-                profile.date_of_birth.isoformat()
-                if profile.date_of_birth is not None
+                date_of_birth.isoformat()
+                if hasattr(date_of_birth, "isoformat")
                 else None
             ),
             profile_conditions={
-                "is_widow": profile.is_widow,
-                "bpl_card_shown": profile.bpl_card_shown,
+                "is_widow": known_boolean("is_widow"),
+                "bpl_card_shown": known_boolean("bpl_card_shown"),
             },
-            typed_facts=values.get("typed_facts"),
+            typed_facts=typed_facts,
             resolutions=store.list_resolutions(str(conversation_id)),
             extractions=extractions,
         )

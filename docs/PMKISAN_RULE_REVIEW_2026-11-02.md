@@ -3,6 +3,9 @@
 > **Draft evidence review only. Not policy approval or an eligibility
 > decision. Any future implementation must be limited to a synthetic mock
 > unless current official rules and the intended use are separately reviewed.**
+>
+> **Amended 2026-11-09:** the reviewer approved the rules for the synthetic mock
+> only. See the amendment at the end of this document.
 
 ## Review identity
 
@@ -139,3 +142,46 @@ it is not human approval, legal advice, or proof of policy currentness.
 Limitations: the second reviewer did not find a newer consolidated official
 guideline and did not exhaustively crawl for later amendments or review every
 source passage. Thus, its agreement does not resolve the currentness gap.
+
+## Amendment 2026-11-09: approved for the synthetic mock
+
+The review and sign-off above are kept as written. This amendment records the
+reviewer's later decision.
+
+- **Decision:** `Roy-developer` approved all eight rules in
+  `src/rules/packages/pmkisan_in.v1.json`, package version `1.0.0`, status
+  `approved_for_mock_portal`, for the synthetic mock portal only:
+  `PMKISAN-LAND-FAMILY-01`, `PMKISAN-INSTITUTIONAL-LAND-01`,
+  `PMKISAN-OFFICE-HOLDER-01`, `PMKISAN-GOV-EMPLOYEE-01`, `PMKISAN-PENSION-01`,
+  `PMKISAN-INCOME-TAX-01`, `PMKISAN-PROFESSIONAL-01` and `PMKISAN-NRI-01`.
+- **Baseline:** the operational guidelines revised on 2020-03-29.
+- **Earlier condition not met:** this review asked that the landholding cutoff
+  be resolved before any definitive eligibility decision, and the independent
+  review recommended that the package not return an eligible result. The
+  reviewer decided to approve the mock without resolving the cutoff and to keep
+  the "Appears eligible" result with its notice. The disposition above remains
+  `changes_required` for any use beyond the synthetic mock.
+- **Still open:** the current landholding cutoff and transfer rules, whether the
+  2020 definition and exclusions remain current, and State/UT verification of
+  records. The app lists the unresolved checks with each result.
+- **Not included in the rules:** `PMKISAN-LAND-CUTOFF-01` and `PMKISAN-EKYC-01`.
+- **Still pending:** human labels for the provisional development tests, native-
+  speaker review of the questions, and privacy review of the family-member facts.
+- **Update 2026-11-09:** `Roy-developer` set the question and privacy status of all
+  registered facts to approved for the synthetic mock. No separate native-speaker
+  or privacy review was performed.
+- **What changed in the package:** only `approval_status`, `reviewer_name` and
+  `reviewed_at`. No rule, required fact or source changed.
+- **Package SHA-256:** `fb59df9f7420b29d33f5a41d938cdd00f688db742e62cd989f11a948b11137a1` (previously `3e7b14c676a21a878ef5c11a0e2d2fd8e202ff50c40318299d9d644ab20cb4a7`).
+- App approval: `PM-KISAN-IN` approved by `Roy-developer` on 2026-11-09 for package SHA-256 `fb59df9f7420b29d33f5a41d938cdd00f688db742e62cd989f11a948b11137a1`
+
+**Document checklist (2026-11-09):** the demo checklist was replaced by version
+`v2`, built from word-for-word text in the 2020 operational guidelines (sections
+3, 6.1 and 6.2 and the essential farmer attributes) and approved at the
+reviewer's instruction. It records what the guidelines say; land records are
+the State's records and not a paper the applicant submits. Hindi and Marathi
+labels have had no native-speaker review. The guidelines are dated 2020, and
+current portal or eKYC requirements were not established.
+
+This approval does not establish current policy and is not a government
+determination or an individual farmer's verified eligibility.

@@ -15,7 +15,16 @@ from pydantic import Field
 
 from src.api.eligibility import EligibilityResponse, evaluate_mock_eligibility
 from src.rules.data_provider import RulePackageProvider
-from src.rules.models import HouseholdProfile
+from src.rules.data_provider import RulePackageProvider
+from src.rules.facts import HouseholdProfile
+
+_REGISTRY = RulePackageProvider().registry
+
+
+def household_profile(**facts) -> HouseholdProfile:
+    """Confirmed answers for a test, keyed by fact ID."""
+
+    return HouseholdProfile.from_answers(facts, _REGISTRY)
 from fake_chat_model import FakeChatModel, ModelDecision
 from langchain_core.tools import tool
 from src.workflow.agent_runtime import (
@@ -392,7 +401,7 @@ def test_react_intake_observes_allowed_tool_then_confirms_each_fact(caplog):
 
         journey = await resume_journey(graph, journey.conversation_id, "yes")
         expected = evaluate_mock_eligibility(
-            HouseholdProfile(
+            household_profile(
                 date_of_birth=date(1984, 5, 1),
                 application_date=date(2026, 11, 4),
                 is_widow=True,
@@ -689,7 +698,7 @@ def test_initial_profile_proposal_cannot_replace_a_confirmed_fact():
         checkpoint = await graph.aget_state(
             {"configurable": {"thread_id": str(journey.conversation_id)}}
         )
-        assert checkpoint.values["profile"]["is_widow"] is False
+        assert checkpoint.values["typed_facts"]["facts"]["is_widow"]["value"] is False
         assert "bpl_card_shown" in accepted.known_fact_names
 
     asyncio.run(scenario())
@@ -1010,12 +1019,12 @@ def test_fact_interpretation_attempt_survives_correction_and_same_id_restart():
         )
         try:
             journey = await run_journey(restarted_graph, request)
-            assert journey.pending_fact == "is_widow"
-            journey = await resume_journey(
-                restarted_graph, conversation_id, "maybe"
+            assert journey.pending_fact == "bpl_card_shown"
+            restored = await restarted_graph.aget_state(
+                {"configurable": {"thread_id": str(conversation_id)}}
             )
+            assert "is_widow" in restored.values["llm_attempted_facts"]
             assert attempts == ["is_widow"]
-            assert journey.pending_fact == "is_widow"
         finally:
             await restarted_connection.close()
 
@@ -1061,7 +1070,7 @@ def test_intake_reads_required_facts_from_the_real_rule_engine_server():
     from mcp import Client
 
     from src.mcp_servers.rule_engine_server import mcp as rule_engine_server
-    from src.workflow.intake_agent import propose_initial_profile_facts
+    from src.workflow.intake_agent import propose_initial_registered_facts
 
     package = PACKAGES["IGNWPS-MH"]
     provider = ScriptedProvider([
@@ -1071,9 +1080,9 @@ def test_intake_reads_required_facts_from_the_real_rule_engine_server():
 
     async def scenario():
         async with Client(rule_engine_server) as client:
-            return await propose_initial_profile_facts(
-                provider, client, "intake", str(uuid4()), "IGNWPS-MH", "I am a widow.",
-                HouseholdProfile(), package.required_facts, "en", None,
+            return await propose_initial_registered_facts(
+                provider, client, "intake", "IGNWPS-MH", "I am a widow.",
+                household_profile(), _REGISTRY, package.required_facts, "en", None,
             )
 
     _proposals, _budget, trace, status = asyncio.run(scenario())

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "artifact_status": "six_mappings_owner_approved_land_records_pending_owner_decision",
+  "source_inventory": "rule_gold_field_review_inventory.json",
+  "source_catalog": "scheme-saathi-capstone-b_passages_data/data/schemes/onboarding/field_catalog.json",
+  "review_policy": "Six existing-fact mappings were approved by the project owner on 2026-11-11. Approval confirms reuse mappings only; it does not change fact definitions, localizations, or app registry data. The land-record mapping remains unresolved pending a separate owner decision.",
+  "mappings": [
+    {
+      "gold_field_id": "family_has_constitutional_post_holder",
+      "candidate_fact_id": "listed_public_office_member",
+      "recommendation": "approved_reuse_mapping",
+      "status": "owner_approved",
+      "rationale": "Both concern a farmer-family member holding a current or former listed public office. The cited PM-KISAN passage enumerates ministers, legislators, mayors, and District Panchayat chairpersons; confirm the existing fact's listed offices cover the full set."
+    },
+    {
+      "gold_field_id": "family_has_government_employee",
+      "candidate_fact_id": "excluded_government_employee_member",
+      "recommendation": "approved_reuse_mapping",
+      "status": "owner_approved",
+      "rationale": "The existing fact and gold concern serving or retired family-member employees and the same lower-grade exceptions. Confirm the existing definition covers the passage's PSEs, attached/autonomous institutions, and regular local-body employees."
+    },
+    {
+      "gold_field_id": "family_has_pensioner_monthly_10000_or_more",
+      "candidate_fact_id": "pension_at_least_10000_excluding_stated_grades",
+      "recommendation": "approved_reuse_mapping",
+      "status": "owner_approved",
+      "rationale": "The cited PM-KISAN clause matches the candidate fact's family-member scope, monthly INR 10,000 threshold, and stated lower-grade exceptions."
+    },
+    {
+      "gold_field_id": "family_has_registered_professional",
+      "candidate_fact_id": "registered_practicing_professional_member",
+      "recommendation": "approved_reuse_mapping",
+      "status": "owner_approved",
+      "rationale": "The full cited PM-KISAN clause specifies listed professions registered with professional bodies and carrying out practice, matching the candidate fact's family-member scope."
+    },
+    {
+      "gold_field_id": "is_institutional_landholder",
+      "candidate_fact_id": "institutional_landholder",
+      "recommendation": "approved_reuse_mapping",
+      "status": "owner_approved",
+      "rationale": "Both the cited PM-KISAN and PMKMDY exclusions refer directly to institutional landholders."
+    },
+    {
+      "gold_field_id": "is_name_in_land_records",
+      "candidate_fact_id": "landholding_family_in_state_records",
+      "recommendation": "approved_scheme_scoped_split",
+      "status": "split_approved_pm_kisan_only",
+      "scheme_decisions": [
+        {
+          "scheme_id": "PM-KISAN-IN",
+          "decision": "approved_reuse_mapping",
+          "fact_id": "landholding_family_in_state_records",
+          "status": "owner_approved"
+        },
+        {
+          "scheme_id": "PMKMDY-IN",
+          "decision": "use_separate_historical_applicant_fact",
+          "fact_id": "applicant_name_in_land_records_on_2019_08_01",
+          "review_draft": "rule_gold_fact_review_drafts/applicant_name_in_land_records_on_2019_08_01.json",
+          "status": "owner_approved_for_synthetic_mock_use_only_registered",
+          "question_and_privacy_review": "owner_approved_for_synthetic_mock_use_only",
+          "primary_source_verification": "owner_accepts_myscheme_as_final_project_evidence; exact_criterion_not_confirmed_in_official_guidelines"
+        }
+      ],
+      "rationale": "The project owner approved reuse of the family-level State/UT land-record fact for PM-KISAN only, and approved the distinct applicant-scoped PMKMDY fact and English/Hindi/Marathi question drafts. The owner accepts the reviewed myScheme clause as final project evidence despite the official-guidelines cross-check not confirming the exact 2019-08-01 wording; this is not represented as primary-source verification. The fact remains registered for synthetic mock evaluation only. Production intake was requested but cannot be activated under the app's current synthetic-only consent/privacy policy and without a PMKMDY scheme package."
+    },
+    {
+      "gold_field_id": "is_nri",
+      "candidate_fact_id": "nri_new_beneficiary",
+      "recommendation": "approved_reuse_mapping",
+      "status": "owner_approved",
+      "rationale": "The cited PM-KISAN clause explicitly limits the NRI exclusion to new beneficiaries, matching the existing fact's new-application scope. Confirm that the Income Tax Act definition is preserved."
+    }
+  ]
+}

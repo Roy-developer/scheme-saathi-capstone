@@ -1,0 +1,282 @@
+{
+  "version": "0.2.0",
+  "created": "2026-11-09",
+  "status": "23 gold schemes: 15 development, 8 held-out. All 23 human_reviewed (held-out 8 marked on owner instruction 2026-11-10).",
+  "selection_rule": "Quote-verified against passages; few unresolved items; no MISSING FIELD or OR-conflict that blocks full encoding; spread of populations and benefit types; families (e.g. all widow pensions) kept in one split.",
+  "alternates": [
+    "eps",
+    "ipmwcd",
+    "faishl"
+  ],
+  "schemes": [
+    {
+      "draft_file": "rule_gold_drafts/ignwps.json",
+      "scheme_id": "IGNWPS-IN",
+      "split": "development",
+      "family": "widow",
+      "rules": 5,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Central widow pension; age 40-79 band, BPL. In active review (untracked docs/IGNWPS_IN_RULE_REVIEW)."
+    },
+    {
+      "draft_file": "rule_gold_drafts/ignwps_mh.json",
+      "scheme_id": "IGNWPS-MH",
+      "split": "development",
+      "family": "widow",
+      "rules": 4,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Maharashtra widow pension; same band, already used in Reflexion dev work."
+    },
+    {
+      "draft_file": "rule_gold_drafts/nsap_ignoaps.json",
+      "scheme_id": "NSAP-IGNOAPS-IN",
+      "split": "development",
+      "family": "old_age",
+      "rules": 3,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Central old-age pension; age>=60, BPL, citizen."
+    },
+    {
+      "draft_file": "rule_gold_drafts/ignoaps_mh.json",
+      "scheme_id": "IGNOAPS-MH",
+      "split": "development",
+      "family": "old_age",
+      "rules": 4,
+      "unresolved": 1,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "MH old-age pension; age>=65, exclusion on other pension; has a playbook run."
+    },
+    {
+      "draft_file": "rule_gold_drafts/pm_kisan.json",
+      "scheme_id": "PM-KISAN-IN",
+      "split": "development",
+      "family": "farmer",
+      "rules": 10,
+      "unresolved": 3,
+      "rule_review_flags": 2,
+      "review_status": "human_reviewed",
+      "why": "Farmer income support; now includes family exclusions, NRI, cut-off date and land-records rules."
+    },
+    {
+      "draft_file": "rule_gold_drafts/igndpsm.json",
+      "scheme_id": "IGNDPSM-MH",
+      "split": "development",
+      "family": "disability",
+      "rules": 6,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "MH disability pension; 18-79 age band, disability >=80%, 6 rules, 0 unresolved.",
+      "relabelled": "Was held-out; errors were read on 2026-11-10 after E3 run 1, so relabelled development."
+    },
+    {
+      "draft_file": "rule_gold_drafts/igndps.json",
+      "scheme_id": "IGNDPS-IN",
+      "split": "development",
+      "family": "disability",
+      "rules": 5,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Central disability pension; contains a gt-vs-gte 80% CONFLICT, a built-in boundary test once Role 1 settles it.",
+      "relabelled": "Was held-out; errors were read on 2026-11-10 after E3 run 1, so relabelled development."
+    },
+    {
+      "draft_file": "rule_gold_drafts/fadse.json",
+      "scheme_id": "FADSE-MH",
+      "split": "development",
+      "family": "disability_self_employment",
+      "rules": 7,
+      "unresolved": 0,
+      "rule_review_flags": 2,
+      "review_status": "human_reviewed",
+      "why": "7 rules and 4 operators (eq/gte/lt/lte), including an income limit of 1,00,000.",
+      "relabelled": "Was held-out; errors were read on 2026-11-10 after E3 run 1, so relabelled development."
+    },
+    {
+      "draft_file": "rule_gold_drafts/fasetdp.json",
+      "scheme_id": "FASETDP-MH",
+      "split": "development",
+      "family": "disability_training",
+      "rules": 5,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Disability >=40% plus vocational training completed; 5 rules, 0 unresolved.",
+      "relabelled": "Was held-out; errors were read on 2026-11-10 after E3 run 1, so relabelled development."
+    },
+    {
+      "draft_file": "rule_gold_drafts/nfbsm.json",
+      "scheme_id": "NFBSM-MH",
+      "split": "development",
+      "family": "family_benefit",
+      "rules": 5,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "One-time survivor benefit; rule is on the deceased breadwinner's age 18-59, not the applicant's.",
+      "relabelled": "Was held-out; errors were read on 2026-11-10 after E3 run 1, so relabelled development."
+    },
+    {
+      "draft_file": "rule_gold_drafts/apy.json",
+      "scheme_id": "APY-IN",
+      "split": "development",
+      "family": "pension_savings",
+      "rules": 5,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Contributory pension; age 18-40, tax-payer exclusion; end-point inclusion unstated.",
+      "relabelled": "Was held-out; errors were read on 2026-11-10 after E3 run 1, so relabelled development."
+    },
+    {
+      "draft_file": "rule_gold_drafts/pmsby.json",
+      "scheme_id": "PMSBY-IN",
+      "split": "development",
+      "family": "insurance",
+      "rules": 5,
+      "unresolved": 1,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Accident insurance; age 18-70 inclusive, bank account. Institutional-account exclusion and auto-debit consent now encoded.",
+      "relabelled": "Was held-out; errors were read on 2026-11-10 after E3 run 1, so relabelled development."
+    },
+    {
+      "draft_file": "rule_gold_drafts/pmjjby.json",
+      "scheme_id": "PMJJBY-IN",
+      "split": "development",
+      "family": "insurance",
+      "rules": 5,
+      "unresolved": 2,
+      "rule_review_flags": 1,
+      "review_status": "human_reviewed",
+      "why": "Life insurance; age 18-50 inclusive, bank account. Institutional-account exclusion and auto-debit consent now encoded.",
+      "relabelled": "Was held-out; errors were read on 2026-11-10 after E3 run 1, so relabelled development."
+    },
+    {
+      "draft_file": "rule_gold_drafts/pre_dis.json",
+      "scheme_id": "PRE-DIS-IN",
+      "split": "development",
+      "family": "disability_scholarship",
+      "rules": 8,
+      "unresolved": 1,
+      "rule_review_flags": 1,
+      "review_status": "human_reviewed",
+      "why": "Pre-matric disability scholarship; disability>=40%, family income <=2,50,000. Student status, other-scholarship, family-count and repeat-class rules now encoded.",
+      "relabelled": "Was held-out; errors were read on 2026-11-10 after E3 run 1, so relabelled development."
+    },
+    {
+      "draft_file": "rule_gold_drafts/post_dis.json",
+      "scheme_id": "POST-DIS-IN",
+      "split": "development",
+      "family": "disability_scholarship",
+      "rules": 8,
+      "unresolved": 1,
+      "rule_review_flags": 1,
+      "review_status": "human_reviewed",
+      "why": "Post-matric disability scholarship; same rules as pre_dis, kept in same split. Student status, other-scholarship, family-count and repeat-class rules now encoded.",
+      "relabelled": "Was held-out; errors were read on 2026-11-10 after E3 run 1, so relabelled development."
+    },
+    {
+      "draft_file": "rule_gold_drafts/aabym.json",
+      "scheme_id": "AABYM-MH",
+      "split": "heldout",
+      "family": "insurance_labourers",
+      "rules": 7,
+      "unresolved": 0,
+      "rule_review_flags": 1,
+      "review_status": "human_reviewed",
+      "why": "Accident insurance for landless rural labourers; age band, rural, labourer, other-insurance exclusion."
+    },
+    {
+      "draft_file": "rule_gold_drafts/pmkmdy.json",
+      "scheme_id": "PMKMDY-IN",
+      "split": "heldout",
+      "family": "farmer_pension",
+      "rules": 14,
+      "unresolved": 1,
+      "rule_review_flags": 1,
+      "review_status": "human_reviewed",
+      "why": "Contributory farmer pension; age 18-40, land <= 2 ha, social-security and high-status exclusions."
+    },
+    {
+      "draft_file": "rule_gold_drafts/pre_st.json",
+      "scheme_id": "PRE-ST-IN",
+      "split": "heldout",
+      "family": "tribal_school_scholarship",
+      "rules": 7,
+      "unresolved": 1,
+      "rule_review_flags": 1,
+      "review_status": "human_reviewed",
+      "why": "ST pre-matric scholarship; ST status, class IX-X, income limit, other-scholarship and repeat-class exclusions."
+    },
+    {
+      "draft_file": "rule_gold_drafts/tce_sc.json",
+      "scheme_id": "TCE-SC-IN",
+      "split": "heldout",
+      "family": "sc_higher_education",
+      "rules": 6,
+      "unresolved": 2,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "SC top-class education; SC status, income <= 8 lakh, first year, sibling limit."
+    },
+    {
+      "draft_file": "rule_gold_drafts/pg_igssgc.json",
+      "scheme_id": "PG-IGSSGC-IN",
+      "split": "heldout",
+      "family": "girl_postgraduate",
+      "rules": 7,
+      "unresolved": 1,
+      "rule_review_flags": 1,
+      "review_status": "human_reviewed",
+      "why": "Single girl child PG scholarship; only-girl-child, age <= 30, regular PG, distance-mode exclusion."
+    },
+    {
+      "draft_file": "rule_gold_drafts/pmay_u.json",
+      "scheme_id": "PMAY-U-IN",
+      "split": "heldout",
+      "family": "urban_housing",
+      "rules": 5,
+      "unresolved": 1,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Urban housing; urban residence, income ceiling, pucca-house and earlier-housing exclusions."
+    },
+    {
+      "draft_file": "rule_gold_drafts/psgs_dip.json",
+      "scheme_id": "PSGS-DIP-IN",
+      "split": "heldout",
+      "family": "girl_technical_diploma",
+      "rules": 7,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "AICTE girls diploma; admission, family limit, exam-gap years, failure and other-scholarship exclusions."
+    },
+    {
+      "draft_file": "rule_gold_drafts/tfefvs.json",
+      "scheme_id": "TFEFVS-MH",
+      "split": "heldout",
+      "family": "vjnt_fee_reimbursement",
+      "rules": 5,
+      "unresolved": 2,
+      "rule_review_flags": 2,
+      "review_status": "human_reviewed",
+      "why": "VJNT fee reimbursement; category, income band, failures <= 1, post-matric."
+    }
+  ],
+  "not_used_needs_or_logic": [
+    "nsigse",
+    "rassnb",
+    "pmuy2",
+    "sbssps"
+  ]
+}

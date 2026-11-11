@@ -5,6 +5,7 @@ from decimal import Decimal, InvalidOperation
 from graphlib import CycleError, TopologicalSorter
 import math
 import re
+from collections.abc import Mapping
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
@@ -159,7 +160,6 @@ class FactDefinition(StrictDataModel):
     question_reviewer: str | None = Field(default=None, max_length=150)
     questions_reviewed_at: date | None = None
     privacy: PrivacyPolicy
-    legacy_profile_field: str | None = Field(default=None, max_length=80)
 
     @model_validator(mode="before")
     @classmethod
@@ -274,10 +274,6 @@ class FactDefinition(StrictDataModel):
                 raise ValueError("Unsupported derived fact definition")
         elif self.derivation is not None:
             raise ValueError("A derivation requires declared input facts")
-        if self.legacy_profile_field is not None and not FACT_ID_PATTERN.fullmatch(
-            self.legacy_profile_field
-        ):
-            raise ValueError("Invalid legacy profile field")
         return self
 
     def validate_value(self, value: object) -> object:
@@ -346,13 +342,6 @@ class FactRegistry(StrictDataModel):
         if len(ids) != len(set(ids)):
             raise ValueError("Fact registry IDs must be unique")
         by_id = {definition.fact_id: definition for definition in self.definitions}
-        legacy_fields = [
-            item.legacy_profile_field
-            for item in self.definitions
-            if item.legacy_profile_field is not None
-        ]
-        if len(legacy_fields) != len(set(legacy_fields)):
-            raise ValueError("Legacy profile mappings must be unambiguous")
         for definition in self.definitions:
             for input_id in definition.derived_from:
                 if input_id not in by_id:
@@ -410,11 +399,39 @@ class FactState(StrictDataModel):
         return self
 
 
-class TypedFactStore(StrictDataModel):
-    """Registry-versioned values; values are validated before rule evaluation."""
+class HouseholdProfile(StrictDataModel):
+    """A household's answers, typed and validated against the fact registry.
+
+    This is the typed profile kept in journey state. Each entry says whether a
+    fact is known, unknown or declined, so new schemes add registry facts
+    instead of new Python fields.
+    """
 
     registry_version: str
     facts: dict[str, FactState]
+
+    @classmethod
+    def from_answers(
+        cls, answers: Mapping[str, object], registry: FactRegistry,
+    ) -> "HouseholdProfile":
+        """Build a store from confirmed answers keyed by fact ID; None means unknown."""
+
+        facts = {}
+        for fact_id, value in answers.items():
+            if value is None:
+                continue
+            definition = registry.get(fact_id)
+            if definition.value_type == "date" and isinstance(value, str):
+                value = date.fromisoformat(value)
+            facts[fact_id] = FactState(
+                status="known",
+                value=definition.validate_value(value),
+                definition_version=definition.version,
+                provenance="user_reported",
+            )
+        return cls(
+            registry_version=registry.registry_version, facts=facts,
+        ).validate_against(registry)
 
     def to_wire(self, registry: FactRegistry | None = None) -> dict[str, object]:
         """Serialize checkpoint/MCP values without losing decimal precision."""
@@ -439,7 +456,7 @@ class TypedFactStore(StrictDataModel):
         cls,
         data: object,
         registry: FactRegistry,
-    ) -> "TypedFactStore":
+    ) -> "HouseholdProfile":
         """Restore explicitly tagged decimals and validate a wire fact store."""
 
         if not isinstance(data, dict):
@@ -463,11 +480,23 @@ class TypedFactStore(StrictDataModel):
         restored["facts"] = facts
         return cls.model_validate(restored).validate_against(registry)
 
-    def validate_against(self, registry: FactRegistry) -> "TypedFactStore":
-        """Validate all supplied IDs, versions, types, and bounds."""
+    def validate_against(self, registry: FactRegistry) -> "HouseholdProfile":
+        """Validate all supplied IDs, versions, types, and bounds.
+
+        Older fact stores remain readable as long as they carry the same major
+        registry line and a non-newer semver version. That keeps checkpoints and
+        synthetic development fixtures compatible while still rejecting a store
+        from a different major registry.
+        """
 
         if self.registry_version != registry.registry_version:
-            raise ValueError("Fact store uses an incompatible registry version")
+            store_parts = tuple(int(part) for part in self.registry_version.split("."))
+            registry_parts = tuple(int(part) for part in registry.registry_version.split("."))
+            if len(store_parts) != 3 or len(registry_parts) != 3:
+                raise ValueError("Fact store uses an incompatible registry version")
+            if store_parts[0] != registry_parts[0] or store_parts > registry_parts:
+                raise ValueError("Fact store uses an incompatible registry version")
+            self = self.model_copy(update={"registry_version": registry.registry_version})
         for fact_id, state in self.facts.items():
             definition = registry.get(fact_id)
             if definition.derived_from:

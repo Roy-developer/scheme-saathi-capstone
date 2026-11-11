@@ -835,6 +835,44 @@ def test_missing_fact_is_shown_as_its_question_not_its_internal_name() -> None:
         assert "name_on_bpl_list" not in shown
 
 
+def test_registered_question_also_accepts_a_typed_answer() -> None:
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    conversation_id = uuid4()
+    waiting = JourneyResponse(
+        conversation_id=conversation_id,
+        plan="Learn about you -> Check the rules",
+        plan_detail=_plan("in_progress", "pending"),
+        status="awaiting_answer",
+        message="What is your date of birth?",
+        question="What is your date of birth?",
+        pending_fact="date_of_birth",
+        question_definition=QuestionPresentation(
+            fact_id="date_of_birth", value_type="date", choices=[],
+        ),
+        conversation=[{"role": "assistant", "content": "What is your date of birth?"}],
+    )
+    with patch(
+        "src.ui.api_client.get_journey_state", return_value=waiting
+    ), patch(
+        "src.ui.api_client.send_journey_message", side_effect=[waiting],
+    ) as send_reply, patch(
+        "src.ui.api_client.list_application_drafts", return_value=[],
+    ):
+        app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS)
+        app.query_params["conversation"] = str(conversation_id)
+        app.query_params["scheme"] = "IGNOAPS-MH"
+        app.run()
+        assert not app.exception
+        assert app.date_input(key=f"registered_answer_{conversation_id}_date_of_birth")
+
+        app.chat_input[0].set_value("third of march 1950").run()
+
+        assert not app.exception
+        assert [call.args for call in send_reply.call_args_list] == [
+            (str(conversation_id), "third of march 1950"),
+        ]
+
+
 def test_refresh_with_forgotten_conversation_cleans_url() -> None:
     """If the API has nothing saved, the search screen shows as normal."""
 
@@ -855,8 +893,8 @@ def test_refresh_with_forgotten_conversation_cleans_url() -> None:
 @pytest.mark.parametrize(
     ("scheme_id", "expected_label"),
     [
-        ("IGNWPS-MH", "Identity proof (synthetic demo item)"),
-        ("PM-KISAN-IN", "Land record (synthetic demo item)"),
+        ("IGNWPS-MH", "Aadhaar card"),
+        ("PM-KISAN-IN", "Cultivable land recorded in the State/UT land records"),
     ],
 )
 def test_document_action_updates_supervisor_plan_for_both_pilots(

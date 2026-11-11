@@ -13,6 +13,165 @@ the generic runtime exists, but do not claim broad catalogue coverage or mix
 that synthetic package into official/gold counts. No paid retrieval run is
 authorized by this planning update; historical measurements below stay intact.
 
+## Local multilingual embedding and BM25 tuning (2026-11-11)
+
+The capstone guide's minimum-bar evidence for retrieval is Recall@5 on at least
+30 labeled queries before and after a change (PDF p. 3; see
+[`CAPSTONE_PROJECT_GUIDE_REFERENCE.md`](CAPSTONE_PROJECT_GUIDE_REFERENCE.md)).
+It specifies no numerical pass threshold. The following controlled development
+experiments meet that query-count requirement, but are not held-out validation
+or evidence that the full retrieval bar is complete.
+
+All runs below use the same 199-query development set
+(`retrieval_eval_dev.json`), passage corpus, `k=5`, and disabled reranker.
+Labels are development-only; the 156 added English labels received AI-assisted
+review, while the original Hindi and Marathi labels remain provisional.
+
+| Configuration | BM25 k1 / b | Recall@5 | Scheme hit@5 |
+|---|---:|---:|---:|
+| BM25 only | 1.5 / 0.75 | 58.1% | 87.4% |
+| Potion multilingual + BM25 + RRF | 1.5 / 0.75 | 47.2% | 79.4% |
+| MiniLM multilingual + BM25 + RRF | 1.5 / 0.75 | 68.1% | 92.0% |
+| MiniLM multilingual + BM25 + RRF | 0.6 / 0.5 | **69.3%** | **93.5%** |
+
+The selected local model is FastEmbed's
+`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`. Its measured
+Windows cache occupied 240.5 MB versus 506.4 MB for the cached Potion model.
+The best tested BM25 settings are `k1=0.6`, `b=0.5`; a small parameter sweep
+found a modest development-set gain over the defaults (`1.5`, `0.75`). A sweep
+of RRF constants from 5 through 200 did not change Recall@5 for MiniLM.
+
+These are not a protected or independently human-reviewed evaluation. The
+five Hindi and five Marathi queries all target English passages in the corpus,
+and both hybrid models scored 0% Recall@5 for those language groups; this does
+not establish cross-lingual retrieval quality. The experiment also disables
+the reranker, so the scores must not be presented as full-pipeline results.
+Retain the MiniLM/BM25 settings as the current development configuration, and
+validate on independently reviewed, held-out multilingual cases before
+claiming generalization or capstone completion.
+
+An attempted 199-query run with the local BGE cross-encoder enabled did not
+complete: ONNX Runtime failed to allocate memory during reranking, so no
+full-pipeline score was produced. Do not treat the long-running attempt as
+latency evidence for one interactive search. Leave the local reranker
+configuration unchanged; prioritize bilingual corpus and evaluation coverage
+instead.
+
+### Marathi retrieval slice (2026-11-11)
+
+The user chose Marathi instead of the proposed 10-scheme Hindi expansion. The
+corpus already contains Marathi-tagged source passages for three Maharashtra
+schemes: BFFL-MH, EACS-MH, and NSMNY-MH. A 30-query exploratory set is at
+`data/schemes/retrieval_eval_marathi_dev.json` (10 questions per scheme),
+grounded to those Marathi passage IDs.
+
+All 30 questions and their supporting passages received AI-assisted review
+from OpenRouter's free `nvidia/nemotron-3.5-lightning:free` model. Four
+question wordings and one supporting-passage label were revised and
+re-reviewed. The detailed output,
+including the review scope and model, is at
+`data/schemes/retrieval_eval_marathi_dev_ai_review.json`. This is not
+independent bilingual/domain review; the query set and labels remain
+development-only and provisional. Do not claim validated Marathi retrieval
+quality until a Marathi reviewer checks naturalness, source meaning, and
+supporting passage IDs. The corpus also has incomplete passage coverage for
+EACS-MH; its current Marathi text covers benefits, documents, and one
+application statement, not full scheme eligibility or application procedure.
+Keep the scope to the evidence actually present, and add held-out reviewed
+cases before claims of generalization.
+
+The scanned MBOCWW education application form cited for EACS-MH
+(`SRC-EACS-MH-002`, collected 2026-11-04) was rendered and OCR-checked against
+both page images. For scheme E-01, its Marathi benefit, 75% attendance
+certificate, Annexure A document list, and self-attested submission statement
+are already represented by `EACS-MH-BENEFIT-03`,
+`EACS-MH-DOCUMENTS-01/02`, and `EACS-MH-APPLICATION-02`. Its office-use
+checklist also confirms that an actively registered construction worker's
+application includes all required documents; this source-exact Marathi
+statement was added as `EACS-MH-APPLICATION-03` in corpus version `0.3.1`.
+Within EACS-MH, the new passage ranks first in BM25 and in the hybrid top five
+for a matching Marathi query (hybrid rank 2). In an unscoped search across the
+full corpus, it did not appear in the top five, so this check does not show
+that a user can retrieve it without first narrowing to EACS-MH. The form does
+not provide the full application procedure, so the coverage gap above remains.
+
+Follow-up source and discovery check: the myScheme EACS page currently renders
+no scheme details in the accessible page content, and the MBOCWW public page
+checked did not expose an E-01 application procedure. No procedure passages
+were added. On the existing 10-query AI-reviewed Marathi EACS development
+slice, using the normal unscoped BM25+MiniLM search limited to the top 10
+passages, at least one EACS passage appeared for 7/10 queries; the labeled
+relevant passage appeared in the top 10 for 7/10. These are development-only
+checks, not independent review. The search flow has no pre-retrieval scheme
+filter, so EACS misses should be addressed with broader validated Marathi
+retrieval work rather than treating the scheme-scoped smoke test as evidence
+of successful discovery.
+
+Development results on the revised, AI-reviewed 30-query set (`k=5`,
+reranker disabled):
+
+| Configuration | Recall@5 | Scheme hit@5 |
+|---|---:|---:|
+| BM25 only (`k1=0.6`, `b=0.5`) | 65.0% | 90.0% |
+| MiniLM + tuned BM25 + RRF | 51.7% | 86.7% |
+
+These are not a fair quality verdict because the synthetic questions were
+drafted from the same passages used to label them and the review was performed
+by an LLM, not an independent Marathi reviewer. The smoke-test signal remains:
+do not assume embeddings improve Marathi retrieval; BM25-only scored higher on
+this small set.
+
+A BM25-only `k1`/`b` sweep on the same 30 development queries reached its best
+measured Recall@5 at `k1=1.5`, `b=1.0` (78.3%; scheme hit@5 90.0%), compared
+with the current `k1=0.6`, `b=0.5` settings (65.0%; scheme hit@5 90.0%).
+Other nearby settings varied materially, and the set is small, synthetic, and
+AI-reviewed rather than independently reviewed. Do not apply a Marathi-only
+parameter override or replace the shared settings based on this sweep; use it
+only as a tuning hypothesis to test on reviewed, held-out Marathi queries.
+
+Cross-set check of the current settings vs. the Marathi sweep candidate
+(`k=5`, reranker disabled):
+
+| Settings | Set | BM25-only Recall@5 / scheme hit | MiniLM + BM25 + RRF Recall@5 / scheme hit |
+|---|---|---:|---:|
+| Current `0.6 / 0.5` | English development (199) | 58.4% / 86.9% | 69.3% / 93.5% |
+| Candidate `1.5 / 1.0` | English development (199) | 58.9% / 88.4% | 68.1% / 91.5% |
+| Current `0.6 / 0.5` | Marathi draft (30) | 65.0% / 90.0% | 51.7% / 86.7% |
+| Candidate `1.5 / 1.0` | Marathi draft (30) | 78.3% / 90.0% | 56.7% / 76.7% |
+
+The candidate improves BM25-only recall on both sets but reduces hybrid scheme
+hit rate on Marathi and both hybrid metrics on English. Keep the shared
+production settings unchanged; the next useful experiment is retrieval-fusion
+weighting (or BM25-only comparison) after independent Marathi review, not
+promoting the Marathi BM25 optimum to a global hybrid setting.
+
+### Fusion-weight experiment (2026-11-11)
+
+Compared BM25-only, vector-only, and weighted RRF at vector contribution
+weights 0.25, 0.5, 1, 2, and 4 (BM25 contribution held at 1; `k=5`,
+reranker disabled). Each modality contributes one ranking per query variant.
+No application defaults were changed.
+
+| Vector weight | English-heavy dev (199): Recall@5 / scheme hit | Marathi draft (30): Recall@5 / scheme hit |
+|---:|---:|---:|
+| BM25-only (0) | 58.4% / 86.9% | 65.0% / 90.0% |
+| 0.25 | 65.1% / 88.9% | 58.3% / 86.7% |
+| 0.5 | 66.1% / 90.5% | 58.3% / 86.7% |
+| 1 (current equal-weight RRF) | **69.3% / 93.5%** | 51.7% / 86.7% |
+| 2 | 67.1% / 92.5% | 15.0% / 43.3% |
+| 4 | 67.1% / 92.5% | 15.0% / 43.3% |
+| Vector-only | 62.8% / 89.9% | 6.7% / 40.0% |
+
+The English-heavy development set benefits most from equal-weight RRF; the
+Marathi draft set performs best with BM25-only, and increasing vector weight
+quickly degrades Marathi retrieval. In the equal-weight comparison, BM25-only
+retrieved relevant passage(s) for five Marathi queries where RRF did not:
+MR-BFFL-001, MR-BFFL-008, MR-BFFL-009, MR-EACS-005, and MR-NSMNY-007.
+Conversely, vector fusion did not improve Marathi Recall@5 on this sample.
+Because the Marathi set is synthetic and AI-reviewed, use this only as a
+development signal: retain current production settings and, if needed, test
+language-specific BM25 preference against independently reviewed Marathi cases.
+
 ## Search fallback calibration (2026-11-05, branch `supervisor-redesign-3`)
 
 ### The problem

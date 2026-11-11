@@ -10,11 +10,11 @@ from typing import Any, Mapping
 
 from pydantic import ValidationError
 
-from eval.schema import EvalPersona, PersonaEvaluationSet
+from eval.schema import EvalPersona, PersonaEvaluationSet, profile_from_mapping
 from src.api.eligibility import evaluate_mock_eligibility
 from src.rules.data_provider import RulePackageProvider
-from src.rules.facts import FactRegistry, FactState, TypedFactStore
-from src.rules.models import HouseholdProfile, RulePackage
+from src.rules.facts import FactRegistry, FactState, HouseholdProfile
+from src.rules.models import RulePackage
 
 
 def load_persona_evaluation_set(
@@ -71,8 +71,8 @@ def _coerce_fact_value(fact_id: str, value: object) -> object:
 def typed_fact_store(
     typed_facts: Mapping[str, Any],
     registry: FactRegistry,
-) -> TypedFactStore:
-    """Build a TypedFactStore; JSON null means unknown."""
+) -> HouseholdProfile:
+    """Build a registry fact store; JSON null means unknown."""
 
     facts: dict[str, FactState] = {}
     for fact_id, value in typed_facts.items():
@@ -89,7 +89,7 @@ def typed_fact_store(
                 definition_version=definition.version,
                 provenance="user_reported",
             )
-    return TypedFactStore(
+    return HouseholdProfile(
         registry_version=registry.registry_version,
         facts=facts,
     ).validate_against(registry)
@@ -98,14 +98,14 @@ def typed_fact_store(
 def persona_input(
     persona: EvalPersona,
     registry: FactRegistry,
-) -> HouseholdProfile | TypedFactStore:
-    """Prefer typed facts when present; otherwise use the legacy profile."""
+) -> HouseholdProfile:
+    """Build validated registered facts from the persona's input mapping."""
 
     if persona.typed_facts is not None:
         return typed_fact_store(persona.typed_facts, registry)
     if persona.profile is None:
         raise ValueError(f"Persona {persona.persona_id!r} has no profile")
-    return persona.profile
+    return profile_from_mapping(persona.profile, registry)
 
 
 def evaluate_persona_set(

@@ -28,6 +28,7 @@ the `onboard` command.
 | Word | Meaning | Example |
 |---|---|---|
 | Clause | One piece of official scheme text | "All Persons who paid Income Tax in last assessment year." |
+| Household profile | The typed record of a household's answers (`HouseholdProfile`), kept in the journey state | `date_of_birth` known, `name_on_bpl_list` declined |
 | Fact | One thing the app asks about a person or family, defined in `src/rules/fact_registry.json` | `income_tax_paid_last_assessment_year` (yes/no), `age` (number, years) |
 | Rule | One condition on one fact, written so it describes who **qualifies** | `income_tax_paid_last_assessment_year eq false` |
 | Operator | How the fact is compared: `eq` equals, `gte` at least, `lte` at most | `age gte 40`, `age lte 79` |
@@ -318,7 +319,7 @@ Run everything from the repository root, after activating the environment:
 | 1 | **Download the official source and copy its text word for word** | Download the PDF from the scheme's government site, or open its official page. Note the URL, date and page or section. Check it is official: a government domain, a letter or notification number and date, and no chatbot text or word-processor metadata. Copy the exact eligibility wording, including any heading a list item sits under. The project has no PDF reader, so copy from a PDF viewer; for a scanned PDF, type or OCR the text and compare it with the page by eye. A web reader that summarises may cut long sentences, so read the page's raw text. Separate eligibility from benefit amounts and application steps. The reviewer confirms the text. | SJSA Maharashtra page (last updated 29.04.2025): "Eligible elderly individuals aged 65 and above, whose names are on the Below Poverty Line (BPL) list, receive monthly financial assistance under the Indira Gandhi National Old Age Pension Scheme." The age bands (65-79, 80+) only set amounts. Confirmed by the reviewer. A PDF offered as the central guideline turned out to be AI-written (log row 29). | Free |
 | 2 | **Write the source file** | `data/schemes/rule_extraction_sources/<scheme>.json`: scheme ID, source (publisher, URL, retrieved, page date), and one case per clause with `text`, `location`, `allowed_fact_ids`, `topic_tags` (declared in the cases file). No answer key. If a clause is a list item, put its heading first in `text`, word for word, because `extract` reads only `text`. | `ignoaps_mh.json`, one clause `IGNOAPS-MH-ELIGIBILITY-01`, tag `inclusion_clause` | Free |
 | 3 | **Check each condition has a fact that means the same thing** | Compare the wording with each candidate fact's meaning in the registry. A close-but-different fact makes the rule say something the text does not. | The first draft used `bpl_card_shown` ("Can you show a government BPL card?"), the only BPL fact. The text says "names are on the ... BPL list" and mentions no card. | Free |
-| 3b | **If no fact fits, add one (reviewed)** | Add a registry entry: meaning, `value_type`, `scope`, `unit`, questions in en/hi/mr (optional help text), privacy block; leave reviews `pending`. Have an independent model check it; the human reviewer approves the **definition**. Questions wait for a native-speaker check, privacy for a privacy review. Re-pin the registry hash: get it with `(Get-FileHash src/rules/fact_registry.json -Algorithm SHA256).Hash.ToLower()` and replace the old value everywhere in `src/rules/bundle_registry.json` and `src/rules/data_provider.py`; run the tests. No command does this step yet. | Reviewer chose (Option B) a new fact `name_on_bpl_list` (yes/no, person): "no" means not eligible, "don't know" stays unknown. Independent check: approve all parts. Definition approved by `Roy-developer`; help text "If you are not sure, answer 'don't know'" added in all three languages; questions and privacy still pending. IGNWPS keeps its card-based fact. | Free |
+| 3b | **If no fact fits, add one (reviewed)** | Add a registry entry: meaning, `value_type`, `scope`, `unit`, questions in en/hi/mr (optional help text), privacy block; leave reviews `pending`. Have an independent model check it; the human reviewer approves the **definition**. Questions wait for a native-speaker check, privacy for a privacy review. Re-pin the registry hash: get it with `(Get-FileHash src/rules/fact_registry.json -Algorithm SHA256).Hash.ToLower()` and replace the old value everywhere in `src/rules/bundle_registry.json`; run the tests. No command does this step yet. | Reviewer chose (Option B) a new fact `name_on_bpl_list` (yes/no, person): "no" means not eligible, "don't know" stays unknown. Independent check: approve all parts. Definition approved by `Roy-developer`; help text "If you are not sure, answer 'don't know'" added in all three languages; questions and privacy still pending. IGNWPS keeps its card-based fact. | Free |
 | 4 | **Draft the rules with the model** | `python -m src.rule_extraction_reflexion.scheme_rules extract <source file> --playbook 1.0.0 --yes`. Calls `extract_rules` with no answer key: all package checks run; lessons with matching tags go into the prompt. Saved as a draft, never policy. | `age gte 65 years; name_on_bpl_list eq true`; lessons used: 0 (inclusion clause; the only lesson is about exclusions). Saved in `data/runtime/reflexion_drafts/`. | 1 call |
 | 5 | **Reviewer decisions on what the text does not say** | Age measured on which date, inclusive boundaries, what an unknown or missing answer means. These are policy, never extracted. Record them in the source file's `reviewer_decisions`. | Age on the application date; 65 included; BPL "no" means not eligible, "don't know" stays unknown | Free |
 | 6 | **Evidence review** | Follow `.github/skills/review-scheme-evidence/SKILL.md` and its template: source register, rule-by-rule findings with exact quotes, questions for a person, provisional development tests, disposition. Save as `docs/<SCHEME>_RULE_REVIEW_<date>.md`; sign-off stays pending. | `docs/IGNOAPS_MH_RULE_REVIEW_2026-11-08.md`: both rules `supported`; disposition `ready_for_human_review` | Free |
@@ -329,24 +330,23 @@ Run everything from the repository root, after activating the environment:
 | 10 | **Add to the cases file** | One entry per clause in `data/schemes/rule_extraction_cases_dev.json` with `package`, `package_dir` (`data/schemes/reflexion_packages`), `package_sha256` (the script refuses a changed file), `topic_tags`, `context` (`[]` if the heading is already in the text) and a manual `split`. Use `check` if the model already reads it correctly (nothing to learn) or to keep it as a fair demo clause; `learn` only for real mistakes. | `check`: the model's draft matched the approved rules exactly | Free |
 | 11 | **Measure** | `python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --playbook 1.0.0 --runs 3 --yes`. If the model makes real mistakes on `learn` clauses, run `learn`, `review` and `freeze` (see "The steps, end to end"), then measure again. | **18/18 exact** on the six check clauses (the earlier five 15/15, IGNOAPS 3/3) | 1 call per clause per run |
 | 12 | **Record** | Update this guide and the review document; note open questions. | This section; review document sign-off | Free |
-| 13 | **Approve for the app** | A separate decision from step 8. The reviewer, listed in `authorized_reviewers`, has this line added to the review document: ``App approval: `<SCHEME>` approved by `<login>` on <YYYY-MM-DD> for package SHA-256 `<hash>` ``. Any later edit to the package needs a new line. | Approved by `Roy-developer`, 2026-11-08 (amendment in the review document) | Free |
+| 13 | **Decide to put it in the app** | A person decides the scheme is ready. The code no longer checks for a recorded approval; the review document stays as the team's record. | Approved by `Roy-developer`, 2026-11-08 (amendment in the review document) | Free |
 | 14 | **Put it in the app** | By hand or with `onboard`: both are shown below. | Done by hand first; `onboard` was then built and recreates the same files byte for byte | Free |
 | 15 | **Write the document checklist and mock form** | `data/schemes/document_checklists/<SCHEME>.json` and `data/schemes/mock_forms/<SCHEME>.json`, marked `demo_only` until reviewed. A person writes these; `onboard` only reports them if missing. | Demo-only files with three checklist items and two form fields | Free |
 | 16 | **Restart and walk through it** | Start `python -m uvicorn src.api.app:app --reload --port 8000` and `python -m streamlit run src/ui/app.py` in separate terminals. In the browser: search for the scheme, then try eligible, not eligible and "I don't know". Automated tests did not catch the two bugs this found. | Date picker refused old birth dates; an internal note reached users (log rows 35 and 36). The "No" answer, checklist and draft are not yet checked in a browser. | Normal app model calls |
 | 17 | **Re-check the search thresholds** | `python scripts/calibrate_search_fallback.py --record signals.json`, then `--analyse signals.json`. Needed whenever passages change. | Not done yet for IGNOAPS | A few cents |
-| 18 | **Finish the reviews and commit** | Native speakers review the questions, a privacy reviewer checks new facts, and someone reviews the remaining passages. Commit when ready; nothing here deploys by itself. | Questions, privacy and three passages are still pending | Free |
+| 18 | **Finish the reviews and commit** | Native speakers review the questions, a privacy reviewer checks new facts, and someone reviews the remaining passages. Commit when ready; nothing here deploys by itself. | Question and privacy status were approved by the reviewer on 2026-11-09 without a separate native-speaker or privacy review; three passages are still pending | Free |
 
 Total model cost for IGNOAPS: about 20 calls, well under 1 US cent.
 
 **Step 14: by hand or with the command**
 
-Both ways start from the same three inputs:
+Both ways start from the same two inputs:
 
 | Input | Where |
 |---|---|
 | The approved package | `data/schemes/reflexion_packages/` |
 | An `onboarding` block in the source file, listing the search passages | `data/schemes/rule_extraction_sources/<scheme>.json` |
-| The `App approval:` line from step 13 | `docs/<SCHEME>_RULE_REVIEW_<date>.md` |
 
 The `onboarding` block looks like this (one entry per section of the official
 page; `review_status` is set for each passage):
@@ -384,11 +384,11 @@ writes anything.
 
 | # | Job | By hand | `onboard` |
 |---|---|---|---|
-| a | Check the approvals | Confirm the `App approval:` line names the package's current hash and a listed reviewer, `approval_status` is `approved_for_mock_portal`, every fact has `definition_review_status: approved`, and each rule's `source_text` matches the source file | Refuses if any is missing |
+| a | Check the text | Confirm each rule's `source_text` matches the source file | Refuses if it doesn't |
 | b | Move the package | `Move-Item data/schemes/reflexion_packages/<file> src/rules/packages/` | Same |
 | c | Cite the source on each fact | In `src/rules/fact_registry.json`, add the package's `source_url` to `source_refs` on every fact the scheme uses (required facts, rule facts, and what derived facts are built from) | Same |
-| d | Re-pin the registry hash | Only if c changed the file. Run `(Get-FileHash src/rules/fact_registry.json -Algorithm SHA256).Hash.ToLower()` and replace the old value in every bundle in `bundle_registry.json` and in `_LEGACY_PILOT_BINDINGS` in `data_provider.py` | Same |
-| e | Add the bundle | Add an entry to `src/rules/bundle_registry.json`: `scheme_id`, `bundle_version`, `activation_state: approved`, `package_file`, `package_version`, `package_sha256`, `registry_version`, `registry_sha256`, sorted `fact_ids`, `legacy_profile_mapping` (each required fact with a `legacy_profile_field`), sorted `source_clause_ids`, and null `checklist_version` and `mock_form_version` | Same |
+| d | Re-pin the registry hash | Only if c changed the file. Run `(Get-FileHash src/rules/fact_registry.json -Algorithm SHA256).Hash.ToLower()` and replace the old value in every bundle in `bundle_registry.json` | Same |
+| e | Add the bundle | Add an entry to `src/rules/bundle_registry.json`: `scheme_id`, `bundle_version`, `activation_state: approved`, `package_file`, `package_version`, `package_sha256`, `registry_version`, `registry_sha256`, sorted `fact_ids`, sorted `source_clause_ids`, and null `checklist_version` and `mock_form_version` | Same |
 | f | Add the search passages | Add one entry per passage to `data/schemes/passages.json`, with the source details from the package | Same, from the `onboarding` block |
 | g | Update the Reflexion case | In the cases file, remove `package_dir` from the scheme's entries | Same; adds an entry if there is none and reminds you to choose a split |
 | h | Check that it loads | `python -c "from src.rules.data_provider import RulePackageProvider as P; print(sorted(P().bundles))"` | Done on a copy, before writing |
@@ -404,15 +404,8 @@ By hand, take care with these points:
 
 `onboard` refuses, and writes nothing, when:
 
-- the app-approval line is missing, is for different package bytes, or names
-  someone outside `authorized_reviewers`;
-- the package is not human-approved, or a fact definition is not approved;
 - a rule does not quote the source file's text word for word;
 - the app's loader would refuse the result, including for another scheme.
-
-The line in step 13 is needed because a package's `approved_for_mock_portal`
-label cannot show app approval: packages used only as Reflexion answer keys
-carry it too.
 
 `onboard` does not write checklists or forms, choose a `learn` or `check`
 split, or review anything; it lists those under "Still for people". If tests
@@ -530,6 +523,8 @@ were found (2026-11-07). Code-level details and guard tests are in section 15.
 | 38 | 34 test errors appeared after browser testing | A portal server left running on port 8765 was still in use | Stop all local servers before running the test suite | — |
 | 39 | Going live took edits to six files by hand, and a missed step only showed up as a loader error | The steps were mechanical but nothing automated them | Built `scheme_rules.py onboard`; a test undoes IGNOAPS on a copy and requires the command to recreate the hand-made files byte for byte | `tests/test_scheme_onboarding.py` |
 | 40 | A teammate could not use `--playbook 1.0.0` | Playbooks lived only in a git-ignored database on one laptop, so a fresh clone stopped with "Unknown playbook version" | Playbooks are exported to `data/schemes/playbooks/` and copied into the local database on first use; the hash check refuses an altered file; `freeze --base` keeps lessons approved elsewhere | `tests/test_scheme_rules.py` |
+| 41 | The registry path looked like it could replace legacy, but several features still depended on fixed profile fields | Evaluate, the example person, the eligibility API, drafts and discovery were built on those fields | Moved them to the registry-backed `HouseholdProfile` first, then switched the pilots, then deleted the legacy path | `tests/test_registered_intake.py` |
+| 42 | My first free-text code ignored the "no policy, no model" rule | I added model help without checking why the registry path had none | Added a privacy gate; the reviewer then approved all facts and asked for approval-only gates to be removed | Review documents, Update 2026-11-09 |
 ### Known open issues
 
 - **Rejected answers cannot teach.** An answer that fails the package's checks
@@ -551,7 +546,7 @@ were found (2026-11-07). Code-level details and guard tests are in section 15.
 - **IGNOAPS open questions:** central age 60 versus Maharashtra 65,
   citizenship, and non-receipt of other pensions (official central guideline
   not obtained); Hindi/Marathi wording of `name_on_bpl_list` awaits a native
-  speaker, and its privacy review is pending. IGNOAPS is live as a mock scheme
+  speaker. IGNOAPS is live as a mock scheme
   only.
 - **IGNOAPS checks not done in a browser:** the "No" answer (automated tests
   only), the document checklist and the application draft.

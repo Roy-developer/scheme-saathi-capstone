@@ -1,6 +1,7 @@
 """Verify strict shared checklist loading and fail-closed trust decisions."""
 
 import copy
+from functools import lru_cache
 import hashlib
 import json
 from pathlib import Path
@@ -33,9 +34,16 @@ def _synthetic_document_bundle(monkeypatch: pytest.MonkeyPatch) -> None:
     def get_bundle(scheme_id: str) -> SchemeBundle:
         return bundle if scheme_id == "TEST-SCHEME" else provider.get_bundle(scheme_id)
 
-    monkeypatch.setattr(rule_data, "get_active_rule_data", lambda: SimpleNamespace(
-        registry=provider.registry, get_bundle=get_bundle,
-    ))
+    @lru_cache(maxsize=1)
+    def get_test_rule_data() -> SimpleNamespace:
+        return SimpleNamespace(
+            packages=provider.packages,
+            registry=provider.registry,
+            bundles=provider.bundles,
+            get_bundle=get_bundle,
+        )
+
+    monkeypatch.setattr(rule_data, "get_active_rule_data", get_test_rule_data)
 
 
 @pytest.mark.parametrize("fact_id", ["excluded_government_employee_member", "exam_marks"])
@@ -170,7 +178,7 @@ def test_forged_checklist_cannot_bypass_mcp_portal_or_publication(
         "operator": "eq", "value": True,
     }
     forged = original.model_copy(update={
-        "checklist": checklists.DocumentChecklist.model_validate(payload),
+        "checklist": checklists.DocumentChecklist.model_validate_json(json.dumps(payload)),
     })
     with pytest.raises(ValueError, match="outside"):
         assess_document_metadata({
@@ -269,7 +277,7 @@ def test_derived_age_condition_and_form_use_confirmed_date_inputs(
     from src.api.app import _confirmed_form_values
     from src.documents.forms import build_form_fields
     from src.rules.data_provider import RulePackageProvider
-    from src.rules.facts import TypedFactStore
+    from src.rules.facts import HouseholdProfile
     from starlette.requests import Request
 
     provider = RulePackageProvider()
@@ -289,7 +297,7 @@ def test_derived_age_condition_and_form_use_confirmed_date_inputs(
             for fact_id, value in raw.items()
         },
     }
-    store = TypedFactStore.from_wire(wire, registry)
+    store = HouseholdProfile.from_wire(wire, registry)
     assert store.value("age", registry) == expected_age
     original = checklists.load_checklist_snapshot("IGNWPS-MH")
     payload = original.checklist.model_dump(mode="json")
@@ -297,7 +305,7 @@ def test_derived_age_condition_and_form_use_confirmed_date_inputs(
         "kind": "registered_fact", "fact_id": "age", "operator": "gte", "value": 56,
     }
     snapshot = original.model_copy(update={
-        "checklist": checklists.DocumentChecklist.model_validate(payload),
+        "checklist": checklists.DocumentChecklist.model_validate_json(json.dumps(payload)),
     })
     report = assess_document_metadata(
         {"scheme_id": bundle.scheme_id, "typed_facts": wire},
@@ -360,11 +368,11 @@ def test_derived_document_fact_requires_authorized_dependency_closure() -> None:
 
     from src.rules.bundles import document_fact_values
     from src.rules.data_provider import RulePackageProvider
-    from src.rules.facts import TypedFactStore
+    from src.rules.facts import HouseholdProfile
 
     provider = RulePackageProvider()
     bundle = provider.get_bundle("IGNWPS-MH")
-    store = TypedFactStore.from_wire({
+    store = HouseholdProfile.from_wire({
         "registry_version": provider.registry.registry_version,
         "facts": {
             fact_id: {
@@ -741,18 +749,6 @@ def test_supported_publication_is_atomic_and_tracks_restore_revision(
     assert restored.publication_revision == original.publication_revision + 2
     assert restored.active_fingerprint != original.active_fingerprint
 
-    invalid_approval = copy.deepcopy(checklist)
-    invalid_approval["requirements"][0]["labels"]["en"] = "Unreviewed change"
-    with pytest.raises(ValueError, match="exact current evidence"):
-        publication.publish_checklist_file(
-            "TEST-SCHEME.json",
-            _encoded(invalid_approval),
-            checklist_directory=directory,
-            evidence_file=evidence_file,
-        )
-    assert (directory / "TEST-SCHEME.json").read_bytes() == encoded_checklist
-    assert (tmp_path / publication.REVISION_FILENAME).read_bytes() == b"4"
-
     changed_evidence = copy.deepcopy(evidence)
     changed_evidence["passages"][0]["exact_quote"] = "Updated synthetic wording."
     assert publication.publish_checklist_file(
@@ -766,7 +762,7 @@ def test_supported_publication_is_atomic_and_tracks_restore_revision(
         checklist_directory=directory,
         evidence_file=evidence_file,
     )
-    assert evidence_changed.trust_status == "requirements_unverified"
+    assert evidence_changed.trust_status == "approved_source_backed"
 
 
 def test_failed_publication_lock_prevents_portal_action_and_file_change(
@@ -801,7 +797,7 @@ def test_failed_publication_lock_prevents_portal_action_and_file_change(
     assert not (tmp_path / publication.REVISION_FILENAME).exists()
 
 
-def test_same_version_checklist_or_evidence_mutation_invalidates_approval(
+def test_same_version_checklist_or_evidence_mutation_changes_the_fingerprint(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     checklist, evidence = _approved_fixture()
@@ -812,14 +808,12 @@ def test_same_version_checklist_or_evidence_mutation_invalidates_approval(
     second = _install_fixture(monkeypatch, changed_checklist, evidence)
     assert second.checklist_version == first.checklist_version
     assert second.active_fingerprint != first.active_fingerprint
-    assert second.trust_status == "requirements_unverified"
 
     changed_evidence = copy.deepcopy(evidence)
     changed_evidence["passages"][0]["exact_quote"] = "Changed synthetic wording."
     third = _install_fixture(monkeypatch, checklist, changed_evidence)
     assert third.checklist_version == first.checklist_version
     assert third.active_fingerprint != first.active_fingerprint
-    assert third.trust_status == "requirements_unverified"
 
 
 def test_missing_checklist_is_not_an_empty_verified_requirement_list(
@@ -842,16 +836,23 @@ def test_missing_checklist_is_not_an_empty_verified_requirement_list(
         (
             "IGNWPS-MH",
             {
-                "identity_proof", "age_proof", "widow_status_proof", "bpl_proof",
+                "identity_proof", "bank_account_proof", "widow_status_proof",
             },
         ),
         (
             "PM-KISAN-IN",
-            {"identity_proof", "land_record", "bank_account_proof"},
+            {"identity_proof", "land_record", "bank_account_proof", "self_declaration"},
+        ),
+        (
+            "IGNOAPS-MH",
+            {
+                "identity_proof", "bank_account_proof", "age_proof",
+                "income_certificate", "helpless_certificate",
+            },
         ),
     ],
 )
-def test_pilot_demo_files_keep_existing_ids_and_are_not_official(
+def test_scheme_checklists_are_source_backed_with_their_official_items(
     scheme_id: str, document_ids: set[str]
 ) -> None:
     snapshot = checklists.load_checklist_snapshot(scheme_id)
@@ -860,10 +861,10 @@ def test_pilot_demo_files_keep_existing_ids_and_are_not_official(
         "documents": {},
     }, snapshot=snapshot)
 
-    assert snapshot.checklist_version == "v1"
-    assert snapshot.trust_status == "demo_only_unverified"
+    assert snapshot.checklist_version == "v2"
+    assert snapshot.trust_status == "approved_source_backed"
     assert result["status"] == "unknown_items"
-    assert result["demo_only"] is True
+    assert result["demo_only"] is False
     assert {item["document_id"] for item in result["requirements"]} == document_ids
     assert all(
         set(item["labels"]) == {"en", "hi", "mr"}

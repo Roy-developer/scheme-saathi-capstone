@@ -7,3 +7,5 @@ src/rules/fact_registry.json -text
 # Test fixtures pinned the same way (tests/fixtures/phase4/bundle_registry.json).
 tests/fixtures/phase4/packages/*.json -text
 tests/fixtures/phase4/fact_registry.json -text
+# An approved checklist binds the exact bytes of this evidence file.
+data/schemes/document_evidence.json -text

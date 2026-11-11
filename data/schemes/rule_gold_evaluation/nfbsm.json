@@ -1,0 +1,69 @@
+{
+  "scheme_id": "NFBSM-MH",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "human_reviewed",
+  "rules": [
+    {
+      "rule_id": "NFBSM-MH-R01",
+      "kind": "eligibility",
+      "field": "is_below_poverty_line",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
+      "source_quote": "primary bread winner in the BPL Family",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "NFBSM-MH-R02",
+      "kind": "eligibility",
+      "field": "deceased_breadwinner_age",
+      "operator": "gte",
+      "value": 18,
+      "unit": "years",
+      "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
+      "source_quote": "in the age group of 18 to 59 years",
+      "needs_human_review": false,
+      "note": "End values included (project owner decision 2026-11-10)."
+    },
+    {
+      "rule_id": "NFBSM-MH-R03",
+      "kind": "eligibility",
+      "field": "deceased_breadwinner_age",
+      "operator": "lte",
+      "value": 59,
+      "unit": "years",
+      "source_passage_id": "NFBSM-MH-ELIGIBILITY-01",
+      "source_quote": "in the age group of 18 to 59 years",
+      "needs_human_review": false,
+      "note": "End values included (project owner decision 2026-11-10)."
+    },
+    {
+      "rule_id": "NFBSM-MH-R04",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "NFBSM-MH-ELIGIBILITY-02",
+      "source_quote": "The applicant should be a resident of Maharashtra.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "NFBSM-MH-R05",
+      "kind": "eligibility",
+      "field": "is_family_member_of_deceased_breadwinner",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "NFBSM-MH-ELIGIBILITY-03",
+      "source_quote": "The applicant should be a family member or dependent of the deceased breadwinner",
+      "needs_human_review": false,
+      "note": null
+    }
+  ],
+  "unresolved": []
+}
