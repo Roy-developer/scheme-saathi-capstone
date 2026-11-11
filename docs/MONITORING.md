@@ -18,6 +18,13 @@ dashboards use Azure Managed Grafana or a separate Container App.
 
 Verdict label `cant_tell` is normalized to `need_more_information` (engine name).
 
+## Security note
+
+`GET /metrics` is **intentionally unauthenticated** for local demos and internal
+scrapes. Anyone who can reach the BE URL can read counters (traffic shape, scheme
+IDs, rough cost). That is fine for a shared-lab demo; for a public ingress, put
+`/metrics` behind auth, an IP allowlist, or an internal-only route before go-live.
+
 ## Local proof (no Compose)
 
 ```bash
