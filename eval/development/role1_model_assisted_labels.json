@@ -1,11 +1,11 @@
 {
-  "labeller_id": "copilot-check",
+  "labeller_id": "model-assisted-check",
   "status": "model-assisted check; NOT an independent human label; pending Nidhi review",
   "labels": [
     {
       "persona_id": "IGNWPS-DEV-001",
       "scheme_id": "IGNWPS-MH",
-      "copilot_label": "eligible",
+      "model_assisted_label": "eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -14,7 +14,7 @@
     {
       "persona_id": "IGNWPS-DEV-002",
       "scheme_id": "IGNWPS-MH",
-      "copilot_label": "eligible",
+      "model_assisted_label": "eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -23,7 +23,7 @@
     {
       "persona_id": "IGNWPS-DEV-003",
       "scheme_id": "IGNWPS-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -32,7 +32,7 @@
     {
       "persona_id": "IGNWPS-DEV-004",
       "scheme_id": "IGNWPS-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -41,7 +41,7 @@
     {
       "persona_id": "IGNWPS-DEV-005",
       "scheme_id": "IGNWPS-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -50,7 +50,7 @@
     {
       "persona_id": "IGNWPS-DEV-006",
       "scheme_id": "IGNWPS-MH",
-      "copilot_label": "eligible",
+      "model_assisted_label": "eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -59,7 +59,7 @@
     {
       "persona_id": "IGNWPS-DEV-007",
       "scheme_id": "IGNWPS-MH",
-      "copilot_label": "need_more_information",
+      "model_assisted_label": "need_more_information",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -68,7 +68,7 @@
     {
       "persona_id": "IGNWPS-DEV-008",
       "scheme_id": "IGNWPS-MH",
-      "copilot_label": "need_more_information",
+      "model_assisted_label": "need_more_information",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -77,7 +77,7 @@
     {
       "persona_id": "IGNWPS-DEV-009",
       "scheme_id": "IGNWPS-MH",
-      "copilot_label": "need_more_information",
+      "model_assisted_label": "need_more_information",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -86,7 +86,7 @@
     {
       "persona_id": "IGNWPS-DEV-010",
       "scheme_id": "IGNWPS-MH",
-      "copilot_label": "need_more_information",
+      "model_assisted_label": "need_more_information",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -95,7 +95,7 @@
     {
       "persona_id": "IGNWPS-DEV-011",
       "scheme_id": "IGNWPS-MH",
-      "copilot_label": "eligible",
+      "model_assisted_label": "eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -104,7 +104,7 @@
     {
       "persona_id": "IGNWPS-DEV-012",
       "scheme_id": "IGNWPS-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -113,7 +113,7 @@
     {
       "persona_id": "IGNWPS-DEV-013",
       "scheme_id": "IGNWPS-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -122,7 +122,7 @@
     {
       "persona_id": "PMKISAN-DEV-001",
       "scheme_id": "PM-KISAN-IN",
-      "copilot_label": "eligible",
+      "model_assisted_label": "eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -131,7 +131,7 @@
     {
       "persona_id": "PMKISAN-DEV-002",
       "scheme_id": "PM-KISAN-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -140,7 +140,7 @@
     {
       "persona_id": "PMKISAN-DEV-003",
       "scheme_id": "PM-KISAN-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -149,7 +149,7 @@
     {
       "persona_id": "PMKISAN-DEV-004",
       "scheme_id": "PM-KISAN-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -158,7 +158,7 @@
     {
       "persona_id": "PMKISAN-DEV-005",
       "scheme_id": "PM-KISAN-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -167,7 +167,7 @@
     {
       "persona_id": "PMKISAN-DEV-006",
       "scheme_id": "PM-KISAN-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -176,7 +176,7 @@
     {
       "persona_id": "PMKISAN-DEV-007",
       "scheme_id": "PM-KISAN-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -185,7 +185,7 @@
     {
       "persona_id": "PMKISAN-DEV-008",
       "scheme_id": "PM-KISAN-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -194,7 +194,7 @@
     {
       "persona_id": "PMKISAN-DEV-009",
       "scheme_id": "PM-KISAN-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -203,7 +203,7 @@
     {
       "persona_id": "PMKISAN-DEV-010",
       "scheme_id": "PM-KISAN-IN",
-      "copilot_label": "need_more_information",
+      "model_assisted_label": "need_more_information",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -212,7 +212,7 @@
     {
       "persona_id": "PMKISAN-DEV-011",
       "scheme_id": "PM-KISAN-IN",
-      "copilot_label": "need_more_information",
+      "model_assisted_label": "need_more_information",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -221,7 +221,7 @@
     {
       "persona_id": "PMKISAN-DEV-012",
       "scheme_id": "PM-KISAN-IN",
-      "copilot_label": "need_more_information",
+      "model_assisted_label": "need_more_information",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -230,7 +230,7 @@
     {
       "persona_id": "IGNOAPS-DEV-001",
       "scheme_id": "IGNOAPS-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -239,7 +239,7 @@
     {
       "persona_id": "IGNOAPS-DEV-002",
       "scheme_id": "IGNOAPS-MH",
-      "copilot_label": "eligible",
+      "model_assisted_label": "eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -248,7 +248,7 @@
     {
       "persona_id": "IGNOAPS-DEV-003",
       "scheme_id": "IGNOAPS-MH",
-      "copilot_label": "eligible",
+      "model_assisted_label": "eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -257,7 +257,7 @@
     {
       "persona_id": "IGNOAPS-DEV-004",
       "scheme_id": "IGNOAPS-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -266,7 +266,7 @@
     {
       "persona_id": "IGNOAPS-DEV-005",
       "scheme_id": "IGNOAPS-MH",
-      "copilot_label": "need_more_information",
+      "model_assisted_label": "need_more_information",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -275,7 +275,7 @@
     {
       "persona_id": "IGNOAPS-DEV-006",
       "scheme_id": "IGNOAPS-MH",
-      "copilot_label": "need_more_information",
+      "model_assisted_label": "need_more_information",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -284,7 +284,7 @@
     {
       "persona_id": "R1-IGNOAPS-003",
       "scheme_id": "IGNOAPS-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -293,7 +293,7 @@
     {
       "persona_id": "R1-IGNOAPS-006",
       "scheme_id": "IGNOAPS-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -302,7 +302,7 @@
     {
       "persona_id": "R1-PMKISAN-004",
       "scheme_id": "PM-KISAN-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "live rule engine",
@@ -311,7 +311,7 @@
     {
       "persona_id": "R1-GOLD-001",
       "scheme_id": "NSAP-IGNOAPS-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "NSAP-IGNOAPS-IN-R03"
       ],
@@ -322,7 +322,7 @@
     {
       "persona_id": "R1-GOLD-002",
       "scheme_id": "NSAP-IGNOAPS-IN",
-      "copilot_label": "eligible",
+      "model_assisted_label": "eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "draft gold rules",
@@ -331,7 +331,7 @@
     {
       "persona_id": "R1-GOLD-003",
       "scheme_id": "IGNWPS-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "IGNWPS-IN-R01"
       ],
@@ -344,7 +344,7 @@
     {
       "persona_id": "R1-GOLD-004",
       "scheme_id": "IGNWPS-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "IGNWPS-IN-R02"
       ],
@@ -357,7 +357,7 @@
     {
       "persona_id": "R1-GOLD-005",
       "scheme_id": "IGNDPS-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "IGNDPS-IN-R04"
       ],
@@ -368,7 +368,7 @@
     {
       "persona_id": "R1-GOLD-006",
       "scheme_id": "IGNDPS-IN",
-      "copilot_label": "eligible",
+      "model_assisted_label": "eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "draft gold rules",
@@ -377,7 +377,7 @@
     {
       "persona_id": "R1-GOLD-007",
       "scheme_id": "IGNDPSM-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "IGNDPSM-MH-R02"
       ],
@@ -388,7 +388,7 @@
     {
       "persona_id": "R1-GOLD-008",
       "scheme_id": "IGNDPSM-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "IGNDPSM-MH-R06"
       ],
@@ -399,7 +399,7 @@
     {
       "persona_id": "R1-GOLD-009",
       "scheme_id": "NFBSM-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "NFBSM-MH-R02"
       ],
@@ -410,7 +410,7 @@
     {
       "persona_id": "R1-GOLD-010",
       "scheme_id": "NFBSM-MH",
-      "copilot_label": "eligible",
+      "model_assisted_label": "eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "draft gold rules",
@@ -419,7 +419,7 @@
     {
       "persona_id": "R1-GOLD-011",
       "scheme_id": "NFBSM-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "NFBSM-MH-R03"
       ],
@@ -430,7 +430,7 @@
     {
       "persona_id": "R1-GOLD-012",
       "scheme_id": "APY-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "APY-IN-R02"
       ],
@@ -443,7 +443,7 @@
     {
       "persona_id": "R1-GOLD-013",
       "scheme_id": "APY-IN",
-      "copilot_label": "eligible",
+      "model_assisted_label": "eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "draft gold rules",
@@ -452,7 +452,7 @@
     {
       "persona_id": "R1-GOLD-014",
       "scheme_id": "PMSBY-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "PMSBY-IN-R02"
       ],
@@ -465,7 +465,7 @@
     {
       "persona_id": "R1-GOLD-015",
       "scheme_id": "PMJJBY-IN",
-      "copilot_label": "eligible",
+      "model_assisted_label": "eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "draft gold rules",
@@ -474,7 +474,7 @@
     {
       "persona_id": "R1-GOLD-016",
       "scheme_id": "PRE-DIS-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "PRE-DIS-IN-R04"
       ],
@@ -488,7 +488,7 @@
     {
       "persona_id": "R1-GOLD-017",
       "scheme_id": "FADSE-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "FADSE-MH-R05"
       ],
@@ -499,7 +499,7 @@
     {
       "persona_id": "R1-GOLD-018",
       "scheme_id": "POST-DIS-IN",
-      "copilot_label": "eligible",
+      "model_assisted_label": "eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "draft gold rules",
@@ -508,7 +508,7 @@
     {
       "persona_id": "R1-GOLD-019",
       "scheme_id": "POST-DIS-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "POST-DIS-IN-R04"
       ],
@@ -522,7 +522,7 @@
     {
       "persona_id": "R1-GOLD-020",
       "scheme_id": "POST-DIS-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "POST-DIS-IN-R07"
       ],
@@ -536,7 +536,7 @@
     {
       "persona_id": "R1-GOLD-021",
       "scheme_id": "POST-DIS-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "POST-DIS-IN-R03"
       ],
@@ -550,7 +550,7 @@
     {
       "persona_id": "R1-GOLD-022",
       "scheme_id": "FASETDP-MH",
-      "copilot_label": "eligible",
+      "model_assisted_label": "eligible",
       "deciding_rules": [],
       "missing_facts": [],
       "method": "draft gold rules",
@@ -559,7 +559,7 @@
     {
       "persona_id": "R1-GOLD-023",
       "scheme_id": "FASETDP-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "FASETDP-MH-R01"
       ],
@@ -570,7 +570,7 @@
     {
       "persona_id": "R1-GOLD-024",
       "scheme_id": "FADSE-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "FADSE-MH-R03"
       ],
@@ -581,7 +581,7 @@
     {
       "persona_id": "R1-GOLD-025",
       "scheme_id": "FADSE-MH",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "FADSE-MH-R04"
       ],
@@ -592,7 +592,7 @@
     {
       "persona_id": "R1-GOLD-026",
       "scheme_id": "PRE-DIS-IN",
-      "copilot_label": "not_eligible",
+      "model_assisted_label": "not_eligible",
       "deciding_rules": [
         "PRE-DIS-IN-R07"
       ],

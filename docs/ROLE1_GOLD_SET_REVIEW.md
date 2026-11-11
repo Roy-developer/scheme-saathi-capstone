@@ -70,7 +70,7 @@ Open source gaps (I could not verify an official URL from here and will not gues
 - **TFEFVSSSHS-MH, TMDVSO-MH, WMCL-IN:** empty gold drafts; fill them or leave out of the gold set.
 
 ## 4. Persona check against the live engine
-Copilot also labelled all 60 personas from the blank sheet (`eval/development/role1_copilot_check_labels.json`), using the live rule engine for the 3 live schemes and the draft gold rules for the rest. This is a model-assisted check, **not** an independent human label. It found 3 personas (R1-GOLD-013, 015, 018) where an exclusion fact was left unset, which made "eligible" unprovable. Those facts are now set to false in the personas. After that fix all 60 labels match the expected verdicts.
+All 60 personas were also labelled from the blank sheet by a model-assisted check (`eval/development/role1_model_assisted_labels.json`), using the live rule engine for the 3 live schemes and the draft gold rules for the rest. This is a model-assisted check, **not** an independent human label. It found 3 personas (R1-GOLD-013, 015, 018) where an exclusion fact was left unset, which made "eligible" unprovable. Those facts are now set to false in the personas. After that fix all 60 labels match the expected verdicts.
 Of the 60 development personas, 34 expected verdicts concern the 3 live schemes (IGNWPS-MH, IGNOAPS-MH, PM-KISAN-IN). I ran these through the rule engine with typed facts: **33 match**. The one difference (IGNWPS-DEV-007) is wording only: the persona says `cant_tell`, the engine says `need_more_information`. The other 26 personas cover gold-only schemes with no live rule package, so their verdicts come from the draft gold rules and need your independent label.
 
 ## 5. Sign-off (reviewer completes)
