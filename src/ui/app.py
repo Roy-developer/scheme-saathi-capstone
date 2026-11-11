@@ -40,11 +40,7 @@ from src.workflow.agent_config import (
     MAX_CONVERSATION_TOOL_CALLS,
 )
 from src.workflow.journey import JourneyRequest, JourneyResponse
-from src.workflow.questions import (
-    parse_registered_answer,
-    registry_question_for,
-    unknown_answer_label,
-)
+from src.workflow.questions import parse_answer, question_for, unknown_answer_label
 from src.workflow.discovery import discovery_message
 
 
@@ -885,7 +881,7 @@ def render_answer_correction(text: dict[str, str], locale: str) -> None:
     fact_name = st.selectbox(
         text["correction_fact"],
         options=st.session_state.known_fact_names,
-        format_func=lambda value: fact_questions.get(value) or registry_question_for(fact_registry().get(value), locale),
+        format_func=lambda value: fact_questions.get(value) or question_for(value, locale),
         key="correction_fact_name",
     )
     answer = st.text_input(text["correction_answer"], key="correction_answer_value")
@@ -1005,9 +1001,7 @@ def _document_metadata_from_session(
             f"doc-date-{scheme_id}-{document_id}", ""
         ).strip()
         if date_of_birth:
-            parsed = parse_registered_answer(
-                fact_registry().get("date_of_birth"), date_of_birth, locale,
-            )
+            parsed = parse_answer("date_of_birth", date_of_birth, locale)
             if parsed.kind != "value":
                 raise DocumentDateError(document_id)
             date_of_birth = parsed.value.isoformat()

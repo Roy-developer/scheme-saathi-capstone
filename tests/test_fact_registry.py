@@ -94,6 +94,7 @@ def _fact(
             "sensitivity": "ordinary",
             "review_status": "pending",
         },
+        "legacy_profile_field": None,
     }
 
 
@@ -200,6 +201,7 @@ def _write_synthetic_bundle(
                 "registry_version": "1.0.0",
                 "registry_sha256": hashlib.sha256(registry_bytes).hexdigest(),
                 "fact_ids": ["exam_marks", "course_type"],
+                "legacy_profile_mapping": {},
                 "source_clause_ids": ["SYNTHETIC-TEST-CLAUSE"],
             }
         ],
@@ -609,6 +611,26 @@ def test_development_only_bundle_is_not_activated_by_default(
     with pytest.raises(ValueError, match="Development-only bundles"):
         RulePackageProvider(tmp_path / "packages")
 
+
+def test_novel_pending_bundle_cannot_masquerade_as_legacy_compatibility(
+    tmp_path: Path,
+) -> None:
+    """Only exact pinned pilot bundles can use legacy activation semantics."""
+
+    _write_synthetic_bundle(
+        tmp_path,
+        activation_state="legacy_compatibility",
+        scheme_id="SYNTHETIC-SCHOLARSHIP-TEST",
+        create_only=True,
+    )
+    with pytest.raises(
+        ValueError,
+        match="Unrecognized legacy compatibility bundle",
+    ):
+        RulePackageProvider(
+            tmp_path / "packages",
+            allow_development=True,
+        )
 
 
 def test_explicit_development_loader_accepts_pending_synthetic_bundle(
@@ -1103,8 +1125,15 @@ def test_data_only_multischeme_discovery_sharing_and_typed_correction_through_ht
             scheme_id, store, provider.packages, provider.bundles, provider.registry
         )
 
+    class ForbiddenRegistryModel(FakeChatModel):
+        model_name: str = "offline-must-not-disclose"
+
+        async def choose(self, *_args):
+            pytest.fail("Registry answers and derived verdicts must not reach a model")
+
     graph = build_journey_graph(
         object(), provider.packages, eligibility_tool=evaluate, search_tool=search,
+        eligibility_model_provider=ForbiddenRegistryModel(),
         checkpointer=MemorySaver(), fact_registry=provider.registry,
         rule_bundles=provider.bundles,
     )
@@ -1414,6 +1443,7 @@ def _write_mapped_development_bundle(root: Path) -> RulePackageProvider:
 
     _write_synthetic_bundle(root, create_only=True)
     widow = _fact("is_widow", "boolean")
+    widow["legacy_profile_field"] = "is_widow"
     registry_bytes = json.dumps({
         "schema_version": "1.0", "registry_version": "1.0.0",
         "definitions": [widow, _fact("synthetic_flag", "boolean")],
@@ -1434,6 +1464,7 @@ def _write_mapped_development_bundle(root: Path) -> RulePackageProvider:
         "registry_sha256": hashlib.sha256(registry_bytes).hexdigest(),
         "package_sha256": hashlib.sha256(package_bytes).hexdigest(),
         "fact_ids": package["required_facts"],
+        "legacy_profile_mapping": {"is_widow": "is_widow"},
     })
     manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
     return RulePackageProvider(root / "packages", allow_development=True)

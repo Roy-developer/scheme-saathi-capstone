@@ -2,47 +2,37 @@
   "schema_version": "1.0",
   "registry_version": "9.0.0",
   "definitions": [
-    {
-      "fact_id": "exam_ratio",
-      "version": "1.0.0",
-      "meaning": "Synthetic exact examination ratio for precision testing only.",
-      "source_refs": [
-        "https://example.test/synthetic-scholarship"
-      ],
-      "definition_review_status": "pending",
-      "scope": "person",
-      "value_type": "decimal",
-      "unit": "ratio",
-      "period": "most recent synthetic examination",
-      "minimum": 0,
-      "maximum": 1,
-      "questions": {
-        "en": {
-          "text": "What exact synthetic examination ratio should be used?"
-        },
-        "hi": {
-          "text": "कृत्रिम परीक्षा का सटीक अनुपात क्या है?"
-        },
-        "mr": {
-          "text": "कृत्रिम परीक्षेचे अचूक प्रमाण काय आहे?"
-        }
-      },
-      "question_review_status": "pending",
-      "privacy": {
-        "policy_id": "synthetic-only",
-        "version": "1.0.0",
-        "purpose": "Exercise exact decimal values in a development-only form.",
-        "sensitivity": "ordinary",
-        "review_status": "pending"
-      }
-    },
+{
+  "fact_id": "exam_ratio",
+  "version": "1.0.0",
+  "meaning": "Synthetic exact examination ratio for precision testing only.",
+  "source_refs": ["https://example.test/synthetic-scholarship"],
+  "definition_review_status": "pending",
+  "scope": "person",
+  "value_type": "decimal",
+  "unit": "ratio",
+  "period": "most recent synthetic examination",
+  "minimum": 0,
+  "maximum": 1,
+  "questions": {
+    "en": {"text": "What exact synthetic examination ratio should be used?"},
+    "hi": {"text": "कृत्रिम परीक्षा का सटीक अनुपात क्या है?"},
+    "mr": {"text": "कृत्रिम परीक्षेचे अचूक प्रमाण काय आहे?"}
+  },
+  "question_review_status": "pending",
+  "privacy": {
+    "policy_id": "synthetic-only",
+    "version": "1.0.0",
+    "purpose": "Exercise exact decimal values in a development-only form.",
+    "sensitivity": "ordinary",
+    "review_status": "pending"
+  }
+},
     {
       "fact_id": "exam_marks",
       "version": "1.0.0",
       "meaning": "Synthetic scholarship applicant's exam score, expressed as whole marks.",
-      "source_refs": [
-        "https://example.test/synthetic-scholarship"
-      ],
+      "source_refs": ["https://example.test/synthetic-scholarship"],
       "definition_review_status": "pending",
       "scope": "person",
       "value_type": "integer",
@@ -56,15 +46,9 @@
       "derived_from": [],
       "derivation": null,
       "questions": {
-        "en": {
-          "text": "What synthetic exam score should be used?"
-        },
-        "hi": {
-          "text": "कृत्रिम परीक्षा में कितने अंक मिले?"
-        },
-        "mr": {
-          "text": "कृत्रिम परीक्षेत किती गुण मिळाले?"
-        }
+        "en": {"text": "What synthetic exam score should be used?"},
+        "hi": {"text": "कृत्रिम परीक्षा में कितने अंक मिले?"},
+        "mr": {"text": "कृत्रिम परीक्षेत किती गुण मिळाले?"}
       },
       "question_review_status": "pending",
       "privacy": {
@@ -79,9 +63,7 @@
       "fact_id": "exam_stream",
       "version": "1.0.0",
       "meaning": "Synthetic examination subject stream.",
-      "source_refs": [
-        "https://example.test/synthetic-scholarship"
-      ],
+      "source_refs": ["https://example.test/synthetic-scholarship"],
       "definition_review_status": "pending",
       "scope": "person",
       "value_type": "choice",
@@ -89,38 +71,20 @@
       "period": null,
       "minimum": null,
       "maximum": null,
-      "choices": [
-        "science",
-        "arts"
-      ],
+      "choices": ["science", "arts"],
       "choice_labels": {
-        "en": {
-          "science": "Science",
-          "arts": "Arts"
-        },
-        "hi": {
-          "science": "विज्ञान",
-          "arts": "कला"
-        },
-        "mr": {
-          "science": "विज्ञान",
-          "arts": "कला"
-        }
+        "en": {"science": "Science", "arts": "Arts"},
+        "hi": {"science": "विज्ञान", "arts": "कला"},
+        "mr": {"science": "विज्ञान", "arts": "कला"}
       },
       "max_length": null,
       "display_only": false,
       "derived_from": [],
       "derivation": null,
       "questions": {
-        "en": {
-          "text": "Which synthetic examination stream applies?"
-        },
-        "hi": {
-          "text": "कौन-सी कृत्रिम परीक्षा धारा लागू होती है?"
-        },
-        "mr": {
-          "text": "कोणती कृत्रिम परीक्षा शाखा लागू होते?"
-        }
+        "en": {"text": "Which synthetic examination stream applies?"},
+        "hi": {"text": "कौन-सी कृत्रिम परीक्षा धारा लागू होती है?"},
+        "mr": {"text": "कोणती कृत्रिम परीक्षा शाखा लागू होते?"}
       },
       "question_review_status": "pending",
       "privacy": {
@@ -135,9 +99,7 @@
       "fact_id": "guardian_consent",
       "version": "1.0.0",
       "meaning": "Synthetic guardian confirmation provided for the practice form.",
-      "source_refs": [
-        "https://example.test/synthetic-scholarship"
-      ],
+      "source_refs": ["https://example.test/synthetic-scholarship"],
       "definition_review_status": "pending",
       "scope": "person",
       "value_type": "boolean",
@@ -151,15 +113,9 @@
       "derived_from": [],
       "derivation": null,
       "questions": {
-        "en": {
-          "text": "Is the synthetic guardian confirmation available?"
-        },
-        "hi": {
-          "text": "क्या कृत्रिम अभिभावक पुष्टि उपलब्ध है?"
-        },
-        "mr": {
-          "text": "कृत्रिम पालकाची पुष्टी उपलब्ध आहे का?"
-        }
+        "en": {"text": "Is the synthetic guardian confirmation available?"},
+        "hi": {"text": "क्या कृत्रिम अभिभावक पुष्टि उपलब्ध है?"},
+        "mr": {"text": "कृत्रिम पालकाची पुष्टी उपलब्ध आहे का?"}
       },
       "question_review_status": "pending",
       "privacy": {

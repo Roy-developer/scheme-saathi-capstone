@@ -57,6 +57,68 @@ class RulePackageModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class HouseholdProfile(RulePackageModel):
+    """Synthetic household facts shared by every scheme check.
+
+    Each fact is optional: ``None`` means "not known yet", which the engine
+    reports as missing information instead of treating it as a "no".
+    """
+
+    date_of_birth: date | None = None
+    application_date: date | None = None
+    is_widow: bool | None = None
+    bpl_card_shown: bool | None = None
+    landholding_family_in_state_records: bool | None = None
+    institutional_landholder: bool | None = None
+    listed_public_office_member: bool | None = None
+    excluded_government_employee_member: bool | None = None
+    pension_at_least_10000_excluding_stated_grades: bool | None = None
+    income_tax_paid_last_assessment_year: bool | None = None
+    registered_practicing_professional_member: bool | None = None
+    nri_new_beneficiary: bool | None = None
+
+    @model_validator(mode="after")
+    def validate_dates(self) -> "HouseholdProfile":
+        """Reject impossible dates once both dates are known.
+
+        Runs automatically after Pydantic fills the fields.
+        """
+
+        # With one date missing we cannot compare them, so allow it.
+        if self.date_of_birth is None or self.application_date is None:
+            return self
+        # Nobody can apply before they are born.
+        if self.date_of_birth > self.application_date:
+            raise ValueError("date_of_birth cannot be after application_date")
+        # Catch typos such as a birth year of 1806 instead of 1986.
+        if calculate_age_on(self.date_of_birth, self.application_date) > 125:
+            raise ValueError("age on application_date cannot exceed 125")
+        return self
+
+    @property
+    def age(self) -> int | None:
+        """Return completed age on the application date, if both are known.
+
+        Age is calculated, never stored, so it cannot disagree with the dates.
+        """
+
+        if self.date_of_birth is None or self.application_date is None:
+            return None
+        return calculate_age_on(self.date_of_birth, self.application_date)
+
+    def fact_value(self, fact: str) -> bool | int | None:
+        """Return a raw or derived fact by name; ``None`` means unknown.
+
+        The engine calls this for every rule, so "age" and normal fields
+        can be read the same way.
+        """
+
+        if fact == "age":
+            return self.age
+        # getattr reads a field by its name, e.g. getattr(p, "is_widow").
+        return getattr(self, fact)
+
+
 class RuleSource(RulePackageModel):
     """Source provenance for the policy statements encoded in a rule package."""
 

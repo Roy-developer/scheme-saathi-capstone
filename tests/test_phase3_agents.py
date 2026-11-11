@@ -15,16 +15,7 @@ from langgraph.store.memory import InMemoryStore
 from src.api.eligibility import evaluate_mock_eligibility
 from src.api.scheme_search import SchemePassage
 from src.rules.data_provider import RulePackageProvider
-from src.rules.data_provider import RulePackageProvider
-from src.rules.facts import TypedFactStore
-
-_REGISTRY = RulePackageProvider().registry
-
-
-def HouseholdProfile(**facts) -> TypedFactStore:
-    """Confirmed answers for a test, keyed by fact ID."""
-
-    return TypedFactStore.from_answers(facts, _REGISTRY)
+from src.rules.models import HouseholdProfile
 from src.mcp_servers.tools import applications, documents
 from src.workflow.agent_config import MAX_CONVERSATION_MODEL_CALLS, MAX_CONVERSATION_TOOL_CALLS
 from fake_chat_model import FakeChatModel, ModelDecision
@@ -284,10 +275,7 @@ def test_discovery_uses_supported_inputs_without_inferred_state_or_gender(monkey
     unknown = discovery_input({}, None, "hi")
     assert unknown.model_dump() == {"query": "", "language": "hi", "limit": 20}
     profile = HouseholdProfile(**PROFILE)
-    known = discovery_input(
-        {fact_id: fact.value for fact_id, fact in profile.facts.items()},
-        profile.value("age", _REGISTRY), "mr",
-    )
+    known = discovery_input(profile.model_dump(), profile.age, "mr")
     assert known.query == "widow pension age 40"
     assert known.language == "mr"
     calls = []

@@ -4,36 +4,18 @@ from datetime import date
 
 import pytest
 
-from src.rules.data_provider import RulePackageProvider
+from src.rules.models import HouseholdProfile
 from src.workflow.questions import (
-    parse_interpreted_registered_answer,
-    parse_registered_answer,
-    registered_fact_confirmation,
-    registry_question_for,
+    QUESTIONS,
+    fact_confirmation,
+    parse_answer,
+    parse_interpreted_answer,
+    question_for,
 )
 
-_REGISTRY = RulePackageProvider().registry
 
-
-def parse_answer(fact, reply, locale="en"):
-    return parse_registered_answer(_REGISTRY.get(fact), reply, locale)
-
-
-def parse_interpreted_answer(fact, value, locale="en"):
-    return parse_interpreted_registered_answer(_REGISTRY.get(fact), value, locale)
-
-
-def question_for(fact, locale="en"):
-    return registry_question_for(_REGISTRY.get(fact), locale)
-
-
-def fact_confirmation(fact, value, locale="en"):
-    return registered_fact_confirmation(_REGISTRY.get(fact), value, locale)
-
-
-def test_every_registered_fact_has_a_question_in_each_language():
-    for definition in _REGISTRY.definitions:
-        assert set(definition.questions) == {"en", "hi", "mr"}
+def test_every_profile_fact_has_a_question():
+    assert set(QUESTIONS) == set(HouseholdProfile.model_fields)
 
 
 @pytest.mark.parametrize(

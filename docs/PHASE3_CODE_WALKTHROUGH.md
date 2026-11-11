@@ -1,11 +1,5 @@
 # Phase 3 code walkthrough: one conversation, several schemes, safe re-checks
 
-> **Update 2026-11-09:** the legacy path described in this guide has been removed.
-> IGNWPS and PM-KISAN now use the registry path like every other scheme, so
-> `HouseholdProfile`, `legacy_compatibility`, `legacy_profile_mapping` and the
-> pinned pilot list no longer exist. Sections below are kept as the history of
-> how the project got here.
-
 This guide follows the **current** Phase 3 code. It starts with a search
 result, then follows one family through bounded re-searching, a shared
 interview, a rule-engine check for each scheme, a corrected answer, the

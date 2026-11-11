@@ -49,7 +49,8 @@
         "review_status": "approved",
         "reviewer": "Roy-developer",
         "reviewed_at": "2026-11-09"
-      }
+      },
+      "legacy_profile_field": null
     },
     {
       "fact_id": "application_date",
@@ -95,7 +96,8 @@
         "review_status": "approved",
         "reviewer": "Roy-developer",
         "reviewed_at": "2026-11-09"
-      }
+      },
+      "legacy_profile_field": "application_date"
     },
     {
       "fact_id": "bpl_card_shown",
@@ -140,7 +142,8 @@
         "review_status": "approved",
         "reviewer": "Roy-developer",
         "reviewed_at": "2026-11-09"
-      }
+      },
+      "legacy_profile_field": "bpl_card_shown"
     },
     {
       "fact_id": "date_of_birth",
@@ -186,7 +189,8 @@
         "review_status": "approved",
         "reviewer": "Roy-developer",
         "reviewed_at": "2026-11-09"
-      }
+      },
+      "legacy_profile_field": "date_of_birth"
     },
     {
       "fact_id": "excluded_government_employee_member",
@@ -231,7 +235,8 @@
         "review_status": "approved",
         "reviewer": "Roy-developer",
         "reviewed_at": "2026-11-09"
-      }
+      },
+      "legacy_profile_field": "excluded_government_employee_member"
     },
     {
       "fact_id": "income_tax_paid_last_assessment_year",
@@ -276,7 +281,8 @@
         "review_status": "approved",
         "reviewer": "Roy-developer",
         "reviewed_at": "2026-11-09"
-      }
+      },
+      "legacy_profile_field": "income_tax_paid_last_assessment_year"
     },
     {
       "fact_id": "institutional_landholder",
@@ -321,7 +327,8 @@
         "review_status": "approved",
         "reviewer": "Roy-developer",
         "reviewed_at": "2026-11-09"
-      }
+      },
+      "legacy_profile_field": "institutional_landholder"
     },
     {
       "fact_id": "is_widow",
@@ -366,7 +373,8 @@
         "review_status": "approved",
         "reviewer": "Roy-developer",
         "reviewed_at": "2026-11-09"
-      }
+      },
+      "legacy_profile_field": "is_widow"
     },
     {
       "fact_id": "landholding_family_in_state_records",
@@ -411,7 +419,8 @@
         "review_status": "approved",
         "reviewer": "Roy-developer",
         "reviewed_at": "2026-11-09"
-      }
+      },
+      "legacy_profile_field": "landholding_family_in_state_records"
     },
     {
       "fact_id": "listed_public_office_member",
@@ -456,7 +465,8 @@
         "review_status": "approved",
         "reviewer": "Roy-developer",
         "reviewed_at": "2026-11-09"
-      }
+      },
+      "legacy_profile_field": "listed_public_office_member"
     },
     {
       "fact_id": "name_on_bpl_list",
@@ -504,7 +514,8 @@
         "review_status": "approved",
         "reviewer": "Roy-developer",
         "reviewed_at": "2026-11-09"
-      }
+      },
+      "legacy_profile_field": null
     },
     {
       "fact_id": "nri_new_beneficiary",
@@ -549,7 +560,8 @@
         "review_status": "approved",
         "reviewer": "Roy-developer",
         "reviewed_at": "2026-11-09"
-      }
+      },
+      "legacy_profile_field": "nri_new_beneficiary"
     },
     {
       "fact_id": "pension_at_least_10000_excluding_stated_grades",
@@ -594,7 +606,8 @@
         "review_status": "approved",
         "reviewer": "Roy-developer",
         "reviewed_at": "2026-11-09"
-      }
+      },
+      "legacy_profile_field": "pension_at_least_10000_excluding_stated_grades"
     },
     {
       "fact_id": "registered_practicing_professional_member",
@@ -639,7 +652,8 @@
         "review_status": "approved",
         "reviewer": "Roy-developer",
         "reviewed_at": "2026-11-09"
-      }
+      },
+      "legacy_profile_field": "registered_practicing_professional_member"
     }
   ]
 }

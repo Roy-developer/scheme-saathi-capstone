@@ -67,6 +67,9 @@ def before(live_copy: ProjectPaths) -> ProjectPaths:
     for bundle in bundles["bundles"]:
         bundle["registry_sha256"] = old_sha
     paths.bundle_registry.write_bytes(_json_like(bundles_raw, bundles))
+    paths.data_provider.write_bytes(
+        paths.data_provider.read_bytes().replace(new_sha.encode(), old_sha.encode())
+    )
 
     paths.passages_file(SCHEME).unlink()
 

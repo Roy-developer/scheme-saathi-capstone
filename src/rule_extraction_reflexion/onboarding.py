@@ -73,6 +73,10 @@ class ProjectPaths:
         return self.rules / "bundle_registry.json"
 
     @property
+    def data_provider(self) -> Path:
+        return self.rules / "data_provider.py"
+
+    @property
     def schemes(self) -> Path:
         return self.root / "data" / "schemes"
 
@@ -189,6 +193,11 @@ def _bundle_entry(
     facts: dict[str, FactDefinition],
     registry: FactRegistry,
 ) -> dict:
+    mapping = {
+        fact_id: registry.get(fact_id).legacy_profile_field
+        for fact_id in package.required_facts
+        if registry.get(fact_id).legacy_profile_field is not None
+    }
     return {
         "scheme_id": package.scheme_id,
         "bundle_version": package.package_version,
@@ -199,6 +208,7 @@ def _bundle_entry(
         "registry_version": registry_version,
         "registry_sha256": registry_sha,
         "fact_ids": list(facts),
+        "legacy_profile_mapping": mapping,
         "source_clause_ids": sorted({rule.source_clause_id for rule in package.rules}),
         "checklist_version": None,
         "mock_form_version": None,
@@ -381,10 +391,12 @@ def plan_onboarding(scheme_id: str, paths: ProjectPaths) -> OnboardingPlan:
     ]
     if cited:
         changes[paths.fact_registry] = new_registry
+        provider_raw = paths.data_provider.read_bytes()
+        changes[paths.data_provider] = provider_raw.replace(old_sha.encode(), new_sha.encode())
         summary += [
             f"Cite the scheme's source on: {', '.join(cited)}",
             f"Re-pin the registry hash: {old_sha[:12]} -> {new_sha[:12]} "
-            "(all bundles)",
+            "(all bundles, and the pilot list in data_provider.py)",
         ]
 
     _check_in_a_copy(paths, scheme_id, changes)

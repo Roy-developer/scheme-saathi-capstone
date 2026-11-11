@@ -20,15 +20,17 @@ class SchemeBundle(StrictDataModel):
 
     scheme_id: str = Field(min_length=1, max_length=80)
     bundle_version: str = Field(min_length=1, max_length=40)
+    # legacy_compatibility: the two original pilots, pinned in code.
     # development_only: test bundles; refused by the live loader.
     # approved: a live scheme, checked for consistency but not pinned in code.
-    activation_state: Literal["development_only", "approved"]
+    activation_state: Literal["legacy_compatibility", "development_only", "approved"]
     package_file: str = Field(min_length=1, max_length=120)
     package_version: str = Field(min_length=1, max_length=40)
     package_sha256: str
     registry_version: str = Field(min_length=1, max_length=40)
     registry_sha256: str
     fact_ids: tuple[str, ...] = Field(min_length=1)
+    legacy_profile_mapping: dict[str, str] = Field(default_factory=dict)
     source_clause_ids: tuple[str, ...] = Field(min_length=1)
     checklist_version: str | None = None
     mock_form_version: str | None = None
@@ -61,6 +63,10 @@ class SchemeBundle(StrictDataModel):
             raise ValueError("Bundle fact IDs must be unique")
         if len(self.source_clause_ids) != len(set(self.source_clause_ids)):
             raise ValueError("Bundle source clause IDs must be unique")
+        if len(set(self.legacy_profile_mapping.values())) != len(
+            self.legacy_profile_mapping
+        ):
+            raise ValueError("Legacy profile mappings must be unambiguous")
         return self
 
 

@@ -5,22 +5,8 @@ from datetime import date
 import pytest
 
 from src.rules.data_provider import RulePackageProvider
-from src.rules.facts import TypedFactStore
-from src.workflow.question_picker import pick_next_registered_fact, pick_shared_registered_fact
-
-_REGISTRY = RulePackageProvider().registry
-
-
-def HouseholdProfile(**facts) -> TypedFactStore:
-    return TypedFactStore.from_answers(facts, _REGISTRY)
-
-
-def pick_next_fact(profile, package, skipped=frozenset()):
-    return pick_next_registered_fact(profile, package, _REGISTRY, skipped)
-
-
-def pick_shared_fact(profile, packages, skipped=frozenset()):
-    return pick_shared_registered_fact(profile, packages, _REGISTRY, skipped)
+from src.rules.models import HouseholdProfile
+from src.workflow.question_picker import pick_next_fact, pick_shared_fact
 
 APPLICATION_DATE = date(2026, 10, 30)
 packages = RulePackageProvider()
@@ -28,7 +14,7 @@ WIDOW = packages.get("IGNWPS-MH")
 PMKISAN = packages.get("PM-KISAN-IN")
 
 
-def widow_profile(**facts) -> TypedFactStore:
+def widow_profile(**facts) -> HouseholdProfile:
     """Build a widow-pension profile with the fixed application date."""
 
     return HouseholdProfile(application_date=APPLICATION_DATE, **facts)

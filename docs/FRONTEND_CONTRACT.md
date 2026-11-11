@@ -46,15 +46,17 @@ Registry-backed interviews also accept `candidate_scheme_ids`. Questions are
 selected deterministically from the loaded rules, preferring the missing
 registered input shared by the most unresolved candidates; ties retain candidate
 and rule order. Only the same ID in the same pinned registry shares an answer,
-never a similar question label. All interviews use the same bounded models;
-a model's proposal is only saved after the person confirms it. Synthetic
-development bundles are explicitly injected only in offline tests.
+never a similar question label. Registry answers and derived verdicts are not
+sent to eligibility models. Legacy-only interviews retain their bounded models.
+Production novel-bundle activation remains denied; synthetic development bundles
+are explicitly injected only in offline tests.
 
 Corrections accept registered fact IDs and use their exact number, integer,
 date, boolean, finite-choice or explicit-unknown parser. Decimal values retain
 the tagged `$decimal` checkpoint/MCP representation; the correction request
 continues to send the user's exact answer text. Additive `fact_questions` maps
 correctable IDs to localized registry question labels, without answer values.
+Legacy correction controls remain compatible.
 
 Development bundles remain on typed intake even when they explicitly map some
 facts to legacy profile fields; only loader-validated pinned compatibility
@@ -63,9 +65,11 @@ against the complete typed store and mapped profile before a resume or
 invalidation write. A conflicting date answer reissues the question safely,
 without saving an invalid fact or losing the ability to retry.
 
-Interviews use bounded confirmed-fact discovery, using only confirmed registered
-facts. Discovery runs before choosing the next question, including after
-corrections, and can introduce more candidate schemes. Existing supported language/limit arguments, durable search attempts,
+Both intake paths share the same bounded confirmed-fact discovery. Registry
+intake supplies only explicitly mapped, validated legacy hints, never arbitrary
+new fact values. Discovery runs before choosing the next registry question,
+including after corrections, and can introduce registry candidates into a legacy
+interview. Existing supported language/limit arguments, durable search attempts,
 information-only results and same-conversation limits remain unchanged.
 
 Saved conversations bind the complete loaded registry (including meaning,

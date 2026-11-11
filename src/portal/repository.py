@@ -578,16 +578,17 @@ def _portal_action_transaction(data: dict[str, object]) -> dict[str, object]:
                 fact_values = {
                     fact_id: (
                         rule_data.registry.get(fact_id).validate_value(
-                            request.profile[fact_id]
+                            request.profile[profile_field]
                         )
-                        if request.profile.get(fact_id) is not None
+                        if request.profile.get(profile_field) is not None
                         else None
                     )
-                    for fact_id in bundle.fact_ids
+                    for fact_id, profile_field
+                    in bundle.legacy_profile_mapping.items()
                 }
                 fact_versions = {
                     fact_id: rule_data.registry.get(fact_id).version
-                    for fact_id in bundle.fact_ids
+                    for fact_id in bundle.legacy_profile_mapping
                 }
             else:
                 fact_store = TypedFactStore.from_wire(
