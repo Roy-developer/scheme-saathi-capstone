@@ -43,7 +43,7 @@ Schemes 16 and 17 are hand-drafted with new fact names (quotes verified). They n
 | Held-out schemes | set by Role 5 | 9 (8 reviewed, 1 pending) | Policy check done; 1 does not fit yet. |
 | Gold rules | not fixed | 89 development, 62 held-out | Quotes verified. |
 | Personas | 60 | 77 (31 + 3 + 26 + 17) | Met. 34 on live schemes run (33 match); 43 typed_facts-only (not run). 17 added 2026-11-11 for 6 new development gold schemes. |
-| Independent labels on personas | 2 labellers | 2 | Done. Second label by Nidhi Kaushik (Role 1) 2026-11-11. See `eval/development/role1_nidhi_labels.json`. |
+| Independent labels on personas | 2 labellers | 2 | **Not met.** Only model-assisted checks exist (`role1_model_assisted_labels.json` and `role1_model_assisted_labels_2.json`); neither is an independent human label. Needs a human labeller. |
 | Written policy | refusals, caseworker, official sources | `docs/POLICY.md` approved | Met. |
 | Demo script | 3 languages | English, Hindi, Marathi key lines | Drafted; native-speaker check pending. |
 

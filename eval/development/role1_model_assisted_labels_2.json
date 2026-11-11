@@ -1,9 +1,9 @@
 {
-  "labeller_id": "role1-nidhi",
-  "labelled_by": "Nidhi Kaushik (Role 1)",
+  "labeller_id": "model-assisted-check-2",
+  "labelled_by": "AI session (not a human)",
   "date": "2026-11-11",
-  "status": "independent human label from rules and source text",
-  "instructions_followed": "Labels derived from the gold draft rules in data/schemes/rule_gold_drafts/ (R1-GOLD-*) and the live rule packages (live-scheme personas). Each verdict reads only facts, operators and values from the rules — expected verdicts were NOT consulted first.",
+  "status": "model-assisted check; NOT an independent human label; pending Nidhi review",
+  "instructions_followed": "Labels derived by a model from the gold draft rules in data/schemes/rule_gold_drafts/ (R1-GOLD-*) and the live rule packages (live-scheme personas). Claimed not to have consulted expected verdicts first; this cannot be verified, so it is not an independent label.",
   "labels": [
     {
       "persona_id": "IGNWPS-DEV-001",
