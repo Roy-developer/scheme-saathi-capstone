@@ -114,6 +114,9 @@ def run_e2_defences(suite: RedTeamSuite) -> dict[str, Any]:
         },
         "note": (
             "Offline E2 for injection, ID mask, and scam screens. "
-            "Memory/approval-gate attacks still need live journey runs."
+            "scam_screen is eval/tests-only today — the live journey does not "
+            "call it; bare UPI/WhatsApp patterns would false-positive if wired "
+            "without tightening. Memory/approval-gate attacks still need live "
+            "journey runs."
         ),
     }

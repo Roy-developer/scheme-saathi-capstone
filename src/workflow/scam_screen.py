@@ -1,7 +1,12 @@
 """Flag scheme-like scam lures before they are treated as official guidance.
 
-Complements injection_guard.py. Narrow literal patterns for processing fees,
-UPI collection, OTP phishing, and unofficial WhatsApp "approval" channels.
+Complements injection_guard.py. Literal patterns for processing fees, UPI
+collection, OTP phishing, and unofficial WhatsApp "approval" channels.
+
+Used today by Role 5 offline E2 / red-team harnesses and unit tests only — the
+live journey does not call this yet. Several patterns (bare ``UPI``,
+``whatsapp``) would false-positive on ordinary citizen messages; tighten them
+before wiring into intake/journey.
 """
 
 from __future__ import annotations
