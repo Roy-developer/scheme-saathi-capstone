@@ -275,7 +275,7 @@
     {
       "draft_file": "rule_gold_drafts/tfefvssshs.json",
       "scheme_id": "TFEFVSSSHS-MH",
-      "split": "held-out",
+      "split": "heldout",
       "family": "tuition_fee_vjnt",
       "rules": 4,
       "unresolved": 4,

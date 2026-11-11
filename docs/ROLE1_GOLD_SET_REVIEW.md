@@ -2,7 +2,7 @@
 
 **Status:** SIGNED OFF by Nidhi Kaushik (Role 1) on 2026-11-11 after her review, with the section 2 decisions accepted.
 **Reviewed material:** the gold drafts, copied from the source clone at commit `b6fe75d` (branch `b_passages_data`, "script for scheme onboarding"). Files: `data/schemes/rule_gold_drafts/`, `data/schemes/rule_gold_selection.json`, `docs/RULE_GOLD_SET_SELECTION.md`.
-**Checked so far (automated):** for all 15 development schemes, every rule's `source_passage_id` exists and its `source_quote` appears verbatim in that passage (0 failures across 98 rules).
+**Checked so far (automated):** for all 17 development schemes, every rule's `source_passage_id` exists and its `source_quote` appears verbatim in that passage (0 failures across 89 rules: 85 in the original 15, 4 in the 2 added later). The 9 held-out schemes were checked the same way; one quote (PSGS-DIP-IN-R03) differs from its passage only in whitespace.
 **Not yet checked (needs the reviewer):** whether each rule's field, operator and value correctly express its quote, and the source pages themselves. The first-pass verdicts below come from reading each quote against its rule.
 
 ## 1. Per-scheme result
@@ -24,6 +24,22 @@
 | 13 | PMJJBY-IN | 5 | OK, confirm R03 | See flagged rule R03. Cover ending at 55 is not encoded (listed in the file). |
 | 14 | PRE-DIS-IN | 8 | Change needed | See flagged rule R07. |
 | 15 | POST-DIS-IN | 8 | Change needed | R05 and R07, below. |
+| 16 | TMDVSO-MH | 1 | New, pending review | Only the category rule is encoded. Age, education and fitness follow the Motor Vehicle Act with no figures, so they go to a caseworker. |
+| 17 | WMCL-IN | 3 | New, pending review | SC/ST labourer's child, education after Class 10, exclusion for supervisory staff. The "first two surviving children" limit and per-benefit conditions are not encoded. |
+
+Schemes 16 and 17 are hand-drafted with new fact names (quotes verified). They need the same line-by-line review as the others before they count as reviewed gold. TFEFVSSSHS-MH, the third addition, is in the held-out split and is covered in `docs/ROLE1_HELDOUT_POLICY_CHECK.md`.
+
+## Targets and actual numbers
+| Item | Asked | Actual | Status |
+|---|---|---|---|
+| Schemes listed with URL and collection date | 40-60 | 42 | Met. MJPJAY-MH has only a myScheme URL. |
+| Gold schemes (development) | 15 | 17 (15 reviewed, 2 pending) | Met. |
+| Held-out schemes | set by Role 5 | 9 (8 reviewed, 1 pending) | Policy check done; 1 does not fit yet. |
+| Gold rules | not fixed | 89 development, 62 held-out | Quotes verified. |
+| Personas | 60 | 60 (31 + 3 + 26) | Met. 34 on live schemes run (33 match); 26 not run. |
+| Independent labels on personas | 2 labellers | 1 | Open: your labelling. |
+| Written policy | refusals, caseworker, official sources | `docs/POLICY.md` approved | Met. |
+| Demo script | 3 languages | English, Hindi, Marathi key lines | Drafted; native-speaker check pending. |
 
 ## 2. Flagged rules: proposed decisions (reviewer must confirm)
 
