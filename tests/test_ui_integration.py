@@ -39,7 +39,7 @@ SCHEME = "IGNWPS-MH"
 TIMEOUT = 90
 UI_ORIGIN = "http://ui-acceptance.invalid"
 DOCUMENT_IDS = (
-    "identity_proof", "bank_account_proof", "widow_status_proof",
+    "identity_proof", "age_proof", "widow_status_proof", "bpl_proof",
 )
 SCHOLARSHIP = "TEST-SCHOLARSHIP"
 SCHOLARSHIP_PACKAGE_DIR = (
@@ -683,7 +683,7 @@ def test_phases_one_to_four_ui_receipt_retry_and_scoped_forget(
     assert not any(item.key == f"draft-create-{SCHEME}" for item in screen.button)
     checked = _documents(screen)
     assert checked["status"] == "checklist_complete"
-    assert checked["demo_only"] is False
+    assert checked["demo_only"] is True
     _click(screen, key=f"draft-create-{SCHEME}")
     draft = screen.session_state.application_drafts[SCHEME]
     assert not draft["approved"]

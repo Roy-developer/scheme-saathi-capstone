@@ -1207,11 +1207,6 @@ these typed answers to a model.
 
 ### Privacy: pending policy means no model sees the fact
 
-> **Update 2026-11-09:** the reviewer approved the question and privacy status of
-> all registered facts for the synthetic mock, and the privacy check was removed.
-> The registry path now uses the same model help as the legacy path: a proposal
-> is only saved after the person confirms it.
-
 Every new `FactDefinition` carries a `PrivacyPolicy`. A registry fact whose
 policy is `pending` must not be disclosed to a model. The code keeps this simple
 and structural: the registry path has **no model call for facts**. The
@@ -1270,7 +1265,7 @@ production activation, a real scheme, or reviewed policy.
 | Test | What it proves |
 |---|---|
 | `test_registry_question_parser_is_strict_and_localized` | Decimal bounds and localized HI/MR bound hints, `NaN`, `8_0`; integer `81.0` invalid; Hindi label to code; Devanagari date digits; bounded display-only text and localized unknown |
-| `test_registry_questions_drive_typed_journey_and_resume` | Real graph: widget metadata, repeated question on `100.01`, choice labels, refresh via `get_journey`, verdict `eligible`, description not in the model's messages |
+| `test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure` | Real graph: widget metadata, repeated question on `100.01`, choice labels, refresh via `get_journey`, verdict `eligible`, description not in the model's messages |
 | `test_unknown_registry_fact_is_not_reasked_and_saved_definitions_fail_closed` | "I don't know" is declined and listed missing; a changed registry version gives `invalid_input` |
 | `test_registry_question_metadata_flows_through_journey_http_api` | Same flow over HTTP with `TestClient` (Marathi) |
 | `test_decimal_checkpoint_roundtrip_preserves_verdict_boundary` | `$decimal` wire form keeps a verdict at a 17-digit threshold; bare strings are rejected |

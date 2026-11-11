@@ -938,7 +938,7 @@ def render_candidate_interview(
             st.write(turn["content"])
 
     if st.session_state.journey_status == "awaiting_answer":
-        reply = journey_reply(text, locale)
+        reply = st.chat_input(text["interview_reply"])
         if reply:
             st.session_state.interview_error = None
             try:
@@ -1681,8 +1681,6 @@ def registered_answer_input(
     fact_id = str(question["fact_id"])
     value_type = question["value_type"]
     key = f"registered_answer_{conversation_id}_{fact_id}"
-    if question.get("confirming"):
-        key = f"{key}_confirming"
     unknown_label = unknown_answer_label(locale)
     if question.get("help_text"):
         st.caption(str(question["help_text"]))
@@ -1700,7 +1698,7 @@ def registered_answer_input(
     if unit or bounds:
         st.caption(" · ".join([*(str(item) for item in bounds), str(unit or "")]).strip(" ·"))
 
-    with st.form(f"{key}_form"):
+    with st.form(f"registered_answer_form_{fact_id}"):
         answer: object = None
         if value_type == "boolean":
             labels = {
@@ -1811,21 +1809,6 @@ def registered_answer_input(
     return str(answer) if submitted and answer is not None else None
 
 
-def journey_reply(text: dict[str, str], locale: str) -> str | None:
-    """Offer the question's own controls, and typing, on every interview screen."""
-
-    definition = st.session_state.get("journey_question_definition")
-    selected = (
-        registered_answer_input(
-            definition, text, locale, st.session_state.conversation_id or "",
-        )
-        if definition
-        else None
-    )
-    typed = st.chat_input(text["interview_reply"], max_chars=MAX_JOURNEY_REPLY_LENGTH)
-    return selected or typed
-
-
 def render_interview(
     scheme_id: str,
     text: dict[str, str],
@@ -1898,7 +1881,17 @@ def render_interview(
             st.write(turn["content"])
 
     if st.session_state.journey_status == "awaiting_answer":
-        reply = journey_reply(text, locale)
+        definition = st.session_state.get("journey_question_definition")
+        reply = (
+            registered_answer_input(
+                definition,
+                text,
+                locale,
+                st.session_state.conversation_id or "",
+            )
+            if definition
+            else st.chat_input(text["interview_reply"])
+        )
         if reply:
             st.session_state.interview_error = None
             try:

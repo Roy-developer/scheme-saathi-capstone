@@ -2,7 +2,7 @@
   "schema_version": 1,
   "scheme_id": "IGNWPS-MH",
   "form_version": "1.0.0",
-  "status": "approved",
+  "status": "demo_only",
   "fields": [
     {
       "field_id": "date_of_birth",

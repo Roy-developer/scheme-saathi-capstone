@@ -344,7 +344,7 @@ interpretation, and `eligibility_agent` sets the specialist model to `None`
 when the scheme is registered (a code comment says registry review metadata
 is not permission to disclose applicant-derived verdicts or missing-fact
 names to a model). The test
-`test_registry_questions_drive_typed_journey_and_resume`
+`test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure`
 (line 738) uses a spy planner model and checks that a synthetic answer typed
 in the conversation never appears in what the model was shown. That is one
 tested instance of the rule, not a proof for every path. The privacy metadata
@@ -774,7 +774,7 @@ rerun them; the table lists the ones that matter for Phase 3.
 |---|---|
 | `test_novel_pending_bundle_cannot_masquerade_as_legacy_compatibility` (571) | Only the exact pinned pilots can use the legacy label |
 | `test_explicit_development_loader_accepts_pending_synthetic_bundle` (592) | Synthetic bundle loads only on explicit request |
-| `test_registry_questions_drive_typed_journey_and_resume` (738) | Typed questions, resume, and a spy model not shown an answer |
+| `test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure` (738) | Typed questions, resume, and a spy model not shown an answer |
 | `test_unknown_registry_fact_is_not_reasked_and_saved_definitions_fail_closed` (840) | Unknown stays declined; changed definition cannot reinterpret saved facts |
 | `test_registry_question_metadata_flows_through_journey_http_api` (905) | API sends widget metadata; validation errors; refresh |
 | `test_data_only_multischeme_discovery_sharing_and_typed_correction_through_http` (1044) | Injected search, shared question once, separate scope/period IDs, typed correction (not real retrieval) |

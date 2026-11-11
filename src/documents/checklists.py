@@ -566,12 +566,25 @@ def _snapshot_from_bytes(
     elif approval_status != "approved":
         status = "requirements_unverified"
     else:
-        # An approved checklist tells users it is source-backed, so it must
-        # actually cite reviewed evidence.
-        source_backed = bool(referenced_ids) and all(
+        core = dict(raw_checklist)
+        core.pop("approval", None)
+        approved_checklist_digest = _canonical_digest(core)
+        approved_evidence_digest = _sha256(evidence_bytes)
+        approval = checklist.approval
+        source_reviews_complete = bool(referenced_ids) and all(
             passage.review_status == "reviewed" for passage in references
         )
-        status = "approved_source_backed" if source_backed else "requirements_unverified"
+        approval_complete = all((
+            approval.checklist_content_sha256 == approved_checklist_digest,
+            approval.evidence_content_sha256 == approved_evidence_digest,
+            bool(approval.reviewer_role),
+            bool(approval.review_reference),
+            approval.reviewed_on is not None,
+        ))
+        if source_reviews_complete and approval_complete:
+            status = "approved_source_backed"
+        else:
+            status = "requirements_unverified"
     citations = references if status == "approved_source_backed" else []
     active_fingerprint = _canonical_digest({
         "scheme_id": scheme_id,

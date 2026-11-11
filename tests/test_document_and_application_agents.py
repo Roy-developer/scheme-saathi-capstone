@@ -83,8 +83,9 @@ def test_document_checker_compares_synthetic_name_and_date_without_echoing_value
         "profile_date_of_birth": "1986-01-01",
         "documents": {
             "identity_proof": "available",
-            "bank_account_proof": "available",
+            "age_proof": "available",
             "widow_status_proof": "available",
+            "bpl_proof": "available",
         },
         "document_metadata": {
             "identity_proof": {
@@ -97,7 +98,7 @@ def test_document_checker_compares_synthetic_name_and_date_without_echoing_value
     assert result["status"] == expected_status
     assert [item["code"] for item in result["discrepancies"]] == codes
     assert "Synthetic Example" not in result["message"]
-    assert result["demo_only"] is False
+    assert result["demo_only"] is True
     assert "no files were uploaded" in result["message"].lower()
 
 
@@ -351,8 +352,9 @@ def _approved_draft() -> tuple[dict[str, object], dict[str, object]]:
         },
         "documents": {
             "identity_proof": "available",
-            "bank_account_proof": "available",
+            "age_proof": "available",
             "widow_status_proof": "available",
+            "bpl_proof": "available",
         },
     })
     identity = {
@@ -467,8 +469,9 @@ def test_repeated_draft_creation_is_idempotent_for_exact_current_dependencies(
         },
         "documents": {
             "identity_proof": "available",
-            "bank_account_proof": "available",
+            "age_proof": "available",
             "widow_status_proof": "available",
+            "bpl_proof": "available",
         },
     }
 
@@ -523,7 +526,7 @@ def test_model_budget_allows_safe_document_recheck_draft_and_submission_after_re
     report = {
         "scheme_id": "IGNWPS-MH",
         "documents": {name: "available" for name in (
-            "identity_proof", "bank_account_proof", "widow_status_proof",
+            "identity_proof", "age_proof", "widow_status_proof", "bpl_proof",
         )},
     }
     checkpoint = Path.cwd() / f".pytest-budget-{uuid4().hex}.sqlite3"
@@ -722,8 +725,9 @@ def test_forgetting_a_journey_removes_its_portal_dependencies_only(
             },
             "documents": {
                 "identity_proof": "available",
-                "bank_account_proof": "available",
+                "age_proof": "available",
                 "widow_status_proof": "available",
+                "bpl_proof": "available",
             },
         })
     forgotten = applications._portal_action({

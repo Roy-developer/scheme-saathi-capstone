@@ -565,7 +565,7 @@ def test_approval_revocation_and_fresh_exact_approval_survive_sqlite_restart(mon
     report = {
         "scheme_id": "IGNWPS-MH",
         "documents": {name: "available" for name in (
-            "identity_proof", "bank_account_proof", "widow_status_proof",
+            "identity_proof", "age_proof", "widow_status_proof", "bpl_proof",
         )},
     }
 

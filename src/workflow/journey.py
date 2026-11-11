@@ -54,7 +54,6 @@ from src.mcp_servers.service_routing import ServiceClientRouter, ToolActor
 from src.rules.bundles import SchemeBundle
 from src.rules.bundles import bundle_fingerprint
 from src.rules.facts import (
-    FactDefinition,
     FactRegistry, FactState, TypedFactStore, decode_wire_value, encode_wire_value,
 )
 from src.rules.models import HouseholdProfile, RulePackage
@@ -95,7 +94,6 @@ from src.workflow.question_picker import (
 )
 from src.workflow.intake_agent import (
     propose_initial_profile_facts,
-    propose_initial_registered_facts,
 )
 from src.workflow.supervisor_agent import (
     propose_supervisor_plan,
@@ -107,11 +105,6 @@ from src.workflow.document_agent import (
     run_document_specialist,
 )
 from src.workflow.questions import (
-    parse_confirmation,
-    parse_interpreted_registered_answer,
-    registered_confirmation_details,
-    registered_direct_answer_question,
-    registered_fact_confirmation,
     unknown_answer_label,
     ParsedAnswer,
     confirm_yes_or_no_question,
@@ -247,7 +240,6 @@ class QuestionPresentation(BaseModel):
     max_length: int | None = None
     choices: list[QuestionChoice] = Field(default_factory=list)
     help_text: str | None = None
-    confirming: bool = False
 
 
 class JourneyNotWaitingError(Exception):
@@ -830,145 +822,17 @@ def build_journey_graph(
                 "handoffs": _report_to_supervisor("intake", "invalid_input"),
             }
 
-        # People apply "today"; asking them for it would be odd.
-        if "application_date" in allowed_facts and "application_date" not in store.facts:
-            application_date = fact_registry.get("application_date")
-            store = TypedFactStore(
-                registry_version=fact_registry.registry_version,
-                facts={**store.facts, "application_date": FactState(
-                    status="known",
-                    value=application_date.validate_value(today()),
-                    definition_version=application_date.version,
-                    provenance="user_reported",
-                )},
-            ).validate_against(fact_registry)
         skipped = set(state.get("skipped_facts", [])) | {
             fact_id for fact_id, fact in store.facts.items()
             if fact.status == "declined"
         }
-        locale = state.get("locale", "en")
-        agent_budget = state.get("agent_budget", {})
-        trace_events: list[dict[str, Any]] = []
-        react_status = state.get("react_status", "deterministic")
-        attempted = durable_attempted_facts(state.get("llm_attempted_facts") or [])
-        proposals = list(state.get("profile_proposals") or [])
-
-        def progress() -> dict[str, Any]:
-            """Everything a registered intake step must save with its reply."""
-
-            return {
-                "registry_intake": True,
-                "typed_facts": store.to_wire(fact_registry),
-                "skipped_facts": sorted(skipped),
-                "llm_attempted_facts": sorted(attempted),
-                "profile_proposals": proposals,
-                "profile_description": None,
-                "initial_description_processed": True,
-                "agent_budget": agent_budget,
-                "agent_trace": trace_events,
-                "react_status": react_status,
-            }
-
-        def waiting_on(
-            fact_id: str,
-            message: str,
-            details: dict[str, object],
-            *,
-            confirming: bool = False,
-            source: str = "",
-            proposed: object = None,
-        ) -> dict[str, Any]:
-            """Pause for one reply about one registered fact."""
-
-            return {
-                **progress(),
-                "status": "awaiting_answer",
-                "message": message,
-                "question": message,
-                "question_definition": details,
-                "pending_fact": fact_id,
-                "pending_answer": None,
-                "pending_registered_answer": None,
-                "pending_confirmation": confirming,
-                "pending_confirmation_source": source,
-                "pending_interpreted_value": proposed,
-                "conversation": [{"role": "assistant", "content": message}],
-            }
-
-        def ask_directly(definition: FactDefinition, message: str) -> dict[str, Any]:
-            return waiting_on(
-                definition.fact_id, message,
-                registered_question_details(definition, locale),
-            )
-
-        def ask_to_confirm(
-            fact_id: str, proposed: object, source: str, message: str | None = None,
-        ) -> dict[str, Any]:
-            definition = fact_registry.get(fact_id)
-            return waiting_on(
-                fact_id,
-                message or registered_fact_confirmation(definition, proposed, locale),
-                registered_confirmation_details(definition),
-                confirming=True, source=source, proposed=proposed,
-            )
-
-        def ask_next_proposal() -> dict[str, Any]:
-            proposal = proposals.pop(0)
-            return ask_to_confirm(
-                str(proposal["fact_name"]), proposal["value"], "initial_profile",
-            )
-
-        def with_fact(fact_id: str, fact_state: FactState) -> None:
-            nonlocal store
-            store = TypedFactStore(
-                registry_version=fact_registry.registry_version,
-                facts={**store.facts, fact_id: fact_state},
-            ).validate_against(fact_registry)
-
-        def record_answer(definition: FactDefinition, value: object) -> None:
-            with_fact(definition.fact_id, FactState(
-                status="known",
-                value=definition.validate_value(value),
-                definition_version=definition.version,
-                provenance="user_reported",
-            ))
-
-        def record_not_known(definition: FactDefinition) -> None:
-            skipped.add(definition.fact_id)
-            with_fact(definition.fact_id, FactState(
-                status="declined", definition_version=definition.version,
-            ))
-
-        description = state.get("profile_description")
-        needed = tuple(dict.fromkeys(
-            fact for package in packages for fact in package.required_facts
-            if fact in allowed_facts
-        ))
-        if description and not state.get("initial_description_processed"):
-            (
-                proposals, agent_budget, description_trace, react_status,
-            ) = await propose_initial_registered_facts(
-                model_provider,
-                specialist_client("intake", state["conversation_id"]),
-                "intake",
-                packages[0].scheme_id,
-                description,
-                store,
-                fact_registry,
-                needed,
-                locale,
-                agent_budget,
-                discovery_facts=tuple(
-                    fact for fact in ("is_widow", "landholding_family_in_state_records")
-                    if state.get("multi_scheme") and fact in allowed_facts
-                ),
-            )
-            trace_events.extend(description_trace)
-
         pending_fact = state.get("pending_fact")
         pending_registered_answer = state.get("pending_registered_answer")
         if pending_fact and pending_registered_answer is not None:
-            if pending_fact not in allowed_facts:
+            if (
+                pending_fact not in allowed_facts
+                or state.get("pending_confirmation")
+            ):
                 return {
                     "status": "invalid_input",
                     "message": "The saved question is not compatible with this scheme.",
@@ -978,118 +842,54 @@ def build_journey_graph(
                 }
             definition = fact_registry.get(pending_fact)
             answer_kind = pending_registered_answer.get("kind")
-            if answer_kind == "confirmation":
-                decision = pending_registered_answer.get("decision")
-                source = state.get("pending_confirmation_source", "")
-                proposed = state.get("pending_interpreted_value")
-                if decision == "unknown":
-                    record_not_known(definition)
-                elif decision == "no":
-                    if not (source == "initial_profile" and proposals):
-                        return ask_directly(
-                            definition,
-                            registered_direct_answer_question(definition, locale),
-                        )
-                elif decision == "yes":
-                    parsed = parse_interpreted_registered_answer(definition, proposed, locale)
-                    if parsed.kind != "value":
-                        return ask_directly(
-                            definition,
-                            f"{parsed.error} {registry_question_for(definition, locale)}",
-                        )
-                    try:
-                        record_answer(definition, parsed.value)
-                    except (TypeError, ValueError):
-                        return ask_directly(definition, " ".join((
-                            discovery_message("invalid_input", locale),
-                            registry_question_for(definition, locale),
-                        )))
-                else:
-                    return ask_to_confirm(
-                        pending_fact, proposed, source, confirm_yes_or_no_question(locale),
+            if answer_kind == "invalid":
+                question = registry_question_for(
+                    definition, state.get("locale", "en")
+                )
+                error = str(
+                    pending_registered_answer.get(
+                        "error",
+                        "Please provide an answer in the registered format.",
                     )
-            elif answer_kind == "invalid":
-                reply = pending_registered_answer.get("reply")
-                if (
-                    definition.value_type in {"boolean", "date"}
-                    and isinstance(reply, str)
-                    and pending_fact not in attempted
-                ):
-                    await reserve_fact(pending_fact)
-                    attempted.add(pending_fact)
-                    interpretation = None
-                    question = registry_question_for(definition, locale)
-                    if not (
-                        answer_interpreter is interpret_free_text_answer
-                        and model_provider is None
-                    ):
-                        (
-                            interpretation, agent_budget, call_trace, call_status,
-                        ) = await run_accounted_model_call(
-                            agent="intake",
-                            action="interpret_free_text_answer",
-                            model=(
-                                model_provider.model_name
-                                if model_provider is not None
-                                else DEFAULT_CHAT_MODEL
-                            ),
-                            input_text=f"{pending_fact}\n{question}\n{reply}",
-                            budget=agent_budget,
-                            callback=lambda: answer_interpreter(pending_fact, question, reply),
-                            failure_type=IntakeAgentError,
-                        )
-                        trace_events.extend(call_trace)
-                        react_status = (
-                            "model_assisted" if call_status == "model_assisted"
-                            else "deterministic_fallback"
-                        )
-                    confident = (
-                        interpretation is not None
-                        and interpretation.confidence >= ANSWER_INTERPRETATION_CONFIDENCE
-                    )
-                    if confident and interpretation.kind == "unknown":
-                        record_not_known(definition)
-                    elif (
-                        confident
-                        and interpretation.kind == "value"
-                        and interpretation.value is not None
-                    ):
-                        candidate = parse_interpreted_registered_answer(
-                            definition, interpretation.value, locale,
-                        )
-                        if candidate.kind == "value":
-                            value = candidate.value
-                            try:
-                                _replace_registered_fact(
-                                    store, fact_registry, pending_fact, value, "known",
-                                )
-                            except (TypeError, ValueError):
-                                pass
-                            else:
-                                return ask_to_confirm(
-                                    pending_fact,
-                                    value.isoformat() if hasattr(value, "isoformat") else value,
-                                    "answer_interpretation",
-                                )
-                if pending_fact not in skipped:
-                    error = str(pending_registered_answer.get(
-                        "error", "Please provide an answer in the registered format.",
-                    ))
-                    return ask_directly(
-                        definition,
-                        f"{error} {registry_question_for(definition, locale)}",
-                    )
-            elif answer_kind == "unknown":
-                record_not_known(definition)
+                )
+                return {
+                    "status": "awaiting_answer",
+                    "message": f"{error} {question}",
+                    "question": question,
+                    "question_definition": registered_question_details(
+                        definition, state.get("locale", "en")
+                    ),
+                    "pending_fact": pending_fact,
+                    "pending_answer": None,
+                    "pending_registered_answer": None,
+                    "typed_facts": store.to_wire(fact_registry),
+                    "conversation": [
+                        {"role": "assistant", "content": f"{error} {question}"}
+                    ],
+                }
+            if answer_kind == "unknown":
+                skipped.add(pending_fact)
+                fact_state = FactState(
+                    status="declined",
+                    definition_version=definition.version,
+                )
             elif answer_kind == "value":
-                record_answer(definition, decode_wire_value(
+                value = decode_wire_value(
                     definition, pending_registered_answer.get("value")
-                ))
+                )
+                normalized = definition.validate_value(value)
+                fact_state = FactState(
+                    status="known",
+                    value=normalized,
+                    definition_version=definition.version,
+                    provenance="user_reported",
+                )
             else:
                 raise ValueError("Saved registered answer has an invalid status")
-
-        if proposals:
-            return ask_next_proposal()
+            store = TypedFactStore(
+                registry_version=fact_registry.registry_version,
+                facts={**store.facts, pending_fact: fact_state},
+            ).validate_against(fact_registry)
 
         bridged_profile = {
             field: store.facts[fact_id].value
@@ -1110,7 +910,6 @@ def build_journey_graph(
         )
         common = {
             **discovery_updates,
-            **progress(),
             "registry_intake": True,
             "fact_questions": {
                 fact_id: registry_question_for(
@@ -2922,8 +2721,7 @@ async def resume_journey(
         parsed = parse_registered_answer(
             definition, message, saved.get("locale", "en")
         )
-        confirming = bool(saved.get("pending_confirmation"))
-        if not confirming and parsed.kind in {"value", "unknown"}:
+        if parsed.kind in {"value", "unknown"}:
             try:
                 proposed = _replace_registered_fact(
                     TypedFactStore.from_wire(saved.get("typed_facts"), registry),
@@ -2943,17 +2741,12 @@ async def resume_journey(
             answer["value"] = encode_wire_value(parsed.value)
         elif parsed.kind == "invalid":
             answer["error"] = parsed.error
-            answer["reply"] = mask_sensitive_text(message)
-        decision = None
-        if confirming:
-            decision = parse_confirmation(message, saved.get("locale", "en"))
-            answer = {"kind": "confirmation", "decision": decision}
         resume_payload: object = {
             "answer": answer,
             # The buttons send the code "skip"; the chat shows what was chosen.
             "safe_text": (
                 unknown_answer_label(saved.get("locale", "en"))
-                if parsed.kind == "unknown" or decision == "unknown"
+                if parsed.kind == "unknown"
                 else mask_sensitive_text(message)
             ),
         }

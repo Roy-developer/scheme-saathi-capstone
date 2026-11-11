@@ -10,7 +10,7 @@ here re-implements prompts, checks or comparison.
     freeze    save approved lessons as a playbook version (free) -> freeze_playbook
     export-playbook  write a frozen playbook to a file for git (free) -> export_playbook
     extract   draft rules for a NEW scheme with no approved rules (paid) -> extract_rules
-    onboard   put a scheme into the app (free)    -> plan_onboarding
+    onboard   put a human-approved scheme into the app (free)    -> plan_onboarding
 
 Examples (PowerShell, from the repo root):
 
@@ -399,7 +399,7 @@ def _run_test_suite() -> bool:
 def onboard(
     scheme_id: str, *, yes: bool, paths: ProjectPaths | None = None, run_tests: bool = True,
 ) -> OnboardingPlan:
-    """Show every change for a scheme; write them only with ``yes``."""
+    """Show every change for a human-approved scheme; write them only with ``yes``."""
     plan = plan_onboarding(scheme_id, paths or ProjectPaths(PROJECT_ROOT))
     print(f"Onboarding {scheme_id}")
     for line in plan.summary:
@@ -463,7 +463,7 @@ def main(argv: list[str] | None = None) -> None:
     extract_cmd.add_argument("--playbook", help="Frozen playbook version to use.")
     extract_cmd.add_argument("--yes", action="store_true", help="Spend the calls.")
 
-    onboard_cmd = commands.add_parser("onboard", help="Put a scheme into the app.")
+    onboard_cmd = commands.add_parser("onboard", help="Put a human-approved scheme into the app.")
     onboard_cmd.add_argument("scheme_id", help="For example IGNOAPS-MH")
     onboard_cmd.add_argument("--yes", action="store_true", help="Write the changes.")
     onboard_cmd.add_argument("--skip-tests", action="store_true", help="Do not run the test suite after writing.")

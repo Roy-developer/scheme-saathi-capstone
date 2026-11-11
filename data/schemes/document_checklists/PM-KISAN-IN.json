@@ -1,112 +1,71 @@
 {
   "schema_version": 1,
   "scheme_id": "PM-KISAN-IN",
-  "checklist_version": "v2",
+  "checklist_version": "v1",
   "requirements": [
     {
       "requirement_id": "identity_group",
       "labels": {
-        "en": "Identity",
-        "hi": "पहचान",
-        "mr": "ओळख"
+        "en": "Identity proof",
+        "hi": "पहचान प्रमाण",
+        "mr": "ओळख पुरावा"
       },
       "alternatives": [
         {
           "document_id": "identity_proof",
           "labels": {
-            "en": "Aadhaar number",
-            "hi": "आधार संख्या",
-            "mr": "आधार क्रमांक"
+            "en": "Identity proof (synthetic demo item)",
+            "hi": "पहचान प्रमाण (प्रदर्शन मद)",
+            "mr": "ओळख पुरावा (प्रात्यक्षिक बाब)"
           }
         }
       ],
-      "condition": {
-        "kind": "unconditional"
-      },
-      "evidence_passage_ids": [
-        "PMKISAN-DOC-DATABASE-01",
-        "PMKISAN-DOC-ATTRIBUTES-01"
-      ]
+      "condition": {"kind": "unconditional"},
+      "evidence_passage_ids": []
     },
     {
       "requirement_id": "land_record_group",
       "labels": {
-        "en": "Land records",
-        "hi": "भूमि अभिलेख",
+        "en": "Land record",
+        "hi": "भूमि रिकॉर्ड",
         "mr": "जमीन अभिलेख"
       },
       "alternatives": [
         {
           "document_id": "land_record",
           "labels": {
-            "en": "Cultivable land recorded in the State/UT land records",
-            "hi": "राज्य/केंद्र शासित प्रदेश के भूमि अभिलेखों में दर्ज कृषि योग्य भूमि",
-            "mr": "राज्य/केंद्रशासित प्रदेशाच्या जमीन अभिलेखात नोंदलेली लागवडीयोग्य जमीन"
+            "en": "Land record (synthetic demo item)",
+            "hi": "भूमि रिकॉर्ड (प्रदर्शन मद)",
+            "mr": "जमीन अभिलेख (प्रात्यक्षिक बाब)"
           }
         }
       ],
-      "condition": {
-        "kind": "unconditional"
-      },
-      "evidence_passage_ids": [
-        "PMKISAN-DOC-LAND-01"
-      ]
+      "condition": {"kind": "unconditional"},
+      "evidence_passage_ids": []
     },
     {
       "requirement_id": "bank_account_group",
       "labels": {
-        "en": "Bank account",
-        "hi": "बैंक खाता",
-        "mr": "बँक खाते"
+        "en": "Bank account proof",
+        "hi": "बैंक खाता प्रमाण",
+        "mr": "बँक खात्याचा पुरावा"
       },
       "alternatives": [
         {
           "document_id": "bank_account_proof",
           "labels": {
-            "en": "Bank account number and IFSC code",
-            "hi": "बैंक खाता संख्या और आईएफएससी कोड",
-            "mr": "बँक खाते क्रमांक आणि आयएफएससी कोड"
+            "en": "Bank account proof (synthetic demo item)",
+            "hi": "बैंक खाता प्रमाण (प्रदर्शन मद)",
+            "mr": "बँक खात्याचा पुरावा (प्रात्यक्षिक बाब)"
           }
         }
       ],
-      "condition": {
-        "kind": "unconditional"
-      },
-      "evidence_passage_ids": [
-        "PMKISAN-DOC-DATABASE-01",
-        "PMKISAN-DOC-ATTRIBUTES-01"
-      ]
-    },
-    {
-      "requirement_id": "self_declaration_group",
-      "labels": {
-        "en": "Self-declaration",
-        "hi": "स्व-घोषणा",
-        "mr": "स्वयंघोषणा"
-      },
-      "alternatives": [
-        {
-          "document_id": "self_declaration",
-          "labels": {
-            "en": "Self-declaration about the exclusion criteria",
-            "hi": "अपवर्जन मानदंडों के बारे में स्व-घोषणा",
-            "mr": "वगळण्याच्या निकषांबाबत स्वयंघोषणा"
-          }
-        }
-      ],
-      "condition": {
-        "kind": "unconditional"
-      },
-      "evidence_passage_ids": [
-        "PMKISAN-DOC-DECLARATION-01"
-      ]
+      "condition": {"kind": "unconditional"},
+      "evidence_passage_ids": []
     }
   ],
   "approval": {
-    "status": "approved",
-    "checklist_version": "v2",
-    "reviewer_role": "Policy/domain reviewer (Roy-developer)",
-    "review_reference": "docs/PMKISAN_RULE_REVIEW_2026-11-02.md, Amendment 2026-11-09",
-    "reviewed_on": "2026-11-09"
+    "status": "demo_only",
+    "checklist_version": "v1"
   }
 }

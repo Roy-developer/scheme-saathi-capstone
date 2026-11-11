@@ -124,11 +124,11 @@ def test_each_mcp_process_discovers_only_its_registered_tools() -> None:
     [
         (
             "IGNWPS-MH",
-            {"identity_proof", "bank_account_proof", "widow_status_proof"},
+            {"identity_proof", "age_proof", "widow_status_proof", "bpl_proof"},
         ),
         (
             "PM-KISAN-IN",
-            {"identity_proof", "land_record", "bank_account_proof", "self_declaration"},
+            {"identity_proof", "land_record", "bank_account_proof"},
         ),
     ],
 )
@@ -157,8 +157,8 @@ def test_knowledge_tools_share_the_active_document_checklist(
 
     assert scheme["source_ids"]
     assert scheme["scheme_name"]
-    assert documents["demo_only"] is False
-    assert documents["requirements_status"] == "approved_source_backed"
+    assert documents["demo_only"] is True
+    assert documents["requirements_status"] == "demo_only_unverified"
     assert documents["checklist_version"] == assessment["checklist_version"]
     assert documents["active_fingerprint"] == assessment["active_fingerprint"]
     assert {
@@ -195,7 +195,7 @@ def test_mcp_rejects_invalid_tool_schema_and_returns_typed_error() -> None:
         async with Client(doc_check_server) as client:
             invalid_schema = await client.call_tool(
                 "check_documents",
-                {"scheme_id": "IGNWPS-MH", "documents": {"bank_account_proof": "no"}},
+                {"scheme_id": "IGNWPS-MH", "documents": {"age_proof": "no"}},
             )
         async with Client(rule_engine_server) as client:
             unknown_scheme = await client.call_tool(
@@ -255,8 +255,9 @@ def test_portal_http_service_owns_its_database(tmp_path, monkeypatch) -> None:
         },
         "documents": {
             "identity_proof": "available",
-            "bank_account_proof": "available",
+            "age_proof": "available",
             "widow_status_proof": "available",
+            "bpl_proof": "available",
         },
     }
 

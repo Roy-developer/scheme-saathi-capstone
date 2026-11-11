@@ -58,22 +58,23 @@ def _create_draft(journey_id: str = "journey-a") -> dict:
             },
             "documents": {
                 "identity_proof": "available",
-                "bank_account_proof": "available",
+                "age_proof": "available",
                 "widow_status_proof": "available",
+                "bpl_proof": "available",
             },
         }
     )
 
 
-def test_document_check_reports_source_backed_requirements() -> None:
+def test_document_check_never_calls_demo_items_official() -> None:
     result = documents.assess_document_metadata(
         {"scheme_id": "IGNWPS-MH", "documents": {}}
     )
 
     assert result["status"] == "unknown_items"
-    assert result["demo_only"] is False
+    assert result["demo_only"] is True
     assert all(item["status"] == "unknown" for item in result["requirements"])
-    assert "source evidence" in result["message"]
+    assert "not verified official" in result["message"]
 
 
 def test_unknown_scheme_requirements_block_draft() -> None:
@@ -341,7 +342,7 @@ def test_supported_publish_before_submit_invalidates_approval_and_retry_receipt(
     assert applications._portal_action(request)["receipt_id"] == submitted["receipt_id"]
     assert load_checklist_snapshot(
         "IGNWPS-MH", checklist_directory=directory, evidence_file=evidence_file
-    ).trust_status == "approved_source_backed"
+    ).trust_status == "demo_only_unverified"
 
 
 def test_publisher_waits_until_portal_submission_commits(
@@ -530,8 +531,9 @@ def _document_report(status="available"):
         "scheme_id": "IGNWPS-MH",
         "documents": {
             "identity_proof": status,
-            "bank_account_proof": "available",
+            "age_proof": "available",
             "widow_status_proof": "available",
+            "bpl_proof": "available",
         },
     }
 

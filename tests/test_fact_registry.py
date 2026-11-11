@@ -780,7 +780,7 @@ def test_registry_question_parser_is_strict_and_localized(
 
 
 @pytest.mark.parametrize("activation_state", ["development_only", "approved"])
-def test_registry_questions_drive_typed_journey_and_resume(
+def test_registry_questions_drive_typed_journey_and_resume_without_llm_disclosure(
     tmp_path: Path, activation_state: str,
 ) -> None:
     """A synthetic bundle asks localized registry questions and resumes typed facts.
@@ -844,6 +844,7 @@ def test_registry_questions_drive_typed_journey_and_resume(
                 action="interview",
                 scheme_id=package.scheme_id,
                 locale="hi",
+                profile_description="Synthetic exam marks are 99.",
             ),
         )
         assert started.status == "awaiting_answer"
@@ -853,6 +854,7 @@ def test_registry_questions_drive_typed_journey_and_resume(
         assert started.question_definition.unit == "percent"
         assert started.question_definition.minimum == 0
         assert started.question_definition.maximum == 100
+        assert "Synthetic exam marks are 99." not in "\n".join(model.seen)
 
         invalid = await resume_journey(
             graph, started.conversation_id, "100.01"
@@ -1338,7 +1340,7 @@ def test_typed_corrections_and_changed_definitions_revoke_real_pilot_approval_af
     report = {
         "scheme_id": "IGNWPS-MH",
         "documents": {name: "available" for name in (
-            "identity_proof", "bank_account_proof", "widow_status_proof",
+            "identity_proof", "age_proof", "widow_status_proof", "bpl_proof",
         )},
     }
 
@@ -1521,7 +1523,7 @@ def test_development_bundle_with_legacy_bridge_still_asks_and_corrects_novel_fac
 
 
 @pytest.mark.parametrize(("seed", "pending", "invalid", "valid"), [
-    # The application date is no longer asked, so only date of birth can be pending.
+    ({"date_of_birth": "1986-01-01"}, "application_date", "1900-01-01", "2026-01-01"),
     ({"application_date": "2026-01-01"}, "date_of_birth", "1800-01-01", "1986-01-01"),
 ])
 def test_combined_date_answer_reasks_safely_and_invalid_correction_never_writes(
@@ -1771,6 +1773,28 @@ def test_approved_bundle_goes_live_when_package_and_definitions_are_approved(
     assert provider.bundles["SYNTHETIC-SCHOLARSHIP-TEST"].activation_state == "approved"
 
 
+def test_approved_bundle_is_refused_without_a_human_approved_package(
+    tmp_path: Path,
+) -> None:
+    _write_synthetic_bundle(
+        tmp_path, activation_state="approved", create_only=True,
+        package_approved=False, definitions_approved=True,
+    )
+
+    with pytest.raises(ValueError, match="human-approved rule package"):
+        RulePackageProvider(tmp_path / "packages")
+
+
+def test_approved_bundle_is_refused_while_a_fact_definition_is_pending(
+    tmp_path: Path,
+) -> None:
+    _write_synthetic_bundle(
+        tmp_path, activation_state="approved", create_only=True,
+        package_approved=True, definitions_approved=False,
+    )
+
+    with pytest.raises(ValueError, match="approved fact definitions"):
+        RulePackageProvider(tmp_path / "packages")
 
 
 def test_development_only_bundle_is_still_refused_even_when_approved_records_exist(

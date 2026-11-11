@@ -174,8 +174,9 @@ def test_synthetic_application_requires_exact_approval(tmp_path, monkeypatch) ->
 
         documents = {
             "identity_proof": "available",
-            "bank_account_proof": "available",
+            "age_proof": "available",
             "widow_status_proof": "available",
+            "bpl_proof": "available",
         }
         mismatch = client.post(
             f"/api/v1/journey/{conversation_id}/documents",
@@ -213,12 +214,12 @@ def test_synthetic_application_requires_exact_approval(tmp_path, monkeypatch) ->
         )
         assert checklist.status_code == 200
         assert checklist.json()["status"] == "checklist_complete"
-        assert checklist.json()["demo_only"] is False
-        assert checklist.json()["trust_status"] == "approved_source_backed"
-        assert checklist.json()["checklist_version"] == "v2"
+        assert checklist.json()["demo_only"] is True
+        assert checklist.json()["trust_status"] == "demo_only_unverified"
+        assert checklist.json()["checklist_version"] == "v1"
         assert checklist.json()["active_fingerprint"]
         assert checklist.json()["groups"][0]["requirement_id"] == "identity_group"
-        assert checklist.json()["citations"]
+        assert checklist.json()["citations"] == []
         assert checklist.json()["plan_detail"]["steps"][0]["specialist"] == "documents"
         changed_report_draft = client.post(
             f"/api/v1/journey/{conversation_id}/drafts",
