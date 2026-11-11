@@ -55,9 +55,12 @@ class DatabaseBackups:
         folder: Path,
         databases: Iterable[Path],
         interval_seconds: int = DEFAULT_INTERVAL_SECONDS,
+        directories: Iterable[Path] = (),
     ) -> None:
         self.folder = folder
         self.databases = tuple(databases)
+        # Plain file trees (uploaded documents), copied whole rather than snapshotted.
+        self.directories = tuple(directories)
         self.interval_seconds = interval_seconds
         self._save_lock = threading.Lock()
         # Databases that could not be restored. Saving these would replace a
@@ -65,7 +68,9 @@ class DatabaseBackups:
         self._not_restored: set[Path] = set()
 
     @classmethod
-    def from_environment(cls, databases: Iterable[Path]) -> "DatabaseBackups | None":
+    def from_environment(
+        cls, databases: Iterable[Path], directories: Iterable[Path] = ()
+    ) -> "DatabaseBackups | None":
         """Build from the environment, or return None when backups are off."""
 
         folder = os.getenv(BACKUP_DIR_VARIABLE)
@@ -74,7 +79,7 @@ class DatabaseBackups:
         interval = int(os.getenv(INTERVAL_VARIABLE, str(DEFAULT_INTERVAL_SECONDS)))
         if interval < 1:
             raise ValueError(f"{INTERVAL_VARIABLE} must be positive")
-        return cls(Path(folder), databases, interval)
+        return cls(Path(folder), databases, interval, directories)
 
     def restore(self) -> None:
         """Bring back saved databases that this container does not have."""
@@ -82,6 +87,7 @@ class DatabaseBackups:
         if not self.folder.is_dir():
             logger.error("Database backup folder is not available; not restoring or saving")
             self._not_restored.update(self.databases)
+            self._not_restored.update(self.directories)
             return
         for database in self.databases:
             try:
@@ -89,6 +95,44 @@ class DatabaseBackups:
             except (OSError, sqlite3.Error):
                 logger.exception("Could not restore database %s", database.name)
                 self._not_restored.add(database)
+        for directory in self.directories:
+            try:
+                self._restore_directory(directory)
+            except OSError:
+                logger.exception("Could not restore folder %s", directory.name)
+                self._not_restored.add(directory)
+
+    def _restore_directory(self, directory: Path) -> None:
+        saved = self.folder / directory.name
+        if directory.exists() and any(directory.iterdir()) or not saved.is_dir():
+            return
+        shutil.copytree(saved, directory, dirs_exist_ok=True)
+        logger.info("Restored folder %s", directory.name)
+
+    def _save_directory(self, directory: Path) -> None:
+        """Mirror the folder so a forgotten file is also gone from the share."""
+
+        target = self.folder / directory.name
+        target.mkdir(parents=True, exist_ok=True)
+        wanted: set[Path] = set()
+        for source in directory.rglob("*"):
+            if source.is_dir() or source.name.endswith(".partial"):
+                continue
+            relative = source.relative_to(directory)
+            wanted.add(relative)
+            copy = target / relative
+            if copy.exists() and copy.stat().st_size == source.stat().st_size:
+                continue
+            copy.parent.mkdir(parents=True, exist_ok=True)
+            incoming = copy.with_name(f"{copy.name}.saving")
+            shutil.copyfile(source, incoming)
+            os.replace(incoming, copy)
+        for existing in sorted(target.rglob("*"), reverse=True):
+            relative = existing.relative_to(target)
+            if existing.is_file() and relative not in wanted:
+                existing.unlink()
+            elif existing.is_dir() and not any(existing.iterdir()):
+                existing.rmdir()
 
     def _restore_one(self, database: Path) -> None:
         saved = self.folder / database.name
@@ -120,6 +164,13 @@ class DatabaseBackups:
                     self._save_one(database)
                 except (OSError, sqlite3.Error):
                     logger.exception("Could not save database %s", database.name)
+            for directory in self.directories:
+                if directory in self._not_restored or not directory.is_dir():
+                    continue
+                try:
+                    self._save_directory(directory)
+                except OSError:
+                    logger.exception("Could not save folder %s", directory.name)
 
     def _save_one(self, database: Path) -> None:
         with tempfile.TemporaryDirectory(dir=database.parent) as folder:
