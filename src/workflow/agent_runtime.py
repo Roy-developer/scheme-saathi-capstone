@@ -68,10 +68,17 @@ _NOT_A_DATE = (
 )
 _DIGIT_GAP = r"[\s.\-]{0,3}"
 _ID_END = r"(?![\w-])"
+# Exactly 12 digits make an Aadhaar. A longer grouped number (a 16-digit
+# card or account, "0012 3456 7890 1234") is left to the account rule so
+# no group of it stays visible.
+_NOT_PART_OF_LONGER_NUMBER = (
+    rf"(?<!\d)(?<!\d[\s.\-])(?<!\d[\s.\-]{{2}})(?<!\d[\s.\-]{{3}})"
+)
 PII_RULES = (
     RedactionRule("email"),
     RedactionRule("aadhaar", detector=(
-        _NOT_INSIDE_ID + _NOT_A_DATE + rf"(?:\d{_DIGIT_GAP}){{11}}\d" + _ID_END
+        _NOT_PART_OF_LONGER_NUMBER + _NOT_INSIDE_ID + _NOT_A_DATE
+        + rf"(?:\d{_DIGIT_GAP}){{11}}\d" + _ID_END + rf"(?!{_DIGIT_GAP}\d)"
     )),
     RedactionRule("phone", detector=(
         _NOT_INSIDE_ID + r"(?:\+?91[ -]?)?[6-9]\d{9}" + _ID_END

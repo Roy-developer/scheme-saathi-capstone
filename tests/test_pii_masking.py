@@ -215,17 +215,31 @@ def test_label_inside_another_word_does_not_trigger_masking(text):
     assert mask_sensitive_text(text) == text
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "Known limit: a 16-digit number in groups of four is masked as an "
-    "Aadhaar (first 12 digits) and its last group stays visible, "
-    "e.g. '[REDACTED_AADHAAR] 1234'."
-))
 def test_sixteen_digit_grouped_number_is_fully_masked():
+    # Was a known limit: the Aadhaar rule took the first 12 digits and the
+    # last group stayed visible ("[REDACTED_AADHAAR] 1234").
     model = RecordingModel(_finish_only())
 
     _run(model, "intake", {"description": "account 0012 3456 7890 1234"}, [finish])
 
-    assert "1234" not in model.seen_text().split("[REDACTED_AADHAAR]")[-1]
+    seen = model.seen_text()
+    assert "1234" not in seen and "0012" not in seen
+    assert "[REDACTED_ACCOUNT]" in seen
+
+
+@pytest.mark.parametrize("text, hidden, label", [
+    ("card 0012 3456 7890 1234 is mine", ("0012", "1234"), "[REDACTED_ACCOUNT]"),
+    ("card 0012-3456-7890-1234", ("0012", "1234"), "[REDACTED_ACCOUNT]"),
+    ("card 0012.3456.7890.1234", ("0012", "1234"), "[REDACTED_ACCOUNT]"),
+    ("aadhaar 2345 6789 0123 please", ("2345", "0123"), "[REDACTED_AADHAAR]"),
+    ("aadhaar 234567890123", ("234567890123",), "[REDACTED_AADHAAR]"),
+    ("आधार २३४५ ६७८९ ०१२३", ("२३४५", "०१२३"), "[REDACTED_AADHAAR]"),
+])
+def test_grouped_numbers_are_masked_whole(text, hidden, label):
+    masked = mask_sensitive_text(text)
+
+    assert all(part not in masked for part in hidden)
+    assert label in masked
 
 
 # Values agents and people must still read as written.
