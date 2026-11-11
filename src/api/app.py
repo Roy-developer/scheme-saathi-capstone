@@ -82,6 +82,14 @@ from src.mcp_servers.service_routing import (
     ToolClient,
 )
 from src.mcp_servers.rule_data import get_active_rule_data
+from src.observability.metrics import (
+    observe_duration,
+    record_conversation,
+    record_evaluation,
+    record_question,
+    record_verdict,
+)
+from src.observability.telemetry import configure_telemetry
 
 
 logger = logging.getLogger(__name__)
@@ -438,6 +446,8 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
             await asyncio.to_thread(backups.save)
 
 
+configure_telemetry()
+
 app = FastAPI(
     title="Scheme Saathi API",
     description=(
@@ -501,11 +511,15 @@ async def evaluate(
         ) from error
     # Send the validated answers through MCP and return the tool's verdict.
     try:
-        return await evaluate_eligibility(
-            http_request.app.state.mcp_client,
-            scheme_id,
-            answers,
-        )
+        with observe_duration("evaluate"):
+            result = await evaluate_eligibility(
+                http_request.app.state.mcp_client,
+                scheme_id,
+                answers,
+            )
+        record_evaluation(scheme_id, source="api")
+        record_verdict(scheme_id, result.result)
+        return result
     except MCPToolError as error:
         # Return a service error, never a made-up or fixture-based verdict.
         raise _tool_failure(
@@ -646,6 +660,27 @@ async def search_schemes(
 
 
 
+def _record_journey_metrics(endpoint: str, result: JourneyResponse) -> None:
+    """Record conversation, question, and verdict counters for a journey reply."""
+
+    record_conversation(endpoint)
+    if result.question is not None:
+        scheme_id = None
+        if result.eligibility_result is not None:
+            scheme_id = result.eligibility_result.scheme_id
+        elif result.candidate_scheme_ids:
+            scheme_id = result.candidate_scheme_ids[0]
+        record_question(scheme_id)
+    if result.eligibility_results:
+        for scheme_id, verdict in result.eligibility_results.items():
+            record_evaluation(scheme_id, source="journey")
+            record_verdict(scheme_id, verdict.result)
+    elif result.eligibility_result is not None:
+        scheme_id = result.eligibility_result.scheme_id
+        record_evaluation(scheme_id, source="journey")
+        record_verdict(scheme_id, result.eligibility_result.result)
+
+
 @app.post("/api/v1/journey", response_model=JourneyResponse)
 async def journey(
     journey_request: JourneyRequest,
@@ -654,11 +689,12 @@ async def journey(
     """Run one orchestrated discovery or synthetic eligibility step."""
 
     try:
-        result = await run_journey(
-            request.app.state.journey_graph,
-            journey_request,
-        )
-        return result.model_copy(update={
+        with observe_duration("journey"):
+            result = await run_journey(
+                request.app.state.journey_graph,
+                journey_request,
+            )
+        result = result.model_copy(update={
             "passages": [
                 passage.model_copy(update={
                     "eligible_for_mock_flow": passage.scheme_id
@@ -667,6 +703,8 @@ async def journey(
                 for passage in result.passages
             ],
         })
+        _record_journey_metrics("journey", result)
+        return result
     except MCPToolError as error:
         raise _tool_failure(
             "A journey tool is unavailable.",
@@ -696,11 +734,14 @@ async def journey_message(
     """
 
     try:
-        return await resume_journey(
-            request.app.state.journey_graph,
-            conversation_id,
-            journey_message.message,
-        )
+        with observe_duration("journey_message"):
+            result = await resume_journey(
+                request.app.state.journey_graph,
+                conversation_id,
+                journey_message.message,
+            )
+        _record_journey_metrics("journey_message", result)
+        return result
     except JourneyNotWaitingError as error:
         raise HTTPException(
             status_code=409,
