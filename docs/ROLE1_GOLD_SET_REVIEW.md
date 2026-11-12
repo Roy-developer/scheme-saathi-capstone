@@ -80,8 +80,8 @@ Open source gaps (I could not verify an official URL from here and will not gues
 - **TFEFVS-MH (held-out):** only a UMANG page. Needs a Social Justice department or DoSJE page, as TFEFVSSSHS-MH has.
 - **FAISHL-IN R02, IPMWCD-IN R04-R05:** myScheme-only source. POLICY.md §3 says myScheme is discovery-only. These rules are plausible but unconfirmed by an official passage. Need official KSB/MoD URL for FAISHL-IN R02 and official WCD circular for IPMWCD-IN R04-R05 before these rules are scored in evaluation.
 - **IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN:** moved to held-out 2026-11-12. UMANG-only URLs violate POLICY.md §3. Their MH state counterparts (IGNDPSM-MH, IGNWPS-MH, IGNOAPS-MH) remain in development and cover the same populations. These three can be restored to development once official NSAP/MoRD URLs are confirmed.
-- **PMJJBY-IN, PMSBY-IN (development):** use jansuraksha.in (not .gov.in); APY-IN from the same umbrella uses jansuraksha.gov.in. Authenticity to be confirmed.
-  Re-checked 2026-11-11: jansuraksha.gov.in loads (national toll-free numbers page), so it is the live government domain. jansuraksha.in loads but shows no content from here, so nothing proves it official. Guessed .gov.in paths for PMJJBY returned 404, so the correct .gov.in PMJJBY and PMSBY URLs are still to be found by a person.
+- **PMJJBY-IN, PMSBY-IN:** `jansuraksha.in` confirmed as official Jan Suraksha portal by Nidhi Kaushik 2026-11-12. No action needed.
+  Confirmed 2026-11-12 by Nidhi Kaushik: jansuraksha.in is the official Jan Suraksha portal. PMJJBY-IN and PMSBY-IN sources are valid.
 - **MJPJAY-MH, TFEFVS-MH, NSAP pages:** re-checked 2026-11-11 and still not resolved. The MJPJAY health-department site and nsap.nic.in are unreachable from here. MahaDBT and the social-justice department home pages load, but neither shows these schemes, so no URL was added.
 
 ## 4. Persona check against the live engine
