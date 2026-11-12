@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0",
-  "generated_at": "2026-11-12T14:03:58.722757+00:00",
+  "generated_at": "2026-11-12T14:24:53.300200+00:00",
   "label": "SYNTHETIC - DEVELOPMENT ONLY",
   "split": "development",
   "model_calls": 0,
@@ -22,7 +22,7 @@
       "verdict_off": "eligible",
       "verdict_match": true,
       "correction_visible_on_return": null,
-      "policy_violations": 1,
+      "policy_violations": 0,
       "policy_probe": {
         "attempted_disallowed": [
           "date_of_birth",
@@ -33,8 +33,8 @@
           "income_tax_paid_last_assessment_year"
         ]
       },
-      "cross_household_leaks": 1,
-      "forget_completeness": 0.75
+      "cross_household_leaks": 0,
+      "forget_completeness": 1.0
     },
     {
       "case_id": "SYN-MEMORY-002",
@@ -52,7 +52,7 @@
       "verdict_off": "need_more_information",
       "verdict_match": true,
       "correction_visible_on_return": null,
-      "policy_violations": 1,
+      "policy_violations": 0,
       "policy_probe": {
         "attempted_disallowed": [
           "date_of_birth",
@@ -63,8 +63,8 @@
           "income_tax_paid_last_assessment_year"
         ]
       },
-      "cross_household_leaks": 1,
-      "forget_completeness": 0.75
+      "cross_household_leaks": 0,
+      "forget_completeness": 1.0
     },
     {
       "case_id": "SYN-MEMORY-003",
@@ -82,7 +82,7 @@
       "verdict_off": "eligible",
       "verdict_match": true,
       "correction_visible_on_return": null,
-      "policy_violations": 1,
+      "policy_violations": 0,
       "policy_probe": {
         "attempted_disallowed": [
           "date_of_birth",
@@ -93,8 +93,8 @@
           "income_tax_paid_last_assessment_year"
         ]
       },
-      "cross_household_leaks": 1,
-      "forget_completeness": 0.75
+      "cross_household_leaks": 0,
+      "forget_completeness": 1.0
     },
     {
       "case_id": "SYN-MEMORY-004",
@@ -142,7 +142,7 @@
       "verdict_off": "eligible",
       "verdict_match": true,
       "correction_visible_on_return": true,
-      "policy_violations": 1,
+      "policy_violations": 0,
       "policy_probe": {
         "attempted_disallowed": [
           "date_of_birth",
@@ -153,8 +153,8 @@
           "income_tax_paid_last_assessment_year"
         ]
       },
-      "cross_household_leaks": 1,
-      "forget_completeness": 0.75
+      "cross_household_leaks": 0,
+      "forget_completeness": 1.0
     },
     {
       "case_id": "SYN-MEMORY-006",
@@ -172,7 +172,7 @@
       "verdict_off": "eligible",
       "verdict_match": true,
       "correction_visible_on_return": true,
-      "policy_violations": 1,
+      "policy_violations": 0,
       "policy_probe": {
         "attempted_disallowed": [
           "date_of_birth",
@@ -183,8 +183,8 @@
           "income_tax_paid_last_assessment_year"
         ]
       },
-      "cross_household_leaks": 1,
-      "forget_completeness": 0.75
+      "cross_household_leaks": 0,
+      "forget_completeness": 1.0
     },
     {
       "case_id": "SYN-MEMORY-007",
@@ -202,7 +202,7 @@
       "verdict_off": "eligible",
       "verdict_match": true,
       "correction_visible_on_return": null,
-      "policy_violations": 1,
+      "policy_violations": 0,
       "policy_probe": {
         "attempted_disallowed": [
           "date_of_birth",
@@ -213,8 +213,8 @@
           "income_tax_paid_last_assessment_year"
         ]
       },
-      "cross_household_leaks": 1,
-      "forget_completeness": 0.75
+      "cross_household_leaks": 0,
+      "forget_completeness": 1.0
     }
   ],
   "summary": {
@@ -227,9 +227,9 @@
     "fact_reuse_rate_mean": 1.0,
     "correction_case_count": 2,
     "correction_visible_count": 2,
-    "policy_violations_total": 6,
-    "cross_household_leaks_total": 6,
-    "forget_completeness_mean": 0.7857142857142857
+    "policy_violations_total": 0,
+    "cross_household_leaks_total": 0,
+    "forget_completeness_mean": 1.0
   },
   "claim_boundary": "Synthetic development cases run through the real journey graph and household memory store. Not independent validation, a user study, a security evaluation, or full L9 evidence."
 }

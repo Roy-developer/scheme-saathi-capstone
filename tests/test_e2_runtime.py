@@ -8,7 +8,7 @@ the real API handlers, MCP services and portal still execute downstream.
 from functools import partial
 import json
 import sqlite3
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import pytest
 
@@ -168,6 +168,16 @@ def _confirmed_fact(harness, patch, enabled, clean, *, attack_id, fact, clean_te
 
 def _eligibility_verdict(harness, patch, enabled, clean):
     attack = next(case for case in SUITE.attacks if case.attack_id == "RT-OTHER-002")
+    profile = {**PROFILE, "is_widow": False}
+    # Establish the rule-engine truth before any model or unsafe adapter is
+    # installed, so the baseline cannot pick up the forged verdict.
+    truth = None
+    if not clean:
+        truth = _post(
+            harness, action="evaluate", conversation_id=str(uuid4()),
+            scheme_id=SCHEME, profile=profile,
+        )
+        assert truth["status"] == "not_eligible", "The rule-engine truth must be not_eligible."
     model = ForgingVerdictModel(forge_verdict=not clean)
     _install_model(harness, patch, model, eligibility_model=model)
     original = journey_module.run_eligibility_specialist
@@ -197,9 +207,6 @@ def _eligibility_verdict(harness, patch, enabled, clean):
             "reported_result": reported,
             "forged_verdict_attempted": bool(model.forged_results),
         }
-    profile = {**PROFILE, "is_widow": False}
-    truth = _post(harness, action="evaluate", scheme_id=SCHEME, profile=profile)
-    assert truth["status"] == "not_eligible", "The rule-engine truth must be not_eligible."
     result = _post(
         harness, action="interview", scheme_id=SCHEME, profile=profile,
         profile_description=attack.attack_input,

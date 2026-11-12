@@ -178,7 +178,7 @@ async def _run_case(provider: RulePackageProvider, case: SyntheticCase) -> dict[
     saved_reusable = [f for f in REUSABLE_FACTS if f in truth]
 
     # Return visit with memory on, then the same journey with memory off.
-    on_final, on_asked = await _return_visit_with_code(graph, CODE_A, answers, case)
+    on_final, on_asked, on_start = await _return_visit_with_code(graph, CODE_A, answers, case)
     off_final, off_asked = await _finish(
         graph,
         await run_journey(graph, JourneyRequest(
@@ -187,7 +187,8 @@ async def _run_case(provider: RulePackageProvider, case: SyntheticCase) -> dict[
         )),
         answers,
     )
-    on_known = set(on_final.known_fact_names)
+    # Reuse is read from the response at visit start, before any answers.
+    on_known = set(on_start.known_fact_names)
     reused = [f for f in saved_reusable if f in on_known]
     correction_visible = None
     if case.correction:
@@ -208,8 +209,8 @@ async def _run_case(provider: RulePackageProvider, case: SyntheticCase) -> dict[
             1 for f in saved_reusable
             if f not in loaded_a.facts or loaded_a.facts[f].value != truth[f]
         )
-    stranger_final, _ = await _return_visit_with_code(graph, CODE_UNSAVED, answers, case)
-    stranger_leaks = len(set(stranger_final.known_fact_names) & set(REUSABLE_FACTS))
+    _, _, stranger_start = await _return_visit_with_code(graph, CODE_UNSAVED, answers, case)
+    stranger_leaks = len(set(stranger_start.known_fact_names) & set(REUSABLE_FACTS))
     cross_household_leaks = value_leaks + stranger_leaks
 
     # Policy: store an out-of-policy profile and confirm it is filtered out.
@@ -218,8 +219,8 @@ async def _run_case(provider: RulePackageProvider, case: SyntheticCase) -> dict[
     attempted = [f for f in policy_profile.facts if not _is_policy_allowed(registry, f)]
     await save_household(store, CODE_POLICY, policy_profile, registry, memory_consent=True)
     stored_policy = await _stored_fact_ids(store, CODE_POLICY)
-    policy_final, _ = await _return_visit_with_code(graph, CODE_POLICY, answers, case)
-    reused_disallowed = set(policy_final.known_fact_names) & set(POLICY_PROBE_FACTS)
+    _, _, policy_start = await _return_visit_with_code(graph, CODE_POLICY, answers, case)
+    reused_disallowed = set(policy_start.known_fact_names) & set(POLICY_PROBE_FACTS)
     policy_violations = (
         sum(1 for f in stored_policy if not _is_policy_allowed(registry, f))
         + len(reused_disallowed)
@@ -227,7 +228,7 @@ async def _run_case(provider: RulePackageProvider, case: SyntheticCase) -> dict[
 
     # Forget: remove the household, then check every forget claim.
     removed = await delete_household(store, CODE_A)
-    forget_final, _ = await _return_visit_with_code(graph, CODE_A, answers, case)
+    _, _, forget_start = await _return_visit_with_code(graph, CODE_A, answers, case)
     other_intact = True
     if case.other_household is not None:
         loaded_b = await load_household(store, CODE_B, registry)
@@ -237,7 +238,7 @@ async def _run_case(provider: RulePackageProvider, case: SyntheticCase) -> dict[
     forget_checks = [
         removed and await store.aget(HOUSEHOLD_NAMESPACE, CODE_A) is None,
         await load_household(store, CODE_A, registry) is None,
-        not (set(forget_final.known_fact_names) & set(REUSABLE_FACTS)),
+        not (set(forget_start.known_fact_names) & set(REUSABLE_FACTS)),
         other_intact,
     ]
     forget_completeness = sum(forget_checks) / FORGET_CHECKS
@@ -273,13 +274,14 @@ async def _return_visit_with_code(
     code: str,
     answers: dict[str, str],
     case: SyntheticCase,
-) -> tuple[Any, list[str]]:
+) -> tuple[Any, list[str], Any]:
     profile = {"application_date": date(2026, 11, 12).isoformat()}
     start = await run_journey(graph, JourneyRequest(
         action="interview", scheme_id=SCHEME_ID, profile=profile,
         return_code=code, memory_consent=True,
     ))
-    return await _finish(graph, start, answers)
+    final, asked = await _finish(graph, start, answers)
+    return final, asked, start
 
 
 def _summarise(cases: list[dict[str, Any]]) -> dict[str, Any]:
