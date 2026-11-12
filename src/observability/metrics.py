@@ -199,6 +199,13 @@ def record_model_usage(model: str, input_tokens: int, output_tokens: int) -> Non
         _instruments.model_cost_usd.add(cost, {"model": model})
 
 
+def record_waiting_approvals_change(delta: int) -> None:
+    """Adjust the count of drafts waiting for approval."""
+
+    if delta:
+        _instruments.waiting_approvals.add(delta)
+
+
 def record_masked_id_hits(count: int = 1) -> None:
     """Count masked identifier hits."""
 
