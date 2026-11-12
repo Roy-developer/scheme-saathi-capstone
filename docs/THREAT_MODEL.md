@@ -10,8 +10,10 @@ assets, applicable threats, current mitigations, and open gaps.
 ## Summary (one page)
 
 The model never decides eligibility: deterministic code does, and every
-verdict shows its deciding clause. Only the citizen's own typed text reaches
-a model; scheme passages and document fields never do.
+verdict shows its deciding clause. Scheme passages never reach a model. Two
+kinds of untrusted input do: the citizen's own typed text, and an uploaded
+document image when the citizen asks Saathi to read it (see "Document
+uploads and reading").
 
 | # | Threat | Defence | Evidence |
 |---|---|---|---|
@@ -25,6 +27,8 @@ a model; scheme passages and document fields never do.
 
 **Open risks** (detail in "Still open"):
 - Saved household profiles have no access control (see "Saved household profiles").
+- An uploaded ID image is sent unmasked to an outside vision model when the
+  citizen asks Saathi to read it (see "Document uploads and reading").
 - How often people rubber-stamp approvals is not measured.
 - A false fact typed plainly ("I am 60" when the person is 58) cannot be caught in software.
 
@@ -66,13 +70,17 @@ differs from a naive reading of the architecture:
   no code path today where that text reaches a model at all.
 - `doc-check`'s `check_documents` tool is explicitly metadata-only — it does
   not inspect or authenticate document contents (confirmed in
-  `MCP_TOOL_INVENTORY.md` and in `src/mcp_servers/tools/documents.py`). No
-  OCR, no content extraction. The classic "hidden white text in a receipt"
-  attack has no surface here today.
-- **The one real path:** `intake_agent.py` passes the citizen's own free-typed
+  `MCP_TOOL_INVENTORY.md` and in `src/mcp_servers/tools/documents.py`). The
+  checker and the documents agent never read a file.
+- **Main path:** `intake_agent.py` passes the citizen's own free-typed
   `initial_description` into the model's context, and a free-text answer
   reader (`propose_profile_facts`) extracts typed facts from later free-text
-  replies. This is the system's actual injection surface.
+  replies. This is the system's main injection surface.
+- **Second path (added 2026-11-11):** on request, an uploaded JPG or PNG is
+  sent to a vision model to transcribe a name and date of birth
+  (`src/documents/extraction.py`). Text hidden in an image therefore does
+  reach a model, but a tool-free one whose output is only parsed by regex.
+  See "Document uploads and reading".
 
 ## Existing mitigations on that one path
 
@@ -225,6 +233,51 @@ every agent and checks that no model call and no trace contains it.
 Limit: masking is pattern-based. An ID number written in words, or in a
 format no rule matches, would not be caught.
 
+## Document uploads and reading
+
+Nidhi's document checker (#23, #24) lets a citizen upload a synthetic
+document and, optionally, have Saathi suggest a name and date of birth from
+it. Checked in code on 2026-11-12.
+
+**Controls in place**
+- Uploads: 20 MB limit; only PDF, JPG and PNG; the file's first bytes must
+  match its claimed type, so a renamed file is rejected
+  (`src/documents/uploads.py`).
+- Each file is stored with a SHA-256 hash, the file view is checked against
+  it, and the disk path is never returned.
+- The checker is deterministic, never decides that a document is genuine,
+  and cannot change eligibility (`src/documents/checker.py`).
+- Least privilege: the `documents` actor may call only `get_documents` and
+  `check_documents`; it has no portal or write tools (`ACTOR_TOOLS`).
+- Scheme IDs and file names are matched against strict patterns before any
+  file is opened, which blocks path tricks.
+- Reviewer sign-off and file viewing need `SCHEME_SAATHI_REVIEWER_CODE`,
+  compared in constant time (`src/api/document_uploads.py`).
+- Reading (`src/documents/extraction.py`): the vision model is told only to
+  transcribe and has no tools. Plain-code regex picks only label-adjacent
+  name and date-of-birth values, capped at 120 characters each, from at most
+  20,000 characters. The citizen must accept or edit a suggestion before the
+  checker uses it.
+
+**Risks**
+- **ID images leave the system unmasked.** When an OpenRouter key is set,
+  reading sends the whole image to an outside provider (default
+  `nvidia/nemotron-3.5-super-vl:free`), or to Azure Document Intelligence
+  if configured. Masking applies to text, not images, so an Aadhaar card
+  photo is sent as is. This departs from "send ID numbers only to
+  mock-portal.submit". Acceptable for synthetic demo data only. Fix: read
+  only with a local OCR engine, or require explicit consent and blank the ID
+  number before sending.
+- **Injection inside an image.** Text such as "ignore instructions" in an
+  image does reach the vision model. Impact is limited: the model has no
+  tools, only two regex-picked fields are kept, and a person confirms them.
+  The worst case is a wrong suggested name or date of birth.
+- **The reviewer code is optional.** If `SCHEME_SAATHI_REVIEWER_CODE` is not
+  set, anyone with a conversation ID can view uploaded files and sign them
+  off. It should be set on every deployed environment.
+- **Stale comment.** `src/documents/uploads.py` still says file contents are
+  "never read by a model", which is no longer true once reading is on.
+
 ## Saved household profiles (open risk)
 
 Household memory (`src/workflow/household_memory.py`, Roy's #20 and #28)
@@ -266,6 +319,10 @@ against the current fact registry.
   above). This is the main open security risk. The fix belongs in the
   household code (Roy), with a test for each of read, overwrite and delete
   by a stranger.
+- **Document reading sends ID images to an outside model unmasked**, and
+  the reviewer code is optional (see "Document uploads and reading"). The
+  fix belongs in the document code (Nidhi): local OCR or consent and
+  blanking first, plus `SCHEME_SAATHI_REVIEWER_CODE` set on every deployment.
 - Done since the first version: intake hardening (#21), PII masking on every
   agent and in tool results (#22), 16-digit account numbers (#27), refusing
   requests to misstate facts (#26), and live verification of ASI03 (#18) and
