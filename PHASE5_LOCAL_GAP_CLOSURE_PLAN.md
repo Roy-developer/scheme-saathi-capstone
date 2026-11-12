@@ -15,6 +15,10 @@ four follow-up memory/custody tests passed. The complete free Role 5
 development gate passed with 43/43 eligibility cases and the existing 23
 runnable red-team checks. A read-only shared-dev check found telemetry from the
 older image, but the current branch is not deployed and no alert rules exist.
+The corrected APY evaluation assertion was committed and pushed as
+`866d7be`; Frontend Checks run `43147565157` passed the custody guard,
+frontend fixtures, and Role 5 development gate. This CI workflow does not build
+the application image, so image-level custody and deployment remain unverified.
 Synthetic Nemotron workflow smoke was attempted with a project-configured key,
 but OpenRouter returned HTTP 404 for structured output on three listed free
 routes. No applicant data was sent; the workflow smoke is not counted as
@@ -58,7 +62,7 @@ highest-value unblocked item.
 | Development personas | 43 personas across 4 schemes after importing 12 APY cases; dataset version 1.2.0 | The local harness scored 43/43 on 2026-11-12. This is deterministic development evidence, not independent validation or held-out evidence. |
 | Scheme packages | 4 active packages, including APY | Do not imply the separate 15-gold-scheme target is met. |
 | Evaluation reports | The local umbrella run generated seven reports under `eval/reports/`; report files were previously ignored | Allowlist the reproducible development artifacts for review; do not treat copied-label κ as calibration. |
-| Held-out custody | README and ignore rule exist; no local held-out persona file is present | Verify CI/image exclusions and keep generated cases out of Git. No unstage action is currently needed. |
+| Held-out custody | README and ignore rule exist; no local held-out persona file is present; current CI custody guard passes | Image-level exclusions remain unverified; keep generated cases out of Git. No unstage action is currently needed. |
 | Red team / E2 | 30 attacks: 23 runnable, 7 stubs. E2 runs injection, ID masking, and scam checks plus clean-case false-block scoring. | Eligibility-truthful, own-data, memory, and approval paths are not covered by the E2 off/on report. |
 | Memory | Consent-gated return-code store now records policy/version, approved fact IDs, and 90-day expiry; legacy/expired records are discarded. | R1/R2 approval, memory-on/off evidence, and cross-household attack coverage remain open; synthetic data only. |
 | Forget flow | One retryable API operation attempts journey and household deletion and reports partial failure. | Not transactional; verify all backing stores and retry after an incomplete result. |
@@ -70,11 +74,11 @@ highest-value unblocked item.
 
 ### Wave 0 — Evidence and custody hygiene (P0)
 
-1. **Partial:** the local custody guard passes and its three focused tests pass.
-   The latest successful branch-baseline Frontend Checks run predates the
-   uncommitted custody-workflow change and does not build the application
-   image. No local Docker/Podman/Nerdctl runtime is available, so verify the
-   changed CI job and built image before releasing held-out cases.
+1. **Partial:** the local custody guard and its three focused tests pass.
+   Frontend Checks run `43147565157` on `866d7be` passed the custody guard,
+   frontend fixtures, and Role 5 development gate. The workflow does not build
+   the application image, and no local Docker/Podman/Nerdctl runtime is
+   available; verify image-level exclusions before releasing held-out cases.
 2. **Done:** reconciled the 31-persona set with 12 APY cases (43 total), ran
    the local harness, and updated the reports. Do not treat the results as
    independent or held-out evidence.
