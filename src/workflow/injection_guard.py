@@ -1,16 +1,14 @@
 """Screen a citizen's free-typed text before it reaches any agent's context.
 
-See docs/THREAT_MODEL.md. Saathi already keeps scheme and document text out
-of every model's context, and per-turn free-text replies already go through
-a quarantined, tool-free reader (``intake.interpret_free_text_answer``). The
-one remaining gap is ``initial_description``: it reaches the full
-tool-calling intake agent (``intake_agent.propose_initial_profile_facts``),
-which has more reasoning surface than a quarantined reader.
+See docs/THREAT_MODEL.md. Saathi keeps scheme and document text out of
+every model's context. Free-text replies and ``initial_description`` go only
+to quarantined, tool-free readers (``intake.interpret_free_text_answer`` and
+``intake_agent.read_description_facts``); no tool-calling agent sees the
+raw text, only code-validated, typed facts.
 
-This module is not a replacement for that reader pattern — it is an
-additive, lower-risk reduction of what the intake agent's reasoning ever
-sees, while the existing schema-constrained ``propose_profile_facts`` tool
-and the citizen-only confirmation step remain the real backstop.
+This module is an extra first filter in front of the description reader,
+not the boundary itself. The tool-free reader, code validation of its
+output and the citizen-only confirmation step remain the real backstop.
 """
 
 import re

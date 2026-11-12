@@ -1,91 +1,86 @@
 {
   "schema_version": 1,
   "scheme_id": "IGNWPS-MH",
-  "checklist_version": "v1",
+  "checklist_version": "v2",
   "requirements": [
     {
       "requirement_id": "identity_group",
       "labels": {
-        "en": "Identity proof",
-        "hi": "पहचान प्रमाण",
-        "mr": "ओळख पुरावा"
+        "en": "Identity",
+        "hi": "पहचान",
+        "mr": "ओळख"
       },
       "alternatives": [
         {
           "document_id": "identity_proof",
           "labels": {
-            "en": "Identity proof (synthetic demo item)",
-            "hi": "पहचान प्रमाण (प्रदर्शन मद)",
-            "mr": "ओळख पुरावा (प्रात्यक्षिक बाब)"
+            "en": "Aadhaar card",
+            "hi": "आधार कार्ड",
+            "mr": "आधार कार्ड"
           }
         }
       ],
-      "condition": {"kind": "unconditional"},
-      "evidence_passage_ids": []
+      "condition": {
+        "kind": "unconditional"
+      },
+      "evidence_passage_ids": [
+        "IGNWPS-DOC-EVALUATION-01"
+      ]
     },
     {
-      "requirement_id": "age_group",
+      "requirement_id": "bank_account_group",
       "labels": {
-        "en": "Age proof",
-        "hi": "आयु प्रमाण",
-        "mr": "वयाचा पुरावा"
+        "en": "Bank account",
+        "hi": "बैंक खाता",
+        "mr": "बँक खाते"
       },
       "alternatives": [
         {
-          "document_id": "age_proof",
+          "document_id": "bank_account_proof",
           "labels": {
-            "en": "Age proof (synthetic demo item)",
-            "hi": "आयु प्रमाण (प्रदर्शन मद)",
-            "mr": "वयाचा पुरावा (प्रात्यक्षिक बाब)"
+            "en": "Bank passbook",
+            "hi": "बैंक पासबुक",
+            "mr": "बँक पासबुक"
           }
         }
       ],
-      "condition": {"kind": "unconditional"},
-      "evidence_passage_ids": []
+      "condition": {
+        "kind": "unconditional"
+      },
+      "evidence_passage_ids": [
+        "IGNWPS-DOC-EVALUATION-01"
+      ]
     },
     {
       "requirement_id": "widow_status_group",
       "labels": {
-        "en": "Widow status proof",
-        "hi": "विधवा स्थिति प्रमाण",
-        "mr": "विधवा स्थितीचा पुरावा"
+        "en": "Widow status",
+        "hi": "विधवा स्थिति",
+        "mr": "विधवा स्थिती"
       },
       "alternatives": [
         {
           "document_id": "widow_status_proof",
           "labels": {
-            "en": "Widow status proof (synthetic demo item)",
-            "hi": "विधवा स्थिति प्रमाण (प्रदर्शन मद)",
-            "mr": "विधवा स्थितीचा पुरावा (प्रात्यक्षिक बाब)"
+            "en": "Husband's death certificate",
+            "hi": "पति का मृत्यु प्रमाण पत्र",
+            "mr": "पतीचा मृत्यू दाखला"
           }
         }
       ],
-      "condition": {"kind": "unconditional"},
-      "evidence_passage_ids": []
-    },
-    {
-      "requirement_id": "bpl_group",
-      "labels": {
-        "en": "BPL proof",
-        "hi": "BPL प्रमाण",
-        "mr": "BPL पुरावा"
+      "condition": {
+        "kind": "unconditional"
       },
-      "alternatives": [
-        {
-          "document_id": "bpl_proof",
-          "labels": {
-            "en": "BPL proof (synthetic demo item)",
-            "hi": "BPL प्रमाण (प्रदर्शन मद)",
-            "mr": "BPL पुरावा (प्रात्यक्षिक बाब)"
-          }
-        }
-      ],
-      "condition": {"kind": "unconditional"},
-      "evidence_passage_ids": []
+      "evidence_passage_ids": [
+        "IGNWPS-DOC-EVALUATION-01"
+      ]
     }
   ],
   "approval": {
-    "status": "demo_only",
-    "checklist_version": "v1"
+    "status": "approved",
+    "checklist_version": "v2",
+    "reviewer_role": "Policy/domain reviewer (Roy-developer)",
+    "review_reference": "docs/IGNWPS_MH_RULE_REVIEW_2026-10-30.md, Update 2026-11-09",
+    "reviewed_on": "2026-11-09"
   }
 }

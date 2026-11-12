@@ -57,68 +57,6 @@ class RulePackageModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
-class HouseholdProfile(RulePackageModel):
-    """Synthetic household facts shared by every scheme check.
-
-    Each fact is optional: ``None`` means "not known yet", which the engine
-    reports as missing information instead of treating it as a "no".
-    """
-
-    date_of_birth: date | None = None
-    application_date: date | None = None
-    is_widow: bool | None = None
-    bpl_card_shown: bool | None = None
-    landholding_family_in_state_records: bool | None = None
-    institutional_landholder: bool | None = None
-    listed_public_office_member: bool | None = None
-    excluded_government_employee_member: bool | None = None
-    pension_at_least_10000_excluding_stated_grades: bool | None = None
-    income_tax_paid_last_assessment_year: bool | None = None
-    registered_practicing_professional_member: bool | None = None
-    nri_new_beneficiary: bool | None = None
-
-    @model_validator(mode="after")
-    def validate_dates(self) -> "HouseholdProfile":
-        """Reject impossible dates once both dates are known.
-
-        Runs automatically after Pydantic fills the fields.
-        """
-
-        # With one date missing we cannot compare them, so allow it.
-        if self.date_of_birth is None or self.application_date is None:
-            return self
-        # Nobody can apply before they are born.
-        if self.date_of_birth > self.application_date:
-            raise ValueError("date_of_birth cannot be after application_date")
-        # Catch typos such as a birth year of 1806 instead of 1986.
-        if calculate_age_on(self.date_of_birth, self.application_date) > 125:
-            raise ValueError("age on application_date cannot exceed 125")
-        return self
-
-    @property
-    def age(self) -> int | None:
-        """Return completed age on the application date, if both are known.
-
-        Age is calculated, never stored, so it cannot disagree with the dates.
-        """
-
-        if self.date_of_birth is None or self.application_date is None:
-            return None
-        return calculate_age_on(self.date_of_birth, self.application_date)
-
-    def fact_value(self, fact: str) -> bool | int | None:
-        """Return a raw or derived fact by name; ``None`` means unknown.
-
-        The engine calls this for every rule, so "age" and normal fields
-        can be read the same way.
-        """
-
-        if fact == "age":
-            return self.age
-        # getattr reads a field by its name, e.g. getattr(p, "is_widow").
-        return getattr(self, fact)
-
-
 class RuleSource(RulePackageModel):
     """Source provenance for the policy statements encoded in a rule package."""
 
@@ -139,7 +77,7 @@ class Rule(RulePackageModel):
 
     rule_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$")
     field: RuleFact
-    operator: Literal["eq", "gte", "lte"]
+    operator: Literal["eq", "gt", "gte", "lt", "lte"]
     value: StrictBool | StrictInt | StrictFloat | StrictStr
     unit: str | None = Field(default=None, max_length=80)
     source_clause_id: str = Field(
@@ -163,7 +101,7 @@ class Rule(RulePackageModel):
             # Age needs a minimum or maximum with a realistic whole number.
             # type(...) is int rejects True/False, which Python treats as 1/0.
             valid = (
-                self.operator in {"gte", "lte"}
+                self.operator in {"gt", "gte", "lt", "lte"}
                 and type(self.value) is int
                 and 0 <= self.value <= 125
             )
@@ -173,7 +111,7 @@ class Rule(RulePackageModel):
         else:
             # Generic registered-fact compatibility is checked by the
             # provider against its pinned registry before activation.
-            valid = self.operator in {"eq", "gte", "lte"}
+            valid = self.operator in {"eq", "gt", "gte", "lt", "lte"}
         if not valid:
             raise ValueError(
                 f"Invalid operator or value for rule field '{self.field}'"
@@ -212,6 +150,9 @@ class RulePackage(RulePackageModel):
         "approved_for_mock_portal",
         "mock_baseline_pending_human_rule_approval",
     ]
+    fact_intake_mode: Literal["model_assisted", "deterministic_only"] = (
+        "model_assisted"
+    )
     reviewer_name: str
     reviewed_at: date
     approval_scope: Literal["synthetic_mock_portal_only"]
@@ -257,8 +198,22 @@ class RulePackage(RulePackageModel):
         if age_rules and self.age_as_of is None:
             raise ValueError("Age rules require age_as_of")
         # A minimum above the maximum (e.g. 80 to 40) would reject everyone.
-        minimums = [rule.value for rule in age_rules if rule.operator == "gte"]
-        maximums = [rule.value for rule in age_rules if rule.operator == "lte"]
-        if minimums and maximums and max(minimums) > min(maximums):
-            raise ValueError("Minimum age cannot exceed maximum age")
+        lower_bounds = [
+            (rule.value, rule.operator == "gt")
+            for rule in age_rules
+            if rule.operator in {"gt", "gte"}
+        ]
+        upper_bounds = [
+            (rule.value, rule.operator == "lt")
+            for rule in age_rules
+            if rule.operator in {"lt", "lte"}
+        ]
+        if lower_bounds and upper_bounds:
+            maximum_lower = max(lower_bounds, key=lambda bound: (bound[0], bound[1]))
+            minimum_upper = min(upper_bounds, key=lambda bound: (bound[0], not bound[1]))
+            if maximum_lower[0] > minimum_upper[0] or (
+                maximum_lower[0] == minimum_upper[0]
+                and (maximum_lower[1] or minimum_upper[1])
+            ):
+                raise ValueError("Minimum age cannot exceed maximum age")
         return self

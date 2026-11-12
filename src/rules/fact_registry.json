@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "registry_version": "1.0.0",
+  "registry_version": "1.2.0",
   "definitions": [
     {
       "fact_id": "age",
@@ -8,7 +8,8 @@
       "meaning": "Completed age in years on the application date.",
       "source_refs": [
         "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
-        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/"
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+        "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf"
       ],
       "definition_review_status": "approved",
       "definition_reviewer": "Roy-developer",
@@ -38,15 +39,18 @@
           "text": "वयाची गणना जन्मतारीख आणि अर्जाच्या तारखेवरून होते."
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": null
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "application_date",
@@ -54,7 +58,8 @@
       "meaning": "On what date are you applying? For example 30 October 2026.",
       "source_refs": [
         "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
-        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/"
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+        "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf"
       ],
       "definition_review_status": "approved",
       "definition_reviewer": "Roy-developer",
@@ -81,15 +86,18 @@
           "text": "तुम्ही कोणत्या तारखेला अर्ज करत आहात?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "application_date"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "bpl_card_shown",
@@ -123,15 +131,18 @@
           "text": "तुम्ही सरकारी बीपीएल कार्ड दाखवू शकता का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "bpl_card_shown"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "date_of_birth",
@@ -139,7 +150,8 @@
       "meaning": "What is your date of birth? For example 12 March 1981 or 12/03/1981.",
       "source_refs": [
         "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
-        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/"
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
+        "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf"
       ],
       "definition_review_status": "approved",
       "definition_reviewer": "Roy-developer",
@@ -166,15 +178,18 @@
           "text": "तुमची जन्मतारीख काय आहे? YYYY-MM-DD मध्ये लिहा, उदाहरण: 1958-05-05."
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "highly_sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "date_of_birth"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "excluded_government_employee_member",
@@ -208,15 +223,18 @@
           "text": "निर्दिष्ट कनिष्ठ श्रेणी अपवाद वगळता कुटुंबातील कोणी सरकारी कर्मचारी आहे किंवा होते का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "excluded_government_employee_member"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "income_tax_paid_last_assessment_year",
@@ -250,15 +268,18 @@
           "text": "कुटुंबातील कोणी मागील निर्धारण वर्षात आयकर भरला का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "income_tax_paid_last_assessment_year"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "institutional_landholder",
@@ -292,15 +313,18 @@
           "text": "जमीन एखाद्या संस्थेच्या नावावर आहे का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "institutional_landholder"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "is_widow",
@@ -334,15 +358,18 @@
           "text": "अर्जदार विधवा आहेत का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "highly_sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "is_widow"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "landholding_family_in_state_records",
@@ -376,15 +403,18 @@
           "text": "शेतकरी कुटुंबाची लागवडीयोग्य जमीन राज्य/केंद्रशासित प्रदेशाच्या नोंदीत आहे का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "landholding_family_in_state_records"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "listed_public_office_member",
@@ -418,15 +448,18 @@
           "text": "कुटुंबातील कोणी मंत्री, खासदार, आमदार किंवा महापौर यांसारख्या सूचीबद्ध सार्वजनिक पदावर आहे किंवा होते का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "listed_public_office_member"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "name_on_bpl_list",
@@ -463,15 +496,18 @@
           "help_text": "तुम्हाला खात्री नसेल, तर 'माहीत नाही' निवडा."
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": null
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "nri_new_beneficiary",
@@ -505,15 +541,18 @@
           "text": "हा अनिवासी भारतीय शेतकरी कुटुंबाचा नवीन अर्ज आहे का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
-      },
-      "legacy_profile_field": "nri_new_beneficiary"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
     },
     {
       "fact_id": "pension_at_least_10000_excluding_stated_grades",
@@ -547,15 +586,63 @@
           "text": "कुटुंबातील कोणाला दरमहा 10,000 रुपये किंवा अधिक पेन्शन मिळते का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
+    },
+    {
+      "fact_id": "applicant_name_in_land_records_on_2019_08_01",
+      "version": "1.0.0",
+      "meaning": "Was the applicant's name recorded in land records as of 1 August 2019?",
+      "source_refs": [
+        "https://www.myscheme.gov.in/schemes/pmkmdy"
+      ],
+      "definition_review_status": "approved",
+      "definition_reviewer": "project_owner",
+      "definition_reviewed_at": "2026-11-11",
+      "scope": "person",
+      "value_type": "boolean",
+      "unit": null,
+      "period": "as_of:2019-08-01",
+      "minimum": null,
+      "maximum": null,
+      "choices": [],
+      "max_length": null,
+      "display_only": false,
+      "derived_from": [],
+      "derivation": null,
+      "questions": {
+        "en": {
+          "text": "Was your name recorded in land records as of 1 August 2019?"
+        },
+        "hi": {
+          "text": "क्या 1 अगस्त 2019 को भूमि अभिलेखों में आपका नाम दर्ज था?"
+        },
+        "mr": {
+          "text": "1 ऑगस्ट 2019 रोजी जमीन अभिलेखांमध्ये तुमचे नाव नोंदलेले होते का?"
+        }
       },
-      "legacy_profile_field": "pension_at_least_10000_excluding_stated_grades"
+      "question_review_status": "approved",
+      "question_reviewer": "project_owner",
+      "questions_reviewed_at": "2026-11-11",
+      "privacy": {
+        "policy_id": "synthetic-mock-minimum-data",
+        "version": "1.0.0",
+        "purpose": "Use only to evaluate the synthetic mock scheme rules.",
+        "sensitivity": "sensitive",
+        "review_status": "approved",
+        "reviewer": "project_owner",
+        "reviewed_at": "2026-11-11"
+      }
     },
     {
       "fact_id": "registered_practicing_professional_member",
@@ -589,15 +676,153 @@
           "text": "कुटुंबातील कोणी नोंदणीकृत व कार्यरत डॉक्टर, अभियंता, वकील किंवा चार्टर्ड अकाउंटंट आहे का?"
         }
       },
-      "question_review_status": "pending",
+      "question_review_status": "approved",
+      "question_reviewer": "Roy-developer",
+      "questions_reviewed_at": "2026-11-09",
       "privacy": {
         "policy_id": "synthetic-mock-minimum-data",
         "version": "1.0.0",
         "purpose": "Use only to evaluate the synthetic mock scheme rules.",
         "sensitivity": "sensitive",
-        "review_status": "pending"
+        "review_status": "approved",
+        "reviewer": "Roy-developer",
+        "reviewed_at": "2026-11-09"
+      }
+    },
+    {
+      "fact_id": "apy_is_citizen_of_india",
+      "version": "1.0.0",
+      "meaning": "Is the applicant a citizen of India for APY joining eligibility?",
+      "source_refs": [
+        "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf"
+      ],
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-11",
+      "scope": "person",
+      "value_type": "boolean",
+      "unit": null,
+      "period": null,
+      "minimum": null,
+      "maximum": null,
+      "choices": [],
+      "max_length": null,
+      "display_only": false,
+      "derived_from": [],
+      "derivation": null,
+      "questions": {
+        "en": {
+          "text": "Are you a citizen of India?"
+        },
+        "hi": {
+          "text": "क्या आप भारत के नागरिक हैं?"
+        },
+        "mr": {
+          "text": "तुम्ही भारताचे नागरिक आहात का?"
+        }
       },
-      "legacy_profile_field": "registered_practicing_professional_member"
+      "question_review_status": "pending",
+      "question_reviewer": null,
+      "questions_reviewed_at": null,
+      "privacy": {
+        "policy_id": "apy-synthetic-mock-minimum-data",
+        "version": "1.0.0",
+        "purpose": "Use only for synthetic APY mock eligibility; do not enter real personal data.",
+        "sensitivity": "sensitive",
+        "review_status": "pending",
+        "reviewer": null,
+        "reviewed_at": null
+      }
+    },
+    {
+      "fact_id": "apy_has_savings_bank_account",
+      "version": "1.0.0",
+      "meaning": "Does the applicant have a savings bank account as required for APY joining eligibility?",
+      "source_refs": [
+        "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf"
+      ],
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-11",
+      "scope": "person",
+      "value_type": "boolean",
+      "unit": null,
+      "period": null,
+      "minimum": null,
+      "maximum": null,
+      "choices": [],
+      "max_length": null,
+      "display_only": false,
+      "derived_from": [],
+      "derivation": null,
+      "questions": {
+        "en": {
+          "text": "Do you have a savings bank account?"
+        },
+        "hi": {
+          "text": "क्या आपका बचत बैंक खाता है?"
+        },
+        "mr": {
+          "text": "तुमचे बचत बँक खाते आहे का?"
+        }
+      },
+      "question_review_status": "pending",
+      "question_reviewer": null,
+      "questions_reviewed_at": null,
+      "privacy": {
+        "policy_id": "apy-synthetic-mock-minimum-data",
+        "version": "1.0.0",
+        "purpose": "Use only for synthetic APY mock eligibility; do not enter real personal data.",
+        "sensitivity": "sensitive",
+        "review_status": "pending",
+        "reviewer": null,
+        "reviewed_at": null
+      }
+    },
+    {
+      "fact_id": "apy_is_or_has_been_income_tax_payer",
+      "version": "1.0.0",
+      "meaning": "Is or has the applicant been an income-tax payer for APY joining eligibility on or after 2022-10-01?",
+      "source_refs": [
+        "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf"
+      ],
+      "definition_review_status": "approved",
+      "definition_reviewer": "Roy-developer",
+      "definition_reviewed_at": "2026-11-11",
+      "scope": "person",
+      "value_type": "boolean",
+      "unit": null,
+      "period": "ever; APY joining on or after 2022-10-01",
+      "minimum": null,
+      "maximum": null,
+      "choices": [],
+      "max_length": null,
+      "display_only": false,
+      "derived_from": [],
+      "derivation": null,
+      "questions": {
+        "en": {
+          "text": "Are you, or have you ever been, an income tax payer?"
+        },
+        "hi": {
+          "text": "क्या आप आयकर दाता हैं, या कभी रहे हैं?"
+        },
+        "mr": {
+          "text": "तुम्ही आयकर भरता का, किंवा कधी भरत होता का?"
+        }
+      },
+      "question_review_status": "pending",
+      "question_reviewer": null,
+      "questions_reviewed_at": null,
+      "privacy": {
+        "policy_id": "apy-synthetic-mock-minimum-data",
+        "version": "1.0.0",
+        "purpose": "Use only for synthetic APY mock eligibility; do not enter real personal data.",
+        "sensitivity": "sensitive",
+        "review_status": "pending",
+        "reviewer": null,
+        "reviewed_at": null
+      }
     }
   ]
 }

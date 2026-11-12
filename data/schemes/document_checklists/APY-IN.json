@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "scheme_id": "APY-IN",
+  "checklist_version": "v1",
+  "requirements": [
+    {
+      "requirement_id": "documents_not_verified",
+      "labels": {
+        "en": "Document requirements are not verified; do not collect documents for this mock.",
+        "hi": "दस्तावेज़ की आवश्यकताएँ सत्यापित नहीं हैं; इस मॉक के लिए दस्तावेज़ एकत्र न करें।",
+        "mr": "कागदपत्रांच्या आवश्यकता पडताळलेल्या नाहीत; या मॉकसाठी कागदपत्रे गोळा करू नका."
+      },
+      "alternatives": [
+        {
+          "document_id": "no_verified_document",
+          "labels": {
+            "en": "No verified document requirement",
+            "hi": "दस्तावेज़ की कोई सत्यापित आवश्यकता नहीं",
+            "mr": "कागदपत्राची कोणतीही पडताळलेली आवश्यकता नाही"
+          }
+        }
+      ],
+      "condition": {
+        "kind": "unconditional"
+      },
+      "evidence_passage_ids": []
+    }
+  ],
+  "approval": {
+    "status": "pending_review",
+    "checklist_version": "v1",
+    "review_reference": "APY package documents_status is not_verified; no documentary requirement is approved."
+  }
+}

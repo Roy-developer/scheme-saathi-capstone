@@ -158,6 +158,63 @@ def _widow_passage():
     ).model_copy(update={"eligible_for_mock_flow": True})
 
 
+def _scheme_passage(scheme_id: str):
+    """Return one passage of any scheme from the per-scheme passage files."""
+
+    return next(
+        passage
+        for passage in load_passages(
+            Path(__file__).resolve().parents[1]
+            / "data"
+            / "schemes"
+            / "passages"
+        )
+        if passage.scheme_id == scheme_id
+    )
+
+
+def test_search_for_scheme_without_rules_shows_information_only() -> None:
+    """APY has cited passages but no rule package: no eligibility demo."""
+
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    passage = _scheme_passage("APY-IN")
+
+    def fake_journey(request):
+        assert request.action == "search"
+        return JourneyResponse(
+            conversation_id=uuid4(),
+            plan="Search for a source-cited scheme.",
+            status="search_results",
+            message=(
+                "Found one relevant cited passage across 1 scheme. "
+                "Showing up to 20 passages; search may not find every "
+                "relevant scheme."
+            ),
+            passages=[passage],
+            candidate_scheme_ids=["APY-IN"],
+        )
+
+    with patch("src.ui.api_client.run_journey", side_effect=fake_journey):
+        app = AppTest.from_file(app_path).run()
+        app.text_input[0].set_value("atal pension")
+        next(
+            button for button in app.button if button.label == "Search schemes"
+        ).click().run()
+
+        assert not app.exception
+        assert any(
+            "information only" in element.value for element in app.info
+        )
+        assert not any(
+            button.label == "Continue to the synthetic eligibility demo"
+            for button in app.button
+        )
+        assert any(
+            passage.passage_id in expander.label
+            for expander in app.expander
+        )
+
+
 def _plan(intake_status: str, eligibility_status: str) -> Plan:
     """A two-step supervisor plan with the given step statuses."""
 
@@ -778,6 +835,44 @@ def test_missing_fact_is_shown_as_its_question_not_its_internal_name() -> None:
         assert "name_on_bpl_list" not in shown
 
 
+def test_registered_question_also_accepts_a_typed_answer() -> None:
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    conversation_id = uuid4()
+    waiting = JourneyResponse(
+        conversation_id=conversation_id,
+        plan="Learn about you -> Check the rules",
+        plan_detail=_plan("in_progress", "pending"),
+        status="awaiting_answer",
+        message="What is your date of birth?",
+        question="What is your date of birth?",
+        pending_fact="date_of_birth",
+        question_definition=QuestionPresentation(
+            fact_id="date_of_birth", value_type="date", choices=[],
+        ),
+        conversation=[{"role": "assistant", "content": "What is your date of birth?"}],
+    )
+    with patch(
+        "src.ui.api_client.get_journey_state", return_value=waiting
+    ), patch(
+        "src.ui.api_client.send_journey_message", side_effect=[waiting],
+    ) as send_reply, patch(
+        "src.ui.api_client.list_application_drafts", return_value=[],
+    ):
+        app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS)
+        app.query_params["conversation"] = str(conversation_id)
+        app.query_params["scheme"] = "IGNOAPS-MH"
+        app.run()
+        assert not app.exception
+        assert app.date_input(key=f"registered_answer_{conversation_id}_date_of_birth")
+
+        app.chat_input[0].set_value("third of march 1950").run()
+
+        assert not app.exception
+        assert [call.args for call in send_reply.call_args_list] == [
+            (str(conversation_id), "third of march 1950"),
+        ]
+
+
 def test_refresh_with_forgotten_conversation_cleans_url() -> None:
     """If the API has nothing saved, the search screen shows as normal."""
 
@@ -798,8 +893,8 @@ def test_refresh_with_forgotten_conversation_cleans_url() -> None:
 @pytest.mark.parametrize(
     ("scheme_id", "expected_label"),
     [
-        ("IGNWPS-MH", "Identity proof (synthetic demo item)"),
-        ("PM-KISAN-IN", "Land record (synthetic demo item)"),
+        ("IGNWPS-MH", "Aadhaar card"),
+        ("PM-KISAN-IN", "Cultivable land recorded in the State/UT land records"),
     ],
 )
 def test_document_action_updates_supervisor_plan_for_both_pilots(

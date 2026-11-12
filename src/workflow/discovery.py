@@ -3,13 +3,13 @@
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Literal
 
-from src.rules.models import HouseholdProfile
+from collections.abc import Mapping
 
 MAX_DISCOVERY_CALLS = 4
 MAX_CANDIDATES = 20
 DiscoveryCode = Literal[
     "candidates_added", "search_completed", "tool_error", "budget_exhausted",
-    "candidate_limit", "correction_invalidated", "tool_retry",
+    "candidate_limit", "correction_invalidated", "tool_retry", "scam_screened",
 ]
 RELEVANT_FACT_TERMS = {
     "is_widow": "widow pension",
@@ -47,6 +47,11 @@ DISCOVERY_MESSAGES: dict[str, dict[str, str]] = {
         "allowance_used": "This conversation has used its allowance of checks. No decision was invented. Choose \"Forget my demonstration data\" to start a new conversation, or ask a CSC operator for help.",
         "candidate_limit": "Only 20 candidates can be checked. These additional candidates were not checked:",
         "correction_invalidated": "Answers changed. Unsubmitted drafts and their approvals are stale; review and approve a fresh draft.",
+        "scam_screened": (
+            "Saathi never asks for a processing fee, OTP, QR payment, or a personal "
+            "WhatsApp/UPI message for scheme approval. That channel was ignored; "
+            "continue with the interview question only."
+        ),
         "stale_draft": "This draft is stale and cannot be approved or submitted. Prepare and personally approve a fresh draft.",
         "corrected": "Answer corrected. Rechecking scheme rules.",
         "checks_finished": "Candidate checks finished. Review each scheme's result.",
@@ -66,6 +71,11 @@ DISCOVERY_MESSAGES: dict[str, dict[str, str]] = {
         "allowance_used": "इस बातचीत में जाँच की तय सीमा पूरी हो गई। कोई निर्णय नहीं गढ़ा गया। नई बातचीत शुरू करने के लिए \"मेरा प्रदर्शन डेटा भूलें\" चुनें, या CSC ऑपरेटर से सहायता लें।",
         "candidate_limit": "केवल 20 योजनाओं की जाँच हो सकती है। इन अतिरिक्त योजनाओं की जाँच नहीं हुई:",
         "correction_invalidated": "उत्तर बदले हैं। बिना जमा किए मसौदे और अनुमोदन पुराने हैं; नया मसौदा देखकर फिर अनुमोदन करें।",
+        "scam_screened": (
+            "साथी कभी प्रोसेसिंग शुल्क, OTP, QR भुगतान, या व्यक्तिगत WhatsApp/UPI पर "
+            "योजना मंजूरी के लिए संदेश नहीं माँगता। उस चैनल को अनदेखा किया गया; केवल "
+            "साक्षात्कार के प्रश्न पर जारी रखें।"
+        ),
         "stale_draft": "यह मसौदा पुराना है; इसका अनुमोदन या जमा नहीं हो सकता। नया मसौदा बनाकर स्वयं अनुमोदन करें।",
         "corrected": "उत्तर सुधारा गया। योजना के नियम फिर जाँचे जा रहे हैं।",
         "checks_finished": "योजनाओं की जाँच पूरी हुई। हर योजना का परिणाम देखें।",
@@ -85,6 +95,11 @@ DISCOVERY_MESSAGES: dict[str, dict[str, str]] = {
         "allowance_used": "या संभाषणातील तपासण्यांची मर्यादा संपली. कोणताही निकाल बनवला नाही. नवीन संभाषण सुरू करण्यासाठी \"माझा प्रात्यक्षिक डेटा विसरा\" निवडा, किंवा CSC ऑपरेटरची मदत घ्या.",
         "candidate_limit": "फक्त 20 योजना तपासता येतात. या अतिरिक्त योजना तपासलेल्या नाहीत:",
         "correction_invalidated": "उत्तरे बदलली आहेत. न सादर केलेले मसुदे आणि मंजुरी कालबाह्य आहेत; नवीन मसुदा पाहून पुन्हा मंजुरी द्या.",
+        "scam_screened": (
+            "साथी कधीही प्रोसेसिंग फी, OTP, QR पेमेंट, किंवा वैयक्तिक WhatsApp/UPI वर "
+            "योजना मंजुरीसाठी संदेश मागत नाही. तो चॅनेल दुर्लक्षित केला; फक्त मुलाखतीच्या "
+            "प्रश्नावर सुरू ठेवा."
+        ),
         "stale_draft": "हा मसुदा कालबाह्य आहे; मंजुरी किंवा सादर करता येणार नाही. नवीन मसुदा तयार करून स्वतः मंजुरी द्या.",
         "corrected": "उत्तर दुरुस्त केले. योजनेचे नियम पुन्हा तपासत आहोत.",
         "checks_finished": "योजनांची तपासणी पूर्ण झाली. प्रत्येक योजनेचा निकाल पाहा.",
@@ -104,34 +119,36 @@ def discovery_message(code: str, locale: str) -> str:
     return DISCOVERY_MESSAGES[locale].get(code, DISCOVERY_MESSAGES[locale]["tool_error"])
 
 
-def discovery_input(profile: HouseholdProfile, locale: str) -> DiscoveryInput:
+def discovery_input(
+    facts: Mapping[str, object], age: int | None, locale: str,
+) -> DiscoveryInput:
     """Use confirmed category/age hints and the explicitly selected UI language.
 
     The current profile has no state or gender, and retrieval supports neither
     an age nor a gender filter. Do not invent these filters from widow status.
     """
 
-    terms = discovery_query(profile)
-    if terms and profile.age is not None:
-        terms += f" age {profile.age}"
+    terms = discovery_query(facts)
+    if terms and age is not None:
+        terms += f" age {age}"
     return DiscoveryInput(query=terms, language=locale)
 
 
-def discovery_query(profile: HouseholdProfile) -> str:
+def discovery_query(facts: Mapping[str, object]) -> str:
     """Use only confirmed positive facts; an unknown fact never becomes a filter."""
 
     return " ".join(
         term for fact, term in RELEVANT_FACT_TERMS.items()
-        if getattr(profile, fact) is True
+        if facts.get(fact) is True
     )
 
 
-def discovery_signature(profile: HouseholdProfile) -> str:
+def discovery_signature(facts: Mapping[str, object], age: int | None) -> str:
     """Represent changes including corrections to false or unknown, without PII."""
 
     return "|".join([
-        *(f"{fact}:{getattr(profile, fact)}" for fact in RELEVANT_FACT_TERMS),
-        f"age:{profile.age}",
+        *(f"{fact}:{facts.get(fact)}" for fact in RELEVANT_FACT_TERMS),
+        f"age:{age}",
     ])
 
 

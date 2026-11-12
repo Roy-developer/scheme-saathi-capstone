@@ -1,0 +1,84 @@
+{
+  "scheme_id": "TCE-SC-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "human_reviewed",
+  "rules": [
+    {
+      "rule_id": "TCE-SC-IN-R01",
+      "kind": "eligibility",
+      "field": "annual_family_income_inr",
+      "operator": "lte",
+      "value": 800000,
+      "unit": "INR per year",
+      "source_passage_id": "TCE-SC-IN-ELIGIBILITY-01",
+      "source_quote": "total annual family income from all sources up to Rs. 8.00 lakh",
+      "needs_human_review": false,
+      "note": "Rs. 8.00 lakh = 800000; 'up to' read as inclusive."
+    },
+    {
+      "rule_id": "TCE-SC-IN-R02",
+      "kind": "eligibility",
+      "field": "is_scheduled_caste",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "TCE-SC-IN-ELIGIBILITY-01",
+      "source_quote": "Those SC students",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "TCE-SC-IN-R03",
+      "kind": "eligibility",
+      "field": "is_admitted_to_notified_institution_full_time",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "TCE-SC-IN-ELIGIBILITY-01",
+      "source_quote": "having secured admission in a full-time prescribed course in any of the notified institutions",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "TCE-SC-IN-R04",
+      "kind": "eligibility",
+      "field": "is_first_year_student",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "TCE-SC-IN-ELIGIBILITY-03",
+      "source_quote": "Fresh scholarship will be awarded only to 1st year students.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "TCE-SC-IN-R05",
+      "kind": "eligibility",
+      "field": "family_members_receiving_scholarship",
+      "operator": "lte",
+      "value": 2,
+      "unit": null,
+      "source_passage_id": "TCE-SC-IN-EXCLUSION-01",
+      "source_quote": "The benefit of the Scheme will not be provided to more than 2 siblings in a family.",
+      "needs_human_review": false,
+      "note": "Counts siblings receiving this scheme, including the applicant."
+    },
+    {
+      "rule_id": "TCE-SC-IN-R06",
+      "kind": "exclusion",
+      "field": "receives_other_scholarship_or_stipend",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "TCE-SC-IN-EXCLUSION-03",
+      "source_quote": "precluded from availing any other scholarship benefits of similar scheme",
+      "needs_human_review": false,
+      "note": null
+    }
+  ],
+  "unresolved": [
+    "Slot limits per institution and merit ranking (ELIGIBILITY-02/04) are selection rules, not eligibility facts.",
+    "Changing institute after selection ends the scholarship (EXCLUSION-02); a post-selection condition, not encoded."
+  ]
+}

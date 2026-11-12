@@ -36,6 +36,7 @@ def openrouter_chat_model(
     *,
     timeout: float = MODEL_TIMEOUT_SECONDS,
     max_tokens: int = MAX_COMPLETION_TOKENS,
+    max_completion_tokens: int | None = None,
     reasoning_effort: str | None = None,
 ) -> ChatOpenAI:
     """Build the chat model used for every OpenRouter call.
@@ -46,14 +47,17 @@ def openrouter_chat_model(
         model: An OpenRouter ``provider/model`` name.
         timeout: Seconds to wait for a reply; slow free models need longer.
         max_tokens: Reply cap. Reasoning models spend it on thinking first.
+        max_completion_tokens: Compatibility alias for ``max_tokens``.
         reasoning_effort: OpenRouter ``reasoning.effort`` (for example "low")
             to keep reasoning models short; None leaves the model default.
     """
 
-    extra_body: dict = {"max_tokens": max_tokens}
-    if reasoning_effort:
+    effective_max_tokens = (
+        max_tokens if max_completion_tokens is None else max_completion_tokens
+    )
+    extra_body: dict[str, object] = {"max_tokens": effective_max_tokens}
+    if reasoning_effort is not None:
         extra_body["reasoning"] = {"effort": reasoning_effort}
-
     return ChatOpenAI(
         model=model,
         api_key=api_key,

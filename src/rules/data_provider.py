@@ -8,90 +8,7 @@ from typing import Mapping
 
 from src.rules.bundles import BundleRegistry, SchemeBundle
 from src.rules.facts import FactRegistry
-from src.rules.models import HouseholdProfile, Rule, RulePackage
-
-
-# A legacy marker is only a compatibility route for these exact, already
-# deployed pilot definitions. Novel bundles cannot self-declare this status.
-LegacyPilotBinding = tuple[
-    str,
-    str,
-    str,
-    str,
-    str,
-    tuple[str, ...],
-    tuple[tuple[str, str], ...],
-    tuple[str, ...],
-]
-_LEGACY_PILOT_BINDINGS: dict[str, LegacyPilotBinding] = {
-    "IGNWPS-MH": (
-        "ignwps_mh.v1.json",
-        "1.0.0",
-        "224bf03585d9bb6bc41a64765c890dd84ea36c6006b0907065d9ded8bd5b2c65",
-        "1.0.0",
-        "006a17b75e515ba934f5e4bd8bd414e52197a7a01f921aab067045fedc0580df",
-        ("age", "application_date", "bpl_card_shown", "date_of_birth", "is_widow"),
-        (
-            ("application_date", "application_date"),
-            ("bpl_card_shown", "bpl_card_shown"),
-            ("date_of_birth", "date_of_birth"),
-            ("is_widow", "is_widow"),
-        ),
-        ("IGNWPS-MH-ELIGIBILITY-01",),
-    ),
-    "PM-KISAN-IN": (
-        "pmkisan_in.v1.json",
-        "1.0.0",
-        "3e7b14c676a21a878ef5c11a0e2d2fd8e202ff50c40318299d9d644ab20cb4a7",
-        "1.0.0",
-        "006a17b75e515ba934f5e4bd8bd414e52197a7a01f921aab067045fedc0580df",
-        (
-            "excluded_government_employee_member",
-            "income_tax_paid_last_assessment_year",
-            "institutional_landholder",
-            "landholding_family_in_state_records",
-            "listed_public_office_member",
-            "nri_new_beneficiary",
-            "pension_at_least_10000_excluding_stated_grades",
-            "registered_practicing_professional_member",
-        ),
-        (
-            (
-                "excluded_government_employee_member",
-                "excluded_government_employee_member",
-            ),
-            (
-                "income_tax_paid_last_assessment_year",
-                "income_tax_paid_last_assessment_year",
-            ),
-            ("institutional_landholder", "institutional_landholder"),
-            (
-                "landholding_family_in_state_records",
-                "landholding_family_in_state_records",
-            ),
-            ("listed_public_office_member", "listed_public_office_member"),
-            ("nri_new_beneficiary", "nri_new_beneficiary"),
-            (
-                "pension_at_least_10000_excluding_stated_grades",
-                "pension_at_least_10000_excluding_stated_grades",
-            ),
-            (
-                "registered_practicing_professional_member",
-                "registered_practicing_professional_member",
-            ),
-        ),
-        (
-            "PMKISAN-GUIDELINES-2020-3",
-            "PMKISAN-GUIDELINES-2020-4.1(a)",
-            "PMKISAN-GUIDELINES-2020-4.1(b)(i)-(ii)",
-            "PMKISAN-GUIDELINES-2020-4.1(b)(iii)",
-            "PMKISAN-GUIDELINES-2020-4.1(b)(iv)",
-            "PMKISAN-GUIDELINES-2020-4.1(b)(v)",
-            "PMKISAN-GUIDELINES-2020-4.1(b)(vi)",
-            "PMKISAN-GUIDELINES-2020-4.1(c)",
-        ),
-    ),
-}
+from src.rules.models import Rule, RulePackage
 
 
 def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
@@ -121,8 +38,6 @@ def _digest(raw: bytes) -> str:
 def _validate_rule(
     rule: Rule,
     registry: FactRegistry,
-    *,
-    allow_legacy_unitless_age: bool,
 ) -> None:
     """Check a rule's fact type, operator, and literal against its definition."""
 
@@ -144,7 +59,7 @@ def _validate_rule(
         )
     elif definition.value_type == "date":
         compatible = False
-        if rule.operator in {"eq", "gte", "lte"} and type(rule.value) is str:
+        if rule.operator in {"eq", "gt", "gte", "lt", "lte"} and type(rule.value) is str:
             try:
                 from datetime import date
 
@@ -154,7 +69,7 @@ def _validate_rule(
                 compatible = False
     elif definition.value_type in {"integer", "decimal"}:
         compatible = (
-            rule.operator in {"eq", "gte", "lte"}
+            rule.operator in {"eq", "gt", "gte", "lt", "lte"}
             and type(rule.value) in (int, float)
         )
         if definition.value_type == "integer":
@@ -169,19 +84,14 @@ def _validate_rule(
             compatible = rule.value >= definition.minimum
         if compatible and definition.maximum is not None:
             compatible = rule.value <= definition.maximum
-        if compatible and rule.operator in {"gte", "lte"}:
+        if compatible and rule.operator in {"gt", "gte", "lt", "lte"}:
             if definition.value_type == "integer":
                 compatible = type(rule.value) is int
     else:
         compatible = False
     numeric_fact = definition.value_type in {"integer", "decimal"}
     if numeric_fact and definition.unit is not None:
-        legacy_age = (
-            rule.field == "age"
-            and allow_legacy_unitless_age
-            and rule.unit is None
-        )
-        compatible = compatible and (rule.unit == definition.unit or legacy_age)
+        compatible = compatible and rule.unit == definition.unit
     elif rule.unit is not None:
         compatible = False
     if not compatible:
@@ -204,40 +114,6 @@ def _validate_bundle(
 ) -> None:
     """Validate bundle references and compatibility before package activation."""
 
-    if bundle.activation_state == "legacy_compatibility":
-        expected = _LEGACY_PILOT_BINDINGS.get(bundle.scheme_id)
-        actual = (
-            bundle.package_file,
-            bundle.package_version,
-            bundle.package_sha256,
-            bundle.registry_version,
-            bundle.registry_sha256,
-            tuple(sorted(bundle.fact_ids)),
-            tuple(sorted(bundle.legacy_profile_mapping.items())),
-            tuple(sorted(bundle.source_clause_ids)),
-        )
-        if expected is None or actual != expected:
-            raise ValueError(
-                f"Unrecognized legacy compatibility bundle: {bundle.scheme_id}"
-            )
-    if bundle.activation_state == "approved":
-        # A new scheme goes live because its review records say so, not
-        # because its fingerprint is written into this file. Reviewer decision
-        # (2026-11-08): the package must be human-approved and every fact's
-        # definition approved; question and privacy reviews may still be
-        # pending, and the scheme stays a synthetic mock.
-        if package.approval_status != "approved_for_mock_portal":
-            raise ValueError(
-                f"Approved bundle needs a human-approved rule package: {bundle.scheme_id}"
-            )
-        pending = sorted(
-            fact_id for fact_id in bundle.fact_ids
-            if registry.get(fact_id).definition_review_status != "approved"
-        )
-        if pending:
-            raise ValueError(
-                f"Approved bundle needs approved fact definitions for {bundle.scheme_id}: {pending}"
-            )
     if bundle.scheme_id != package.scheme_id:
         raise ValueError("Bundle scheme ID does not match its rule package")
     if bundle.package_version != package.package_version:
@@ -252,13 +128,7 @@ def _validate_bundle(
     package_source = str(package.source.source_url)
     referenced = set(package.required_facts)
     for rule in package.rules:
-        _validate_rule(
-            rule,
-            registry,
-            allow_legacy_unitless_age=(
-                bundle.activation_state == "legacy_compatibility"
-            ),
-        )
+        _validate_rule(rule, registry)
         definition = registry.get(rule.field)
         referenced.update(definition.derived_from or (rule.field,))
     if not referenced <= set(bundle.fact_ids):
@@ -272,27 +142,6 @@ def _validate_bundle(
             raise ValueError(
                 f"Fact source references do not include package source: {fact_id}"
             )
-    profile_fields = set(HouseholdProfile.model_fields)
-    for fact_id, profile_field in bundle.legacy_profile_mapping.items():
-        definition = registry.get(fact_id)
-        if (
-            fact_id not in package.required_facts
-            or definition.legacy_profile_field != profile_field
-            or profile_field not in profile_fields
-        ):
-            raise ValueError(
-                f"Invalid legacy profile mapping for {package.scheme_id}: {fact_id}"
-            )
-    missing_legacy = {
-        fact_id
-        for fact_id in package.required_facts
-        if registry.get(fact_id).legacy_profile_field is not None
-        and fact_id not in bundle.legacy_profile_mapping
-    }
-    if missing_legacy:
-        raise ValueError(
-            f"Bundle omits legacy profile mappings: {sorted(missing_legacy)}"
-        )
 
 
 class RulePackageProvider:

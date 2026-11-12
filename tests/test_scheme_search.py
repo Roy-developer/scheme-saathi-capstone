@@ -46,7 +46,9 @@ def build_retriever(passages):
     )
 
 
-def test_openrouter_embeddings_prefers_free_api_key(monkeypatch):
+def test_openrouter_embeddings_prefers_free_api_key_and_batches_requests(monkeypatch):
+    """Keep the OpenRouter embedding helper's explicit injection behavior covered."""
+
     requests = []
 
     def handle(request: httpx.Request) -> httpx.Response:
@@ -90,16 +92,118 @@ def test_openrouter_embeddings_prefers_free_api_key(monkeypatch):
     assert len(requests) == before + 1, "the passage index is built only once"
 
 
-def test_embeddings_do_not_fall_back_to_chat_key(monkeypatch):
+def test_vector_search_uses_local_fastembed_without_api_key(monkeypatch):
     monkeypatch.delenv("OPENROUTER_API_KEY_FREE", raising=False)
     monkeypatch.delenv("OPEN_ROUTER_FREE", raising=False)
     monkeypatch.setenv("OPENROUTER_API_KEY", "chat-key")
+
+    class FakeVector(list):
+        def tolist(self):
+            return list(self)
+
+    class FakeTextEmbedding:
+        @staticmethod
+        def list_supported_models():
+            return [{
+                "model": (
+                    "sentence-transformers/"
+                    "paraphrase-multilingual-MiniLM-L12-v2"
+                )
+            }]
+
+        def __init__(self, *, model_name, local_files_only):
+            assert model_name == (
+                "sentence-transformers/"
+                "paraphrase-multilingual-MiniLM-L12-v2"
+            )
+            assert local_files_only is True
+
+        def embed(self, texts):
+            return (FakeVector([1.0, 0.0]) for _ in texts)
+
+        def query_embed(self, text):
+            return iter([FakeVector([1.0, 0.0])])
+
+    monkeypatch.setattr(scheme_search_module, "TextEmbedding", FakeTextEmbedding)
     retriever = HybridSchemeRetriever(
         load_passages(PASSAGE_DIR), use_cross_encoder=False,
     )
 
-    with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY_FREE"):
-        retriever._vector_search_many(("widow",), retriever.passages)
+    rankings = retriever._vector_search_many(("widow pension",), retriever.passages)
+
+    assert rankings[0]
+    assert retriever._embedding_model() is retriever._embedding_model()
+
+
+def test_openrouter_embedding_backend_uses_configured_free_key_and_model(monkeypatch):
+    monkeypatch.setattr(scheme_search_module, "EMBEDDING_BACKEND", "openrouter")
+    monkeypatch.setattr(
+        scheme_search_module,
+        "OPENROUTER_EMBEDDING_MODEL",
+        "mongodb/voyage-4",
+    )
+    monkeypatch.setenv("OPENROUTER_API_KEY_FREE", "embedding-key")
+    calls = []
+    expected = object()
+
+    def build_embeddings(api_key, model):
+        calls.append((api_key, model))
+        return expected
+
+    monkeypatch.setattr(
+        scheme_search_module,
+        "openrouter_embeddings",
+        build_embeddings,
+    )
+    retriever = HybridSchemeRetriever(
+        load_passages(PASSAGE_DIR), use_cross_encoder=False,
+    )
+
+    assert retriever._embedding_model() is expected
+    assert calls == [("embedding-key", "mongodb/voyage-4")]
+
+
+def test_missing_local_embedding_model_falls_back_to_openrouter(monkeypatch):
+    class MissingTextEmbedding:
+        @staticmethod
+        def list_supported_models():
+            return [{
+                "model": (
+                    "sentence-transformers/"
+                    "paraphrase-multilingual-MiniLM-L12-v2"
+                )
+            }]
+
+        def __init__(self, *, model_name, local_files_only):
+            assert model_name == (
+                "sentence-transformers/"
+                "paraphrase-multilingual-MiniLM-L12-v2"
+            )
+            assert local_files_only is True
+            raise ValueError(
+                "Could not load model with local_files_only=True"
+            )
+
+    monkeypatch.setattr(scheme_search_module, "TextEmbedding", MissingTextEmbedding)
+    monkeypatch.setenv("OPENROUTER_API_KEY_FREE", "embedding-key")
+    calls = []
+    expected = object()
+
+    def build_embeddings(api_key, model):
+        calls.append((api_key, model))
+        return expected
+
+    monkeypatch.setattr(
+        scheme_search_module,
+        "openrouter_embeddings",
+        build_embeddings,
+    )
+    retriever = HybridSchemeRetriever(
+        load_passages(PASSAGE_DIR), use_cross_encoder=False,
+    )
+
+    assert retriever._embedding_model() is expected
+    assert calls == [("embedding-key", "mongodb/voyage-4")]
 
 
 def test_openrouter_reranker_returns_scores_in_document_order(
@@ -388,7 +492,10 @@ def _agreement_retriever(vector_first_scheme: str):
     ids = [passage.passage_id for passage in ordered]
     return HybridSchemeRetriever(
         passages,
-        vector_search=lambda query, candidates, limit: ids[:limit],
+        vector_search=lambda query, candidates, limit: [
+            passage_id for passage_id in ids
+            if any(passage.passage_id == passage_id for passage in candidates)
+        ][:limit],
         rerank=lambda query, candidates: [
             0.19 if passage.passage_id == "PM-KISAN-IN-BENEFIT-01" else 0.05
             for passage in candidates

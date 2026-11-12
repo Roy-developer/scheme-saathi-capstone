@@ -1,6 +1,7 @@
 """Passage models, loading, and search for scheme discovery."""
 
 import json
+import logging
 import os
 import re
 from collections.abc import Callable, Iterable, Sequence
@@ -11,6 +12,7 @@ import urllib.error
 import urllib.request
 import uuid
 
+from fastembed import TextEmbedding
 from fastembed.rerank.cross_encoder import TextCrossEncoder
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
@@ -63,12 +65,26 @@ class PassageCorpus(BaseModel):
     passages: tuple[SchemePassage, ...]
 
 
-EMBEDDING_MODEL = os.getenv("OPENROUTER_EMBEDDING_MODEL", "voyageai/voyage-4")
+EMBEDDING_BACKEND = os.getenv(
+    "SCHEME_SAATHI_EMBEDDING_BACKEND",
+    "fastembed",
+).casefold()
+LOCAL_EMBEDDING_MODEL = os.getenv(
+    "SCHEME_SAATHI_EMBEDDING_MODEL",
+    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+)
+OPENROUTER_EMBEDDING_MODEL = os.getenv(
+    "OPENROUTER_EMBEDDING_MODEL",
+    "mongodb/voyage-4",
+)
+logger = logging.getLogger(__name__)
 OPENROUTER_RERANK_URL = "https://openrouter.ai/api/v1/rerank"
 OPENROUTER_RERANKER_MODEL = "cohere/rerank-v3.5"
 RERANKER_MODEL = "BAAI/bge-reranker-v2-m3-int8"
 VECTOR_COLLECTION = "scheme_passages"
 RETRIEVAL_DEPTH = 20
+BM25_K1 = 0.6
+BM25_B = 0.5
 # Chosen from the 43-query dev set: keeps 94% of relevant passages and
 # drops ~90% of the rest. Specific to Cohere rerank scores.
 HOSTED_RERANK_MIN_SCORE = 0.3
@@ -197,6 +213,22 @@ def load_passages(path: Path) -> tuple[SchemePassage, ...]:
     return passages
 
 
+class FastEmbedEmbeddings(Embeddings):
+    """Run multilingual text embeddings locally with FastEmbed."""
+
+    def __init__(self, model_name: str) -> None:
+        self._model = TextEmbedding(
+            model_name=model_name,
+            local_files_only=True,
+        )
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        return [embedding.tolist() for embedding in self._model.embed(texts)]
+
+    def embed_query(self, text: str) -> list[float]:
+        return next(self._model.query_embed(text)).tolist()
+
+
 class HybridSchemeRetriever:
     """Combine BM25 and Qdrant vectors with RRF, then rerank candidates."""
 
@@ -223,7 +255,7 @@ class HybridSchemeRetriever:
         documents = [
             tokenize(self.document_text(passage)) for passage in self.passages
         ]
-        self._bm25 = BM25Okapi(documents)
+        self._bm25 = BM25Okapi(documents, k1=BM25_K1, b=BM25_B)
         self._vector_search_override = vector_search
         self._rerank_override = rerank
         self._embeddings = embeddings
@@ -389,16 +421,55 @@ class HybridSchemeRetriever:
 
     def _embedding_model(self) -> Embeddings:
         if self._embeddings is None:
-            self._embeddings = openrouter_embeddings(
-                free_api_key("vector search"), EMBEDDING_MODEL,
-            )
+            if EMBEDDING_BACKEND == "fastembed":
+                supported_models = {
+                    model["model"].casefold()
+                    for model in TextEmbedding.list_supported_models()
+                }
+                if LOCAL_EMBEDDING_MODEL.casefold() not in supported_models:
+                    raise ValueError(
+                        f"Unsupported local embedding model "
+                        f"{LOCAL_EMBEDDING_MODEL!r}."
+                    )
+                try:
+                    self._embeddings = FastEmbedEmbeddings(
+                        LOCAL_EMBEDDING_MODEL
+                    )
+                except ValueError as error:
+                    error_message = str(error).casefold()
+                    if (
+                        "local_files_only=true" not in error_message
+                        and "could not find model in cache_dir"
+                        not in error_message
+                    ):
+                        raise
+                    logger.warning(
+                        "Local embedding model %r is unavailable; falling "
+                        "back to OpenRouter model %r.",
+                        LOCAL_EMBEDDING_MODEL,
+                        OPENROUTER_EMBEDDING_MODEL,
+                    )
+                    self._embeddings = openrouter_embeddings(
+                        free_api_key("vector search"),
+                        OPENROUTER_EMBEDDING_MODEL,
+                    )
+            elif EMBEDDING_BACKEND == "openrouter":
+                self._embeddings = openrouter_embeddings(
+                    free_api_key("vector search"),
+                    OPENROUTER_EMBEDDING_MODEL,
+                )
+            else:
+                raise ValueError(
+                    "SCHEME_SAATHI_EMBEDDING_BACKEND must be 'fastembed' "
+                    "or 'openrouter'."
+                )
         return self._embeddings
 
     def _embed_queries(self, queries: Sequence[str]) -> list[list[float]]:
         try:
             return self._embedding_model().embed_documents(list(queries))
         except OpenAIError as error:
-            # Never echo the provider's error text, which may quote the input.
+            # Never echo provider errors, which may quote request content.
             raise RuntimeError("OpenRouter embeddings request failed.") from error
 
     def _get_vector_store(self) -> QdrantVectorStore:

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "scheme_id": "APY-IN",
+  "form_version": "0.1.0",
+  "status": "pending_review",
+  "fields": [
+    {
+      "field_id": "date_of_birth",
+      "labels": {
+        "en": "Date of birth",
+        "hi": "जन्म तिथि",
+        "mr": "जन्मतारीख"
+      },
+      "value_type": "date",
+      "required": true,
+      "fact_id": "date_of_birth"
+    },
+    {
+      "field_id": "indian_citizenship",
+      "labels": {
+        "en": "Are you a citizen of India?",
+        "hi": "क्या आप भारत के नागरिक हैं?",
+        "mr": "तुम्ही भारताचे नागरिक आहात का?"
+      },
+      "value_type": "boolean",
+      "required": true,
+      "fact_id": "apy_is_citizen_of_india"
+    },
+    {
+      "field_id": "savings_bank_account",
+      "labels": {
+        "en": "Do you have a savings bank account?",
+        "hi": "क्या आपका बचत बैंक खाता है?",
+        "mr": "तुमचे बचत बँक खाते आहे का?"
+      },
+      "value_type": "boolean",
+      "required": true,
+      "fact_id": "apy_has_savings_bank_account"
+    },
+    {
+      "field_id": "income_tax_payer",
+      "labels": {
+        "en": "Are you, or have you ever been, an income tax payer?",
+        "hi": "क्या आप आयकर दाता हैं, या कभी रहे हैं?",
+        "mr": "तुम्ही आयकर भरता का, किंवा कधी भरत होता का?"
+      },
+      "value_type": "boolean",
+      "required": true,
+      "fact_id": "apy_is_or_has_been_income_tax_payer"
+    }
+  ]
+}

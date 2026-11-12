@@ -36,18 +36,18 @@ class FakeRetriever:
 def test_development_dataset_has_multilingual_and_cross_scheme_queries():
     evaluation_set = load_evaluation_set(EVAL_SET_PATH, CORPUS_PATH)
 
-    assert len(evaluation_set.queries) == 36
+    assert len(evaluation_set.queries) == 199
     assert evaluation_set.split == "development"
     assert evaluation_set.protected is False
-    assert len({query.query_id for query in evaluation_set.queries}) == 36
+    assert len({query.query_id for query in evaluation_set.queries}) == 199
     assert {
         language: sum(query.query_language == language for query in evaluation_set.queries)
         for language in ("en", "hi", "mr")
-    } == {"en": 31, "hi": 3, "mr": 2}
+    } == {"en": 189, "hi": 5, "mr": 5}
     assert sum(
         query.query_id.startswith("CROSS-")
         for query in evaluation_set.queries
-    ) == 3
+    ) == 8
     passage_schemes = {
         passage.passage_id: passage.scheme_id
         for passage in load_passages(CORPUS_PATH)
@@ -65,7 +65,7 @@ ALL_SCHEMES_EVAL_PATH = (
 )
 
 
-def test_all_schemes_dataset_covers_every_scheme_not_in_the_original_set():
+def test_all_schemes_dataset_covers_the_full_corpus_independently():
     original = load_evaluation_set(EVAL_SET_PATH, CORPUS_PATH)
     extended = load_evaluation_set(ALL_SCHEMES_EVAL_PATH, CORPUS_PATH)
     scheme_by_passage = {
@@ -80,10 +80,8 @@ def test_all_schemes_dataset_covers_every_scheme_not_in_the_original_set():
         }
 
     assert len(extended.queries) >= 30
-    assert {query.query_id for query in original.queries}.isdisjoint(
-        {query.query_id for query in extended.queries}
-    )
-    assert schemes(original) | schemes(extended) == set(scheme_by_passage.values())
+    assert schemes(original) == set(scheme_by_passage.values())
+    assert schemes(extended) == set(scheme_by_passage.values())
     assert sum(q.query_id.startswith("CROSS-") for q in extended.queries) >= 3
 
 

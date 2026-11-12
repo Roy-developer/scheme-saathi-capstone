@@ -1,0 +1,69 @@
+{
+  "scheme_id": "FASETDP-MH",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "human_reviewed",
+  "rules": [
+    {
+      "rule_id": "FASETDP-MH-R01",
+      "kind": "eligibility",
+      "field": "disability_percent",
+      "operator": "gte",
+      "value": 40,
+      "unit": "percent",
+      "source_passage_id": "FASETDP-MH-ELIGIBILITY-01",
+      "source_quote": "Applicant should have a minimum 40% disability",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "FASETDP-MH-R02",
+      "kind": "eligibility",
+      "field": "is_resident_of_state",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "FASETDP-MH-ELIGIBILITY-02",
+      "source_quote": "Applicant should be Domicile of Maharashtra",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "FASETDP-MH-R03",
+      "kind": "eligibility",
+      "field": "has_completed_vocational_training",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "FASETDP-MH-ELIGIBILITY-03",
+      "source_quote": "The applicant should have completed their Vocational Training in a Government or Government Recognized Institution.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "FASETDP-MH-R04",
+      "kind": "eligibility",
+      "field": "is_citizen_of_india",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "FASETDP-MH-ELIGIBILITY-04",
+      "source_quote": "The applicant should be a citizen of India.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "FASETDP-MH-R05",
+      "kind": "eligibility",
+      "field": "has_disability",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "FASETDP-MH-ELIGIBILITY-05",
+      "source_quote": "The applicant should be a Person with Disability",
+      "needs_human_review": false,
+      "note": null
+    }
+  ],
+  "unresolved": []
+}

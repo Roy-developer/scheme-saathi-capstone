@@ -15,7 +15,16 @@ from langgraph.store.memory import InMemoryStore
 from src.api.eligibility import evaluate_mock_eligibility
 from src.api.scheme_search import SchemePassage
 from src.rules.data_provider import RulePackageProvider
-from src.rules.models import HouseholdProfile
+from src.rules.data_provider import RulePackageProvider
+from src.rules.facts import HouseholdProfile
+
+_REGISTRY = RulePackageProvider().registry
+
+
+def household_profile(**facts) -> HouseholdProfile:
+    """Confirmed answers for a test, keyed by fact ID."""
+
+    return HouseholdProfile.from_answers(facts, _REGISTRY)
 from src.mcp_servers.tools import applications, documents
 from src.workflow.agent_config import MAX_CONVERSATION_MODEL_CALLS, MAX_CONVERSATION_TOOL_CALLS
 from fake_chat_model import FakeChatModel, ModelDecision
@@ -77,7 +86,7 @@ def test_eligibility_specialist_chooses_handoff_from_observation():
 
     async def rule_check():
         calls.append(True)
-        return await evaluate(None, "IGNWPS-MH", HouseholdProfile(**PROFILE))
+        return await evaluate(None, "IGNWPS-MH", household_profile(**PROFILE))
 
     result, budget, trace, mode = asyncio.run(run_eligibility_specialist(
         ObservingModel(), "IGNWPS-MH", "mr", {}, rule_check,
@@ -131,7 +140,7 @@ def test_eligibility_exhausted_budget_and_wrong_tool_output_do_not_invent_verdic
 
     async def rule_check():
         calls.append(True)
-        return await evaluate(None, "IGNWPS-MH", HouseholdProfile(**PROFILE))
+        return await evaluate(None, "IGNWPS-MH", household_profile(**PROFILE))
 
     result, budget, trace, mode = asyncio.run(run_eligibility_specialist(
         Model(), "IGNWPS-MH", "en",
@@ -183,7 +192,7 @@ def test_eligibility_runs_rule_check_once_when_model_is_unavailable():
 
     async def rule_check():
         calls.append(True)
-        return await evaluate(None, "IGNWPS-MH", HouseholdProfile(**PROFILE))
+        return await evaluate(None, "IGNWPS-MH", household_profile(**PROFILE))
 
     result, budget, _, mode = asyncio.run(run_eligibility_specialist(
         Unavailable(), "IGNWPS-MH", "en", {}, rule_check,
@@ -193,7 +202,7 @@ def test_eligibility_runs_rule_check_once_when_model_is_unavailable():
     assert mode == "deterministic_fallback"
 
     async def wrong_scheme():
-        return await evaluate(None, "PM-KISAN-IN", HouseholdProfile(**PROFILE))
+        return await evaluate(None, "PM-KISAN-IN", household_profile(**PROFILE))
 
     assert asyncio.run(run_eligibility_specialist(
         Unavailable(), "IGNWPS-MH", "en", {}, wrong_scheme,
@@ -256,7 +265,7 @@ def test_eligibility_observation_selects_clarification_or_safe_referral(unavaila
     async def rule_check():
         if unavailable:
             raise MCPToolError("Synthetic unavailable rule service")
-        return await evaluate(None, "IGNWPS-MH", HouseholdProfile(**{
+        return await evaluate(None, "IGNWPS-MH", household_profile(**{
             **PROFILE, "bpl_card_shown": None,
         }))
 
@@ -272,9 +281,13 @@ def test_eligibility_observation_selects_clarification_or_safe_referral(unavaila
 
 
 def test_discovery_uses_supported_inputs_without_inferred_state_or_gender(monkeypatch):
-    unknown = discovery_input(HouseholdProfile(), "hi")
+    unknown = discovery_input({}, None, "hi")
     assert unknown.model_dump() == {"query": "", "language": "hi", "limit": 20}
-    known = discovery_input(HouseholdProfile(**PROFILE), "mr")
+    profile = household_profile(**PROFILE)
+    known = discovery_input(
+        {fact_id: fact.value for fact_id, fact in profile.facts.items()},
+        profile.value("age", _REGISTRY), "mr",
+    )
     assert known.query == "widow pension age 40"
     assert known.language == "mr"
     calls = []
@@ -478,6 +491,9 @@ def test_failed_node_search_reservation_survives_sqlite_process_restart():
 def test_new_discovery_fact_from_description_is_not_searched_until_confirmed():
     class Model(FakeChatModel):
         model_name: str = "offline-description"
+        description_facts: list[dict[str, object]] = [
+            {"fact_name": "landholding_family_in_state_records", "value": True},
+        ]
 
         def __init__(self):
             super().__init__()
@@ -565,7 +581,7 @@ def test_approval_revocation_and_fresh_exact_approval_survive_sqlite_restart(mon
     report = {
         "scheme_id": "IGNWPS-MH",
         "documents": {name: "available" for name in (
-            "identity_proof", "age_proof", "widow_status_proof", "bpl_proof",
+            "identity_proof", "bank_account_proof", "widow_status_proof",
         )},
     }
 

@@ -64,6 +64,8 @@ def compare_rule(expected: Rule, proposed: Rule) -> list[str]:
 def compare_rules(
     expected_rules: Sequence[Rule],
     proposed_rules: Sequence[Rule],
+    *,
+    boolean_exclusion_rule_ids: Sequence[str] = (),
 ) -> dict[str, list[str]]:
     """Report missing, unexpected, or changed rules, paired by meaning.
 
@@ -84,6 +86,16 @@ def compare_rules(
     """
     expected_by_meaning = _index_rules(expected_rules)
     proposed_by_meaning = _index_rules(proposed_rules)
+    exclusion_rule_ids = set(boolean_exclusion_rule_ids)
+    expected_rule_ids = {rule.rule_id for rule in expected_rules}
+    if not exclusion_rule_ids <= expected_rule_ids:
+        raise ValueError("Boolean exclusion IDs must reference expected rules")
+    if any(
+        rule.rule_id in exclusion_rule_ids
+        and (rule.operator != "eq" or type(rule.value) is not bool)
+        for rule in expected_rules
+    ):
+        raise ValueError("Boolean exclusions must be eq rules with boolean values")
     differences: dict[str, list[str]] = {}
 
     for meaning, expected in expected_by_meaning.items():
@@ -93,6 +105,14 @@ def compare_rules(
             continue
 
         attribute_differences = compare_rule(expected, proposed)
+        if (
+            expected.rule_id in exclusion_rule_ids
+            and expected.operator == proposed.operator == "eq"
+            and type(expected.value) is bool
+            and type(proposed.value) is bool
+            and expected.value != proposed.value
+        ):
+            attribute_differences.remove("value")
         if attribute_differences:
             differences[expected.rule_id] = attribute_differences
 

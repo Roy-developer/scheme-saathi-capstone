@@ -2,7 +2,8 @@
 
 Production agents receive ``ChatOpenAI``. Tests subclass ``FakeChatModel`` and
 implement ``choose()`` to decide each tool call, so a test can script the
-model, inspect what it was shown, or fail if it is called at all.
+model, inspect what it was shown, or fail if it is called at all. The
+tool-free description reader is answered by ``read_description()`` instead.
 """
 
 import json
@@ -14,6 +15,7 @@ from langchain_core.outputs import ChatGeneration, ChatResult
 from pydantic import BaseModel, ConfigDict
 
 from src.workflow.agent_config import AGENT_PROMPTS
+from src.workflow.intake_agent import DESCRIPTION_READER_PROMPT
 
 
 class ModelDecision(BaseModel):
@@ -64,6 +66,8 @@ class FakeChatModel(BaseChatModel):
     model_config = ConfigDict(extra="allow", arbitrary_types_allowed=True)
 
     model_name: str = "fake-model"
+    # What the quarantined description reader "finds" by default.
+    description_facts: list[dict[str, object]] = []
 
     @property
     def _llm_type(self) -> str:
@@ -76,6 +80,10 @@ class FakeChatModel(BaseChatModel):
     async def choose(self, agent, locale, messages, tools) -> ModelDecision:
         raise NotImplementedError
 
+    async def read_description(self, request: dict[str, object]) -> str:
+        """Reply text for the quarantined description reader."""
+        return json.dumps({"facts": self.description_facts})
+
     def _generate(self, *args: object, **kwargs: object) -> ChatResult:
         raise NotImplementedError("Agents call the model asynchronously.")
 
@@ -83,6 +91,9 @@ class FakeChatModel(BaseChatModel):
         self, messages: list[BaseMessage], stop=None, run_manager=None, **kwargs,
     ) -> ChatResult:
         system = next((m for m in messages if isinstance(m, SystemMessage)), None)
+        if system is not None and system.content == DESCRIPTION_READER_PROMPT:
+            content = await self.read_description(json.loads(str(messages[-1].content)))
+            return ChatResult(generations=[ChatGeneration(message=AIMessage(content=content))])
         agent, locale = _PROMPT_OWNERS.get(str(system.content) if system else "", (None, None))
         decision = await self.choose(
             agent, locale, _simple_messages(messages), getattr(self, "bound_tools", []),

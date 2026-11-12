@@ -1,0 +1,188 @@
+{
+  "dataset_version": "0.1.0",
+  "split": "development",
+  "protected": false,
+  "annotation_note": "Exploratory Marathi-only retrieval set drafted from the existing Marathi-tagged corpus passages for BFFL-MH, EACS-MH, and NSMNY-MH. All 30 synthetic questions and passage labels received AI-assisted review by nvidia/nemotron-3.5-lightning:free via OpenRouter; several flagged questions were revised and re-reviewed. This is not independent Marathi domain or human validation. Use for development smoke testing only; do not report as held-out or validated evaluation evidence.",
+  "queries": [
+    {
+      "query_id": "MR-BFFL-001",
+      "query": "भाऊसाहेब फुंडकर फळबाग योजनेत ठिबक सिंचनासाठी किती अनुदान मिळते?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["BFFL-MH-BENEFIT-01", "BFFL-MH-BENEFIT-07"]
+    },
+    {
+      "query_id": "MR-BFFL-002",
+      "query": "या फळबाग योजनेचे अनुदान किती वर्षांत आणि कोणत्या प्रमाणात दिले जाते?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["BFFL-MH-BENEFIT-02"]
+    },
+    {
+      "query_id": "MR-BFFL-003",
+      "query": "लावलेली फळझाडे पहिल्या आणि दुसऱ्या वर्षी किती टक्के जगवावी लागतात?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["BFFL-MH-BENEFIT-03"]
+    },
+    {
+      "query_id": "MR-BFFL-004",
+      "query": "दरवर्षी मिळणारे अनुदान कोणत्या खात्यात जमा केले जाते?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["BFFL-MH-BENEFIT-04"]
+    },
+    {
+      "query_id": "MR-BFFL-005",
+      "query": "नारळाच्या लागवडीसाठी या योजनेत अनुदान मिळते का?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["BFFL-MH-BENEFIT-08"]
+    },
+    {
+      "query_id": "MR-BFFL-006",
+      "query": "कोकण विभागात फळबाग लागवडीसाठी किती क्षेत्र असणे आवश्यक आहे?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["BFFL-MH-ELIGIBILITY-07"]
+    },
+    {
+      "query_id": "MR-BFFL-007",
+      "query": "फळबाग लाभासाठी ठिबक सिंचन संच बसवणे बंधनकारक आहे का?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["BFFL-MH-ELIGIBILITY-02"]
+    },
+    {
+      "query_id": "MR-BFFL-008",
+      "query": "शेतजमिनीच्या सातबारा उताऱ्यावर अर्जदाराचे नाव असणे गरजेचे आहे का?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["BFFL-MH-ELIGIBILITY-03"]
+    },
+    {
+      "query_id": "MR-BFFL-009",
+      "query": "जाहिरात निघाल्यानंतर अर्ज किती दिवसांत जमा करायचा?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["BFFL-MH-APPLICATION-02", "BFFL-MH-APPLICATION-10"]
+    },
+    {
+      "query_id": "MR-BFFL-010",
+      "query": "फळबाग योजनेचा अर्ज कुठून मिळवता येतो?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["BFFL-MH-APPLICATION-12"]
+    },
+    {
+      "query_id": "MR-EACS-001",
+      "query": "पहिली ते सातवीत शिकणाऱ्या मुलांसाठी दरवर्षी किती शैक्षणिक मदत मिळते?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["EACS-MH-BENEFIT-03"]
+    },
+    {
+      "query_id": "MR-EACS-002",
+      "query": "आठवी ते दहावीच्या विद्यार्थ्यांना वर्षाला किती रक्कम दिली जाते?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["EACS-MH-BENEFIT-03"]
+    },
+    {
+      "query_id": "MR-EACS-003",
+      "query": "योजनेत किती पाल्यांसाठी शैक्षणिक मदतीची तरतूद नमूद आहे?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["EACS-MH-BENEFIT-03"]
+    },
+    {
+      "query_id": "MR-EACS-004",
+      "query": "अर्जदाराकडे कोणत्या मंडळाचे ओळखपत्र असावे?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["EACS-MH-DOCUMENTS-01"]
+    },
+    {
+      "query_id": "MR-EACS-005",
+      "query": "रहिवासाचा पुरावा म्हणून कोणती कागदपत्रे चालतात?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["EACS-MH-DOCUMENTS-01"]
+    },
+    {
+      "query_id": "MR-EACS-006",
+      "query": "विद्यार्थी शाळेत शिकत असल्याचा कोणता पुरावा द्यावा?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["EACS-MH-DOCUMENTS-01"]
+    },
+    {
+      "query_id": "MR-EACS-007",
+      "query": "कागदपत्रांमध्ये ७५% हजेरीसाठी कोणता दाखला नमूद आहे?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["EACS-MH-DOCUMENTS-02"]
+    },
+    {
+      "query_id": "MR-EACS-008",
+      "query": "बँक खात्याचा पुरावा म्हणून काय जोडावे?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["EACS-MH-DOCUMENTS-01"]
+    },
+    {
+      "query_id": "MR-EACS-009",
+      "query": "शैक्षणिक योजनेच्या अर्जासोबत कागदपत्रांबाबत काय करावे?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["EACS-MH-APPLICATION-02"]
+    },
+    {
+      "query_id": "MR-EACS-010",
+      "query": "शैक्षणिक सहाय्यासाठी अर्ज करताना प्रपत्र अ आणि ब मधील कागदपत्रांबाबत काय करावे?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["EACS-MH-APPLICATION-02"]
+    },
+    {
+      "query_id": "MR-NSMNY-001",
+      "query": "नमो शेतकरी महासन्मान निधी योजनेसाठी कोण पात्र ठरतो?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["NSMNY-MH-ELIGIBILITY-02", "NSMNY-MH-ELIGIBILITY-03"]
+    },
+    {
+      "query_id": "MR-NSMNY-002",
+      "query": "पीएम किसान पोर्टलवर नव्याने नोंदणी केलेल्या शेतकऱ्यांना नमो शेतकरी योजनेचा लाभ मिळू शकतो का?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["NSMNY-MH-ELIGIBILITY-03"]
+    },
+    {
+      "query_id": "MR-NSMNY-003",
+      "query": "केंद्र सरकारने पीएम किसान पात्रतेचे निकष बदलल्यास महाराष्ट्राच्या योजनेवर त्याचा परिणाम होतो का?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["NSMNY-MH-ELIGIBILITY-02"]
+    },
+    {
+      "query_id": "MR-NSMNY-004",
+      "query": "नमो शेतकरी योजनेचा हप्ता कोणत्या पद्धतीने बँक खात्यात जमा होतो?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["NSMNY-MH-BENEFIT-01"]
+    },
+    {
+      "query_id": "MR-NSMNY-005",
+      "query": "या योजनेत वर्षाला किती हप्ते दिले जातात?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["NSMNY-MH-BENEFIT-03"]
+    },
+    {
+      "query_id": "MR-NSMNY-006",
+      "query": "पहिला दोन हजार रुपयांचा हप्ता कोणत्या महिन्यांदरम्यान दिला जातो?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["NSMNY-MH-BENEFIT-03"]
+    },
+    {
+      "query_id": "MR-NSMNY-007",
+      "query": "ऑगस्ट ते नोव्हेंबर या कालावधीतील हप्त्याची रक्कम किती आहे?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["NSMNY-MH-BENEFIT-03"]
+    },
+    {
+      "query_id": "MR-NSMNY-008",
+      "query": "डिसेंबर ते मार्च दरम्यान किती रुपये मिळतात?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["NSMNY-MH-BENEFIT-03"]
+    },
+    {
+      "query_id": "MR-NSMNY-009",
+      "query": "प्रत्येक हप्त्याच्या वितरणावेळी पात्रता कोणत्या प्रणालीनुसार तपासली जाते?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["NSMNY-MH-BENEFIT-01"]
+    },
+    {
+      "query_id": "MR-NSMNY-010",
+      "query": "अपात्र व्यक्तीला लाभ मिळाल्यास रक्कम कशी वसूल केली जाते?",
+      "query_language": "mr",
+      "relevant_passage_ids": ["NSMNY-MH-EXCLUSION-01"]
+    }
+  ]
+}

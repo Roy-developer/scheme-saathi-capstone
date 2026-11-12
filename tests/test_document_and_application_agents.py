@@ -83,9 +83,8 @@ def test_document_checker_compares_synthetic_name_and_date_without_echoing_value
         "profile_date_of_birth": "1986-01-01",
         "documents": {
             "identity_proof": "available",
-            "age_proof": "available",
+            "bank_account_proof": "available",
             "widow_status_proof": "available",
-            "bpl_proof": "available",
         },
         "document_metadata": {
             "identity_proof": {
@@ -98,7 +97,7 @@ def test_document_checker_compares_synthetic_name_and_date_without_echoing_value
     assert result["status"] == expected_status
     assert [item["code"] for item in result["discrepancies"]] == codes
     assert "Synthetic Example" not in result["message"]
-    assert result["demo_only"] is True
+    assert result["demo_only"] is False
     assert "no files were uploaded" in result["message"].lower()
 
 
@@ -352,9 +351,8 @@ def _approved_draft() -> tuple[dict[str, object], dict[str, object]]:
         },
         "documents": {
             "identity_proof": "available",
-            "age_proof": "available",
+            "bank_account_proof": "available",
             "widow_status_proof": "available",
-            "bpl_proof": "available",
         },
     })
     identity = {
@@ -469,9 +467,8 @@ def test_repeated_draft_creation_is_idempotent_for_exact_current_dependencies(
         },
         "documents": {
             "identity_proof": "available",
-            "age_proof": "available",
+            "bank_account_proof": "available",
             "widow_status_proof": "available",
-            "bpl_proof": "available",
         },
     }
 
@@ -526,7 +523,7 @@ def test_model_budget_allows_safe_document_recheck_draft_and_submission_after_re
     report = {
         "scheme_id": "IGNWPS-MH",
         "documents": {name: "available" for name in (
-            "identity_proof", "age_proof", "widow_status_proof", "bpl_proof",
+            "identity_proof", "bank_account_proof", "widow_status_proof",
         )},
     }
     checkpoint = Path.cwd() / f".pytest-budget-{uuid4().hex}.sqlite3"
@@ -535,6 +532,10 @@ def test_model_budget_allows_safe_document_recheck_draft_and_submission_after_re
 
     class Model(FakeChatModel):
         model_name: str = "offline-full-phase4"
+
+        async def read_description(self, _request):
+            calls.append("intake_reader")
+            return '{"facts": [{"fact_name": "is_widow", "value": true}]}'
 
         async def choose(self, agent, _locale, messages, _actions):
             calls.append(agent)
@@ -650,8 +651,8 @@ def test_model_budget_allows_safe_document_recheck_draft_and_submission_after_re
             assert ledger.values["counters"]["model_calls"] == len(calls) == 8
             assert len(calls) == MAX_CONVERSATION_MODEL_CALLS
             assert calls[:2] == ["supervisor"] * 2
-            assert calls[2:5] == ["intake"] * 3
-            assert calls[5:7] == ["eligibility"] * 2
+            assert calls[2:6] == ["intake_reader", "intake", "intake", "intake"]
+            assert calls[6:8] == ["eligibility"] * 2
             assert ledger.values["counters"]["tool_calls"] <= MAX_CONVERSATION_TOOL_CALLS
 
     try:
@@ -725,9 +726,8 @@ def test_forgetting_a_journey_removes_its_portal_dependencies_only(
             },
             "documents": {
                 "identity_proof": "available",
-                "age_proof": "available",
+                "bank_account_proof": "available",
                 "widow_status_proof": "available",
-                "bpl_proof": "available",
             },
         })
     forgotten = applications._portal_action({

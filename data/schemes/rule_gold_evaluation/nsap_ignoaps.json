@@ -1,0 +1,45 @@
+{
+  "scheme_id": "NSAP-IGNOAPS-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "human_reviewed",
+  "rules": [
+    {
+      "rule_id": "NSAP-IGNOAPS-IN-R01",
+      "kind": "eligibility",
+      "field": "is_citizen_of_india",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "NSAP-IGNOAPS-IN-ELIGIBILITY-01",
+      "source_quote": "The applicant should be a citizen of India.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "NSAP-IGNOAPS-IN-R02",
+      "kind": "eligibility",
+      "field": "is_below_poverty_line",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "NSAP-IGNOAPS-IN-ELIGIBILITY-02",
+      "source_quote": "The applicant should be living Below Poverty Line.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "NSAP-IGNOAPS-IN-R03",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "gte",
+      "value": 60,
+      "unit": "years",
+      "source_passage_id": "NSAP-IGNOAPS-IN-ELIGIBILITY-03",
+      "source_quote": "The applicant should be at least 60 years of age.",
+      "needs_human_review": false,
+      "note": null
+    }
+  ],
+  "unresolved": []
+}

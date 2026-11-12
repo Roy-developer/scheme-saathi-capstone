@@ -1,0 +1,71 @@
+{
+  "scheme_id": "PMAY-U-IN",
+  "schema_version": "1",
+  "origin": "hand_drafted",
+  "review_status": "human_reviewed",
+  "rules": [
+    {
+      "rule_id": "PMAY-U-IN-R01",
+      "kind": "exclusion",
+      "field": "annual_family_income_inr",
+      "operator": "gt",
+      "value": 900000,
+      "unit": "INR per year",
+      "source_passage_id": "PMAY-U-IN-EXCLUSION-01",
+      "source_quote": "Annual Household Income is above ₹9,00,000",
+      "needs_human_review": false,
+      "note": "Upper income limit of the MIG category (up to Rs 9 lakh)."
+    },
+    {
+      "rule_id": "PMAY-U-IN-R02",
+      "kind": "eligibility",
+      "field": "has_aadhaar",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMAY-U-IN-ELIGIBILITY-07",
+      "source_quote": "All eligible beneficiaries (including family members) should have an Aadhaar/ Aadhaar Virtual ID",
+      "needs_human_review": false,
+      "note": "Also applies to family members."
+    },
+    {
+      "rule_id": "PMAY-U-IN-R03",
+      "kind": "eligibility",
+      "field": "lives_in_urban_area",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMAY-U-IN-ELIGIBILITY-01",
+      "source_quote": "living in urban areas",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PMAY-U-IN-R04",
+      "kind": "exclusion",
+      "field": "owns_pucca_house_anywhere",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMAY-U-IN-EXCLUSION-01",
+      "source_quote": "If the user owns a pucca house anywhere in India",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PMAY-U-IN-R05",
+      "kind": "exclusion",
+      "field": "availed_housing_scheme_last_20_years",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMAY-U-IN-EXCLUSION-01",
+      "source_quote": "If they have availed benefit under any Housing scheme of Central/State/UT government in past 20 years.",
+      "needs_human_review": false,
+      "note": null
+    }
+  ],
+  "unresolved": [
+    "Income category EWS/LIG/MIG decides the vertical; States/UTs may redefine the EWS limit (ELIGIBILITY-02). Only the national Rs 9 lakh ceiling is encoded."
+  ]
+}

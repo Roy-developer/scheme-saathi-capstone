@@ -1,0 +1,20 @@
+groups:
+  - name: scheme_saathi_role5
+    rules:
+      # Capstone L13/L16: one working alert — high can't-tell /
+      # need_more_information rate (UI alias: cant_tell).
+      - alert: HighCantTellRate
+        expr: |
+          (
+            sum(rate(scheme_saathi_verdicts_total{result="need_more_information"}[5m]))
+            /
+            clamp_min(sum(rate(scheme_saathi_verdicts_total[5m])), 1e-9)
+          ) > 0.2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Can't-tell / need_more_information rate is high"
+          description: >
+            More than 20% of recent eligibility verdicts are need_more_information
+            for 5 minutes. Check corpus/rule gaps by scheme_id.

@@ -1,6 +1,7 @@
 """Checks on the per-scheme passage files in data/schemes/passages/."""
 
 import json
+import re
 from collections import Counter
 from pathlib import Path
 
@@ -131,6 +132,33 @@ def test_rejects_duplicate_passage_ids_within_a_file(tmp_path):
 
     with pytest.raises(ValueError, match="unique"):
         load_passages(invalid_file)
+
+
+def test_selected_gold_quotes_are_grounded_in_the_combined_corpus():
+    project_root = Path(__file__).parents[1]
+    schemes_dir = project_root / "data" / "schemes"
+    manifest = json.loads(
+        (schemes_dir / "rule_gold_selection.json").read_text(encoding="utf-8")
+    )
+    passages = {
+        passage.passage_id: passage
+        for passage in load_passages(PASSAGE_DIR)
+    }
+
+    def normalized(text: str) -> str:
+        return re.sub(r"\s+", " ", text).casefold().strip()
+
+    for selected in manifest["schemes"]:
+        gold = json.loads(
+            (schemes_dir / selected["draft_file"]).read_text(encoding="utf-8")
+        )
+        for rule in gold["rules"]:
+            passage = passages[rule["source_passage_id"]]
+            assert passage.scheme_id == selected["scheme_id"]
+            assert normalized(rule["source_quote"]) in normalized(passage.text), (
+                selected["scheme_id"],
+                rule["rule_id"],
+            )
 
 
 def test_rejects_duplicate_passage_ids_across_files(tmp_path):

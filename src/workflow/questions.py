@@ -1,4 +1,4 @@
-"""Localized questions for profile facts and deterministic answer reading."""
+"""Deterministic reading of answers to registered fact questions."""
 
 from dataclasses import dataclass
 from datetime import date, datetime
@@ -7,7 +7,6 @@ import re
 from typing import Literal
 
 from src.rules.facts import FactDefinition, FactRegistry
-from src.rules.models import BOOL_FACTS
 
 
 # One question per HouseholdProfile field. The picker returns a field name,
@@ -90,6 +89,11 @@ DATE_HINTS = {
     "en": 'Please give a date as YYYY-MM-DD, for example 1958-05-05, or say "I don\'t know".',
     "hi": 'कृपया YYYY-MM-DD में तारीख दें, जैसे 1958-05-05, या "मुझे नहीं पता" कहें।',
     "mr": 'कृपया YYYY-MM-DD मध्ये तारीख द्या, उदा. 1958-05-05, किंवा "माहित नाही" असे सांगा.',
+}
+UNCLEAR_REPLY_PREFIX = {
+    "en": "I could not understand that.",
+    "hi": "मुझे समझ नहीं आया।",
+    "mr": "मला समजले नाही.",
 }
 INTEGER_REPLY_PATTERN = re.compile(r"[+-]?[0-9]+")
 DECIMAL_REPLY_PATTERN = re.compile(
@@ -175,14 +179,6 @@ class ParsedAnswer:
     kind: Literal["value", "unknown", "invalid"]
     value: object | None = None
     error: str | None = None
-
-
-def question_for(fact: str, locale: str = "en") -> str:
-    """Return the question to ask for a profile fact."""
-
-    if locale in LOCALIZED_QUESTIONS:
-        return LOCALIZED_QUESTIONS[locale][fact]
-    return QUESTIONS[fact]
 
 
 def registry_question_for(
@@ -350,12 +346,29 @@ def _bound_label(bound: str, locale: str) -> str:
     return labels[bound].get(locale, labels[bound]["en"])
 
 
-def fact_confirmation(
-    fact: str,
+def registered_fact_confirmation(
+    definition: FactDefinition,
     value: bool | str,
     locale: str = "en",
 ) -> str:
-    """Render a typed proposal for explicit confirmation in the chosen locale."""
+    """Render a proposal for a registry-backed fact for explicit confirmation."""
+
+    return _confirmation_text(registry_question_for(definition, locale), value, locale)
+
+
+def registered_confirmation_details(definition: FactDefinition) -> dict[str, object]:
+    """Build the yes/no answer widget used to confirm a proposed value."""
+
+    return {
+        "fact_id": definition.fact_id,
+        "value_type": "boolean",
+        "choices": [],
+        "confirming": True,
+    }
+
+
+def _confirmation_text(question: str, value: bool | str, locale: str) -> str:
+    """Ask whether a proposed value is what the person meant."""
 
     display = (
         ("हाँ" if value else "नहीं") if locale == "hi" and isinstance(value, bool)
@@ -367,18 +380,18 @@ def fact_confirmation(
     )
     if locale == "hi":
         return (
-            f'{question_for(fact, locale)} आपके उत्तर को "{display}" समझा। '
+            f'{question} आपके उत्तर को "{display}" समझा। '
             "क्या यह सही है? "
             '"हाँ" या "नहीं" में उत्तर दें।'
         )
     if locale == "mr":
         return (
-            f'{question_for(fact, locale)} तुमचे उत्तर "{display}" असे समजले. '
+            f'{question} तुमचे उत्तर "{display}" असे समजले. '
             "हे बरोबर आहे का? "
             '"होय" किंवा "नाही" असे उत्तर द्या.'
         )
     return (
-        f'{question_for(fact, locale)} I understood your answer as "{display}". '
+        f'{question} I understood your answer as "{display}". '
         "Is that correct? "
         "Please answer yes or no."
     )
@@ -432,76 +445,41 @@ def _parse_date(text: str) -> date | None:
     return None
 
 
-def parse_answer(fact: str, reply: str, locale: str = "en") -> ParsedAnswer:
-    """Turn a chat reply into a value for ``fact``.
+def parse_interpreted_registered_answer(
+    definition: FactDefinition, value: bool | str, locale: str = "en",
+) -> ParsedAnswer:
+    """Validate a model's proposal against a registered fact's type."""
 
-    Examples:
-        parse_answer("is_widow", "Yes")              -> value True
-        parse_answer("is_widow", "not sure")         -> unknown
-        parse_answer("is_widow", "maybe")            -> invalid
-        parse_answer("date_of_birth", "12/03/1981")  -> value 1981-03-12
-    """
+    if definition.value_type == "boolean" and isinstance(value, bool):
+        return ParsedAnswer(kind="value", value=definition.validate_value(value))
+    if definition.value_type == "date" and isinstance(value, str):
+        return parse_registered_answer(definition, value, locale)
+    return ParsedAnswer(kind="invalid", error=_registered_answer_hint(definition, locale))
+
+
+def parse_confirmation(reply: str, locale: str = "en") -> str:
+    """Read a reply to "is that correct?" as yes, no, unknown or unclear."""
 
     text = _normalise(reply, locale)
-
-    # "I don't know" works for every kind of question.
-    if (
-        text in DONT_KNOW_WORDS
-        or text in LOCALIZED_UNKNOWN_WORDS.get(locale, frozenset())
-    ):
-        return ParsedAnswer(kind="unknown")
-
-    if fact in BOOL_FACTS:
-        if text in YES_WORDS | LOCALIZED_YES_WORDS.get(locale, frozenset()):
-            return ParsedAnswer(kind="value", value=True)
-        if text in NO_WORDS | LOCALIZED_NO_WORDS.get(locale, frozenset()):
-            return ParsedAnswer(kind="value", value=False)
-        return ParsedAnswer(
-            kind="invalid",
-            error=YES_NO_HINTS.get(locale, YES_NO_HINTS["en"]),
-        )
-
-    # The only non-yes/no facts are dates.
-    parsed_date = _parse_date(text)
-    if parsed_date is None:
-        return ParsedAnswer(
-            kind="invalid",
-            error=DATE_HINTS.get(locale, DATE_HINTS["en"]),
-        )
-    return ParsedAnswer(kind="value", value=parsed_date)
+    if text in DONT_KNOW_WORDS or text in LOCALIZED_UNKNOWN_WORDS.get(locale, frozenset()):
+        return "unknown"
+    if text in YES_WORDS | LOCALIZED_YES_WORDS.get(locale, frozenset()):
+        return "yes"
+    if text in NO_WORDS | LOCALIZED_NO_WORDS.get(locale, frozenset()):
+        return "no"
+    return "unclear"
 
 
-def parse_interpreted_answer(
-    fact: str, value: bool | str, locale: str = "en"
-) -> ParsedAnswer:
-    """Validate an LLM proposal against the expected type for a profile fact."""
-
-    if fact in BOOL_FACTS:
-        if not isinstance(value, bool):
-            return ParsedAnswer(
-                kind="invalid",
-                error=YES_NO_HINTS.get(locale, YES_NO_HINTS["en"]),
-            )
-        return ParsedAnswer(kind="value", value=value)
-    if not isinstance(value, str):
-        return ParsedAnswer(
-            kind="invalid",
-            error=DATE_HINTS.get(locale, DATE_HINTS["en"]),
-        )
-    return parse_answer(fact, value, locale)
-
-
-def direct_answer_question(fact: str, locale: str = "en") -> str:
-    """Ask for a fact directly after the person declined a proposed value."""
+def registered_direct_answer_question(
+    definition: FactDefinition, locale: str = "en",
+) -> str:
+    """Ask for a registered fact directly after a proposed value was declined."""
 
     prompt = {
         "hi": "ठीक है। कृपया सीधे उत्तर दें:",
         "mr": "ठीक आहे. कृपया थेट उत्तर द्या:",
     }.get(locale, "Okay. Please answer directly:")
-    return (
-        f"{prompt} {question_for(fact, locale)} "
-        f"{parse_answer(fact, '', locale).error or ''}"
-    ).strip()
+    return f"{prompt} {registry_question_for(definition, locale)}"
 
 
 def confirm_yes_or_no_question(locale: str = "en") -> str:

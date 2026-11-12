@@ -2,6 +2,7 @@
 
 import asyncio
 from contextlib import AsyncExitStack, asynccontextmanager, suppress
+from datetime import date
 import logging
 import os
 import sys
@@ -10,7 +11,7 @@ from typing import AsyncIterator
 from uuid import UUID
 
 import aiosqlite
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import FastAPI, HTTPException, Query, Request, Response
 # Client connects to the MCP server; parameters explain how to launch stdio.
 from mcp import Client, StdioServerParameters
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
@@ -41,10 +42,19 @@ from src.api.applications import (
 )
 from src.api.scheme_search import SchemePassage
 from src.documents.forms import build_form_fields, load_mock_form_snapshot
-from src.rules.facts import TypedFactStore
+from src.rules.facts import HouseholdProfile
 from src.rules.bundles import bundle_fingerprint
-from src.rules.models import HouseholdProfile
 # This adapter calls the MCP tool and translates failures for the API layer.
+from src.observability.metrics import (
+    metrics_response,
+    observe_duration,
+    record_conversation,
+    record_evaluation,
+    record_pending_approval_created,
+    record_pending_approval_resolved,
+    record_question,
+    record_verdict,
+)
 from src.workflow.eligibility import (
     evaluate_eligibility,
 )
@@ -55,7 +65,16 @@ from src.workflow.application_gate import (
 from src.llm_client import DEFAULT_CHAT_MODEL, openrouter_chat_model
 from src.workflow.intake import IntakeAgentError
 from src.workflow.conversation_budget import BUDGET_NAMESPACE
+from src.workflow.household_memory import (
+    HOUSEHOLD_NAMESPACE,
+    generate_return_code,
+    load_household,
+    load_household_locale,
+    normalize_return_code,
+    save_household,
+)
 from src.workflow.journey import (
+    confirmed_answers,
     ApplicationTaskError,
     JourneyMessage,
     JourneyCorrection,
@@ -130,17 +149,15 @@ def _confirmed_form_values(
     if typed_facts is None:
         bundle = request.app.state.rule_bundles.get(scheme_id)
         facts = {}
-        for fact_id, profile_field in (
-            bundle.legacy_profile_mapping.items() if bundle else ()
-        ):
-            value = (profile or {}).get(profile_field)
+        for fact_id in (bundle.fact_ids if bundle else ()):
+            value = (profile or {}).get(fact_id)
             facts[fact_id] = (
                 request.app.state.fact_registry.get(fact_id).validate_value(value)
                 if value is not None
                 else None
             )
     else:
-        store = TypedFactStore.from_wire(typed_facts, request.app.state.fact_registry)
+        store = HouseholdProfile.from_wire(typed_facts, request.app.state.fact_registry)
         facts = {
             fact_id: state.value if state.status == "known" else None
             for fact_id, state in store.facts.items()
@@ -207,8 +224,8 @@ async def _application_state(
     request: Request,
     conversation_id: UUID,
     scheme_id: str,
-) -> tuple[dict, HouseholdProfile]:
-    """Require a saved, current eligible result and return its profile."""
+) -> tuple[dict, dict[str, object]]:
+    """Require a saved, current eligible result and return its confirmed answers."""
 
     try:
         current = await get_journey(request.app.state.journey_graph, conversation_id)
@@ -237,7 +254,7 @@ async def _application_state(
             detail="A completed profile is required for a mock application.",
         )
     try:
-        profile = HouseholdProfile.model_validate(profile_data or {})
+        profile = confirmed_answers(values)
     except Exception as error:
         logger.exception("Saved journey profile could not be validated")
         raise HTTPException(status_code=409, detail="The saved profile is invalid.") from error
@@ -366,9 +383,21 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
                         service_environment["OPENROUTER_API_KEY_FREE"] = (
                             embedding_credential
                         )
-                    if embedding_model := os.getenv("OPENROUTER_EMBEDDING_MODEL"):
-                        service_environment["OPENROUTER_EMBEDDING_MODEL"] = (
+                    if embedding_backend := os.getenv(
+                        "SCHEME_SAATHI_EMBEDDING_BACKEND"
+                    ):
+                        service_environment["SCHEME_SAATHI_EMBEDDING_BACKEND"] = (
+                            embedding_backend
+                        )
+                    if embedding_model := os.getenv("SCHEME_SAATHI_EMBEDDING_MODEL"):
+                        service_environment["SCHEME_SAATHI_EMBEDDING_MODEL"] = (
                             embedding_model
+                        )
+                    if openrouter_embedding_model := os.getenv(
+                        "OPENROUTER_EMBEDDING_MODEL"
+                    ):
+                        service_environment["OPENROUTER_EMBEDDING_MODEL"] = (
+                            openrouter_embedding_model
                         )
                 elif service_name == "mock-portal":
                     service_environment["SCHEME_SAATHI_PORTAL_URL"] = PORTAL_URL
@@ -460,6 +489,14 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@app.get("/metrics")
+def prometheus_metrics() -> Response:
+    """Expose Prometheus metrics for Role 6 dashboards to scrape later."""
+
+    payload, content_type = metrics_response()
+    return Response(content=payload, media_type=content_type)
+
+
 @app.get("/api/v1/info", tags=["service"])
 def service_info() -> dict[str, str | bool]:
     """Return non-sensitive build metadata for shared-deployment diagnostics."""
@@ -479,7 +516,7 @@ def service_info() -> dict[str, str | bool]:
 )
 async def evaluate(
     scheme_id: str,
-    eligibility_request: HouseholdProfile,
+    eligibility_request: dict[str, object],
     http_request: Request,
 ) -> EligibilityResponse:
     """Evaluate any loaded scheme by calling the MCP rule-engine tool."""
@@ -487,13 +524,33 @@ async def evaluate(
     # Reject unknown scheme IDs before spending a tool call.
     if scheme_id not in http_request.app.state.rule_packages:
         raise HTTPException(status_code=404, detail="Unknown scheme")
-    # Send the validated profile through MCP and return the tool's verdict.
+    bundle = http_request.app.state.rule_bundles[scheme_id]
     try:
-        return await evaluate_eligibility(
-            http_request.app.state.mcp_client,
-            scheme_id,
-            eligibility_request,
+        HouseholdProfile.from_answers(
+            eligibility_request, http_request.app.state.fact_registry,
         )
+        answers = HouseholdProfile.from_answers(
+            {
+                fact_id: value for fact_id, value in eligibility_request.items()
+                if fact_id in bundle.fact_ids
+            },
+            http_request.app.state.fact_registry,
+        )
+    except (KeyError, TypeError, ValueError) as error:
+        raise HTTPException(
+            status_code=422, detail="Some answers are missing or invalid.",
+        ) from error
+    # Send the validated answers through MCP and return the tool's verdict.
+    try:
+        with observe_duration("evaluate"):
+            result = await evaluate_eligibility(
+                http_request.app.state.mcp_client,
+                scheme_id,
+                answers,
+            )
+        record_evaluation(scheme_id, source="api")
+        record_verdict(scheme_id, result.result)
+        return result
     except MCPToolError as error:
         # Return a service error, never a made-up or fixture-based verdict.
         raise _tool_failure(
@@ -515,7 +572,7 @@ async def _mark_changed_document_reports(
         {"configurable": {"thread_id": str(conversation_id)}}
     )
     values = snapshot.values
-    if not values.get("profile"):
+    if not (values.get("profile") or values.get("typed_facts")):
         return response.model_copy(update={
             "document_assessments": {
                 scheme_id: {
@@ -527,7 +584,7 @@ async def _mark_changed_document_reports(
             }
         })
     try:
-        profile = HouseholdProfile.model_validate(values.get("profile") or {})
+        profile = confirmed_answers(values)
     except ValueError:
         return response.model_copy(update={
             "document_assessments": {
@@ -562,15 +619,13 @@ async def _mark_changed_document_reports(
                 documents=prior.get("documents", {}),
                 profile_name=prior.get("profile_name"),
                 profile_date_of_birth=(
-                    profile.date_of_birth.isoformat()
-                    if profile.date_of_birth is not None
-                    else None
+                    profile.get("date_of_birth")
                 ),
                 document_metadata=prior.get("document_metadata", {}),
                 typed_facts=values.get("typed_facts"),
                 profile_conditions={
-                    "is_widow": profile.is_widow,
-                    "bpl_card_shown": profile.bpl_card_shown,
+                    "is_widow": profile.get("is_widow"),
+                    "bpl_card_shown": profile.get("bpl_card_shown"),
                 },
                 bundle_fingerprint=_bundle_fingerprint(request, scheme_id),
             )
@@ -636,6 +691,27 @@ async def search_schemes(
 
 
 
+def _record_journey_metrics(endpoint: str, result: JourneyResponse) -> None:
+    """Record conversation, question, and verdict counters for a journey reply."""
+
+    record_conversation(endpoint)
+    if result.question is not None:
+        scheme_id = None
+        if result.eligibility_result is not None:
+            scheme_id = result.eligibility_result.scheme_id
+        elif result.candidate_scheme_ids:
+            scheme_id = result.candidate_scheme_ids[0]
+        record_question(scheme_id)
+    if result.eligibility_results:
+        for scheme_id, verdict in result.eligibility_results.items():
+            record_evaluation(scheme_id, source="journey")
+            record_verdict(scheme_id, verdict.result)
+    elif result.eligibility_result is not None:
+        scheme_id = result.eligibility_result.scheme_id
+        record_evaluation(scheme_id, source="journey")
+        record_verdict(scheme_id, result.eligibility_result.result)
+
+
 @app.post("/api/v1/journey", response_model=JourneyResponse)
 async def journey(
     journey_request: JourneyRequest,
@@ -644,11 +720,12 @@ async def journey(
     """Run one orchestrated discovery or synthetic eligibility step."""
 
     try:
-        result = await run_journey(
-            request.app.state.journey_graph,
-            journey_request,
-        )
-        return result.model_copy(update={
+        with observe_duration("journey"):
+            result = await run_journey(
+                request.app.state.journey_graph,
+                journey_request,
+            )
+        result = result.model_copy(update={
             "passages": [
                 passage.model_copy(update={
                     "eligible_for_mock_flow": passage.scheme_id
@@ -657,6 +734,8 @@ async def journey(
                 for passage in result.passages
             ],
         })
+        _record_journey_metrics("journey", result)
+        return result
     except MCPToolError as error:
         raise _tool_failure(
             "A journey tool is unavailable.",
@@ -686,11 +765,14 @@ async def journey_message(
     """
 
     try:
-        return await resume_journey(
-            request.app.state.journey_graph,
-            conversation_id,
-            journey_message.message,
-        )
+        with observe_duration("journey_message"):
+            result = await resume_journey(
+                request.app.state.journey_graph,
+                conversation_id,
+                journey_message.message,
+            )
+        _record_journey_metrics("journey_message", result)
+        return result
     except JourneyNotWaitingError as error:
         raise HTTPException(
             status_code=409,
@@ -777,9 +859,7 @@ async def assess_application_documents(
                 "documents": assessment.documents,
                 "profile_name": assessment.profile_name,
                 "profile_date_of_birth": (
-                    profile.date_of_birth.isoformat()
-                    if profile.date_of_birth is not None
-                    else None
+                    profile.get("date_of_birth")
                 ),
                 "document_metadata": {
                     document_id: metadata.model_dump(mode="json")
@@ -790,7 +870,7 @@ async def assess_application_documents(
         )
         _, result["form_preview"] = _confirmed_form_values(
             request, assessment.scheme_id, values.get("typed_facts"),
-            profile=profile.model_dump(mode="json"),
+            profile=profile,
         )
         return result
     except MCPToolError as error:
@@ -825,14 +905,14 @@ async def create_application_draft(
         draft_request.scheme_id,
         draft_request.documents,
         draft_request.profile_name,
-        profile.date_of_birth,
+        date.fromisoformat(profile["date_of_birth"]) if profile.get("date_of_birth") else None,
         document_metadata,
         assessment.get("checklist_fingerprint", ""),
         assessment.get("evidence_fingerprint", ""),
         assessment.get("active_fingerprint", ""),
         {
-            "is_widow": profile.is_widow,
-            "bpl_card_shown": profile.bpl_card_shown,
+            "is_widow": profile.get("is_widow"),
+            "bpl_card_shown": profile.get("bpl_card_shown"),
         },
         values.get("typed_facts"),
         _bundle_fingerprint(request, draft_request.scheme_id),
@@ -843,12 +923,12 @@ async def create_application_draft(
             draft_request.scheme_id,
             values.get("typed_facts"),
             draft_request.form_values,
-            profile.model_dump(mode="json"),
+            profile,
         )
     except ValueError as error:
         raise HTTPException(
-            status_code=409,
-            detail="The active synthetic form mapping is unavailable.",
+            status_code=422,
+            detail="The submitted synthetic form values are invalid.",
         ) from error
     if form_preview["status"] == "unavailable":
         raise HTTPException(
@@ -878,9 +958,7 @@ async def create_application_draft(
                 "documents": draft_request.documents,
                 "profile_name": draft_request.profile_name,
                 "profile_date_of_birth": (
-                    profile.date_of_birth.isoformat()
-                    if profile.date_of_birth is not None
-                    else None
+                    profile.get("date_of_birth")
                 ),
                 "document_metadata": document_metadata,
                 "typed_facts": values.get("typed_facts"),
@@ -889,6 +967,7 @@ async def create_application_draft(
                 "district": draft_request.district,
             },
         )
+        record_pending_approval_created()
         return _public_application_record(created)
     except HTTPException:
         raise
@@ -959,7 +1038,7 @@ async def edit_application_draft(
         package = request.app.state.rule_packages.get(record["scheme_id"])
         if (
             package is None
-            or record["draft"].get("profile") != profile.model_dump(mode="json")
+            or record["draft"].get("profile") != profile
             or record["draft"].get("rule_package_version") != package.package_version
             or record["draft"].get("bundle_fingerprint")
             != _bundle_fingerprint(request, record["scheme_id"])
@@ -1041,7 +1120,7 @@ async def update_application_approval(
                     status_code=409,
                     detail="The scheme form or bundle changed. Create and review a new draft.",
                 )
-            if draft.get("profile") != profile.model_dump(mode="json"):
+            if draft.get("profile") != profile:
                 raise HTTPException(
                     status_code=409,
                     detail="Your answers changed. Recheck eligibility and create a new draft.",
@@ -1059,6 +1138,9 @@ async def update_application_approval(
                 },
             },
         )
+        # Capstone monitoring: draft left the waiting-approval queue.
+        if decision.action in {"approve", "reject", "submit"}:
+            record_pending_approval_resolved()
         return _public_application_record(result)
     except HTTPException:
         raise
@@ -1106,3 +1188,101 @@ async def forget_journey(conversation_id: str, request: Request) -> None:
     await request.app.state.journey_checkpointer.adelete_thread(conversation_id)
     if (upload_store := getattr(request.app.state, "upload_store", None)) is not None:
         await asyncio.to_thread(upload_store.delete_conversation, conversation_id)
+
+# -- Household memory endpoints -----------------------------------------------
+
+
+@app.get("/api/v1/household/{return_code}", tags=["household"])
+async def get_household(return_code: str, request: Request) -> dict:
+    """Load a saved household profile by its return code.
+
+    Returns the saved typed facts as a wire dict, or 404 when the code is
+    unknown or the saved profile cannot be restored against the current
+    registry.
+    """
+
+    try:
+        code = normalize_return_code(return_code)
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    registry = request.app.state.fact_registry
+    store = request.app.state.journey_store
+    profile = await load_household(store, code, registry)
+    if profile is None:
+        raise HTTPException(status_code=404, detail="Unknown return code.")
+    locale = await load_household_locale(store, code)
+    return {
+        "return_code": code,
+        "typed_facts": profile.to_wire(registry),
+        "locale": locale or "en",
+    }
+
+
+@app.post("/api/v1/household", tags=["household"])
+async def save_household_profile(
+    body: dict,
+    request: Request,
+) -> dict:
+    """Save or update a household profile under a return code.
+
+    Body:
+        return_code (optional): Reuse an existing code; generates one when absent.
+        conversation_id: The conversation whose typed_facts to save.
+    """
+
+    conversation_id = body.get("conversation_id")
+    if not conversation_id:
+        raise HTTPException(status_code=422, detail="conversation_id is required.")
+    try:
+        UUID(conversation_id)
+    except (ValueError, TypeError) as error:
+        raise HTTPException(
+            status_code=422, detail="conversation_id must be a UUID.",
+        ) from error
+
+    graph = request.app.state.journey_graph
+    config = {"configurable": {"thread_id": conversation_id}}
+    snapshot = await graph.aget_state(config)
+    values = snapshot.values or {}
+    typed_data = values.get("typed_facts")
+    if not typed_data:
+        raise HTTPException(
+            status_code=404,
+            detail="No profile facts found in this conversation.",
+        )
+    registry = request.app.state.fact_registry
+    try:
+        profile = HouseholdProfile.from_wire(typed_data, registry)
+    except (KeyError, TypeError, ValueError) as error:
+        raise HTTPException(
+            status_code=422, detail="Saved facts could not be validated.",
+        ) from error
+
+    raw_code = body.get("return_code")
+    if raw_code:
+        try:
+            code = normalize_return_code(raw_code)
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+    else:
+        code = generate_return_code()
+
+    locale = values.get("locale", "en")
+    store = request.app.state.journey_store
+    await save_household(store, code, profile, registry, locale)
+    return {"return_code": code}
+
+
+@app.delete("/api/v1/household/{return_code}", status_code=204, tags=["household"])
+async def forget_household(return_code: str, request: Request) -> None:
+    """Delete a household's saved profile."""
+
+    try:
+        code = normalize_return_code(return_code)
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
+    store = request.app.state.journey_store
+    existing = await store.aget(HOUSEHOLD_NAMESPACE, code)
+    if existing is None:
+        raise HTTPException(status_code=404, detail="Unknown return code.")
+    await store.adelete(HOUSEHOLD_NAMESPACE, code)

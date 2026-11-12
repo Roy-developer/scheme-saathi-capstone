@@ -1,0 +1,23 @@
+{
+  "experiment_id": "E4",
+  "title": "Scheme Saathi signature ablation",
+  "status": "config_stub_not_runnable",
+  "description": "Compare direct LLM eligibility from retrieved text versus the rule engine (count boundary errors). Also compare planned question order versus a fixed questionnaire for the same persona.",
+  "controls": {
+    "llm_eligibility_path": "evaluation_only_never_live_authority",
+    "rule_engine_path": "evaluate_mock_eligibility",
+    "question_orders": ["planned", "fixed"],
+    "eval_set": "held_out_role5_only"
+  },
+  "metrics": [
+    "boundary_error_count_llm",
+    "boundary_error_count_rules",
+    "questions_per_conversation",
+    "verdict_agreement_hi_mr_en",
+    "cost_per_case",
+    "median_latency",
+    "p95_latency"
+  ],
+  "note": "Development rule-engine scoring for boundary personas is available now via scripts/evaluate_eligibility_dev.py. The LLM-side and questioning ablations remain blocked.",
+  "blocker": "Needs held-out personas, simulated citizen, and an isolated LLM-eligibility path that cannot write live verdicts."
+}

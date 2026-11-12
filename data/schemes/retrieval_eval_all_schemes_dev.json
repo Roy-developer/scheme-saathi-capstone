@@ -2,7 +2,7 @@
   "dataset_version": "0.3.0",
   "split": "development",
   "protected": false,
-  "annotation_note": "Synthetic English queries covering the 18 schemes that the original 43-query set (retrieval_eval_dev.json) does not cover, plus five cross-scheme queries. Labels were assigned by reading the passage text and indicate passages that directly support each query, not an eligibility outcome. Development-only; not a protected held-out set. No human domain review is claimed. Hindi and Marathi queries are not included because their translations have not been validated.",
+  "annotation_note": "Supplemental synthetic English development set of 156 queries spanning all 42 schemes, including five cross-scheme queries. Labels were assigned by reading reviewed passage text and indicate passages that directly support each query, not an eligibility outcome. Development-only; not a protected held-out set. No human domain review is claimed. Hindi and Marathi queries are not included because their translations have not been validated. Query IDs are local to this file; this independently labeled set may contain different query variants from retrieval_eval_dev.json.",
   "queries": [
     {
       "query_id": "APY-ALL-001",

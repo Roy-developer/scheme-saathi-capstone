@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from datetime import date
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from src.rules.models import HouseholdProfile
+from src.rules.facts import FactRegistry, HouseholdProfile
 
 
 VerdictResult = Literal["eligible", "not_eligible", "need_more_information"]
@@ -67,9 +66,8 @@ class PersonaLabel(StrictFrozen):
 class EvalPersona(StrictFrozen):
     """One synthetic boundary persona with expected scheme verdicts.
 
-    Use ``profile`` for legacy HouseholdProfile fields, or ``typed_facts`` for
-    registry facts (for example IGNOAPS ``name_on_bpl_list``). At least one
-    must be set. ``null`` in ``typed_facts`` means unknown.
+    Use ``profile`` for known registered facts or ``typed_facts`` when explicit
+    unknown values are needed. Both are evaluated against the current registry.
     """
 
     persona_id: str = Field(min_length=1)
@@ -77,7 +75,7 @@ class EvalPersona(StrictFrozen):
     split: EvalSplit
     protected: bool
     description: str = Field(min_length=1)
-    profile: HouseholdProfile | None = None
+    profile: dict[str, Any] | None = None
     typed_facts: dict[str, Any] | None = None
     expected_by_scheme: dict[str, ExpectedVerdict] = Field(min_length=1)
     labels: tuple[PersonaLabel, ...] = ()
@@ -243,13 +241,14 @@ class ExperimentConfig(BaseModel):
     note: str | None = None
 
 
-def profile_from_mapping(raw: dict) -> HouseholdProfile:
-    """Build a HouseholdProfile, ignoring UI-only keys such as state."""
+def profile_from_mapping(
+    raw: dict[str, Any], registry: FactRegistry,
+) -> HouseholdProfile:
+    """Build a registry-validated fact store, ignoring UI-only fields."""
 
-    allowed = set(HouseholdProfile.model_fields)
+    allowed = {
+        definition.fact_id for definition in registry.definitions
+        if not definition.derived_from
+    }
     cleaned = {key: value for key, value in raw.items() if key in allowed}
-    for key in ("date_of_birth", "application_date"):
-        value = cleaned.get(key)
-        if isinstance(value, str):
-            cleaned[key] = date.fromisoformat(value)
-    return HouseholdProfile.model_validate(cleaned)
+    return HouseholdProfile.from_answers(cleaned, registry)
