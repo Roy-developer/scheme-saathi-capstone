@@ -18,8 +18,18 @@ from typing import Iterator, Mapping
 
 from opentelemetry import metrics as otel_metrics
 
+from src.observability.tracing import CORRELATION_ATTRIBUTE, correlation_id
+
 METER_NAME = "scheme_saathi"
 PRICES_PATH = Path(__file__).resolve().parents[2] / "config" / "model_prices.json"
+
+
+def _with_correlation(labels: dict[str, str], correlation: str | None) -> dict[str, str]:
+    """Add the hashed conversation id to a metric's labels when one is known."""
+
+    if correlation:
+        labels[CORRELATION_ATTRIBUTE] = correlation
+    return labels
 
 
 @dataclass(frozen=True)
@@ -82,10 +92,13 @@ def create_instruments(meter: otel_metrics.Meter) -> Instruments:
 _instruments = create_instruments(otel_metrics.get_meter(METER_NAME))
 
 
-def record_conversation(endpoint: str) -> None:
+def record_conversation(endpoint: str, conversation_id: str | None = None) -> None:
     """Count a journey start or resume."""
 
-    _instruments.conversations.add(1, {"endpoint": endpoint})
+    correlation = correlation_id(conversation_id) if conversation_id else None
+    _instruments.conversations.add(
+        1, _with_correlation({"endpoint": endpoint}, correlation)
+    )
 
 
 def record_evaluation(scheme_id: str, source: str = "api") -> None:
@@ -95,7 +108,11 @@ def record_evaluation(scheme_id: str, source: str = "api") -> None:
 
 
 def record_verdict(scheme_id: str, result: str) -> None:
-    """Count a rule-engine or journey verdict."""
+    """Count a rule-engine or journey verdict.
+
+    No conversation label here: verdict and evaluation totals stay one series
+    per scheme, so they are not split by conversation.
+    """
 
     _instruments.verdicts.add(1, {"scheme_id": scheme_id, "result": result})
 
@@ -125,10 +142,13 @@ def record_new_verdicts(
         record_verdict(scheme_id, result)
 
 
-def record_question(scheme_id: str | None) -> None:
+def record_question(scheme_id: str | None, conversation_id: str | None = None) -> None:
     """Count a pending interview question shown to the user."""
 
-    _instruments.questions.add(1, {"scheme_id": scheme_id or "unknown"})
+    correlation = correlation_id(conversation_id) if conversation_id else None
+    _instruments.questions.add(
+        1, _with_correlation({"scheme_id": scheme_id or "unknown"}, correlation)
+    )
 
 
 def record_waiting_approvals_change(delta: int) -> None:

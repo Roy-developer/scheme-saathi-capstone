@@ -33,6 +33,7 @@ from src.workflow.agent_config import (
     TOKEN_ESTIMATE_CHARACTERS,
 )
 from src.observability.metrics import record_model_usage
+from src.observability.tracing import record_call_span
 from src.workflow.conversation_budget import reserve_counters
 
 
@@ -96,20 +97,29 @@ class ScrubbedTraceMiddleware(AgentMiddleware):
     applicant data, so they can be saved and shown to the person.
     """
 
-    def __init__(self, agent: str, model_name: str, trace: list[dict[str, object]]) -> None:
+    def __init__(
+        self, agent: str, model_name: str, trace: list[dict[str, object]],
+        correlation: str | None = None,
+    ) -> None:
         super().__init__()
         self.agent = agent
         self.model_name = model_name
         self.trace = trace
+        # Hashed conversation id (see tracing.correlation_id), or None.
+        self.correlation = correlation
         self.step = 0
         self._usage = (0, 0, time.monotonic())
 
     def _record(self, action: str | None, status: str) -> None:
         input_tokens, output_tokens, started = self._usage
-        self.trace.append(trace_event(
+        event = trace_event(
             self.agent, action, status, self.model_name, max(self.step, 1),
             input_tokens, output_tokens, max(0, int((time.monotonic() - started) * 1000)),
-        ))
+        )
+        self.trace.append(event)
+        record_call_span(
+            "model" if action is None else "tool", event, correlation=self.correlation,
+        )
 
     async def awrap_model_call(
         self, request: ModelRequest, handler: Callable[[ModelRequest], Awaitable[ModelResponse]],
@@ -127,6 +137,14 @@ class ScrubbedTraceMiddleware(AgentMiddleware):
         record_model_usage(
             self.model_name, usage.get("input_tokens", 0), usage.get("output_tokens", 0)
         )
+        # Span only: the trace list keeps its existing events, so stop logic is unchanged.
+        record_call_span("model", {
+            "agent": self.agent, "status": "model_response", "model": self.model_name,
+            "step": max(self.step, 1),
+            "input_tokens": usage.get("input_tokens", 0),
+            "output_tokens": usage.get("output_tokens", 0),
+            "duration_ms": max(0, int((time.monotonic() - started) * 1000)),
+        }, correlation=self.correlation)
         return response
 
     async def awrap_tool_call(

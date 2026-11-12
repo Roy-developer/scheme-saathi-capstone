@@ -674,14 +674,15 @@ async def search_schemes(
 def _record_journey_metrics(endpoint: str, result: JourneyResponse) -> None:
     """Record conversation, question, and verdict counters for a journey reply."""
 
-    record_conversation(endpoint)
+    conversation = str(result.conversation_id)
+    record_conversation(endpoint, conversation)
     if result.question is not None:
         scheme_id = None
         if result.eligibility_result is not None:
             scheme_id = result.eligibility_result.scheme_id
         elif result.candidate_scheme_ids:
             scheme_id = result.candidate_scheme_ids[0]
-        record_question(scheme_id)
+        record_question(scheme_id, conversation)
     verdicts = {
         scheme_id: verdict.result
         for scheme_id, verdict in result.eligibility_results.items()
@@ -690,7 +691,7 @@ def _record_journey_metrics(endpoint: str, result: JourneyResponse) -> None:
         verdicts = {
             result.eligibility_result.scheme_id: result.eligibility_result.result,
         }
-    record_new_verdicts(str(result.conversation_id), verdicts)
+    record_new_verdicts(conversation, verdicts)
 
 
 @app.post("/api/v1/journey", response_model=JourneyResponse)

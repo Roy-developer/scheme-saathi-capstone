@@ -160,6 +160,7 @@ async def run_agent(
     budget: Mapping[str, int] | None = None,
     *,
     max_steps: int = MAX_AGENT_STEPS_PER_TURN,
+    correlation_id: str | None = None,
 ) -> AgentRunResult:
     """Run one specialist as a LangChain agent with Saathi's middleware.
 
@@ -173,6 +174,7 @@ async def run_agent(
         budget: Conversation counters from the graph state; ``_read_budget``
             merges in reservations saved in the LangGraph Store.
         max_steps: Model calls allowed in this run.
+        correlation_id: Hashed conversation id for spans (never the raw id).
     """
 
     counters = _read_budget(budget)
@@ -188,7 +190,7 @@ async def run_agent(
                 for rule in PII_RULES
             ),
             ModelCallLimitMiddleware(run_limit=max_steps, exit_behavior="end"),
-            ScrubbedTraceMiddleware(agent, model.model_name, trace),
+            ScrubbedTraceMiddleware(agent, model.model_name, trace, correlation_id),
             DurableBudgetMiddleware(counters, estimate_extra=system_prompt + json.dumps(
                 [tool.args_schema.model_json_schema() for tool in tools]
             )),
