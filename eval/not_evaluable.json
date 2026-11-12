@@ -1,0 +1,6 @@
+{
+  "reason": "IGNDPS-MH rule package is not on main and has an open review: conflicting age source (65 vs 18 to 79), an unsupported BPL claim, pending has_disability review, and no named domain reviewer. Cases are kept in the dataset but excluded from success scoring until the package is signed off.",
+  "scheme_id": "IGNDPS-MH",
+  "excluded_cases": ["GEN-IGNDPS-001", "GEN-IGNDPS-002", "GEN-IGNDPS-003", "GEN-IGNDPS-004", "GEN-IGNDPS-005", "GEN-IGNDPS-006", "HO-012", "HO-013", "HO-014", "HO-015", "HO-016", "HO-017", "HO-018", "HO-019"],
+  "lifted_when": "IGNDPS-MH package passes domain review, is added through a reviewed PR, and the lead and R5 sign off"
+}

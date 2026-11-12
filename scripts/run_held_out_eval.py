@@ -82,6 +82,9 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     cases = json.loads(HELD_OUT_FILE.read_text(encoding="utf-8"))["cases"]
+    excluded = set(json.loads((PROJECT_ROOT / "eval" / "not_evaluable.json").read_text(encoding="utf-8"))["excluded_cases"])
+    cases = [c for c in cases if c["id"] not in excluded]
+    print(f"Excluded as not evaluable: {len(excluded)} cases (IGNDPS-MH, pending review).")
     by_scheme = Counter(c["scheme_id"] for c in cases)
     by_intent = Counter(c["intended_category"] for c in cases)
     print(f"Gate passed. Held-out cases: {len(cases)}")
