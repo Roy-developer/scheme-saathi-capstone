@@ -105,8 +105,8 @@ Judgment calls made while labelling `role1_label_sheet_nidhi.json`:
 ## 6. Sign-off (reviewer completes)
 | Field | Value |
 |---|---|
-| Reviewer | Nidhi Kaushik  |
-| Date | 2026-11-11 |
-| Commit reviewed | `b6fe75d` |
+| Reviewer | Nidhi Kaushik |
+| Date | 2026-11-12 |
+| Commit reviewed | `9feef4e` |
 | Decision on flagged rules (section 2) | Proposed decisions accepted; section 3 requests go to the gold-set owner |
 | Overall | Accepted for all 19 development schemes. All 19 human_reviewed in rule_gold_selection.json and their draft files. IGNWPSM-MH moved to alternate (double-count). IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN moved to held-out 2026-11-12 (UMANG-only policy violation resolved). |
