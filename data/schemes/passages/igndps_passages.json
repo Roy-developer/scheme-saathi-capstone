@@ -74,6 +74,78 @@
       "review_status": "reviewed"
     },
     {
+      "passage_id": "IGNDPS-IN-BENEFIT-01",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "A pension of Rs.300/- per month is provided to Divyangjan between 18-79 years.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Benefits, age 18-79"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-BENEFIT-02",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "benefit",
+      "text": "A pension of Rs.500/- per month will be provided to Divyangjan aged 80 years and above.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Benefits, age 80 and above"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-ELIGIBILITY-04",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "eligibility",
+      "text": "The applicant's disability should be more than 80%.",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Eligibility, point 4"
+      },
+      "review_status": "reviewed"
+    },
+    {
+      "passage_id": "IGNDPS-IN-APPLICATION-01",
+      "scheme_id": "IGNDPS-IN",
+      "scheme_name": "Indira Gandhi National Disability Pension Scheme",
+      "jurisdiction": "IN",
+      "language": "en",
+      "section": "application",
+      "text": "One can download UMANG App or visit website https://web.umang.gov.in/web_new/home",
+      "source": {
+        "source_id": "SRC-IGNDPS-IN-001",
+        "publisher": "Ministry of Rural Development",
+        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html",
+        "collected_at": "2026-11-04",
+        "publication_date": null,
+        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 1"
+      },
+      "review_status": "reviewed"
+    },
+    {
       "passage_id": "IGNDPS-IN-ELIGIBILITY-06",
       "scheme_id": "IGNDPS-IN",
       "scheme_name": "Indira Gandhi National Disability Pension Scheme",
