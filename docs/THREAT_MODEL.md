@@ -1,10 +1,32 @@
 # Threat model: Scheme Saathi
 
-Owner: Role 5 (Tools, control & security), Vivian Fernandes. Checked directly
-against the running code on `main` as of 2026-11-09, not against intent or
-design docs alone. Covers the 4 MCP servers, the permission guard, the
-approval gate, and the specialist agents. Written as the capstone guide
-requires: assets, applicable threats, current mitigations, and open gaps.
+Owner: Role 4 (Tools, control and security), Vivian Fernandes. Checked directly
+against the running code on `main`, first on 2026-11-09 and again on
+2026-11-12 (after #28), not against intent or design docs alone. Covers the
+4 MCP servers, the permission guard, the approval gate, the specialist agents
+and the household memory store. Written as the capstone guide requires:
+assets, applicable threats, current mitigations, and open gaps.
+
+## Summary (one page)
+
+The model never decides eligibility: deterministic code does, and every
+verdict shows its deciding clause. Only the citizen's own typed text reaches
+a model; scheme passages and document fields never do.
+
+| # | Threat | Defence | Evidence |
+|---|---|---|---|
+| 1 | Injection through the citizen's free text (ASI01) | Regex `injection_guard` first, then a tool-free quarantined reader whose output must parse as typed facts; the tool-calling agent never sees the raw text; the citizen confirms every fact | `tests/test_intake_quarantine.py`, `tests/test_injection_guard.py` |
+| 2 | ID numbers leaking into models, traces or logs | Aadhaar, phone, email and account numbers are masked before every model call and in every tool result; the portal never asks for an ID number | `tests/test_pii_masking.py` (#22, #27) |
+| 3 | A draft submitted without approval, or after an edit | Approval is tied to the exact draft revision and fingerprint; any edit, profile change or rule change makes it stale | `scripts/demo_approval_gate_live.py`, `tests/test_cascading_failure_isolation.py` |
+| 4 | One conversation reading or acting on another's draft (ASI03) | Portal calls are bound to the conversation's `journey_id`; drafts are looked up by draft and journey together | `tests/test_cross_journey_isolation.py` |
+| 5 | A wrong upstream result trusted downstream (ASI08) | Each step re-checks the rule engine before acting; a model cannot override its verdict | `tests/test_cascading_failure_isolation.py` |
+| 6 | A citizen asking Saathi to misstate facts to qualify | Plain-code `honesty_guard` refuses, explains and re-asks, in English, Hindi and Marathi | `tests/test_honesty_guard.py` (#26) |
+| 7 | Tool misuse beyond an agent's job (ASI02) | Each agent may call only its own tools (`ACTOR_TOOLS`); only the application agent can create, edit or submit a draft, and the approval and cleanup steps get only narrow, fixed portal actions (`PORTAL_ACTIONS`) | `tests/test_mcp_permissions.py` |
+
+**Open risks** (detail in "Still open"):
+- Saved household profiles have no access control (see "Saved household profiles").
+- How often people rubber-stamp approvals is not measured.
+- A false fact typed plainly ("I am 60" when the person is 58) cannot be caught in software.
 
 ## Assets
 
@@ -14,6 +36,7 @@ requires: assets, applicable threats, current mitigations, and open gaps.
 | Scheme rule packages (`src/rules/packages/*.json`) | The actual decision logic. If these are wrong or tampered with, every verdict downstream is wrong. |
 | Draft applications and the mock portal DB | Synthetic, but structurally stand in for a real government submission; the design must hold even though the data doesn't. |
 | Approval tokens | A one-time permission slip; if these could be forged or replayed, the approval gate is meaningless. |
+| Saved household profiles (`src/workflow/household_memory.py`) | Typed facts such as date of birth, widow status and BPL card status, kept across visits under a return code. |
 
 ## System summary
 
@@ -131,7 +154,7 @@ also costs one extra model call from the conversation budget.
 | ASI03 Identity/privilege abuse | Confused deputy — acting beyond the caller's own rights | **Verified** (live test) | Portal calls require the bound `journey_id` to match (`service_routing.py` line 107-108), and `src/portal/repository.py` looks drafts up by `draft_id=? AND journey_id=?` together. `tests/test_cross_journey_isolation.py::test_one_conversation_cannot_access_another_conversations_draft` drives the real API: a second, legitimate conversation that knows the victim's real `draft_id` gets 404 on read, edit, approve and submit, while the victim's own access still works. |
 | ASI04 Agentic supply chain | Poisoned tool, package, or server | Low, not yet tested | Startup inventory check (`SERVICE_TOOLS` match) is fail-closed; no dependency-pinning review done yet. |
 | ASI05 Unexpected code execution | Text becomes a shell command | None found | No agent has shell or code-exec access anywhere in `src/`. |
-| ASI06 Memory/context poisoning | Bad content saved and reused later | Low | No long-term memory store exists yet in the code (confirmed by grep) — nothing to poison yet, but also nothing protecting one once it's built. |
+| ASI06 Memory/context poisoning | Bad content saved and reused later | **Yes, open** | A long-term household store now exists (#20, #28). Saved facts are re-validated against the current fact registry when loaded, but anyone who has or guesses a return code can overwrite a profile. See "Saved household profiles". |
 | ASI07 Insecure inter-agent comms | Spoofed/unchecked messages between agents | Low | Agents only talk through typed `Handoff`/observation objects validated by Pydantic, not free text. |
 | ASI08 Cascading failures | One agent's error becomes another's trusted input | **Verified** (live tests), one soft spot noted | `tests/test_cascading_failure_isolation.py` injects a wrong upstream result at each hand-off: a model that tries to hand off "eligible" after the rule engine said no is refused and fails closed (`test_model_claiming_eligible_cannot_override_the_rule_engine`, `test_model_handoff_carries_only_the_observed_rule_engine_verdict`); a rule result for a different scheme is discarded (`test_rule_tool_verdict_for_a_different_scheme_is_discarded`); a wrong intake proposal is never evaluated until the citizen confirms it (`test_wrong_intake_proposal_is_not_evaluated_until_the_citizen_confirms`); a poisoned "eligible" verdict in the checkpoint is re-derived by the application step and no draft is written (`test_poisoned_eligible_verdict_is_rederived_before_any_portal_write`); an approved draft goes stale when the profile (`test_approved_draft_cannot_be_submitted_after_the_profile_changes`) or rule package (`test_approval_under_old_rules_is_dead_once_the_rule_package_changes`) changes underneath it. Soft spot: the documents step gates only on the saved verdict, so a poisoned verdict still lets it run a read-only checklist check — harmless today because the application step re-checks the rules before any write. |
 | ASI09 Human-agent trust exploitation | Approvals rubber-stamped without reading | **Yes — same gap as above** | No measurement of Saathi's own approval read-through rate yet. |
@@ -177,13 +200,80 @@ plainly ("I am 60" when the person is 58). Nothing in software can catch that;
 the document checker and the human approval of every draft are the backstop.
 The Hindi and Marathi refusal text needs a native-speaker check.
 
+## Personal data and ID numbers
+
+The capstone guide asks that ID numbers go only to `mock-portal.submit`.
+Saathi is stricter: **no step needs an ID number, so none is sent anywhere.**
+
+- The mock portal forms (`data/schemes/mock_forms/*.json`) and the draft
+  models (`src/api/applications.py`) have no Aadhaar, phone or account-number
+  field. A draft carries a synthetic applicant reference and district only.
+- If a citizen types an ID number anyway, it is masked before any model sees
+  it. `PIIMiddleware` (one per rule in `PII_RULES`,
+  `src/workflow/agent_runtime.py`) redacts Aadhaar, phone, email and account
+  numbers in the task message **and in every tool result**. The description
+  reader, search queries and saved chat text are masked with
+  `mask_sensitive_text` before use.
+- Masking covers spaced, dotted, hyphenated, `+91` and Devanagari-digit
+  forms, numbers glued to a label ("Aadhaar-…"), and 16-digit account numbers
+  masked whole rather than as a partial Aadhaar (#27).
+- Agent traces store scrubbed metadata only (`ScrubbedTraceMiddleware`).
+
+Evidence: `tests/test_pii_masking.py` sends each identifier type through
+every agent and checks that no model call and no trace contains it.
+
+Limit: masking is pattern-based. An ID number written in words, or in a
+format no rule matches, would not be caught.
+
+## Saved household profiles (open risk)
+
+Household memory (`src/workflow/household_memory.py`, Roy's #20 and #28)
+saves a family's typed facts under a return code such as `SAATHI-7K3M`, so
+they can come back later. The routes `GET`, `POST` and
+`DELETE /api/v1/household/...` (`src/api/app.py`) have no authentication and
+no rate limit, and the code itself is the only secret:
+
+- **Guessable codes.** 4 characters from 36 gives about 1.7 million codes.
+  With no rate limit, scanning them is practical.
+- **Read (ASI03).** `GET /api/v1/household/{code}` returns the saved facts
+  (date of birth, widow status, BPL card status) to anyone with a code. This
+  is the capstone red-team case "attempts to retrieve another household's
+  data from memory".
+- **Overwrite (ASI06).** `POST /api/v1/household` accepts a caller-supplied
+  `return_code`, so anyone can replace another household's profile with
+  facts from their own conversation.
+- **Delete.** `DELETE /api/v1/household/{code}` removes a profile for anyone
+  with the code.
+- **Logs.** `save_household` logs the full return code in plain text
+  (`household_memory.py`, "Saved household profile under …"). The code works
+  like a password, so this is personal data in logs.
+
+Proposed fix, smallest first:
+1. Use 10+ random characters (keep the `SAATHI-` prefix for readability).
+2. Have only the server generate codes on first save; never accept a
+   caller-supplied code for a new save.
+3. Allow an update or delete only from the conversation the code was issued
+   to (store `conversation_id` with the record and check it).
+4. Rate-limit the household routes.
+5. Log only the last 2 characters of a code.
+
+Mitigating today: all data is synthetic, and loaded facts are re-validated
+against the current fact registry.
+
 ## Still open
 
-- Hardening the intake free-text path (see "Recommended fix" above) — next task.
-- Live verification of ASI03 and ASI08 is done (see their rows above). One
-  follow-up from ASI08: the documents step trusts the saved verdict as its
-  gate instead of re-asking the rule engine; it cannot write anything that
-  matters, but re-deriving there too would remove the last trusted claim.
+- **Saved household profiles have no access control** (see the section
+  above). This is the main open security risk. The fix belongs in the
+  household code (Roy), with a test for each of read, overwrite and delete
+  by a stranger.
+- Done since the first version: intake hardening (#21), PII masking on every
+  agent and in tool results (#22), 16-digit account numbers (#27), refusing
+  requests to misstate facts (#26), and live verification of ASI03 (#18) and
+  ASI08 (#21).
+- One follow-up from ASI08: the documents step trusts the saved verdict as
+  its gate instead of re-asking the rule engine. It cannot write anything
+  that matters, but re-deriving there too would remove the last trusted
+  claim.
 - No measurement yet of how often a human actually reads an approval before
   clicking it, vs. rubber-stamping.
 - This document covers the tools/control/security layer only. Evaluation,
