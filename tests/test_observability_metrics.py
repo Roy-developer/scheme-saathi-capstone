@@ -111,3 +111,35 @@ def test_same_verdict_in_different_conversations_counts_each(reader) -> None:
 
     (point,) = _points(reader, "scheme_saathi.verdicts")
     assert point.value == 2
+
+
+def _pending(**fields) -> dict:
+    return {"approved": False, "rejected": False, "receipt_id": None, **fields}
+
+
+def test_waiting_approvals_follow_draft_transitions(reader) -> None:
+    from src.api.app import _track_waiting_approval
+
+    draft = _pending()
+    _track_waiting_approval(None, draft)
+    assert sum(p.value for p in _points(reader, "scheme_saathi.waiting_approvals")) == 1
+
+    approved = {**draft, "approved": True}
+    _track_waiting_approval(draft, approved)
+    assert sum(p.value for p in _points(reader, "scheme_saathi.waiting_approvals")) == 0
+
+    _track_waiting_approval(approved, {**approved, "receipt_id": "R-1"})
+    assert sum(p.value for p in _points(reader, "scheme_saathi.waiting_approvals")) == 0
+
+    _track_waiting_approval(approved, {**approved, "approved": False})
+    assert sum(p.value for p in _points(reader, "scheme_saathi.waiting_approvals")) == 1
+
+
+def test_reject_removes_a_waiting_draft(reader) -> None:
+    from src.api.app import _track_waiting_approval
+
+    draft = _pending()
+    _track_waiting_approval(None, draft)
+    _track_waiting_approval(draft, {**draft, "rejected": True})
+
+    assert sum(p.value for p in _points(reader, "scheme_saathi.waiting_approvals")) == 0

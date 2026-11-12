@@ -89,6 +89,7 @@ from src.observability.metrics import (
     record_new_verdicts,
     record_question,
     record_verdict,
+    record_waiting_approvals_change,
 )
 from src.observability.telemetry import configure_telemetry
 
@@ -277,6 +278,15 @@ async def _get_mock_draft(
             detail="Draft not found for this conversation.",
         )
     return record
+
+
+def _awaiting_approval(record: dict) -> bool:
+    return not record.get("approved") and not record.get("rejected") and not record.get("receipt_id")
+
+
+def _track_waiting_approval(before: dict | None, after: dict) -> None:
+    previous = _awaiting_approval(before) if before is not None else False
+    record_waiting_approvals_change(int(_awaiting_approval(after)) - int(previous))
 
 
 def _public_application_record(record: dict) -> dict:
@@ -938,6 +948,7 @@ async def create_application_draft(
                 "district": draft_request.district,
             },
         )
+        _track_waiting_approval(None, created)
         return _public_application_record(created)
     except HTTPException:
         raise
@@ -1028,6 +1039,7 @@ async def edit_application_draft(
                 "district": edit.district,
             },
         )
+        _track_waiting_approval(record, edited)
         return _public_application_record(edited)
     except HTTPException:
         raise
@@ -1108,6 +1120,7 @@ async def update_application_approval(
                 },
             },
         )
+        _track_waiting_approval(record, result)
         return _public_application_record(result)
     except HTTPException:
         raise

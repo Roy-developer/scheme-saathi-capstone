@@ -26,6 +26,7 @@ class Instruments:
     questions: otel_metrics.Counter
     masked_id_hits: otel_metrics.Counter
     request_latency: otel_metrics.Histogram
+    waiting_approvals: otel_metrics.UpDownCounter
 
 
 def create_instruments(meter: otel_metrics.Meter) -> Instruments:
@@ -54,6 +55,10 @@ def create_instruments(meter: otel_metrics.Meter) -> Instruments:
             "scheme_saathi.request_latency",
             unit="s",
             description="Latency for evaluate and journey HTTP handlers",
+        ),
+        waiting_approvals=meter.create_up_down_counter(
+            "scheme_saathi.waiting_approvals",
+            description="Mock drafts waiting for a human approval decision",
         ),
     )
 
@@ -108,6 +113,13 @@ def record_question(scheme_id: str | None) -> None:
     """Count a pending interview question shown to the user."""
 
     _instruments.questions.add(1, {"scheme_id": scheme_id or "unknown"})
+
+
+def record_waiting_approvals_change(delta: int) -> None:
+    """Adjust the count of drafts waiting for approval."""
+
+    if delta:
+        _instruments.waiting_approvals.add(delta)
 
 
 def record_masked_id_hits(count: int = 1) -> None:
