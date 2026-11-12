@@ -7,15 +7,19 @@ offline runs and tests need no backend.
 
 from __future__ import annotations
 
+import json
 import time
 from collections import OrderedDict
 from contextlib import contextmanager
 from dataclasses import dataclass
+from functools import lru_cache
+from pathlib import Path
 from typing import Iterator, Mapping
 
 from opentelemetry import metrics as otel_metrics
 
 METER_NAME = "scheme_saathi"
+PRICES_PATH = Path(__file__).resolve().parents[2] / "config" / "model_prices.json"
 
 
 @dataclass(frozen=True)
@@ -27,6 +31,8 @@ class Instruments:
     masked_id_hits: otel_metrics.Counter
     request_latency: otel_metrics.Histogram
     waiting_approvals: otel_metrics.UpDownCounter
+    model_tokens: otel_metrics.Counter
+    model_cost_usd: otel_metrics.Counter
 
 
 def create_instruments(meter: otel_metrics.Meter) -> Instruments:
@@ -59,6 +65,16 @@ def create_instruments(meter: otel_metrics.Meter) -> Instruments:
         waiting_approvals=meter.create_up_down_counter(
             "scheme_saathi.waiting_approvals",
             description="Mock drafts waiting for a human approval decision",
+        ),
+        model_tokens=meter.create_counter(
+            "scheme_saathi.model_tokens",
+            unit="{token}",
+            description="Model tokens used, by direction (input or output)",
+        ),
+        model_cost_usd=meter.create_counter(
+            "scheme_saathi.model_cost_usd",
+            unit="USD",
+            description="Estimated model cost from config/model_prices.json",
         ),
     )
 
@@ -120,6 +136,47 @@ def record_waiting_approvals_change(delta: int) -> None:
 
     if delta:
         _instruments.waiting_approvals.add(delta)
+
+
+@lru_cache(maxsize=1)
+def _price_table() -> dict[str, tuple[float | None, float | None]]:
+    """Return (input, output) USD per 1M tokens for each configured model id."""
+
+    try:
+        data = json.loads(PRICES_PATH.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    models = data.get("models", {}) if isinstance(data, dict) else {}
+    return {
+        model: (entry.get("input_per_million"), entry.get("output_per_million"))
+        for model, entry in models.items()
+        if isinstance(entry, dict)
+    }
+
+
+def record_model_usage(model: str, input_tokens: int, output_tokens: int) -> None:
+    """Count one model call's tokens and, when priced, its estimated cost.
+
+    Call this once per model response, using the usage the response reports.
+    A model with no configured price still gets its token counts recorded.
+    """
+
+    input_tokens = max(0, int(input_tokens or 0))
+    output_tokens = max(0, int(output_tokens or 0))
+    if input_tokens:
+        _instruments.model_tokens.add(
+            input_tokens, {"direction": "input", "model": model}
+        )
+    if output_tokens:
+        _instruments.model_tokens.add(
+            output_tokens, {"direction": "output", "model": model}
+        )
+    input_price, output_price = _price_table().get(model, (None, None))
+    if input_price is None or output_price is None:
+        return
+    cost = (input_tokens * input_price + output_tokens * output_price) / 1_000_000
+    if cost:
+        _instruments.model_cost_usd.add(cost, {"model": model})
 
 
 def record_masked_id_hits(count: int = 1) -> None:

@@ -32,6 +32,7 @@ from src.workflow.agent_config import (
     PROMPT_VERSION,
     TOKEN_ESTIMATE_CHARACTERS,
 )
+from src.observability.metrics import record_model_usage
 from src.workflow.conversation_budget import reserve_counters
 
 
@@ -123,6 +124,9 @@ class ScrubbedTraceMiddleware(AgentMiddleware):
             raise
         usage = response.result[-1].usage_metadata or {}
         self._usage = (usage.get("input_tokens", 0), usage.get("output_tokens", 0), started)
+        record_model_usage(
+            self.model_name, usage.get("input_tokens", 0), usage.get("output_tokens", 0)
+        )
         return response
 
     async def awrap_tool_call(

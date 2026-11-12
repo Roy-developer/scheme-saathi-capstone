@@ -1,3 +1,4 @@
+import json
 import uuid
 
 import pytest
@@ -161,3 +162,47 @@ def test_plain_text_adds_no_masked_hit(reader) -> None:
     mask_sensitive_text("I am a farmer in Maharashtra with a small plot.")
 
     assert _points(reader, "scheme_saathi.masked_id_hits") == []
+
+
+def test_model_usage_records_tokens_by_direction(reader, monkeypatch) -> None:
+    monkeypatch.setattr(metrics, "_price_table", lambda: {})
+
+    metrics.record_model_usage("fake-model", 120, 30)
+
+    points = {
+        dict(point.attributes)["direction"]: point.value
+        for point in _points(reader, "scheme_saathi.model_tokens")
+    }
+    assert points == {"input": 120, "output": 30}
+
+
+def test_model_cost_total_equals_sum_of_two_calls(reader, monkeypatch) -> None:
+    # Fake prices and usage only: USD per 1M tokens.
+    monkeypatch.setattr(
+        metrics, "_price_table", lambda: {"fake-model": (2.0, 8.0)}
+    )
+
+    metrics.record_model_usage("fake-model", 1_000_000, 500_000)  # 2.0 + 4.0
+    metrics.record_model_usage("fake-model", 250_000, 100_000)  # 0.5 + 0.8
+
+    (point,) = _points(reader, "scheme_saathi.model_cost_usd")
+    assert point.value == pytest.approx(2.0 + 4.0 + 0.5 + 0.8)
+    assert dict(point.attributes) == {"model": "fake-model"}
+
+
+def test_unpriced_model_records_tokens_but_no_cost(reader, monkeypatch) -> None:
+    monkeypatch.setattr(metrics, "_price_table", lambda: {"fake-model": (None, None)})
+
+    metrics.record_model_usage("fake-model", 100, 100)
+
+    assert _points(reader, "scheme_saathi.model_cost_usd") == []
+    assert len(_points(reader, "scheme_saathi.model_tokens")) == 2
+
+
+def test_price_file_is_marked_as_needing_confirmation() -> None:
+    data = json.loads(metrics.PRICES_PATH.read_text(encoding="utf-8"))
+
+    assert data["needs_confirmation"] is True
+    assert all(
+        entry["needs_confirmation"] is True for entry in data["models"].values()
+    )
