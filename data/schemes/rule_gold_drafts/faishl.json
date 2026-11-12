@@ -23,10 +23,10 @@
       "operator": "eq",
       "value": true,
       "unit": null,
-      "source_passage_id": "FAISHL-IN-ELIGIBILITY-03",
-      "source_quote": "The applicant must have taken a home loan from a bank, government/public sector undertaking, LIC, GIC, or HUDCO.",
+      "source_passage_id": "FAISHL-IN-BENEFIT-01",
+      "source_quote": "Reimbursement of interest on loan taken from banks for construction of house to War Bereaved, War Disabled and Attributable Peace time casualties is provided out of AFFD Fund.",
       "needs_human_review": false,
-      "note": null
+      "note": "Loan condition is implicit in the benefit description (subsidy requires an existing loan). Official source: ksb.gov.in/interest-subsidy-on-home-loan.htm (confirmed 2026-11-12)."
     }
   ],
   "unresolved": [
