@@ -64,12 +64,16 @@ def test_gold_draft_rules_quote_their_passages_exactly(path):
 def test_conflicting_passages_are_flagged_for_a_person():
     by_scheme = {load_gold(path).scheme_id: load_gold(path) for path in GOLD_FILES}
 
-    assert any("CONFLICT" in note for note in by_scheme["IGNDPS-IN"].unresolved)
+    # MSY-IN conflict still unresolved
     assert any("CONFLICT" in note for note in by_scheme["MSY-IN"].unresolved)
+
+    # IGNDPS-IN disability conflict was resolved by Priyanka (gold-set owner) 2026-11-10:
+    # 80% or more (inclusive), citing BENEFICIARY-01. The conflict is documented in the
+    # rule note; unresolved was cleared and needs_human_review set to false after the decision.
     disability = next(
         r for r in by_scheme["IGNDPS-IN"].rules if r.field == "disability_percent"
     )
-    assert disability.needs_human_review
+    assert disability.note is not None and "Priyanka" in disability.note
 
 
 # --- Rule schema -------------------------------------------------------------

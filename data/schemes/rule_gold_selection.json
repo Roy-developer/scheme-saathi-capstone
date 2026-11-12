@@ -1,10 +1,11 @@
 {
-  "version": "0.5.0",
+  "version": "0.6.0",
   "created": "2026-11-09",
-  "status": "32 gold schemes: 23 development, 9 held-out. v0.5.0 (2026-11-11): added EACS-MH, NSMNY-MH, IGNWPSM-MH, BFFL-MH to development — all have genuine official URLs (mahabocw.in, mahait.org, sjsa.maharashtra.gov.in, mahadbt.maharashtra.gov.in), 0 unresolved flags.",
+  "status": "31 gold schemes: 22 development, 9 held-out. v0.6.0 (2026-11-11): moved IGNWPSM-MH from development to alternate (shares source URL with live IGNWPS-MH; double-count). Development gold is now 22 schemes.",
   "selection_rule": "Quote-verified against passages; few unresolved items; no MISSING FIELD or OR-conflict that blocks full encoding; spread of populations and benefit types; families (e.g. all widow pensions) kept in one split.",
   "alternates": [
-    "eps"
+    "eps",
+    "ignwpsm"
   ],
   "schemes": [
     {
@@ -350,13 +351,13 @@
     {
       "draft_file": "rule_gold_drafts/ignwpsm.json",
       "scheme_id": "IGNWPSM-MH",
-      "split": "development",
+      "split": "alternate",
       "family": "widow",
       "rules": 6,
       "unresolved": 0,
       "rule_review_flags": 0,
-      "review_status": "pending_human_review",
-      "why": "MH widow pension; 6-rule full encoding (age 40-79, BPL, MH resident, widow, no other pension), genuine sjsa.maharashtra.gov.in. Same family as IGNWPS-MH (development); kept together per selection rule."
+      "review_status": "human_reviewed",
+      "why": "Moved from development to alternate 2026-11-11: shares source URL with IGNWPS-MH (sjsa.maharashtra.gov.in/…/indira-gandhi-national-widow-pension-scheme/); keeping both in the gold set double-counts the scheme. IGNWPS-MH kept (live package). IGNWPSM-MH available as alternate if a second MH widow-pension scheme is ever needed."
     },
     {
       "draft_file": "rule_gold_drafts/bhausaheb_fundkar.json",

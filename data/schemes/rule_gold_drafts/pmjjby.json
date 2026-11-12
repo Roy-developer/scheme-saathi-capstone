@@ -14,7 +14,7 @@
       "source_passage_id": "PMJJBY-IN-ELIGIBILITY-01",
       "source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 50 years are eligible to join.",
       "needs_human_review": false,
-      "note": "ELIGIBILITY-03 says 18 years completed. End values included (project owner decision 2026-11-10)."
+      "note": "ELIGIBILITY-03 says 18 years completed. End values included (Priyanka (gold-set owner) decision 2026-11-10)."
     },
     {
       "rule_id": "PMJJBY-IN-R02",
@@ -26,7 +26,7 @@
       "source_passage_id": "PMJJBY-IN-ELIGIBILITY-01",
       "source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 50 years are eligible to join.",
       "needs_human_review": false,
-      "note": "ELIGIBILITY-03 says 50 years (age nearer birthday). End values included (project owner decision 2026-11-10)."
+      "note": "ELIGIBILITY-03 says 50 years (age nearer birthday). End values included (Priyanka (gold-set owner) decision 2026-11-10)."
     },
     {
       "rule_id": "PMJJBY-IN-R03",
@@ -66,7 +66,7 @@
     }
   ],
   "unresolved": [
-    "Age basis differs: ELIGIBILITY-03 says 18 years completed and 50 years (age nearer birthday); end values treated as included per project owner decision 2026-11-10.",
+    "Age basis differs: ELIGIBILITY-03 says 18 years completed and 50 years (age nearer birthday); end values treated as included per Priyanka (gold-set owner) decision 2026-11-10.",
     "Cover ends at age 55 (EXCLUSION-01); entry is not possible beyond 50. Not encoded as a rule."
   ]
 }

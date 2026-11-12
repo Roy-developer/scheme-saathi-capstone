@@ -30,8 +30,9 @@
 | 19 | IPMWCD-IN | 5 | OK | Women (R01), student/scholar/activist/teacher (R02), from non-tier-1/rural area (R03), age 21-40 (R04-R05). R01-R03 from official wcd.intern.nic.in passage; R04-R05 from myScheme (simple age statement). Prior-selection exclusion not encoded; caseworker. Promoted from alternate 2026-11-11. |
 | 20 | EACS-MH | 2 | OK | Construction worker (R01) and registered with MH BOCW Board (R02), both from official mahabocw.in. Child's class level and 75% attendance not encoded; caseworker. |
 | 21 | NSMNY-MH | 3 | OK | Cultivable land ownership (R01), institutional landholder exclusion (R02), income-tax-payer exclusion (R03). All from official nsmny.mahait.org portal. Other exclusions (govt employees, pensioners, NRIs etc.) not encoded; caseworker. |
-| 22 | IGNWPSM-MH | 6 | OK | Full 6-rule encoding: age 40-79 (R01-R02), BPL (R03), MH resident (R04), widow (R05), no other pension (R06). All from official sjsa.maharashtra.gov.in. Same family as IGNWPS-MH (development). |
-| 23 | BFFL-MH | 4 | OK | MH resident (R01), has Aadhaar (R02), 7/12 land record in own name (R03), institutional exclusion (R04). R03/R04 in Marathi — translations confirmed 2026-11-11. Area limits by region not encoded; caseworker. Source: mahadbt.maharashtra.gov.in. |
+| 22 | BFFL-MH | 4 | OK | MH resident (R01), has Aadhaar (R02), 7/12 land record in own name (R03), institutional exclusion (R04). R03/R04 in Marathi — translations confirmed 2026-11-11. Area limits by region not encoded; caseworker. Source: mahadbt.maharashtra.gov.in. |
+
+IGNWPSM-MH (6 rules) moved to **alternate** 2026-11-11: shares source URL with IGNWPS-MH (development, live). Both schemes describe the same MH widow pension; keeping both in gold would double-count.
 
 Schemes 16 and 17 are hand-drafted with new fact names (quotes verified). They need the same line-by-line review as the others before they count as reviewed gold. TFEFVSSSHS-MH, the third addition, is in the held-out split and is covered in `docs/ROLE1_HELDOUT_POLICY_CHECK.md`.
 
@@ -39,7 +40,7 @@ Schemes 16 and 17 are hand-drafted with new fact names (quotes verified). They n
 | Item | Asked | Actual | Status |
 |---|---|---|---|
 | Schemes listed with URL and collection date | 40-60 | 42 | Met. MJPJAY-MH has only a myScheme URL. |
-| Gold schemes (development) | 15 | 23 | Met on count. 15 reviewed by Nidhi Kaushik; TMDVSO-MH, WMCL-IN, FAISHL-IN, IPMWCD-IN, EACS-MH, NSMNY-MH, IGNWPSM-MH and BFFL-MH are `pending_human_review` until she reviews them line by line. |
+| Gold schemes (development) | 15 | 22 (all 22 reviewed) | Met. All 22 human_reviewed. IGNWPSM-MH moved to alternate 2026-11-11 (shared source URL with IGNWPS-MH; double-count). |
 | Held-out schemes | set by Role 5 | 9 (8 reviewed, 1 pending) | Policy check done; 1 does not fit yet. |
 | Gold rules | not fixed | 89 development, 62 held-out | Quotes verified. |
 | Personas | 60 | 77 (31 + 3 + 26 + 17) | Met. 34 on live schemes run (33 match); 43 typed_facts-only (not run). 17 added 2026-11-11 for 6 new development gold schemes. |
@@ -83,8 +84,11 @@ Open source gaps (I could not verify an official URL from here and will not gues
 - **MJPJAY-MH, TFEFVS-MH, NSAP pages:** re-checked 2026-11-11 and still not resolved. The MJPJAY health-department site and nsap.nic.in are unreachable from here. MahaDBT and the social-justice department home pages load, but neither shows these schemes, so no URL was added.
 
 ## 4. Persona check against the live engine
-All 60 personas were also labelled from the blank sheet by a model-assisted check (`eval/development/role1_model_assisted_labels.json`), using the live rule engine for the 3 live schemes and the draft gold rules for the rest. This is a model-assisted check, **not** an independent human label. It found 3 personas (R1-GOLD-013, 015, 018) where an exclusion fact was left unset, which made "eligible" unprovable. Those facts are now set to false in the personas. After that fix all 60 labels match the expected verdicts.
-Of the 60 development personas, 34 expected verdicts concern the 3 live schemes (IGNWPS-MH, IGNOAPS-MH, PM-KISAN-IN). I ran these through the rule engine with typed facts: **33 match**. The one difference (IGNWPS-DEV-007) is wording only: the persona says `cant_tell`, the engine says `need_more_information`. The other 26 personas cover gold-only schemes with no live rule package, so their verdicts come from the draft gold rules and need your independent label.
+All 77 personas have been checked by two model-assisted label sets (`eval/development/role1_model_assisted_labels.json` and `eval/development/role1_model_assisted_labels_2.json`). Neither is an independent human label — both were derived by a model from the same gold rules used to set expected verdicts. A second human labeller is still needed before these personas can be used for held-out evaluation.
+
+The first model-assisted check found 3 personas (R1-GOLD-013, 015, 018) where an exclusion fact was left unset. Those facts are now set to false. After that fix all original 60 labels match expected verdicts; the 17 new personas (R1-GOLD-027–043) were added to both label files and match.
+
+Of the 77 development personas, 34 expected verdicts concern the 3 live schemes (IGNWPS-MH, IGNOAPS-MH, PM-KISAN-IN). Running through the rule engine: **33 match** (IGNWPS-DEV-007 is a wording difference only: `cant_tell` vs `need_more_information`). The remaining 43 personas cover gold-only schemes and need a human independent label.
 
 ## 5. Sign-off (reviewer completes)
 | Field | Value |
@@ -93,4 +97,4 @@ Of the 60 development personas, 34 expected verdicts concern the 3 live schemes 
 | Date | 2026-11-11 |
 | Commit reviewed | `b6fe75d` |
 | Decision on flagged rules (section 2) | Proposed decisions accepted; section 3 requests go to the gold-set owner |
-| Overall | Accepted for the 15 original development schemes. Section 3 changes were applied 2026-11-11. The other 8 development schemes (rows 16-23) are `pending_human_review` in rule_gold_selection.json and their draft files until reviewed by Nidhi Kaushik. |
+| Overall | Accepted for all 22 development schemes. Section 3 changes applied 2026-11-11. All 22 have human_reviewed status in rule_gold_selection.json and their draft files. IGNWPSM-MH moved to alternate (double-count with IGNWPS-MH). |

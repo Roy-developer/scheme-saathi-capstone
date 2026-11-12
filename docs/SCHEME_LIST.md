@@ -2,7 +2,7 @@
 
 Generated from `data/schemes/passages/` and `rule_gold_selection.json`. Official = government ministry/department/portal page or PDF; myScheme links are discovery only.
 
-Total schemes: 42 (family members are linked, not merged; no double-counting needed to stay at 40+).
+Total schemes: 42 listed (41 distinct, 1 duplicate family entry noted below). Development gold: 22 schemes.
 
 | # | Scheme ID | Name | Level | Family | Official source URL | Discovery (myScheme) | Collected | Gold rules | Gold split | Live |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -19,7 +19,7 @@ Total schemes: 42 (family members are linked, not merged; no double-counting nee
 | 11 | IGNOAPS-MH | Indira Gandhi National Old Age Pension Scheme (Maharashtra) | State (MH) | Old-age pension | https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/ | https://www.myscheme.gov.in/schemes/igoapsm | 2026-11-05 | 4 | development | yes |
 | 12 | IGNWPS-MH | Indira Gandhi National Widow Pension Scheme | State (MH) | Widow pension | https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/ | - | 2026-11-01 | 4 | development | yes |
 | 13 | IGNWPS-IN | Indira Gandhi National Widow Pension Scheme | Central | Widow pension | https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-widow-pension-scheme_ignwps.html | - | 2026-11-04 | 5 | development |  |
-| 14 | IGNWPSM-MH | Indira Gandhi National Widow Pension Scheme (Maharashtra) | State (MH) | Widow pension | https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/ | https://www.myscheme.gov.in/schemes/ignwpsm | 2026-11-04 | 6 | development |  |
+| 14 | IGNWPSM-MH | Indira Gandhi National Widow Pension Scheme (Maharashtra) | State (MH) | Widow pension | https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/ | https://www.myscheme.gov.in/schemes/ignwpsm | 2026-11-04 | 6 | alternate (duplicate URL with IGNWPS-MH) |  |
 | 15 | IPMWCD-IN | Internship Programme for Women Students / Scholars / Social Activists / Teachers | Central | - | https://wcd.intern.nic.in/aboutproject | https://www.myscheme.gov.in/schemes/ipmwcd | 2026-11-05 | 5 | development |  |
 | 16 | MSY-IN | Mahila Samriddhi Yojana | Central | - | https://www.dosje.gov.in/schemes-and-services/mahila-samridhi-yojna-msy/ | https://www.myscheme.gov.in/schemes/cbssc-msy | 2026-11-03 | 5 | - |  |
 | 17 | MJPJAY-MH | Mahatma Jyotirao Phule Jan Arogya Yojana | State (MH) | - | MISSING (myScheme only) | https://www.myscheme.gov.in/schemes/mjpjay | 2026-11-05 | 1 | - |  |
@@ -51,6 +51,6 @@ Total schemes: 42 (family members are linked, not merged; no double-counting nee
 
 ## Notes
 
-- Duplicate families are linked by the Family column: widow (IGNWPS-IN, IGNWPS-MH, IGNWPSM-MH), old-age (NSAP-IGNOAPS-IN, IGNOAPS-MH), disability (IGNDPS-IN, IGNDPSM-MH). IGNWPS-MH and IGNWPSM-MH share one source URL.
+- Duplicate families are linked by the Family column: widow (IGNWPS-IN, IGNWPS-MH, IGNWPSM-MH), old-age (NSAP-IGNOAPS-IN, IGNOAPS-MH), disability (IGNDPS-IN, IGNDPSM-MH). IGNWPS-MH and IGNWPSM-MH share one source URL — IGNWPS-MH is in the development gold set (live); IGNWPSM-MH is alternate to avoid double-counting. Net distinct schemes: 41.
 - Every scheme in the list now has at least one gold rule. TFEFVSSSHS-MH, TMDVSO-MH and WMCL-IN were added in v0.3.0 and are pending human review.
 - Only myScheme as a source (needs an official URL before it counts as official): MJPJAY-MH.
