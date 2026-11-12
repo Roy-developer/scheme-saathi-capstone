@@ -115,13 +115,18 @@ def integrated_ui() -> Iterator[IntegratedUI]:
         if (
             address.scheme == "http"
             and address.netloc == urlsplit(UI_ORIGIN).netloc
-            and address.path.startswith("/api/v1/journey")
+            and (
+                address.path.startswith("/api/v1/journey")
+                or address.path == "/api/v1/forget"
+                or address.path.startswith("/api/v1/household")
+            )
         ):
             assert harness is not None
             assert isinstance(request, urllib.request.Request)
             body = json.loads(request.data) if request.data else {}
             response = harness.client.request(
-                request.get_method(), address.path,
+                request.get_method(),
+                address.path + (f"?{address.query}" if address.query else ""),
                 content=request.data, headers=dict(request.header_items()),
             )
             result = response.json() if response.content else {}
@@ -733,8 +738,16 @@ def test_phases_one_to_four_ui_receipt_retry_and_scoped_forget(
     })
     assert retained.status_code == 200
     retained_id = retained.json()["conversation_id"]
+    next(
+        checkbox for checkbox in restored.checkbox
+        if checkbox.key == "memory_consent"
+    ).check().run()
     _click(restored, "Forget my demonstration data")
+    assert ("DELETE", "/api/v1/forget") in {
+        (method, path) for method, path, _, _ in harness.requests
+    }
     assert not restored.query_params
+    assert not restored.session_state.get("memory_consent", False)
     assert harness.client.get(root).status_code == 404
     assert harness.client.get(f"{root}/drafts").json() == {"drafts": []}
     assert harness.client.get(f"/api/v1/journey/{retained_id}").status_code == 200
@@ -748,6 +761,79 @@ def test_phases_one_to_four_ui_receipt_retry_and_scoped_forget(
                 (conversation_id,),
             ).fetchone()[0] == 0
     assert harness.client.delete(f"/api/v1/journey/{retained_id}").status_code == 204
+
+
+def test_corrected_return_code_answer_can_be_resaved_from_the_ui(
+    integrated_ui: IntegratedUI,
+) -> None:
+    """A user can correct a loaded answer and explicitly update that code."""
+
+    harness = integrated_ui
+    initial = harness.client.post("/api/v1/journey", json={
+        "action": "evaluate",
+        "scheme_id": SCHEME,
+        "profile": {
+            "date_of_birth": "1986-01-01",
+            "application_date": "2026-11-04",
+            "is_widow": True,
+            "bpl_card_shown": True,
+            "income_tax_paid_last_assessment_year": False,
+        },
+    })
+    assert initial.status_code == 200
+    conversation_id = initial.json()["conversation_id"]
+    saved = harness.client.post("/api/v1/household", json={
+        "conversation_id": conversation_id,
+        "memory_consent": True,
+    })
+    assert saved.status_code == 200
+    return_code = saved.json()["return_code"]
+
+    screen = AppTest.from_file(UI_PATH, default_timeout=TIMEOUT).run()
+    _healthy(screen)
+    screen.text_input(key="scheme_query").set_value("widow pension BPL")
+    _click(screen, "Search schemes")
+    screen.selectbox(key="selected_search_scheme").set_value(SCHEME).run()
+    _click(screen, "Continue to the synthetic eligibility demo")
+    screen.checkbox(key="demo_consent").check().run()
+    screen.checkbox(key="memory_consent").check().run()
+    screen.text_input(key=f"return_code_input_{SCHEME}").set_value(return_code)
+    _click(screen, key=f"load_code_{SCHEME}")
+    assert screen.session_state.household_return_code == return_code
+    _click(screen, "Start questions")
+
+    answers = {
+        "date_of_birth": "1986-01-01",
+        "application_date": "2026-11-04",
+        "is_widow": "yes",
+        "bpl_card_shown": "yes",
+    }
+    for _ in range(8):
+        if screen.session_state.journey_status != "awaiting_answer":
+            break
+        pending = next(
+            request[3] for request in reversed(harness.requests)
+            if request[3].get("pending_fact")
+        )
+        fact = pending["pending_fact"]
+        screen.chat_input[0].set_value(answers.get(fact, "no")).run()
+        _healthy(screen)
+    assert screen.session_state.journey_status == "eligible"
+    assert return_code in screen.session_state.journey_return_code
+
+    screen.selectbox(key="correction_fact_name").set_value("bpl_card_shown").run()
+    screen.text_input(key="correction_answer_value").set_value("no")
+    _click(screen, "Save correction and recheck")
+    _click(screen, "Save my answers")
+
+    loaded = harness.client.get(
+        f"/api/v1/household/{return_code}?memory_consent=true"
+    )
+    assert loaded.status_code == 200
+    assert (
+        loaded.json()["typed_facts"]["facts"]["bpl_card_shown"]["value"]
+        is False
+    )
 
 
 def test_approved_ui_correction_refresh_requires_fresh_report_draft_and_review(

@@ -34,6 +34,8 @@ def test_label_agreement_smoke_on_development_set() -> None:
     )
     assert report["paired_label_count"] >= 20
     assert report["cohens_kappa"] == 1.0
+    assert report["smoke_copy"] is True
+    assert "does not establish independent labels" in report["note"]
 
 
 def test_e2_defences_on_blocks_offline_attacks() -> None:

@@ -5,6 +5,7 @@ from contextlib import AsyncExitStack, asynccontextmanager, suppress
 from datetime import date
 import logging
 import os
+import sqlite3
 import sys
 from pathlib import Path
 from typing import AsyncIterator
@@ -55,6 +56,7 @@ from src.observability.metrics import (
     record_question,
     record_verdict,
 )
+from src.observability.telemetry import configure_telemetry
 from src.workflow.eligibility import (
     evaluate_eligibility,
 )
@@ -66,7 +68,7 @@ from src.llm_client import DEFAULT_CHAT_MODEL, openrouter_chat_model
 from src.workflow.intake import IntakeAgentError
 from src.workflow.conversation_budget import BUDGET_NAMESPACE
 from src.workflow.household_memory import (
-    HOUSEHOLD_NAMESPACE,
+    delete_household,
     generate_return_code,
     load_household,
     load_household_locale,
@@ -469,6 +471,8 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         if backups is not None:
             await asyncio.to_thread(backups.save)
 
+
+configure_telemetry()
 
 app = FastAPI(
     title="Scheme Saathi API",
@@ -1151,49 +1155,69 @@ async def update_application_approval(
         ) from error
 
 
+async def _forget_journey_data(
+    request: Request,
+    conversation_uuid: UUID,
+) -> None:
+    conversation_id = str(conversation_uuid)
+    drafts = await call_application_tool(
+        _portal_reader(request, conversation_id),
+        "mock_portal",
+        {"action": "list_drafts", "journey_id": conversation_id},
+    )
+    await _dispatch_application_task(
+        request, conversation_uuid, "delete_journey", {},
+    )
+    for draft in drafts.get("drafts", []):
+        for revision in range(1, draft["revision"] + 1):
+            thread_id = application_gate_thread_id(
+                conversation_id, draft["draft_id"], revision
+            )
+            await request.app.state.journey_checkpointer.adelete_thread(
+                thread_id
+            )
+    await request.app.state.journey_store.adelete(
+        BUDGET_NAMESPACE, conversation_id
+    )
+    await request.app.state.journey_checkpointer.adelete_thread(
+        conversation_id
+    )
+    if (
+        upload_store := getattr(request.app.state, "upload_store", None)
+    ) is not None:
+        await asyncio.to_thread(
+            upload_store.delete_conversation, conversation_id
+        )
+
+
 @app.delete("/api/v1/journey/{conversation_id}", status_code=204)
 async def forget_journey(conversation_id: str, request: Request) -> None:
     """Delete the synthetic conversation's persisted graph checkpoints."""
 
     try:
-        UUID(conversation_id)
+        conversation_uuid = UUID(conversation_id)
     except ValueError as error:
         raise HTTPException(
             status_code=422,
             detail="conversation_id must be a UUID.",
         ) from error
     try:
-        drafts = await call_application_tool(
-            _portal_reader(request, conversation_id),
-            "mock_portal",
-            {"action": "list_drafts", "journey_id": conversation_id},
-        )
-        await _dispatch_application_task(
-            request, UUID(conversation_id), "delete_journey", {},
-        )
-        for draft in drafts.get("drafts", []):
-            for revision in range(1, draft["revision"] + 1):
-                thread_id = application_gate_thread_id(
-                    conversation_id, draft["draft_id"], revision
-                )
-                await request.app.state.journey_checkpointer.adelete_thread(
-                    thread_id
-                )
-        await request.app.state.journey_store.adelete(BUDGET_NAMESPACE, conversation_id)
+        await _forget_journey_data(request, conversation_uuid)
     except MCPToolError as error:
         raise _tool_failure(
             "The mock application service could not clear this session.",
             "Could not clear mock application data",
         ) from error
-    await request.app.state.journey_checkpointer.adelete_thread(conversation_id)
-    if (upload_store := getattr(request.app.state, "upload_store", None)) is not None:
-        await asyncio.to_thread(upload_store.delete_conversation, conversation_id)
 
 # -- Household memory endpoints -----------------------------------------------
 
 
 @app.get("/api/v1/household/{return_code}", tags=["household"])
-async def get_household(return_code: str, request: Request) -> dict:
+async def get_household(
+    return_code: str,
+    request: Request,
+    memory_consent: bool = False,
+) -> dict:
     """Load a saved household profile by its return code.
 
     Returns the saved typed facts as a wire dict, or 404 when the code is
@@ -1201,6 +1225,11 @@ async def get_household(return_code: str, request: Request) -> dict:
     registry.
     """
 
+    if memory_consent is not True:
+        raise HTTPException(
+            status_code=403,
+            detail="Explicit memory consent is required to load saved answers.",
+        )
     try:
         code = normalize_return_code(return_code)
     except ValueError as error:
@@ -1228,8 +1257,14 @@ async def save_household_profile(
     Body:
         return_code (optional): Reuse an existing code; generates one when absent.
         conversation_id: The conversation whose typed_facts to save.
+        memory_consent: Must be true to save household memory.
     """
 
+    if body.get("memory_consent") is not True:
+        raise HTTPException(
+            status_code=403,
+            detail="Explicit memory consent is required to save answers.",
+        )
     conversation_id = body.get("conversation_id")
     if not conversation_id:
         raise HTTPException(status_code=422, detail="conversation_id is required.")
@@ -1269,7 +1304,17 @@ async def save_household_profile(
 
     locale = values.get("locale", "en")
     store = request.app.state.journey_store
-    await save_household(store, code, profile, registry, locale)
+    try:
+        await save_household(
+            store,
+            code,
+            profile,
+            registry,
+            locale,
+            memory_consent=True,
+        )
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
     return {"return_code": code}
 
 
@@ -1281,8 +1326,55 @@ async def forget_household(return_code: str, request: Request) -> None:
         code = normalize_return_code(return_code)
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
-    store = request.app.state.journey_store
-    existing = await store.aget(HOUSEHOLD_NAMESPACE, code)
-    if existing is None:
-        raise HTTPException(status_code=404, detail="Unknown return code.")
-    await store.adelete(HOUSEHOLD_NAMESPACE, code)
+    await delete_household(request.app.state.journey_store, code)
+
+
+@app.delete("/api/v1/forget", status_code=204, tags=["household"])
+async def forget_personal_data(body: dict, request: Request) -> None:
+    """Best-effort, retryable deletion of journey and household memory."""
+
+    conversation_uuid = None
+    raw_conversation_id = body.get("conversation_id")
+    if raw_conversation_id:
+        try:
+            conversation_uuid = UUID(raw_conversation_id)
+        except (ValueError, TypeError) as error:
+            raise HTTPException(
+                status_code=422,
+                detail="conversation_id must be a UUID.",
+            ) from error
+
+    raw_return_code = body.get("return_code")
+    return_code = None
+    if raw_return_code:
+        try:
+            return_code = normalize_return_code(raw_return_code)
+        except (ValueError, AttributeError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+    if conversation_uuid is None and return_code is None:
+        raise HTTPException(
+            status_code=422,
+            detail="conversation_id or return_code is required.",
+        )
+
+    failures: list[str] = []
+    if conversation_uuid is not None:
+        try:
+            await _forget_journey_data(request, conversation_uuid)
+        except (ApplicationTaskError, MCPToolError, sqlite3.Error, OSError):
+            logger.exception("Could not fully delete journey data")
+            failures.append("journey")
+    if return_code is not None:
+        try:
+            await delete_household(request.app.state.journey_store, return_code)
+        except (sqlite3.Error, OSError):
+            logger.exception("Could not fully delete household memory")
+            failures.append("household")
+    if failures:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Data deletion was incomplete; retry the forget action. "
+                "Some records may already have been deleted."
+            ),
+        )

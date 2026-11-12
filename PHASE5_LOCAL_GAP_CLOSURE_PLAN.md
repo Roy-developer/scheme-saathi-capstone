@@ -1,0 +1,234 @@
+# Local Phase 5 Gap-Closure Plan
+
+**Status:** Working plan; Phase 5 remains paused for paid evaluation and final held-out runs.  
+**Baseline:** `supervisor-redesign-3`, compared with `role5/phase5-gap-closure-plan`.  
+**Monitoring input:** `feature/monitoring-otel-on-supervisor`, commit `13dde6b`.
+
+**Latest implementation update:** Memory steps 1-6 are implemented; steps
+7-9 have partial test/evidence coverage. Active journey state is capped, but
+historical SQLite checkpoint pruning and full memory-on/off reporting remain
+open; one deterministic one-case memory-on/off smoke now reports matching
+verdicts and one avoided question. The corrected return-code answer was also
+verified through the real UI load/correct/resave path; UI integration and app
+regressions passed (24). The complete free Role 5 development gate passed with
+43/43 eligibility cases and the existing 23 runnable red-team checks. Synthetic
+Nemotron
+workflow smoke was attempted with a project-configured key, but OpenRouter
+returned HTTP 404 for structured output on three listed free routes. No
+applicant data was sent; the workflow smoke is not counted as evidence.
+
+This plan replaces the downloaded Round 2 plan as the working sequence for this
+local branch. It accounts for the monitoring implementation on the feature
+branch and for the gaps verified in the local tree. It is not approval to run
+paid evaluations or access held-out cases.
+
+## Implementation strategy — diminishing returns
+
+Follow the Round 2 plan's principle: spend effort where it closes a PDF claim,
+removes a prerequisite, or reduces a material risk. Do not equate more code,
+tests, or personas with more evaluation evidence.
+
+| Order | Work with highest marginal value now | Why it unlocks value | Stop / move on when |
+|---|---|---|---|
+| 1 | Close Wave 0-1 governance: verify held-out CI/image custody, obtain threshold and Phase 1-4 acceptance decisions, and complete freeze/authorship contracts. | These are prerequisites for trustworthy comparisons and final held-out work. | Required artifacts are verified and team decisions are recorded; if a sign-off/access dependency is external, mark it blocked rather than polishing around it. |
+| 2 | Finish the remaining memory evidence in Wave 2: demonstrate corrected-value reuse through the UI, bounded retention at the actual checkpoint layer, and a compact memory-on/off report. | This closes the L9 evidence gap and enables honest memory-specific security tests. | The policy, correction, expiry, isolation, forget, and on/off evidence match their DoD; stop adding unit tests that do not change that evidence. |
+| 3 | Address missing security/E2 classes in Wave 3: own-data, memory isolation, and approval authorization; preserve independent attack authorship and benign controls. | These have higher claim value than further tuning of already-covered injection/ID/scam checks. | At least 30 independently authored attacks actually execute and off/on attack success plus false blocks are reported; do not inflate the runnable count with stubs. |
+| 4 | Run E1/E3/E4 and final held-out work in Wave 4 only after approved freeze and custody gates. | This avoids spending paid calls or contaminating held-out cases before results are comparable. | Complete only the specified arms and three repeats; stop rather than add extra runs for cosmetic score gains. |
+| Parallel, gated | Wave 5 shared monitoring proof, owned by R6, once a safe environment and credentials are available. | Local exporter/dashboard polish cannot substitute for a scrape and working alert. | Stop local polish until shared telemetry and alert evidence can be collected safely. |
+
+**Low-return work to avoid:** adding easy development personas after the
+development set is adequate; chasing 43/43 accuracy; tuning more regexes while
+memory/approval stubs remain; reformatting dashboards without a live scrape;
+rerunning or retuning against held-out results; and reopening planning when no
+new evidence, approval, or blocker state has changed.
+
+**Reprioritization trigger:** revisit the order only when a prerequisite is
+approved, an artifact changes the claim status, a test exposes a material
+control failure, or new evidence changes the risk/effort balance. Record the
+specific change and update the status table; otherwise execute the current
+highest-value unblocked item.
+
+## 1. Verified local starting point
+
+| Area | Local state | Remaining gap |
+|---|---|---|
+| Development personas | 43 personas across 4 schemes after importing 12 APY cases; dataset version 1.2.0 | The local harness scored 43/43 on 2026-11-12. This is deterministic development evidence, not independent validation or held-out evidence. |
+| Scheme packages | 4 active packages, including APY | Do not imply the separate 15-gold-scheme target is met. |
+| Evaluation reports | The local umbrella run generated seven reports under `eval/reports/`; report files were previously ignored | Allowlist the reproducible development artifacts for review; do not treat copied-label κ as calibration. |
+| Held-out custody | README and ignore rule exist; no local held-out persona file is present | Verify CI/image exclusions and keep generated cases out of Git. No unstage action is currently needed. |
+| Red team / E2 | 30 attacks: 23 runnable, 7 stubs. E2 runs injection, ID masking, and scam checks plus clean-case false-block scoring. | Eligibility-truthful, own-data, memory, and approval paths are not covered by the E2 off/on report. |
+| Memory | Consent-gated return-code store now records policy/version, approved fact IDs, and 90-day expiry; legacy/expired records are discarded. | R1/R2 approval, memory-on/off evidence, and cross-household attack coverage remain open; synthetic data only. |
+| Forget flow | One retryable API operation attempts journey and household deletion and reports partial failure. | Not transactional; verify all backing stores and retry after an incomplete result. |
+| Labels / experiments | κ smoke uses copied labels; E1/E4 configs exist, but required arms are not evidenced; paid E3 is pending | Independent labels and frozen, reproducible E1-E4 evidence remain open. |
+| Monitoring | Prometheus `/metrics` and dashboards are present. The OpenTelemetry/Azure Monitor exporter from `13dde6b` is now ported into this working tree alongside Prometheus, preserving existing metric coverage. | The exporter has no shared-environment proof; alert/dashboard behavior, metric accuracy, and Azure configuration remain to be demonstrated. |
+| Threat model | ASI06 now documents the consent-gated return-code prototype, controls, and residual risks in `docs/THREAT_MODEL.md`. | Keep it aligned with changes; cross-household attack evidence remains open. |
+
+## 2. Execution order
+
+### Wave 0 — Evidence and custody hygiene (P0)
+
+1. **Partial:** the local custody guard passes and its three focused tests pass.
+   The latest successful branch-baseline Frontend Checks run predates the
+   uncommitted custody-workflow change and does not build the application
+   image. No local Docker/Podman/Nerdctl runtime is available, so verify the
+   changed CI job and built image before releasing held-out cases.
+2. **Done:** reconciled the 31-persona set with 12 APY cases (43 total), ran
+   the local harness, and updated the reports. Do not treat the results as
+   independent or held-out evidence.
+3. **Done:** the claim matrix exists with evidence, owners, and claim statuses.
+4. **Pending sign-off:** Role 1/team leads must approve thresholds and dates
+   before score comparisons. Do not invent bars absent from the requirements.
+5. **Partial:** the retrieval backlog records controlled before/after Recall@5
+   results on 199-query and 30-query development sets. A canonical paired run
+   with exact command/config/input hashes and independent label review remains
+   open; do not treat AI-reviewed labels as validated evidence.
+
+**Exit:** counts agree with the actual dataset; held-out custody is verified;
+claims and thresholds are documented without overstating results.
+
+### Wave 1 — Governance and freeze contract (P0)
+
+1. Record what Phases 1-4 have and have not accepted; Phase 5 remains paused
+   for paid and final held-out runs until this review exists.
+2. Create `eval/freeze/` manifest pinning model/provider, prompt and middleware
+   versions, tool allowlists, budgets, package/registry hashes, playbook hash,
+   attack-suite version, and (after Wave 2) memory-policy version.
+3. Document independent attack authorship and review metadata. Attack authors
+   must not be the defenders of the tested controls.
+4. Document held-out secrecy, regeneration, and exposure/reclassification rules.
+5. Connect approved evaluation thresholds to the CI gate, which must fail
+   below the approved floor. Preserve one representative failed-run explanation.
+6. Keep report non-claims aligned with the actual evidence inventory.
+
+**Owners:** R1 and team leads for acceptance/threshold decisions; R3/R5 for
+freeze details; R5 for attack and held-out custody.
+
+### Wave 2 — Governed household memory (P0 product gaps, then P1 evidence)
+
+1. A versioned `docs/MEMORY_POLICY.md` now documents the prototype policy and
+   90-day TTL; R1/R2 still need to approve the stored fact set, language, and
+   retention period before product or real-applicant use.
+2. **Implemented:** memory records include explicit consent metadata,
+   `expires_at`, policy version, and fact identifiers. Legacy records without
+   valid consent/expiry are deleted on access.
+3. **Implemented:** the save/load path permits only known facts with approved
+   definition and privacy reviews; highly-sensitive, unknown, and unreviewed
+   facts are excluded or rejected.
+4. **Implemented:** API and English/Hindi/Marathi UI require explicit memory
+   consent; the control is unchecked by default and resets on forget.
+5. **Implemented:** expiry is checked on reads; writes refresh the 90-day
+   expiry. Clock injection covers the memory unit tests.
+6. **Implemented:** one forget operation attempts both stores, returns an
+   error on partial failure, and can be retried safely. Unit and integration
+   tests cover the combined flow.
+7. **Partial:** the existing Save action replaces approved facts for the
+   entered return code; unit, real-graph, and UI integration tests cover
+   updating a corrected value and reusing it on the next visit. Active journey
+   state caps conversation turns and handoffs at 40. Historical SQLite
+   checkpoint pruning is not implemented, so this is not a full retention
+   control.
+8. **Partial:** tests cover consented versus fresh journeys, saved-fact
+   correction/reuse, return-code isolation, policy filtering, and combined
+   forget failure/success. `eval/reports/memory_on_off_dev_latest.json` records
+   one deterministic synthetic functional smoke; independent labels, broader
+   verdict agreement, and memory/approval attack evidence remain open.
+9. **Partial:** ASI06, the policy, focused tests, and one-case smoke report are
+   linked from the evaluation report. Full L9 evidence remains open.
+
+**Progress:** Steps 1-6 implemented; steps 7-9 are partial. The Wave is not
+exited.
+
+**Exit:** explicit consent, expiry, privacy filtering, correction, and complete
+forget behavior are demonstrated. Do not claim full L9 until the on/off report
+and evidence pack are also complete.
+
+### Wave 3 — Security and E2 (P0 partial, P1 full claim)
+
+1. Refresh the threat model against the actual memory and approval code.
+2. Close the seven red-team stubs in priority order, beginning with cases that
+   can use existing isolation and approval tests. Do not report a stub as run.
+3. Add an own-data-path attack through quarantined intake text.
+4. Extend E2 off/on evaluation to truthful eligibility, own-data, memory
+   isolation, and approval authorization. Report attack success with defences
+   off/on and legitimate-work false blocks.
+5. Preserve independent attack authorship and clean benign cases; add CI gates
+   for the claimed attack set and false-block regressions.
+
+**Exit:** at least 30 independently authored attacks actually execute,
+including own-data, memory, and approval cases; reported E2 scope matches
+implemented checks. Until then, claim only the current offline subset.
+
+### Wave 4 — Frozen evaluation claims (P0 hygiene, then P1 results)
+
+1. Maintain at least 60 synthetic personas overall (about 20 development and
+   at least 40 held-out); the current 43 development cases exceed the guide's
+   approximate development count. Keep related variants together when
+   splitting. Do not generate or access held-out cases until custody and freeze
+   gates are approved.
+2. Verify the simulated citizen uses a different model with a hidden profile
+   card and answers only what the user asks; prevent the agent/evaluator from
+   seeing the hidden card.
+3. Obtain two independent teammate labels for each persona against every
+   candidate scheme, record disagreements, and replace copied-label κ.
+   If using an LLM judge, use a different model family, calibrate against at
+   least 20 human-labelled outputs, and report Cohen's κ.
+4. Add a forced-C0 path (fixed workflow/single retrieval prompt without agent
+   decisions) and compare C0, C1, and C2 on the same cases, model, tools, and
+   budget under the same freeze pins and safety controls.
+5. Add E4's isolated, non-authoritative LLM eligibility comparison and
+   fixed-vs-planned question-order ablation.
+6. Only after the freeze and custody gates, run at least 40 held-out cases
+   through the approved final evaluations three times and report spread.
+   Never commit held-out case files or tune against their results.
+7. Complete E3 before/after evidence under identical pins; use human-reviewed
+   lessons, include lesson-generation cost, and report lessons that worsened
+   results. Run held-out extraction only when separately authorized.
+8. For every configuration, report task success, policy violations, attack
+   success, legitimate-work false blocks, cost per case, median and p95
+   latency, errors, failures, and timeouts. Record commands, artifacts, and
+   input hashes so results can be reproduced.
+9. Keep the 15-gold-scheme target as a separate data workstream; report the
+   current four-package coverage honestly.
+
+**Exit:** every PDF-facing number links to frozen inputs, an evidence artifact,
+an owner, and an honest claim status; retrieval and agent evaluation reports
+meet the PDF's denominators, label/calibration protocol, and metric checklist.
+
+### Wave 5 — Monitoring deployment evidence (implementation present; P1 handoff)
+
+The local working tree now has dual recording: existing Prometheus metrics
+remain available at `/metrics`, and OpenTelemetry metrics can export through
+Azure Monitor when `APPLICATIONINSIGHTS_CONNECTION_STRING` is configured.
+This intentionally preserves the richer local Prometheus signals rather than
+replacing them with the narrower metrics set from the older feature branch.
+
+1. Check that journey results are not counted repeatedly across turns and that
+   labels/values are safe and bounded. Verify dashboard coverage for questions
+   per conversation, can't-tell rate, pending approvals, masked-ID hits, and
+   cost per conversation.
+2. Configure the connection string only through the deployment secret store;
+   never commit or print it.
+3. In the shared environment, verify data arrives in the intended
+   Application Insights resource, or demonstrate the Prometheus/Grafana scrape
+   path. Include a sanitized query/scrape and timestamp as evidence.
+4. Demonstrate a working alert and dashboard. Existing configuration files and
+   local tests alone do not satisfy this gate.
+5. Verify exported telemetry contains no prompts, applicant facts, return
+   codes, or other sensitive values.
+
+**Exit:** Role 6 supplies shared-environment export/scrape and alert evidence.
+Until then, monitoring is implemented locally but is not a completed deployment
+claim.
+
+## 3. Dependencies and stop conditions
+
+- Waves 0-1 precede any paid or final held-out run.
+- Wave 2 precedes memory/approval red-team claims and the memory-on/off report.
+- Wave 3 must report actual execution rather than suite size.
+- Wave 4 runs only against the approved freeze; held-out exposure requires
+  reclassification and replacement.
+- Wave 5 may proceed in parallel, but it does not authorize or unblock paid
+  evaluation by itself.
+- Role 1 must decide TTL, labels, and thresholds; Role 2 owns memory semantics;
+  Role 3 owns C0/C1 and question-order changes; Role 4 owns guardrail fixes;
+  Role 5 owns evaluation/attack evidence; Role 6 owns deployment monitoring.

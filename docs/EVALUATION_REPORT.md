@@ -15,7 +15,7 @@ python scripts/run_role5_dev_evals.py
 
 | PDF requirement | In-repo status |
 |---|---|
-| 60+ synthetic personas (~20 dev / ≥40 held-out) | Dev: 31 in `eval/development/`. Held-out: generate ≥40 into gitignored `eval/held_out/local/` |
+| 60+ synthetic personas (~20 dev / ≥40 held-out) | Dev: 43 in `eval/development/` (12 APY); held-out: generate ≥40 into gitignored `eval/held_out/local/` only after freeze |
 | Dual independent labels + κ | κ harness ready; smoke uses copied labels — **Role 1 must replace** |
 | Simulated citizen (hidden profile) | `eval/harness/simulated_citizen.py` offline stand-in |
 | Code-first eligibility scoring | `evaluate_eligibility_dev.py` / held-out script |
@@ -24,7 +24,8 @@ python scripts/run_role5_dev_evals.py
 | E3 Reflexion before/after | Playbook inventory free; **paid** OpenRouter runs pending |
 | E4 signature ablation | Rule-engine side via personas; LLM/question ablations pending |
 | 30+ red-team | 30 attacks; 23 offline-runnable; memory/approval still stubs |
-| Monitoring / Grafana / alert | `/metrics` + `monitoring/` JSON/rules for Azure Managed Grafana or separate Container App |
+| L9 memory | Synthetic prototype controls and focused evidence: [`docs/MEMORY_POLICY.md`](MEMORY_POLICY.md), [`tests/test_household_memory.py`](../tests/test_household_memory.py), [`tests/test_journey_graph.py`](../tests/test_journey_graph.py), and [`tests/test_household_memory_api.py`](../tests/test_household_memory_api.py). R1/R2 approval, checkpoint-level retention, cross-household attacks, and verdict-agreement/memory-on-off reporting remain pending. |
+| Monitoring / Grafana / alert | Prometheus `/metrics` plus optional OpenTelemetry Azure Monitor export; shared-environment export/dashboard/alert still unverified |
 | CI evaluation gate | Frontend checks runs `run_role5_dev_evals.py` |
 | Three held-out repeats | Pending after freeze |
 
@@ -32,9 +33,18 @@ python scripts/run_role5_dev_evals.py
 
 | Metric | Value |
 |---|---|
-| Personas | 31 |
-| Accuracy | 1.0 (regenerate with umbrella script) |
-| Schemes | IGNWPS-MH, PM-KISAN-IN, IGNOAPS-MH |
+| Personas | 43 (dataset version 1.2.0) |
+| Accuracy | 1.0 (43/43; local development run on 2026-11-12) |
+| Schemes | APY-IN, IGNWPS-MH, PM-KISAN-IN, IGNOAPS-MH |
+
+### Memory on/off smoke
+
+[`eval/reports/memory_on_off_dev_latest.json`](../eval/reports/memory_on_off_dev_latest.json)
+is a one-case deterministic smoke: both paths reached the same eligibility
+verdict, consented memory reused two approved facts, and one question was
+avoided. It is not independent validation or full L9 evidence. Regenerate it
+with `python scripts/run_role5_dev_evals.py` or
+`python scripts/evaluate_household_memory_dev.py`.
 
 ## 3. Red-team / E2
 
@@ -87,7 +97,8 @@ python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --pl
 
 ## 7. Monitoring
 
-Emitted at `GET /metrics`:
+Emitted at `GET /metrics` (Prometheus) and through OpenTelemetry instruments
+(Azure Monitor export is enabled only when configured):
 
 - `scheme_saathi_conversations_total`
 - `scheme_saathi_evaluations_total`
@@ -96,8 +107,9 @@ Emitted at `GET /metrics`:
 - `scheme_saathi_masked_id_hits_total`
 - `scheme_saathi_request_latency_seconds`
 
-Role 6 handoff: `monitoring/prometheus.yml`, `monitoring/alerts.yml` (can't-tell
-rate alert), Grafana dashboard JSON under `monitoring/` (Azure Managed Grafana / separate Container App — no Compose).
+Role 6 handoff: verify the configured Azure Monitor exporter or scrape
+`monitoring/prometheus.yml`, then demonstrate the alert and dashboard using the
+definitions under `monitoring/`. Configuration alone is not deployment evidence.
 
 ## 8. Still required for a full PDF claim
 
@@ -106,4 +118,4 @@ rate alert), Grafana dashboard JSON under `monitoring/` (Azure Managed Grafana /
 3. Live E1 / E4 after agent freeze; three held-out repeats with spread.
 4. Live red-team for cross-household memory and approval-gate cases with independent authorship.
 5. Different-family LLM judge calibrated on 20+ human labels (if non-code qualities are judged).
-6. Role 6 wires Compose so Prometheus/Grafana scrape the deployed API in the shared environment.
+6. Role 6 proves the deployed metrics reach the shared monitoring environment and demonstrates a working alert.

@@ -2,9 +2,14 @@
 
 from __future__ import annotations
 
+import pytest
 from fastapi.testclient import TestClient
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 
 from src.api.app import app
+from src.observability import metrics
+from src.observability import telemetry
 from src.observability.metrics import (
     MASKED_ID_HITS_TOTAL,
     PENDING_APPROVALS,
@@ -19,6 +24,32 @@ from src.workflow.agent_runtime import mask_sensitive_text
 
 
 client = TestClient(app)
+
+
+@pytest.fixture
+def otel_reader(monkeypatch: pytest.MonkeyPatch) -> InMemoryMetricReader:
+    reader = InMemoryMetricReader()
+    provider = MeterProvider(metric_readers=[reader])
+    monkeypatch.setattr(
+        metrics,
+        "_otel_instruments",
+        metrics.create_otel_instruments(provider.get_meter("test")),
+    )
+    return reader
+
+
+def _otel_points(reader: InMemoryMetricReader, name: str) -> list:
+    data = reader.get_metrics_data()
+    if data is None:
+        return []
+    return [
+        point
+        for resource_metrics in data.resource_metrics
+        for scope_metrics in resource_metrics.scope_metrics
+        for metric in scope_metrics.metrics
+        if metric.name == name
+        for point in metric.data.data_points
+    ]
 
 
 def test_metrics_endpoint_exposes_prometheus_text() -> None:
@@ -87,3 +118,61 @@ def test_record_tokens_updates_cost_histogram() -> None:
     assert "scheme_saathi_tokens_total" in body
     assert "scheme_saathi_cost_usd_count" in body
     assert "test-model" in body or "scheme_saathi_tokens_total" in response_before
+
+
+def test_opentelemetry_records_evaluation_and_normalized_verdict(otel_reader) -> None:
+    metrics.record_evaluation("IGNWPS-MH", source="journey")
+    metrics.record_verdict("IGNWPS-MH", "cant_tell")
+
+    (evaluation,) = _otel_points(otel_reader, "scheme_saathi.evaluations")
+    assert evaluation.value == 1
+    assert dict(evaluation.attributes) == {
+        "scheme_id": "IGNWPS-MH",
+        "source": "journey",
+    }
+    (verdict,) = _otel_points(otel_reader, "scheme_saathi.verdicts")
+    assert dict(verdict.attributes) == {
+        "scheme_id": "IGNWPS-MH",
+        "result": "need_more_information",
+    }
+
+
+def test_opentelemetry_preserves_cost_guardrail_and_approval_signals(
+    otel_reader,
+) -> None:
+    metrics.record_tokens("test-model", input_tokens=1000, output_tokens=500)
+    metrics.record_guardrail_block("scam_screen", "flagged")
+    metrics.record_pending_approval_created()
+    metrics.record_pending_approval_resolved()
+
+    token_points = _otel_points(otel_reader, "scheme_saathi.tokens")
+    assert {point.attributes["direction"]: point.value for point in token_points} == {
+        "input": 1000,
+        "output": 500,
+    }
+    (cost,) = _otel_points(otel_reader, "scheme_saathi.cost_usd")
+    assert cost.count == 1
+    (guardrail,) = _otel_points(otel_reader, "scheme_saathi.guardrail_blocks")
+    assert guardrail.value == 1
+    (approvals,) = _otel_points(otel_reader, "scheme_saathi.pending_approvals")
+    assert approvals.value == 0
+
+
+def test_azure_exporter_is_configured_only_with_connection_string(monkeypatch) -> None:
+    from azure.monitor import opentelemetry as azure_monitor_opentelemetry
+
+    calls: list[bool] = []
+    monkeypatch.setattr(telemetry, "_configured", False)
+    monkeypatch.setattr(
+        azure_monitor_opentelemetry,
+        "configure_azure_monitor",
+        lambda: calls.append(True),
+    )
+    monkeypatch.delenv(telemetry.CONNECTION_STRING_ENV, raising=False)
+    telemetry.configure_telemetry()
+    assert calls == []
+
+    monkeypatch.setenv(telemetry.CONNECTION_STRING_ENV, "test-connection")
+    telemetry.configure_telemetry()
+    telemetry.configure_telemetry()
+    assert calls == [True]

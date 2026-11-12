@@ -71,7 +71,11 @@ from src.workflow.application_gate import (
     pause_for_application_approval,
     resume_application_approval,
 )
-from src.workflow.agent_config import MAX_TRACE_EVENTS
+from src.workflow.agent_config import (
+    MAX_CONVERSATION_HISTORY,
+    MAX_HANDOFF_HISTORY,
+    MAX_TRACE_EVENTS,
+)
 from src.workflow.agent_runtime import (
     AgentTraceEvent,
     DEFAULT_CHAT_MODEL,
@@ -158,6 +162,24 @@ def _merge_agent_trace(
     return (current + added)[-MAX_TRACE_EVENTS:]
 
 
+def _merge_conversation(
+    current: list[dict[str, str]],
+    added: list[dict[str, str]],
+) -> list[dict[str, str]]:
+    """Keep only the most recent conversation turns in active graph state."""
+
+    return (current + added)[-MAX_CONVERSATION_HISTORY:]
+
+
+def _merge_handoffs(
+    current: list[dict[str, Any]],
+    added: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Bound active graph state to recent agent handoffs."""
+
+    return (current + added)[-MAX_HANDOFF_HISTORY:]
+
+
 class JourneyRequest(BaseModel):
     """Input that starts one request in a resumable synthetic journey.
 
@@ -182,6 +204,7 @@ class JourneyRequest(BaseModel):
     # is present; an operator cannot supply this confirmation on their behalf.
     citizen_present: bool = False
     return_code: str | None = None
+    memory_consent: bool = False
     # A visible request limit; do not silently discard excess candidates.
     candidate_scheme_ids: list[str] = Field(
         default_factory=list,
@@ -204,6 +227,8 @@ class JourneyRequest(BaseModel):
             ))
         if self.profile_description is not None and self.action != "interview":
             raise ValueError("profile_description is only supported for interviews")
+        if self.return_code and not self.memory_consent:
+            raise ValueError("Loading household memory requires explicit consent")
         if (
             self.action == "interview"
             and self.mode == "csc"
@@ -332,8 +357,8 @@ class JourneyState(TypedDict, total=False):
     react_status: str
     # Annotated with "add": new items are appended to the saved history
     # instead of replacing it.
-    handoffs: Annotated[list[dict[str, Any]], add]
-    conversation: Annotated[list[dict[str, str]], add]
+    handoffs: Annotated[list[dict[str, Any]], _merge_handoffs]
+    conversation: Annotated[list[dict[str, str]], _merge_conversation]
     application_task: dict[str, Any] | None
     application_task_result: dict[str, Any] | None
     application_task_error: dict[str, Any] | None
