@@ -27,7 +27,7 @@
 | 16 | TMDVSO-MH | 1 | OK | Category rule (VJNT/OBC/SBC = DNT) matches official page. Age/education/fitness not encoded (Motor Vehicle Act); caseworker. Reviewed 2026-11-11. |
 | 17 | WMCL-IN | 3 | OK | SC/ST labourer's child (R01), education after Class 10 (R02), exclusion for supervisory staff (R03) — all match source passages exactly. Per-tier and "first two children" conditions not encoded; caseworker. Reviewed 2026-11-11. |
 | 18 | FAISHL-IN | 2 | OK, source flag | R01 from official ksb.gov.in. **R02 (has_home_loan) source is myScheme only** — myScheme is discovery-only per POLICY.md §3. Rule is consistent with the KSB benefit description but lacks an official passage. Needs an official KSB or MoD page confirming the home-loan condition before scoring. |
-| 19 | IPMWCD-IN | 5 | OK, source flag | R01-R03 from official wcd.intern.nic.in. **R04-R05 (age 21-40) source is myScheme only** — discovery-only per POLICY.md §3. Age range is a simple factual statement unlikely to be wrong, but needs an official WCD page or circular confirming 21-40 before scoring. |
+| 19 | IPMWCD-IN | 5 | OK | All 5 rules from official wcd.intern.nic.in. R04-R05 age range (21-40) confirmed on the same portal by Nidhi Kaushik 2026-11-12. |
 | 20 | EACS-MH | 2 | OK | Construction worker (R01) and registered with MH BOCW Board (R02), both from official mahabocw.in. Child's class level and 75% attendance not encoded; caseworker. |
 | 21 | NSMNY-MH | 3 | OK | Cultivable land ownership (R01), institutional landholder exclusion (R02), income-tax-payer exclusion (R03). All from official nsmny.mahait.org portal. Other exclusions (govt employees, pensioners, NRIs etc.) not encoded; caseworker. |
 | 22 | BFFL-MH | 4 | OK | MH resident (R01), has Aadhaar (R02), 7/12 land record in own name (R03), institutional exclusion (R04). R03/R04 in Marathi — translations confirmed 2026-11-11. Area limits by region not encoded; caseworker. Source: mahadbt.maharashtra.gov.in. |
@@ -78,7 +78,8 @@ All five requests from the original review have been applied directly to the dra
 Open source gaps (I could not verify an official URL from here and will not guess one):
 - **MJPJAY-MH:** only a myScheme page. Needs the state health department page.
 - **TFEFVS-MH (held-out):** only a UMANG page. Needs a Social Justice department or DoSJE page, as TFEFVSSSHS-MH has.
-- **FAISHL-IN R02, IPMWCD-IN R04-R05:** myScheme-only source. POLICY.md §3 says myScheme is discovery-only. These rules are plausible but unconfirmed by an official passage. Need official KSB/MoD URL for FAISHL-IN R02 and official WCD circular for IPMWCD-IN R04-R05 before these rules are scored in evaluation.
+- **FAISHL-IN R02:** myScheme-only source. POLICY.md §3 says myScheme is discovery-only. Rule is consistent with the KSB benefit description but lacks an official passage. Need official KSB or MoD page confirming the home-loan condition before scoring.
+- **IPMWCD-IN R04-R05:** Resolved 2026-11-12 — wcd.intern.nic.in confirmed as official WCD internship portal by Nidhi Kaushik. Age range 21-40 is on the same portal as R01-R03; source flag cleared.
 - **IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN:** moved to held-out 2026-11-12. UMANG-only URLs violate POLICY.md §3. Their MH state counterparts (IGNDPSM-MH, IGNWPS-MH, IGNOAPS-MH) remain in development and cover the same populations. These three can be restored to development once official NSAP/MoRD URLs are confirmed.
 - **PMJJBY-IN, PMSBY-IN:** `jansuraksha.in` confirmed as official Jan Suraksha portal by Nidhi Kaushik 2026-11-12. No action needed.
   Confirmed 2026-11-12 by Nidhi Kaushik: jansuraksha.in is the official Jan Suraksha portal. PMJJBY-IN and PMSBY-IN sources are valid.
