@@ -22,7 +22,7 @@
   "age_boundaries_inclusive": true,
   "documents_status": "not_verified",
   "reasons": {
-    "eligible": "All reviewed mock conditions are met: aged 18 to 79 on the application date, and a person with a disability. (Lead decision 2026-11-13: age 18 to 79; pending domain confirmation of the Maharashtra page.)",
+    "eligible": "MOCK DEMO ONLY: all mock conditions are met (age 18 to 79 as recorded in this demo package; not confirmed against an official source), and a person with a disability.",
     "not_eligible": "One or more required mock scheme conditions are not met.",
     "need_more_information": "Some details are still needed before this mock check can be completed."
   },
@@ -66,5 +66,7 @@
   ],
   "publication_date_status": "not_confirmed",
   "publication_date": null,
-  "domain_review_status": "pending_human_domain_reviewer"
+  "domain_review_status": "pending_human_domain_reviewer",
+  "mock_status": "MOCK PORTAL DEMO ONLY. Not an official rule. Not for real applicants.",
+  "domain_confirmation": "none recorded; age range not confirmed against an official source"
 }
