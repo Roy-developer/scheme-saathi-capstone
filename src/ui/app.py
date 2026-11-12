@@ -1303,6 +1303,8 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                         st.session_state.get("journey_locale", "en"), text,
                     )
                 else:
+                    # An unavailable form preview blocks the draft, so the button stays hidden.
+                    form_missing = {"form_preview_unavailable"}
                     st.warning(text["form_fields_missing"])
                 if assessment.get("report_stale"):
                     st.warning(text["requirements_changed"])
