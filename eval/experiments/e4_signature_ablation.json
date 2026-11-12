@@ -19,5 +19,6 @@
     "p95_latency"
   ],
   "note": "Development rule-engine scoring for boundary personas is available now via scripts/evaluate_eligibility_dev.py. The LLM-side and questioning ablations remain blocked.",
+  "code_only_results_dev": "scripts/evaluate_interview_ablation_dev.py: 31 dev cases, 0 en/hi/mr verdict breaks, mean questions planned 4.19 vs fixed 5.35 (simulated citizen answers parsed by production parser; no LLM). Held-out and LLM-eligibility arms still pending.",
   "blocker": "Needs held-out personas, simulated citizen, and an isolated LLM-eligibility path that cannot write live verdicts."
 }

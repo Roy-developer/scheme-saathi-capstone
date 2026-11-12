@@ -32,7 +32,7 @@ from src.workflow.agent_runtime import (
 from src.workflow.application_agent import run_application_specialist
 
 
-AGENTS = ["supervisor", "intake", "eligibility", "documents", "application"]
+AGENTS = ["supervisor", "intake", "eligibility", "documents", "application", "single"]
 
 # (label, raw value as a person might type it, expected placeholder)
 PII_SAMPLES = [
