@@ -1,8 +1,8 @@
 # Household memory policy
 
 **Version:** 1.0.0  
-**Status:** Prototype policy; 90-day retention is a conservative implementation
-default pending R1/R2 approval.  
+**Status:** Prototype policy; the project approver selected 90-day retention for
+consented return-code memory on 2026-11-12.
 **Scope:** Synthetic demonstration data only. Do not enter real applicant data.
 
 ## What is stored and why
@@ -23,8 +23,8 @@ facts are retained only after the separate memory-consent action.
 - Demonstration consent is not memory consent. A separate, unchecked-by-default
   consent control is required to load or save a return-code profile.
 - Memory consent is recorded with its grant time and this policy version.
-- The prototype expires a saved record after 90 days. The value is provisional
-  until R1/R2 approve the retention period.
+- A saved return-code memory expires after 90 days, as approved by the project
+  approver on 2026-11-12.
 - A user may update an existing profile by explicitly saving again. The current
   save replaces the known eligible facts; it does not merge unreviewed facts.
 - The UI's **Forget my data** action sends one request to delete both journey
@@ -43,12 +43,14 @@ grandfathering of older return-code records.
 The active graph state retains at most 40 recent conversation turns and 40
 recent agent handoffs, alongside separately bounded trace events. This limits
 the current state used by the workflow; it does not prune historical SQLite
-checkpoints created before the current state update. The whole conversation's
-checkpoints are removed by the forget action. Checkpoint-level retention and
-pruning remain to be verified before any stronger retention claim.
+checkpoints created before the current state update. The project approver
+selected no automatic expiry for historical SQLite journey/checkpoint data on
+2026-11-12. Checkpoints remain until explicitly forgotten; the forget action
+removes the conversation's checkpoint thread. Focused memory and SQLite restart
+tests pass, but backup-snapshot deletion behavior is not covered here.
 
 ## Review required
 
-R1/R2 must approve the privacy-filtered fact set, consent language, 90-day
-retention, and correction/deletion behavior before this prototype policy is
-treated as an approved product policy or used with real applicant data.
+The approved retention choices do not authorize real applicant data. The
+privacy-filtered fact set, consent language, and correction/deletion behavior
+still require product/privacy review before real-applicant use.

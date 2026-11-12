@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-11-12T03:11:11.884669+00:00",
+  "generated_at": "2026-11-12T04:16:21.571911+00:00",
   "split": "development",
   "model_calls": 0,
-  "persona_count": 1,
+  "case_count": 4,
   "cases": [
     {
       "case_id": "SYN-MEMORY-001",
@@ -22,13 +22,69 @@
       },
       "verdicts_match": true,
       "questions_avoided": 1
+    },
+    {
+      "case_id": "SYN-MEMORY-002",
+      "scheme_id": "IGNWPS-MH",
+      "memory_on": {
+        "consent": true,
+        "reused_fact_count": 2,
+        "asked_fact_count": 2,
+        "verdict": "need_more_information"
+      },
+      "memory_off": {
+        "consent": false,
+        "reused_fact_count": 0,
+        "asked_fact_count": 3,
+        "verdict": "need_more_information"
+      },
+      "verdicts_match": true,
+      "questions_avoided": 1
+    },
+    {
+      "case_id": "SYN-MEMORY-003",
+      "scheme_id": "IGNWPS-MH",
+      "memory_on": {
+        "consent": true,
+        "reused_fact_count": 2,
+        "asked_fact_count": 2,
+        "verdict": "eligible"
+      },
+      "memory_off": {
+        "consent": false,
+        "reused_fact_count": 0,
+        "asked_fact_count": 3,
+        "verdict": "eligible"
+      },
+      "verdicts_match": true,
+      "questions_avoided": 1
+    },
+    {
+      "case_id": "SYN-MEMORY-004",
+      "scheme_id": "IGNWPS-MH",
+      "memory_on": {
+        "consent": true,
+        "reused_fact_count": 2,
+        "asked_fact_count": 1,
+        "verdict": "not_eligible"
+      },
+      "memory_off": {
+        "consent": false,
+        "reused_fact_count": 0,
+        "asked_fact_count": 1,
+        "verdict": "not_eligible"
+      },
+      "verdicts_match": true,
+      "questions_avoided": 0
     }
   ],
   "summary": {
+    "case_count": 4,
+    "verdict_agreement_count": 4,
     "verdict_agreement_rate": 1.0,
-    "memory_on_reused_fact_count": 2,
+    "memory_on_reused_fact_count": 8,
     "memory_off_reused_fact_count": 0,
-    "questions_avoided": 1
+    "questions_avoided": 3
   },
-  "claim_boundary": "One deterministic synthetic functional smoke only; not independent validation, a user study, a security evaluation, or full L9 evidence."
+  "claim_boundary": "Four deterministic synthetic functional cases only; not independent validation, a user study, a security evaluation, or full L9 evidence."
 }

@@ -4,7 +4,7 @@ Updated: 2026-11-12. This matrix records local evidence, not team approval.
 
 | Requirement | Evidence | Owner | Status | Claim boundary |
 |---|---|---|---|---|
-| L9 memory | `docs/MEMORY_POLICY.md`; consent/privacy/expiry tests; one-case functional on/off smoke in `eval/reports/memory_on_off_dev_latest.json` | R2/R5 | Partial | Governed synthetic-data prototype only; R1/R2 approval, checkpoint-level retention, independent cross-household attacks, and multi-case on/off evidence are still required for an L9 claim. |
+| L9 memory | `docs/MEMORY_POLICY.md`; consent/privacy/expiry tests; SQLite restart persistence test; four-case functional on/off report in `eval/reports/memory_on_off_dev_latest.json` | R2/R5 | Partial | Synthetic-data prototype only. The approver selected 90-day return-code memory expiry and no automatic historical-checkpoint expiry; independent cross-household attacks and broader L9 evidence remain required for the claim. |
 | L12 Reflexion | `eval/reports/reflexion_e3_inventory.json` | R5 | Dev-only | Inventory does not establish a frozen held-out before/after result. |
 | L13 personas and κ | `eval/development/personas_v1.json`; `eval/reports/eligibility_dev_latest.json`; copied-label smoke report | R1/R5 | Dev-only | 43 development personas, including 12 APY; κ uses copied labels; no held-out claim. |
 | L13 monitoring | `/metrics`; `docs/MONITORING.md` records shared-dev `AppMetrics` names from image `git-13dde6b37e3a` | R5/R6 | Partial | Export from an older image is observed; current branch is not deployed, `/metrics` returned 404, and dashboard/alert proof is missing. |

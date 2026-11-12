@@ -5,11 +5,14 @@
 **Monitoring input:** `feature/monitoring-otel-on-supervisor`, commit `13dde6b`.
 
 **Latest implementation update:** Memory steps 1-6 are implemented; steps
-7-9 have partial test/evidence coverage. Active journey state is capped, but
-historical SQLite checkpoint pruning and full memory-on/off reporting remain
-open; one deterministic one-case memory-on/off smoke now reports matching
-verdicts and one avoided question. The corrected return-code answer was also
-verified through the real UI load/correct/resave path; UI integration and app
+7-9 have partial test/evidence coverage. On 2026-11-12, the project approver
+selected 90-day expiry for consented return-code memory and no automatic expiry
+for historical SQLite checkpoints. The existing explicit-forget path and
+SQLite restart persistence test support that behavior; no checkpoint pruning
+was added. A four-case synthetic memory-on/off report now compares verdicts
+and question counts, but independent and full L9 evidence remain open. The
+corrected return-code answer was also verified through the real UI
+load/correct/resave path; UI integration and app
 regressions passed (24); 101 focused memory/journey/API/UI/evaluation tests and
 four follow-up memory/custody tests passed. The complete free Role 5
 development gate passed with 43/43 eligibility cases and the existing 23
@@ -64,7 +67,7 @@ highest-value unblocked item.
 | Evaluation reports | The local umbrella run generated seven reports under `eval/reports/`; report files were previously ignored | Allowlist the reproducible development artifacts for review; do not treat copied-label κ as calibration. |
 | Held-out custody | README and ignore rule exist; no local held-out persona file is present; current CI custody guard passes | Image-level exclusions remain unverified; keep generated cases out of Git. No unstage action is currently needed. |
 | Red team / E2 | 30 attacks: 23 runnable, 7 stubs. E2 runs injection, ID masking, and scam checks plus clean-case false-block scoring. | Eligibility-truthful, own-data, memory, and approval paths are not covered by the E2 off/on report. |
-| Memory | Consent-gated return-code store now records policy/version, approved fact IDs, and 90-day expiry; legacy/expired records are discarded. | R1/R2 approval, memory-on/off evidence, and cross-household attack coverage remain open; synthetic data only. |
+| Memory | Consent-gated return-code store records policy/version, approved fact IDs, and 90-day expiry; legacy/expired records are discarded. Approver selected no automatic expiry for historical SQLite checkpoints. | Multi-case memory-on/off evidence and cross-household attack coverage remain open; fact-set/consent-text review is still required before real-applicant use. Synthetic data only. |
 | Forget flow | One retryable API operation attempts journey and household deletion and reports partial failure. | Not transactional; verify all backing stores and retry after an incomplete result. |
 | Labels / experiments | κ smoke uses copied labels; E1/E4 configs exist, but required arms are not evidenced; paid E3 is pending | Independent labels and frozen, reproducible E1-E4 evidence remain open. |
 | Monitoring | Prometheus `/metrics` and dashboards are present. The OpenTelemetry/Azure Monitor exporter from `13dde6b` is now ported into this working tree alongside Prometheus, preserving existing metric coverage. | The exporter has no shared-environment proof; alert/dashboard behavior, metric accuracy, and Azure configuration remain to be demonstrated. |
@@ -112,9 +115,10 @@ freeze details; R5 for attack and held-out custody.
 
 ### Wave 2 — Governed household memory (P0 product gaps, then P1 evidence)
 
-1. A versioned `docs/MEMORY_POLICY.md` now documents the prototype policy and
-   90-day TTL; R1/R2 still need to approve the stored fact set, language, and
-   retention period before product or real-applicant use.
+1. A versioned `docs/MEMORY_POLICY.md` documents the prototype policy. The
+   project approver selected a 90-day TTL for consented return-code memory and
+   no automatic expiry for historical checkpoints on 2026-11-12. Fact-set and
+   consent-language review remains required before real-applicant use.
 2. **Implemented:** memory records include explicit consent metadata,
    `expires_at`, policy version, and fact identifiers. Legacy records without
    valid consent/expiry are deleted on access.
@@ -132,18 +136,20 @@ freeze details; R5 for attack and held-out custody.
    entered return code; unit, real-graph, and UI integration tests cover
    updating a corrected value and reusing it on the next visit. Active journey
    state caps conversation turns and handoffs at 40. Historical SQLite
-   checkpoint pruning is not implemented, so this is not a full retention
-   control.
+   checkpoints have no automatic expiry per the approver's decision; the
+   existing restart-persistence test passes and explicit forget deletes a
+   conversation thread. Backup-snapshot deletion behavior remains unverified.
 8. **Partial:** tests cover consented versus fresh journeys, saved-fact
    correction/reuse, return-code isolation, policy filtering, and combined
    forget failure/success. `eval/reports/memory_on_off_dev_latest.json` records
-   one deterministic synthetic functional smoke; independent labels, broader
-   verdict agreement, and memory/approval attack evidence remain open.
-9. **Partial:** ASI06, the policy, focused tests, and one-case smoke report are
+   four deterministic synthetic functional cases; independent labels and
+   memory/approval attack evidence remain open.
+9. **Partial:** ASI06, the policy, focused tests, and four-case smoke report are
    linked from the evaluation report. Full L9 evidence remains open.
 
-**Progress:** Steps 1-6 implemented; steps 7-9 are partial. The Wave is not
-exited.
+**Progress:** Steps 1-6 implemented; steps 7-9 are partial. The approved
+retention choices are documented and the focused memory/checkpoint tests pass
+(26); the Wave is not exited.
 
 **Exit:** explicit consent, expiry, privacy filtering, correction, and complete
 forget behavior are demonstrated. Do not claim full L9 until the on/off report

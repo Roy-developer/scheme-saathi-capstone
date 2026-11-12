@@ -152,8 +152,9 @@ def main(argv: list[str] | None = None) -> int:
         or red_team["failed"] > 0
         or (e2["defences_on"]["attack_success_rate"] or 0) > 0
         or (e2["legitimate_work"]["false_block_rate"] or 0) > 0
+        or memory["summary"]["case_count"] != 4
         or memory["summary"]["verdict_agreement_rate"] != 1.0
-        or memory["summary"]["memory_on_reused_fact_count"] != 2
+        or memory["summary"]["memory_on_reused_fact_count"] != 8
         or memory["summary"]["memory_off_reused_fact_count"] != 0
         or memory["summary"]["questions_avoided"] < 1
     )
