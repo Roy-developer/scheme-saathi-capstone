@@ -12,7 +12,7 @@
       "value": 40,
       "unit": "years",
       "source_passage_id": "IGNWPS-IN-ELIGIBILITY-01",
-      "source_quote": "The applicant must be a widow in the age group of 40-79 years.",
+      "source_quote": "The applicant must be a widow in the age group of 40-59 years.",
       "needs_human_review": false,
       "note": null
     },
@@ -21,12 +21,12 @@
       "kind": "eligibility",
       "field": "age",
       "operator": "lte",
-      "value": 79,
+      "value": 59,
       "unit": "years",
       "source_passage_id": "IGNWPS-IN-ELIGIBILITY-01",
-      "source_quote": "The applicant must be a widow in the age group of 40-79 years.",
+      "source_quote": "The applicant must be a widow in the age group of 40-59 years.",
       "needs_human_review": false,
-      "note": null
+      "note": "Updated from 79 to 59: the NSAP portal FAQ (Q17) specifies the central scheme age range as 40-59. The previous value of 79 was from a myScheme page and likely reflected a state-supplemented extension. The central scheme ceiling is 59."
     },
     {
       "rule_id": "IGNWPS-IN-R03",
@@ -36,7 +36,7 @@
       "value": true,
       "unit": null,
       "source_passage_id": "IGNWPS-IN-ELIGIBILITY-01",
-      "source_quote": "The applicant must be a widow in the age group of 40-79 years.",
+      "source_quote": "The applicant must be a widow in the age group of 40-59 years.",
       "needs_human_review": false,
       "note": null
     },
@@ -48,7 +48,7 @@
       "value": true,
       "unit": null,
       "source_passage_id": "IGNWPS-IN-ELIGIBILITY-02",
-      "source_quote": "The applicant should belong to a household living below the poverty line",
+      "source_quote": "The applicant should belong to a household living below the poverty line.",
       "needs_human_review": false,
       "note": null
     },
@@ -61,8 +61,8 @@
       "unit": null,
       "source_passage_id": "IGNWPS-IN-EXCLUSION-01",
       "source_quote": "In case of remarriage of widow",
-      "needs_human_review": false,
-      "note": "Pension is discontinued on remarriage."
+      "needs_human_review": true,
+      "note": "Pension is discontinued on remarriage. The source passage (IGNWPS-IN-EXCLUSION-01) is flagged needs_recollection — discontinuation conditions are not explicitly listed in the NSAP FAQ (Q17-Q19). This rule should be verified against an official NSAP source."
     }
   ],
   "unresolved": []

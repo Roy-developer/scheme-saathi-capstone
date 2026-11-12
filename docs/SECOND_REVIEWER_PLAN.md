@@ -25,35 +25,42 @@ To compute **Cohen's kappa** (inter-rater reliability), we need two people to in
 
 1. **Read `docs/POLICY.md`** — especially sections 1 (eligibility model) and 2 (caseworker referral). This tells you what `eligible`, `not_eligible` and `need_more_information` mean.
 
-2. **Read the official scheme sources** listed in `docs/SCHEME_LIST.md` (Official source URL column). These are the ground truth — `.gov.in` pages, official PDFs. Do not use UMANG or myScheme as your primary source.
+2. **Read the official scheme sources** listed in `docs/SCHEME_LIST.md` (Official source URL column). These are the ground truth — `.gov.in` pages and official PDFs. Prefer the department page; some rules were captured from myScheme, so use it only to cross-check. If an official page cannot be opened (for example `nsap.dord.gov.in`), do not guess: note it in the reason, label from what you can verify, and tell Nidhi.
 
 3. **Do NOT open any of these files before you finish labelling:**
-   - `eval/development/role1_label_sheet_nidhi.json` (Nidhi's labels)
+   - `eval/development/role1_label_sheet_nidhi.json` (Nidhi's labels and reasons; copying it would copy her answers)
    - `eval/development/role1_model_assisted_labels.json` (model labels)
    - `eval/development/role1_model_assisted_labels_2.json` (model labels)
    - `data/schemes/rule_gold_drafts/` (the gold rules — these are what's being tested)
-   - Any `expected_by_scheme` fields in the persona files
+   - Any `expected_by_scheme` or `labels` fields in the persona files. These hold the expected verdicts, so open the persona files only to copy the fields listed in step 5.
 
-4. **Work from the personas directly.** Each persona has a `description` and `typed_facts`. Those facts are everything the system knows about this person — treat absent facts as unknown (use `need_more_information` if a missing fact is required to decide).
+4. **Work from the persona facts only.** Each persona has a `persona_id`, a `description` and its facts. The facts are everything the system knows about this person. Treat absent facts as unknown (use `need_more_information` if a missing fact is required to decide). The facts field is called `profile` in `personas_v1.json` and `typed_facts` in `gold_scheme_personas_v1.json`.
 
    Persona files:
    - `eval/development/personas_v1.json` — 34 personas for the 3 live schemes (IGNWPS-MH, IGNOAPS-MH, PM-KISAN-IN)
-   - `eval/development/gold_scheme_personas_v1.json` — 45 personas for the other 19 development gold schemes
+   - `eval/development/gold_scheme_personas_v1.json` — 45 personas for gold development schemes that are not live
 
-5. **Create your own label file** — copy `eval/development/role1_label_sheet_nidhi.json` as a template, name it `eval/development/role1_label_sheet_<yourname>.json`, and fill in:
+   Each persona is labelled against one scheme (79 persona and scheme pairs over 22 schemes). Ask Nidhi for the pair list (persona_id and scheme_id only). Do not open her sheet.
+
+5. **Create your own new label sheet.** Do not copy Nidhi's sheet. Start a fresh file named `eval/development/role1_label_sheet_<yourname>.json` with the same layout, one row per persona and scheme pair, containing only these fields:
+   - `persona_id`, `scheme_id`, `description` and `facts` (copied from the persona file)
    - `"your_label (eligible / not_eligible / need_more_information)"` — one of the three values
    - `"your_reason (rule or source quote)"` — the rule or quote from the official source that drove your decision
 
-6. Set the top-level `"labeller_id"` to your GitHub username and `"status"` to `"single_labeller_role1"`.
+   If you would rather not build it by hand, ask Nidhi for a blank sheet with the label and reason fields emptied.
+
+6. Set the top-level `"labeller_id"` to your GitHub username and `"status"` to `"second_labeller_independent"`. If any row was unclear or the official page was silent, write that in the reason so it can be discussed after kappa is computed.
 
 **Scope:** All 79 rows. Every scheme in the sheet has an official URL in `docs/SCHEME_LIST.md`.
+
+**Note on the first pass:** Nidhi's labels were produced with model assistance and then reviewed by her. They are the first labeller's pass, not a gold standard, so label what the official source says even if you suspect it differs from hers.
 
 ---
 
 ### Task 2 — Native-speaker check on demo script (quick, ~30 min)
 
 **What:** The demo script has Hindi and Marathi lines that need a native-speaker review.  
-**File:** `docs/DEMO_SCRIPT.md` (or similar — check the docs/ folder)  
+**File:** `docs/DEMO_SCRIPT.md`  
 **Why:** The lines were drafted with translation tools and flagged for human verification before public demo.
 
 **What to check:**
@@ -101,9 +108,9 @@ Full URLs are in `docs/SCHEME_LIST.md`.
 From `docs/POLICY.md`:
 
 - **State overrides central:** If a Maharashtra scheme sets age 65 for old-age pension, use 65 — not the central scheme's 60 (e.g. IGNOAPS-MH vs NSAP-IGNOAPS-IN are different schemes).
-- **Missing facts = `need_more_information`:** If a required eligibility fact is absent from the persona's `typed_facts`, label `need_more_information` — do not assume.
-- **Exclusion conditions:** Some rules are exclusions (`kind: exclusion`) — the scheme rejects applicants *if* the fact is true. Read carefully.
-- **Caseworker referral:** Complex conditions the system can't express (OR logic, exceptions by region) are flagged as caseworker — don't try to evaluate them.
+- **Missing facts = `need_more_information`:** If a required eligibility fact is absent from the persona's facts, label `need_more_information` — do not assume.
+- **Exclusion conditions:** Some criteria are exclusions — the scheme rejects applicants *if* the condition is true. Read the official wording carefully.
+- **Conditions you cannot decide from the facts** (for example exceptions by region) should be recorded in your reason; do not guess.
 
 ---
 
@@ -113,7 +120,7 @@ From `docs/POLICY.md`:
 2. Tag Nidhi Kaushik (`@NidhiShreeish`) to run the kappa calculation.
 3. Add a comment on PR #25 with your `labeller_id` and the count of rows you labelled.
 
-The kappa script lives at `eval/scripts/compute_kappa.py` (if it doesn't exist yet, Nidhi will write it once both label files are ready).
+The agreement and kappa code is `eval/harness/agreement.py`. Nidhi runs it once both label files are ready.
 
 ---
 
