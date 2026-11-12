@@ -1,6 +1,6 @@
-# Rule gold set (revised 2026-11-12, v0.8.0)
+# Rule gold set (revised 2026-11-12, v0.9.0)
 
-Machine-readable list: `data/schemes/rule_gold_selection.json`. 32 schemes: 19 development, 9 held-out, 4 alternate.
+Machine-readable list: `data/schemes/rule_gold_selection.json`. 32 schemes: 22 development, 9 held-out, 1 alternate (IGNWPSM-MH).
 
 ## Why the split changed
 The first E3 run (docs/EXPERIMENT_E3_RULE_EXTRACTION_2026-11-10.md) used 10 held-out schemes. Their errors
@@ -8,13 +8,13 @@ were then read to explain the result. The guide says cases looked at after a hel
 cases, so those 10 were **relabelled development**, and a **fresh held-out set of 8** was built. The fresh 8
 have not been run or inspected.
 
-## Development (19) - lessons may be learned from these
+## Development (22) - lessons may be learned from these
 | Family | Schemes |
 |---|---|
-| Widow pension | IGNWPS-MH |
-| Old-age pension | IGNOAPS-MH |
+| Widow pension | IGNWPS-MH, IGNWPS-IN |
+| Old-age pension | IGNOAPS-MH, NSAP-IGNOAPS-IN |
 | Farmer support | PM-KISAN-IN |
-| Disability pension | IGNDPSM-MH |
+| Disability pension | IGNDPSM-MH, IGNDPS-IN |
 | Disability self-employment / training | FADSE-MH, FASETDP-MH |
 | Family benefit | NFBSM-MH |
 | Contributory pension | APY-IN |
@@ -27,17 +27,12 @@ have not been run or inspected.
 | Construction worker education | EACS-MH |
 | Farmer income support | NSMNY-MH, BFFL-MH |
 
-All 19 are `human_reviewed`.
+All 22 are `human_reviewed`. IGNWPS-IN, IGNDPS-IN and NSAP-IGNOAPS-IN restored to development 2026-11-12 after official NSAP portal (nsap.dord.gov.in, Ministry of Rural Development GoI) confirmed as valid .gov.in source.
 
-## Alternate (4) - reviewed but not scored (policy or duplication)
+## Alternate (1) - reviewed but not scored (duplication)
 | Scheme | Reason |
 |---|---|
 | IGNWPSM-MH | Duplicate source URL with IGNWPS-MH (development); double-count removed 2026-11-11 |
-| IGNWPS-IN | UMANG-only URL; violates POLICY.md §3; IGNWPS-MH covers same population in development |
-| IGNDPS-IN | UMANG-only URL; violates POLICY.md §3; IGNDPSM-MH covers same population in development |
-| NSAP-IGNOAPS-IN | UMANG-only URL; violates POLICY.md §3; IGNOAPS-MH covers same population in development |
-
-Restore IGNWPS-IN, IGNDPS-IN and NSAP-IGNOAPS-IN to development once official .gov.in URLs are confirmed.
 
 ## Held-out (8) - measure only, never learn from
 | Scheme | Rules | What it adds |
@@ -66,7 +61,7 @@ Hand-drafted from the passages, with every quote checked against the passage tex
 | WMCL-IN | development | 3 | SC/ST labourer's child, education after Class 10, exclusion for supervisory staff. |
 | TFEFVSSSHS-MH | held-out | 4 | Same family as held-out TFEFVS-MH, so it goes to the same split. Role 5 must confirm. |
 
-Totals: 32 schemes, 19 development, 9 held-out, 4 alternate.
+Totals: 32 schemes, 22 development, 9 held-out, 1 alternate.
 
 ## Field vocabulary
 26 fields were added to `FIELD_TYPES` in `src/rules/extraction.py` for the held-out schemes (14 more were

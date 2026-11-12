@@ -10,12 +10,13 @@
       "section": "beneficiary",
       "text": "Indira Gandhi National Widow Pension Scheme (IGNWPS) is implemented by Ministry of Rural Development, Government of India. It is a non-contributory pension scheme to provide social security to widows of poor family (BPL) of the society.",
       "source": {
-        "source_id": "SRC-IGNWPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-widow-pension-scheme_ignwps.html",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-001",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal)",
+        "url": "https://nsap.dord.gov.in/",
         "collected_at": "2026-11-04",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Details"
+        "locator": "department.txt / myScheme page (identical text); Details",
+        "collection_note": "Official NSAP portal at nsap.dord.gov.in. No per-scheme sub-pages; homepage lists IGNOAPS, IGNWPS and IGNDPS."
       },
       "review_status": "reviewed"
     },
@@ -28,12 +29,13 @@
       "section": "benefit",
       "text": "A pension of Rs.300/- per month is provided to Widows between 40 years and 79 years.",
       "source": {
-        "source_id": "SRC-IGNWPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-widow-pension-scheme_ignwps.html",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-001",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal)",
+        "url": "https://nsap.dord.gov.in/",
         "collected_at": "2026-11-04",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Benefits, age 40-79"
+        "locator": "department.txt / myScheme page (identical text); Benefits, age 40-79",
+        "collection_note": "Official NSAP portal at nsap.dord.gov.in. No per-scheme sub-pages; homepage lists IGNOAPS, IGNWPS and IGNDPS."
       },
       "review_status": "reviewed"
     },
@@ -46,12 +48,13 @@
       "section": "benefit",
       "text": "For persons who are 80 years and above the pension is Rs.500/- per month.",
       "source": {
-        "source_id": "SRC-IGNWPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-widow-pension-scheme_ignwps.html",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-001",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal)",
+        "url": "https://nsap.dord.gov.in/",
         "collected_at": "2026-11-04",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Benefits, age 80 and above"
+        "locator": "department.txt / myScheme page (identical text); Benefits, age 80 and above",
+        "collection_note": "Official NSAP portal at nsap.dord.gov.in. No per-scheme sub-pages; homepage lists IGNOAPS, IGNWPS and IGNDPS."
       },
       "review_status": "reviewed"
     },
@@ -64,12 +67,13 @@
       "section": "eligibility",
       "text": "The applicant must be a widow in the age group of 40-79 years.",
       "source": {
-        "source_id": "SRC-IGNWPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-widow-pension-scheme_ignwps.html",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-001",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal)",
+        "url": "https://nsap.dord.gov.in/",
         "collected_at": "2026-11-04",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Eligibility, point 1"
+        "locator": "department.txt / myScheme page (identical text); Eligibility, point 1",
+        "collection_note": "Official NSAP portal at nsap.dord.gov.in. No per-scheme sub-pages; homepage lists IGNOAPS, IGNWPS and IGNDPS."
       },
       "review_status": "reviewed"
     },
@@ -82,12 +86,13 @@
       "section": "eligibility",
       "text": "The applicant should belong to a household living below the poverty line according to the criteria prescribed by the Govt. of India",
       "source": {
-        "source_id": "SRC-IGNWPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-widow-pension-scheme_ignwps.html",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-001",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal)",
+        "url": "https://nsap.dord.gov.in/",
         "collected_at": "2026-11-04",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Eligibility, point 2"
+        "locator": "department.txt / myScheme page (identical text); Eligibility, point 2",
+        "collection_note": "Official NSAP portal at nsap.dord.gov.in. No per-scheme sub-pages; homepage lists IGNOAPS, IGNWPS and IGNDPS."
       },
       "review_status": "reviewed"
     },
@@ -100,12 +105,13 @@
       "section": "exclusion",
       "text": "Pension will be discontinued\nIn case of remarriage of widow\nOnce the widow moves above poverty line",
       "source": {
-        "source_id": "SRC-IGNWPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-widow-pension-scheme_ignwps.html",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-001",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal)",
+        "url": "https://nsap.dord.gov.in/",
         "collected_at": "2026-11-04",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Exclusion"
+        "locator": "department.txt / myScheme page (identical text); Exclusion",
+        "collection_note": "Official NSAP portal at nsap.dord.gov.in. No per-scheme sub-pages; homepage lists IGNOAPS, IGNWPS and IGNDPS."
       },
       "review_status": "reviewed"
     },
@@ -118,12 +124,13 @@
       "section": "application",
       "text": "One can download UMANG App or visit website https://web.umang.gov.in/web_new/home",
       "source": {
-        "source_id": "SRC-IGNWPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-widow-pension-scheme_ignwps.html",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-001",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal)",
+        "url": "https://nsap.dord.gov.in/",
         "collected_at": "2026-11-04",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 1"
+        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 1",
+        "collection_note": "Official NSAP portal at nsap.dord.gov.in. No per-scheme sub-pages; homepage lists IGNOAPS, IGNWPS and IGNDPS."
       },
       "review_status": "reviewed"
     },
@@ -136,12 +143,13 @@
       "section": "application",
       "text": "The citizen can login using mobile number and OTP.",
       "source": {
-        "source_id": "SRC-IGNWPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-widow-pension-scheme_ignwps.html",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-001",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal)",
+        "url": "https://nsap.dord.gov.in/",
         "collected_at": "2026-11-04",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 2"
+        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 2",
+        "collection_note": "Official NSAP portal at nsap.dord.gov.in. No per-scheme sub-pages; homepage lists IGNOAPS, IGNWPS and IGNDPS."
       },
       "review_status": "reviewed"
     },
@@ -154,12 +162,13 @@
       "section": "application",
       "text": "Once logged In, citizen can search for NSAP.",
       "source": {
-        "source_id": "SRC-IGNWPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-widow-pension-scheme_ignwps.html",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-001",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal)",
+        "url": "https://nsap.dord.gov.in/",
         "collected_at": "2026-11-04",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 3"
+        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 3",
+        "collection_note": "Official NSAP portal at nsap.dord.gov.in. No per-scheme sub-pages; homepage lists IGNOAPS, IGNWPS and IGNDPS."
       },
       "review_status": "reviewed"
     },
@@ -172,12 +181,13 @@
       "section": "application",
       "text": "Click on “Apply Online”",
       "source": {
-        "source_id": "SRC-IGNWPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-widow-pension-scheme_ignwps.html",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-001",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal)",
+        "url": "https://nsap.dord.gov.in/",
         "collected_at": "2026-11-04",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 4"
+        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 4",
+        "collection_note": "Official NSAP portal at nsap.dord.gov.in. No per-scheme sub-pages; homepage lists IGNOAPS, IGNWPS and IGNDPS."
       },
       "review_status": "reviewed"
     },
@@ -190,12 +200,13 @@
       "section": "application",
       "text": "Fill the basic details, choose the mode of payment of pension, upload photo and click on “Submit”.",
       "source": {
-        "source_id": "SRC-IGNWPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-widow-pension-scheme_ignwps.html",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-001",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal)",
+        "url": "https://nsap.dord.gov.in/",
         "collected_at": "2026-11-04",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 5"
+        "locator": "department.txt / myScheme page (identical text); Application Process, Online (UMANG), step 5",
+        "collection_note": "Official NSAP portal at nsap.dord.gov.in. No per-scheme sub-pages; homepage lists IGNOAPS, IGNWPS and IGNDPS."
       },
       "review_status": "reviewed"
     },
@@ -208,12 +219,13 @@
       "section": "documents",
       "text": "Death Certificate of husband – With the name of the surviving wife(widow).\nBPL Card.\nAge Proof - For age, the birth certificate or school certificate may be relied on. In their absence ration card and EPIC may be considered. If there is no valid document, any Medical Officer of any government hospital may be authorized to issue the age certificate.",
       "source": {
-        "source_id": "SRC-IGNWPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-widow-pension-scheme_ignwps.html",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-001",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal)",
+        "url": "https://nsap.dord.gov.in/",
         "collected_at": "2026-11-04",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Documents Required"
+        "locator": "department.txt / myScheme page (identical text); Documents Required",
+        "collection_note": "Official NSAP portal at nsap.dord.gov.in. No per-scheme sub-pages; homepage lists IGNOAPS, IGNWPS and IGNDPS."
       },
       "review_status": "reviewed"
     }

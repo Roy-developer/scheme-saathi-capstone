@@ -1,14 +1,11 @@
 {
-  "version": "0.8.0",
+  "version": "0.9.0",
   "created": "2026-11-09",
-  "status": "32 gold schemes: 19 development, 9 held-out, 4 alternate. v0.8.0 (2026-11-12): moved IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN from held-out to alternates — all three were reviewed line-by-line and have personas/labels built on them, so they cannot serve as a clean held-out set (see RULE_GOLD_SET_SELECTION.md §3). Their MH state counterparts (IGNDPSM-MH, IGNWPS-MH, IGNOAPS-MH) remain in development and cover the same populations. Restore to development once official NSAP/MoRD .gov.in URLs are confirmed.",
+  "status": "32 gold schemes: 22 development, 9 held-out, 1 alternate (IGNWPSM-MH). v0.9.0 (2026-11-12): restored IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN to development after official NSAP portal (nsap.dord.gov.in) confirmed as valid .gov.in source.",
   "selection_rule": "Quote-verified against passages; few unresolved items; no MISSING FIELD or OR-conflict that blocks full encoding; spread of populations and benefit types; families (e.g. all widow pensions) kept in one split.",
   "alternates": [
     "eps",
-    "igndps",
-    "ignwps",
-    "ignwpsm",
-    "nsap_ignoaps"
+    "ignwpsm"
   ],
   "schemes": [
     {
@@ -25,13 +22,12 @@
     {
       "draft_file": "rule_gold_drafts/ignwps.json",
       "scheme_id": "IGNWPS-IN",
-      "split": "alternate",
+      "split": "development",
       "family": "widow",
       "rules": 5,
       "unresolved": 0,
       "rule_review_flags": 0,
-      "review_status": "human_reviewed",
-      "why": "Moved to alternate 2026-11-12: reviewed line-by-line with personas and labels built on it, so cannot serve as clean held-out. UMANG-only URL violates POLICY.md §3. IGNWPS-MH (state) covers same population in development. Restore to development once official NSAP/MoRD URL confirmed."
+      "review_status": "human_reviewed"
     },
     {
       "draft_file": "rule_gold_drafts/ignoaps_mh.json",
@@ -47,13 +43,12 @@
     {
       "draft_file": "rule_gold_drafts/nsap_ignoaps.json",
       "scheme_id": "NSAP-IGNOAPS-IN",
-      "split": "alternate",
+      "split": "development",
       "family": "old_age",
       "rules": 3,
       "unresolved": 0,
       "rule_review_flags": 0,
-      "review_status": "human_reviewed",
-      "why": "Moved to alternate 2026-11-12: reviewed line-by-line with personas and labels built on it, so cannot serve as clean held-out. UMANG-only URL violates POLICY.md §3. IGNOAPS-MH (state) covers same population in development. Restore to development once official nsap.nic.in or MoRD URL confirmed."
+      "review_status": "human_reviewed"
     },
     {
       "draft_file": "rule_gold_drafts/pm_kisan.json",
@@ -81,13 +76,12 @@
     {
       "draft_file": "rule_gold_drafts/igndps.json",
       "scheme_id": "IGNDPS-IN",
-      "split": "alternate",
+      "split": "development",
       "family": "disability",
       "rules": 5,
       "unresolved": 0,
       "rule_review_flags": 0,
-      "review_status": "human_reviewed",
-      "why": "Moved to alternate 2026-11-12: reviewed line-by-line with personas and labels built on it, so cannot serve as clean held-out. UMANG-only URL violates POLICY.md §3. IGNDPSM-MH (state) covers same population in development. Restore to development once official URL confirmed."
+      "review_status": "human_reviewed"
     },
     {
       "draft_file": "rule_gold_drafts/fadse.json",

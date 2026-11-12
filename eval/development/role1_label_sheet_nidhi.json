@@ -5,6 +5,82 @@
   "instructions": "Label from rules and source text only; do not open expected verdicts first. R1-GOLD-* personas use the draft gold rules.",
   "rows": [
     {
+      "persona_id": "R1-GOLD-001",
+      "scheme_id": "NSAP-IGNOAPS-IN",
+      "description": "Aged 59, BPL citizen: one year below the central age threshold of 60.",
+      "facts": {
+        "is_citizen_of_india": true,
+        "is_below_poverty_line": true,
+        "age": 59
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Age 59 is below the central threshold of 60."
+    },
+    {
+      "persona_id": "R1-GOLD-002",
+      "scheme_id": "NSAP-IGNOAPS-IN",
+      "description": "Aged exactly 60, BPL citizen.",
+      "facts": {
+        "is_citizen_of_india": true,
+        "is_below_poverty_line": true,
+        "age": 60
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": " Indian citizen, age 60 or older, BPL. Citizenship and other central pension are not in the persona facts, so they are assumed not to apply."
+    },
+    {
+      "persona_id": "R1-GOLD-003",
+      "scheme_id": "IGNWPS-IN",
+      "description": "Widow aged 39, BPL.",
+      "facts": {
+        "age": 39,
+        "is_widow": true,
+        "is_below_poverty_line": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Age 39 is below the central threshold of 60."
+    },
+    {
+      "persona_id": "R1-GOLD-004",
+      "scheme_id": "IGNWPS-IN",
+      "description": "Widow aged 80, BPL: above the 79 limit.",
+      "facts": {
+        "age": 80,
+        "is_widow": true,
+        "is_below_poverty_line": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Age 80 is above the central threshold of 79."
+    },
+    {
+      "persona_id": "R1-GOLD-005",
+      "scheme_id": "IGNDPS-IN",
+      "description": "Disability of 79%: just below the 80% threshold.",
+      "facts": {
+        "age": 40,
+        "is_resident_of_india": true,
+        "has_disability": true,
+        "disability_percent": 79,
+        "is_below_poverty_line": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Disability 79% is below the central threshold of 80%."
+    },
+    {
+      "persona_id": "R1-GOLD-006",
+      "scheme_id": "IGNDPS-IN",
+      "description": "Disability of exactly 80%.",
+      "facts": {
+        "age": 40,
+        "is_resident_of_india": true,
+        "has_disability": true,
+        "disability_percent": 80,
+        "is_below_poverty_line": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": " Disability 80% meets the central threshold of 80%."
+    },
+    {
       "persona_id": "IGNWPS-DEV-001",
       "scheme_id": "IGNWPS-MH",
       "description": "Widow at exact lower age boundary (40) with BPL card shown.",
