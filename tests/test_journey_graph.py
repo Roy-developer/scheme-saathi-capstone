@@ -173,10 +173,10 @@ def test_shared_interview_continues_after_one_scheme_is_ruled_out():
             ),
         )
         asked = []
-        for answer in ("yes", "30/10/1976", "yes"):
+        for answer in ("30/10/1976", "yes", "yes"):
             asked.append(result.pending_fact)
             result = await resume_journey(graph, result.conversation_id, answer)
-        assert asked == ["is_widow", "date_of_birth", "bpl_card_shown"]
+        assert asked == ["date_of_birth", "is_widow", "bpl_card_shown"]
         assert result.status == "completed"
         assert result.eligibility_result is None  # No misleading single verdict.
         assert result.candidate_verdicts["IGNWPS-MH"].result == "eligible"
@@ -493,12 +493,12 @@ def interview(graph, scheme_id, answers):
 
 def test_interview_asks_one_question_at_a_time_until_eligible():
     responses = interview(
-        build_interview_graph(), "IGNWPS-MH", ["yes", "30/10/1976", "yes"]
+        build_interview_graph(), "IGNWPS-MH", ["30/10/1976", "yes", "yes"]
     )
 
     assert [r.pending_fact for r in responses[:3]] == [
-        "is_widow",
         "date_of_birth",
+        "is_widow",
         "bpl_card_shown",
     ]
     assert all(r.status == "awaiting_answer" for r in responses[:3])
@@ -520,8 +520,8 @@ def test_interview_plan_is_visible_while_waiting():
 def test_unclear_answer_repeats_the_question_with_a_hint():
     responses = interview(build_interview_graph(), "IGNWPS-MH", ["maybe"])
 
-    assert responses[1].pending_fact == "is_widow"
-    assert "Please answer" in responses[1].question
+    assert responses[1].pending_fact == "date_of_birth"
+    assert "Please give a date" in responses[1].question
 
 
 def test_free_text_interpretation_requires_confirmation_before_saving():
@@ -549,6 +549,8 @@ def test_free_text_interpretation_requires_confirmation_before_saving():
             graph,
             JourneyRequest(action="interview", scheme_id="IGNWPS-MH"),
         )
+        result = await resume_journey(graph, result.conversation_id, "30/10/1976")
+        assert result.pending_fact == "is_widow"
         result = await resume_journey(
             graph, result.conversation_id, "My husband passed away last year."
         )
@@ -557,7 +559,7 @@ def test_free_text_interpretation_requires_confirmation_before_saving():
         assert "is_widow" not in result.known_fact_names
 
         result = await resume_journey(graph, result.conversation_id, "yes")
-        assert result.pending_fact == "date_of_birth"
+        assert result.pending_fact == "bpl_card_shown"
         assert "is_widow" in result.known_fact_names
         assert calls == [("is_widow", "My husband passed away last year.")]
 
@@ -585,6 +587,8 @@ def test_declined_interpretation_reasks_for_a_direct_answer():
             graph,
             JourneyRequest(action="interview", scheme_id="IGNWPS-MH"),
         )
+        result = await resume_journey(graph, result.conversation_id, "30/10/1976")
+        assert result.pending_fact == "is_widow"
         result = await resume_journey(graph, result.conversation_id, "maybe")
         assert "I understood your answer" in result.question
 
@@ -598,7 +602,9 @@ def test_declined_interpretation_reasks_for_a_direct_answer():
 
         result = await resume_journey(graph, result.conversation_id, "no")
         assert result.status == "not_eligible"
-        assert result.known_fact_names == ["application_date", "is_widow"]
+        assert set(result.known_fact_names) == {
+            "application_date", "date_of_birth", "is_widow",
+        }
 
     asyncio.run(scenario())
 
@@ -635,6 +641,7 @@ def test_answer_reader_failure_uses_plain_code_question(monkeypatch):
             graph,
             JourneyRequest(action="interview", scheme_id="IGNWPS-MH"),
         )
+        result = await resume_journey(graph, result.conversation_id, "30/10/1976")
         result = await resume_journey(graph, result.conversation_id, "maybe")
         assert result.status == "awaiting_answer"
         assert result.pending_fact == "is_widow"
@@ -664,20 +671,20 @@ def test_clear_free_text_unknown_skips_the_fact_without_inventing_a_value():
         result = await resume_journey(
             graph, result.conversation_id, "I can't remember."
         )
-        assert result.pending_fact == "date_of_birth"
-        assert "is_widow" not in result.known_fact_names
+        assert result.pending_fact == "is_widow"
+        assert "date_of_birth" not in result.known_fact_names
 
     asyncio.run(scenario())
 
 
 def test_impossible_date_is_rejected_and_asked_again():
     responses = interview(
-        build_interview_graph(), "IGNWPS-MH", ["yes", "01/01/2030"]
+        build_interview_graph(), "IGNWPS-MH", ["01/01/2030"]
     )
 
-    assert responses[2].pending_fact == "date_of_birth"
+    assert responses[1].pending_fact == "date_of_birth"
     assert "date of birth cannot be after application date" in (
-        responses[2].question.lower()
+        responses[1].question.lower()
     )
 
 
@@ -685,11 +692,11 @@ def test_dont_know_is_not_asked_again_and_ends_with_missing_facts():
     responses = interview(
         build_interview_graph(),
         "IGNWPS-MH",
-        ["I don't know", "30/10/1976", "not sure"],
+        ["30/10/1976", "I don't know", "not sure"],
     )
 
     asked = [r.pending_fact for r in responses if r.pending_fact]
-    assert asked == ["is_widow", "date_of_birth", "bpl_card_shown"]
+    assert asked == ["date_of_birth", "is_widow", "bpl_card_shown"]
     final = responses[-1]
     assert final.status == "need_more_information"
     assert set(final.missing_fields) == {"is_widow", "government_bpl_card"}
@@ -700,7 +707,7 @@ def test_failed_rule_stops_the_questions_early():
     responses = interview(
         build_interview_graph(),
         "PM-KISAN-IN",
-        ["yes", "no", "no", "no", "no", "yes"],
+        ["30/10/1976", "yes", "no", "no", "no", "no", "yes"],
     )
 
     final = responses[-1]
@@ -712,7 +719,7 @@ def test_failed_rule_stops_the_questions_early():
 
 def test_reply_when_not_waiting_is_refused():
     graph = build_interview_graph()
-    responses = interview(graph, "IGNWPS-MH", ["no"])
+    responses = interview(graph, "IGNWPS-MH", ["30/10/1976", "no"])
     assert responses[-1].status == "not_eligible"
 
     with pytest.raises(JourneyNotWaitingError):
@@ -747,7 +754,7 @@ def test_new_request_replaces_a_waiting_question():
         )
     )
 
-    assert result.pending_fact == "landholding_family_in_state_records"
+    assert result.pending_fact == "date_of_birth"
     assert [s.scheme_id for s in result.plan_detail.steps] == [
         "PM-KISAN-IN",
         "PM-KISAN-IN",
@@ -771,7 +778,7 @@ def test_interview_defaults_application_date_to_today():
             graph,
             JourneyRequest(action="interview", scheme_id="IGNWPS-MH"),
         )
-        for answer in ["yes", "30/10/1986", "yes"]:
+        for answer in ["30/10/1986", "yes", "yes"]:
             result = await resume_journey(graph, start.conversation_id, answer)
         return result
 

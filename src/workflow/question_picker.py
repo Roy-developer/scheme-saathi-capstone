@@ -30,6 +30,11 @@ def pick_next_registered_fact(
     return None
 
 
+# Asked in every interview, before scheme rules, so the document checker can
+# compare a typed document date of birth with the household's own date.
+ALWAYS_ASKED_FACTS: tuple[str, ...] = ("date_of_birth",)
+
+
 def pick_shared_registered_fact(
     store: HouseholdProfile,
     packages: Sequence[RulePackage],
@@ -41,6 +46,15 @@ def pick_shared_registered_fact(
     Only identical IDs in the same pinned registry share an answer. Candidate,
     rule and derived-input order break ties; similar question labels do not.
     """
+
+    registered = {definition.fact_id for definition in registry.definitions}
+    for fact_id in ALWAYS_ASKED_FACTS:
+        if (
+            fact_id in registered
+            and fact_id not in store.facts
+            and fact_id not in skipped_facts
+        ):
+            return fact_id
 
     counts: Counter[str] = Counter()
     for package in packages:

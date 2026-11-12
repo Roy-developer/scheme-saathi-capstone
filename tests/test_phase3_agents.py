@@ -559,6 +559,7 @@ def test_interpretation_attempt_reserved_before_crash_is_not_repeated():
             action="interview", scheme_id="IGNWPS-MH", conversation_id=conversation_id,
         )
         await run_journey(graph, request)
+        await resume_journey(graph, conversation_id, "30/10/1976")
         with pytest.raises(RuntimeError, match="Simulated interruption"):
             await resume_journey(graph, conversation_id, "An unclear synthetic reply")
         restarted = await run_journey(graph, request)

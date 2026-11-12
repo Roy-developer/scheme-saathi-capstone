@@ -542,10 +542,10 @@ def test_interview_over_http_asks_questions_then_returns_verdict(
     assert started.status_code == 200
     body = started.json()
     assert body["status"] == "awaiting_answer"
-    assert body["pending_fact"] == "is_widow"
+    assert body["pending_fact"] == "date_of_birth"
     conversation_id = body["conversation_id"]
 
-    for answer in ["yes", "30 October 1976", "yes"]:
+    for answer in ["30 October 1976", "yes", "yes"]:
         reply = client.post(
             f"/api/v1/journey/{conversation_id}/messages",
             json={"message": answer},

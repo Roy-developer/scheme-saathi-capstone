@@ -94,6 +94,7 @@ from src.workflow.intake import (
     rewrite_scheme_query,
 )
 from src.workflow.question_picker import (
+    ALWAYS_ASKED_FACTS,
     pick_shared_registered_fact,
 )
 from src.workflow.intake_agent import (
@@ -823,6 +824,10 @@ def build_journey_graph(
             allowed_facts |= set(RELEVANT_FACT_TERMS) & {
                 definition.fact_id for definition in fact_registry.definitions
             }
+        # The picker asks these for every scheme, so their answers must be accepted too.
+        allowed_facts |= set(ALWAYS_ASKED_FACTS) & {
+            definition.fact_id for definition in fact_registry.definitions
+        }
         try:
             store = restore_typed_store(state.get("typed_facts"))
             facts = dict(store.facts)

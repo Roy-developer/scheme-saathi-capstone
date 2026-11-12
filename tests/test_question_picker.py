@@ -96,7 +96,24 @@ def test_shared_picker_counts_each_fact_once_per_scheme():
         "scheme_id": "OTHER-WIDOW",
         "rules": (WIDOW.rules[-1],),
     })
-    assert pick_shared_fact(widow_profile(), [WIDOW, second]) == "bpl_card_shown"
+    known_dob = {"date_of_birth": date(1976, 10, 30), "is_widow": True}
+    assert pick_shared_fact(widow_profile(**known_dob), [WIDOW, second]) == "bpl_card_shown"
     assert pick_shared_fact(
-        widow_profile(), [WIDOW, second], frozenset({"bpl_card_shown"})
-    ) == "is_widow"
+        widow_profile(**known_dob), [WIDOW, second], frozenset({"bpl_card_shown"})
+    ) is None
+
+
+def test_shared_picker_asks_date_of_birth_first_for_every_scheme():
+    for package in (WIDOW, PMKISAN):
+        assert pick_shared_fact(household_profile(), [package]) == "date_of_birth"
+
+
+def test_date_of_birth_is_not_asked_again_once_known():
+    known = household_profile(date_of_birth=date(1976, 10, 30))
+    assert pick_shared_fact(known, [PMKISAN]) == "landholding_family_in_state_records"
+
+
+def test_skipped_date_of_birth_is_not_asked_again():
+    assert pick_shared_fact(
+        household_profile(), [PMKISAN], frozenset({"date_of_birth"})
+    ) == "landholding_family_in_state_records"

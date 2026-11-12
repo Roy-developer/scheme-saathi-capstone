@@ -422,8 +422,7 @@ def test_malformed_fact_proposal_is_not_confirmed_or_saved():
     ))
 
     assert result.status == "awaiting_answer"
-    assert result.pending_fact == "is_widow"
-    assert result.question == "Are you a widow?"
+    assert result.pending_fact == "date_of_birth"
     assert result.known_fact_names == ["application_date"]
     assert any(event.status == "invalid_arguments" for event in result.agent_trace)
 
@@ -447,7 +446,7 @@ def test_model_failures_fall_back_to_the_fixed_question_flow():
     ))
 
     assert journey.status == "awaiting_answer"
-    assert journey.question == "Are you a widow?"
+    assert journey.pending_fact == "date_of_birth"
     assert journey.react_status == "deterministic_fallback"
     assert [event.status for event in journey.agent_trace] == [
         "model_unavailable",
@@ -952,12 +951,13 @@ def test_fact_interpretation_attempt_survives_correction_and_same_id_restart():
                 today=lambda: date(2026, 11, 4),
             )
             journey = await run_journey(graph, request)
+            assert journey.pending_fact == "date_of_birth"
+            journey = await resume_journey(graph, conversation_id, "1986-01-01")
             assert journey.pending_fact == "is_widow"
             journey = await resume_journey(graph, conversation_id, "maybe")
             assert attempts == ["is_widow"]
             journey = await resume_journey(graph, conversation_id, "yes")
-            assert journey.pending_fact == "date_of_birth"
-            await resume_journey(graph, conversation_id, "1986-01-01")
+            assert journey.pending_fact == "bpl_card_shown"
 
             corrected = await correct_journey_answer(
                 graph,
