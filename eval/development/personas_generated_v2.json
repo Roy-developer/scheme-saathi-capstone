@@ -1,0 +1,807 @@
+{
+  "dataset_version": "2.0.0-dev-generated",
+  "split": "development",
+  "protected": false,
+  "annotation_note": "GENERATED DEVELOPMENT-ONLY SET, NOT HELD-OUT, NOT INDEPENDENT. Built from the live rule packages in src/rules/packages/ (APY-IN (apy_in.v1.json) sha256=620fa5e02729664af7cd7d6ebc5aea6a498d99e7cb643d99a866094f0c8ff027; IGNDPS-MH (igndps_mh.v1.json) sha256=dade0231fd9097f778a8d40b2119e1d902db14c7cdc5520f8f2fc4a0b16504e4; IGNOAPS-MH (ignoaps_mh.v1.json) sha256=cd4652b8a7da119561eee6ee8a532b4059cca8b750c9d323d93c6a05c00a6549; IGNWPS-MH (ignwps_mh.v1.json) sha256=224bf03585d9bb6bc41a64765c890dd84ea36c6006b0907065d9ded8bd5b2c65; PM-KISAN-IN (pmkisan_in.v1.json) sha256=fb59df9f7420b29d33f5a41d938cdd00f688db742e62cd989f11a948b11137a1). Generator: scripts/generate_dev_personas.py. Application date fixed at 2026-06-01; dates of birth are synthetic. Every expected_by_scheme value was computed by the deterministic rule engine (src/api/eligibility.py evaluate_mock_eligibility), not hand-written. Inputs were chosen at threshold boundaries and exclusion facts; the intended verdict is checked by the generator only. Dual labelling by Role 1 is not done. The held-out set still needs independent authorship.",
+  "personas": [
+    {
+      "persona_id": "GEN-IGNWPS-001",
+      "boundary_family": "ignwps-age-lower-below",
+      "split": "development",
+      "protected": false,
+      "description": "Widow aged 39 (one day short of 40 on the application date), BPL card shown.",
+      "typed_facts": {
+        "date_of_birth": "1986-06-02",
+        "application_date": "2026-06-01",
+        "is_widow": true,
+        "bpl_card_shown": true
+      },
+      "expected_by_scheme": {
+        "IGNWPS-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNWPS-MH-AGE-MIN-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNWPS-002",
+      "boundary_family": "ignwps-age-lower-exact",
+      "split": "development",
+      "protected": false,
+      "description": "Widow exactly 40 on the application date, BPL card shown.",
+      "typed_facts": {
+        "date_of_birth": "1986-06-01",
+        "application_date": "2026-06-01",
+        "is_widow": true,
+        "bpl_card_shown": true
+      },
+      "expected_by_scheme": {
+        "IGNWPS-MH": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01",
+            "IGNWPS-MH-AGE-MIN-01",
+            "IGNWPS-MH-AGE-MAX-01",
+            "IGNWPS-MH-BPL-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNWPS-003",
+      "boundary_family": "ignwps-age-upper-exact",
+      "split": "development",
+      "protected": false,
+      "description": "Widow exactly 79 on the application date, BPL card shown.",
+      "typed_facts": {
+        "date_of_birth": "1947-06-01",
+        "application_date": "2026-06-01",
+        "is_widow": true,
+        "bpl_card_shown": true
+      },
+      "expected_by_scheme": {
+        "IGNWPS-MH": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01",
+            "IGNWPS-MH-AGE-MIN-01",
+            "IGNWPS-MH-AGE-MAX-01",
+            "IGNWPS-MH-BPL-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNWPS-004",
+      "boundary_family": "ignwps-age-upper-above",
+      "split": "development",
+      "protected": false,
+      "description": "Widow aged 80 on the application date, BPL card shown.",
+      "typed_facts": {
+        "date_of_birth": "1946-06-01",
+        "application_date": "2026-06-01",
+        "is_widow": true,
+        "bpl_card_shown": true
+      },
+      "expected_by_scheme": {
+        "IGNWPS-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNWPS-MH-AGE-MAX-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNWPS-005",
+      "boundary_family": "ignwps-widow-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "Age 50 applicant who is not a widow, BPL card shown.",
+      "typed_facts": {
+        "date_of_birth": "1976-06-01",
+        "application_date": "2026-06-01",
+        "is_widow": false,
+        "bpl_card_shown": true
+      },
+      "expected_by_scheme": {
+        "IGNWPS-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNWPS-MH-WIDOW-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNWPS-006",
+      "boundary_family": "ignwps-bpl-missing",
+      "split": "development",
+      "protected": false,
+      "description": "Widow aged 50 with the BPL card answer left unknown.",
+      "typed_facts": {
+        "date_of_birth": "1976-06-01",
+        "application_date": "2026-06-01",
+        "is_widow": true,
+        "bpl_card_shown": null
+      },
+      "expected_by_scheme": {
+        "IGNWPS-MH": {
+          "result": "need_more_information",
+          "missing_fields": [
+            "government_bpl_card"
+          ],
+          "deciding_rule_ids": [
+            "IGNWPS-MH-BPL-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNOAPS-001",
+      "boundary_family": "ignoaps-age-lower-below",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant aged 64 on the application date, name on BPL list.",
+      "typed_facts": {
+        "date_of_birth": "1962-06-02",
+        "application_date": "2026-06-01",
+        "name_on_bpl_list": true
+      },
+      "expected_by_scheme": {
+        "IGNOAPS-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNOAPS-002",
+      "boundary_family": "ignoaps-age-lower-exact",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant exactly 65 on the application date, name on BPL list.",
+      "typed_facts": {
+        "date_of_birth": "1961-06-01",
+        "application_date": "2026-06-01",
+        "name_on_bpl_list": true
+      },
+      "expected_by_scheme": {
+        "IGNOAPS-MH": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01",
+            "IGNOAPS-MH-BPL-LIST-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNOAPS-003",
+      "boundary_family": "ignoaps-bpl-list-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant aged 70, name not on BPL list.",
+      "typed_facts": {
+        "date_of_birth": "1956-06-01",
+        "application_date": "2026-06-01",
+        "name_on_bpl_list": false
+      },
+      "expected_by_scheme": {
+        "IGNOAPS-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNOAPS-MH-BPL-LIST-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNOAPS-004",
+      "boundary_family": "ignoaps-bpl-list-missing",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant aged 70, BPL list answer unknown.",
+      "typed_facts": {
+        "date_of_birth": "1956-06-01",
+        "application_date": "2026-06-01",
+        "name_on_bpl_list": null
+      },
+      "expected_by_scheme": {
+        "IGNOAPS-MH": {
+          "result": "need_more_information",
+          "missing_fields": [
+            "name_on_bpl_list"
+          ],
+          "deciding_rule_ids": [
+            "IGNOAPS-MH-BPL-LIST-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNOAPS-005",
+      "boundary_family": "ignoaps-dob-missing",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant with date of birth unknown, name on BPL list.",
+      "typed_facts": {
+        "date_of_birth": null,
+        "application_date": "2026-06-01",
+        "name_on_bpl_list": true
+      },
+      "expected_by_scheme": {
+        "IGNOAPS-MH": {
+          "result": "need_more_information",
+          "missing_fields": [
+            "date_of_birth"
+          ],
+          "deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNDPS-001",
+      "boundary_family": "igndps-age-lower-below",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant aged 17 on the application date, has disability.",
+      "typed_facts": {
+        "date_of_birth": "2009-06-02",
+        "application_date": "2026-06-01",
+        "has_disability": true
+      },
+      "expected_by_scheme": {
+        "IGNDPS-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNDPS-MH-AGE-GTE"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNDPS-002",
+      "boundary_family": "igndps-age-lower-exact",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant exactly 18 on the application date, has disability.",
+      "typed_facts": {
+        "date_of_birth": "2008-06-01",
+        "application_date": "2026-06-01",
+        "has_disability": true
+      },
+      "expected_by_scheme": {
+        "IGNDPS-MH": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNDPS-MH-AGE-GTE",
+            "IGNDPS-MH-AGE-LTE",
+            "IGNDPS-MH-HAS_DISABILITY-EQ"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNDPS-003",
+      "boundary_family": "igndps-age-upper-exact",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant exactly 79 on the application date, has disability.",
+      "typed_facts": {
+        "date_of_birth": "1947-06-01",
+        "application_date": "2026-06-01",
+        "has_disability": true
+      },
+      "expected_by_scheme": {
+        "IGNDPS-MH": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNDPS-MH-AGE-GTE",
+            "IGNDPS-MH-AGE-LTE",
+            "IGNDPS-MH-HAS_DISABILITY-EQ"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNDPS-004",
+      "boundary_family": "igndps-age-upper-above",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant aged 80 on the application date, has disability.",
+      "typed_facts": {
+        "date_of_birth": "1946-06-01",
+        "application_date": "2026-06-01",
+        "has_disability": true
+      },
+      "expected_by_scheme": {
+        "IGNDPS-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNDPS-MH-AGE-LTE"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNDPS-005",
+      "boundary_family": "igndps-disability-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant aged 46 without a disability.",
+      "typed_facts": {
+        "date_of_birth": "1976-06-01",
+        "application_date": "2026-06-01",
+        "has_disability": false
+      },
+      "expected_by_scheme": {
+        "IGNDPS-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNDPS-MH-HAS_DISABILITY-EQ"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-IGNDPS-006",
+      "boundary_family": "igndps-disability-missing",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant aged 50 with disability answer unknown.",
+      "typed_facts": {
+        "date_of_birth": "1976-06-01",
+        "application_date": "2026-06-01",
+        "has_disability": null
+      },
+      "expected_by_scheme": {
+        "IGNDPS-MH": {
+          "result": "need_more_information",
+          "missing_fields": [
+            "has_disability"
+          ],
+          "deciding_rule_ids": [
+            "IGNDPS-MH-HAS_DISABILITY-EQ"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-APY-001",
+      "boundary_family": "apy-age-lower-below",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant aged 17 on the application date, all other answers clean.",
+      "typed_facts": {
+        "date_of_birth": "2009-06-02",
+        "application_date": "2026-06-01",
+        "apy_is_citizen_of_india": true,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-AGE-MIN-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-APY-002",
+      "boundary_family": "apy-age-lower-exact",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant exactly 18 on the application date, all answers clean.",
+      "typed_facts": {
+        "date_of_birth": "2008-06-01",
+        "application_date": "2026-06-01",
+        "apy_is_citizen_of_india": true,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-AGE-MIN-01",
+            "APY-IN-AGE-MAX-01",
+            "APY-IN-CITIZEN-01",
+            "APY-IN-SAVINGS-BANK-01",
+            "APY-IN-TAX-PAYER-EXCLUSION-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-APY-003",
+      "boundary_family": "apy-age-upper-exact",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant exactly 40 on the application date, all answers clean.",
+      "typed_facts": {
+        "date_of_birth": "1986-06-01",
+        "application_date": "2026-06-01",
+        "apy_is_citizen_of_india": true,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-AGE-MIN-01",
+            "APY-IN-AGE-MAX-01",
+            "APY-IN-CITIZEN-01",
+            "APY-IN-SAVINGS-BANK-01",
+            "APY-IN-TAX-PAYER-EXCLUSION-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-APY-004",
+      "boundary_family": "apy-age-upper-above",
+      "split": "development",
+      "protected": false,
+      "description": "Applicant aged 41 on the application date, all answers clean.",
+      "typed_facts": {
+        "date_of_birth": "1985-06-01",
+        "application_date": "2026-06-01",
+        "apy_is_citizen_of_india": true,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-AGE-MAX-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-APY-005",
+      "boundary_family": "apy-taxpayer-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "Age 35 applicant who has been an income tax payer.",
+      "typed_facts": {
+        "date_of_birth": "1990-06-01",
+        "application_date": "2026-06-01",
+        "apy_is_citizen_of_india": true,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": true
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "APY-IN-TAX-PAYER-EXCLUSION-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-APY-006",
+      "boundary_family": "apy-citizenship-missing",
+      "split": "development",
+      "protected": false,
+      "description": "Age 35 applicant with citizenship answer unknown.",
+      "typed_facts": {
+        "date_of_birth": "1990-06-01",
+        "application_date": "2026-06-01",
+        "apy_is_citizen_of_india": null,
+        "apy_has_savings_bank_account": true,
+        "apy_is_or_has_been_income_tax_payer": false
+      },
+      "expected_by_scheme": {
+        "APY-IN": {
+          "result": "need_more_information",
+          "missing_fields": [
+            "apy_is_citizen_of_india"
+          ],
+          "deciding_rule_ids": [
+            "APY-IN-CITIZEN-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-PMKISAN-001",
+      "boundary_family": "pmkisan-clean-eligible",
+      "split": "development",
+      "protected": false,
+      "description": "Family with state-recorded cultivable land and no listed exclusion.",
+      "typed_facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "expected_by_scheme": {
+        "PM-KISAN-IN": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PMKISAN-LAND-FAMILY-01",
+            "PMKISAN-INSTITUTIONAL-LAND-01",
+            "PMKISAN-OFFICE-HOLDER-01",
+            "PMKISAN-GOV-EMPLOYEE-01",
+            "PMKISAN-PENSION-01",
+            "PMKISAN-INCOME-TAX-01",
+            "PMKISAN-PROFESSIONAL-01",
+            "PMKISAN-NRI-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-PMKISAN-002",
+      "boundary_family": "pmkisan-landholding-false",
+      "split": "development",
+      "protected": false,
+      "description": "Family with no cultivable land in state records; other answers clean.",
+      "typed_facts": {
+        "landholding_family_in_state_records": false,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "expected_by_scheme": {
+        "PM-KISAN-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PMKISAN-LAND-FAMILY-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-PMKISAN-003",
+      "boundary_family": "pmkisan-institutional-landholder-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "Family with land, but the landholder is an institution.",
+      "typed_facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": true,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "expected_by_scheme": {
+        "PM-KISAN-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PMKISAN-INSTITUTIONAL-LAND-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-PMKISAN-004",
+      "boundary_family": "pmkisan-public-office-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "Family with land, one member holds a listed public office.",
+      "typed_facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": true,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "expected_by_scheme": {
+        "PM-KISAN-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PMKISAN-OFFICE-HOLDER-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-PMKISAN-005",
+      "boundary_family": "pmkisan-government-employee-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "Family with land, one member is an excluded government employee.",
+      "typed_facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": true,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "expected_by_scheme": {
+        "PM-KISAN-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PMKISAN-GOV-EMPLOYEE-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-PMKISAN-006",
+      "boundary_family": "pmkisan-pension-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "Family with land, pension of at least 10000 outside the stated grades.",
+      "typed_facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": true,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "expected_by_scheme": {
+        "PM-KISAN-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PMKISAN-PENSION-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-PMKISAN-007",
+      "boundary_family": "pmkisan-income-tax-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "Family with land, income tax paid in the last assessment year.",
+      "typed_facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": true,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "expected_by_scheme": {
+        "PM-KISAN-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PMKISAN-INCOME-TAX-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-PMKISAN-008",
+      "boundary_family": "pmkisan-professional-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "Family with land, one member is a registered practising professional.",
+      "typed_facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": true,
+        "nri_new_beneficiary": false
+      },
+      "expected_by_scheme": {
+        "PM-KISAN-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PMKISAN-PROFESSIONAL-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-PMKISAN-009",
+      "boundary_family": "pmkisan-nri-exclusion",
+      "split": "development",
+      "protected": false,
+      "description": "Family with land, applicant is a new NRI beneficiary.",
+      "typed_facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": true
+      },
+      "expected_by_scheme": {
+        "PM-KISAN-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PMKISAN-NRI-01"
+          ]
+        }
+      }
+    },
+    {
+      "persona_id": "GEN-PMKISAN-010",
+      "boundary_family": "pmkisan-landholding-missing",
+      "split": "development",
+      "protected": false,
+      "description": "Family with the state-records landholding answer unknown; other answers clean.",
+      "typed_facts": {
+        "landholding_family_in_state_records": null,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "expected_by_scheme": {
+        "PM-KISAN-IN": {
+          "result": "need_more_information",
+          "missing_fields": [
+            "landholding_family_in_state_records"
+          ],
+          "deciding_rule_ids": [
+            "PMKISAN-LAND-FAMILY-01"
+          ]
+        }
+      }
+    }
+  ]
+}
