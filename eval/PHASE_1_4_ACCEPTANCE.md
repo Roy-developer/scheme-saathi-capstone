@@ -12,6 +12,33 @@ acceptance.
       document checks, exact approval, and mock receipt behavior.
 - [x] A synthetic-data free Nemotron client smoke was run on 2026-11-12; it is
       not an E1 comparison or a freeze.
+- [x] Local synthetic backup tests exercise pending-deletion recovery, including
+      a mixed snapshot and a concurrent save. This does not establish Azure
+      share durability or multi-worker behavior.
+
+## Facts and source review (2026-11-12)
+
+All four active bundles have recorded approval for a **synthetic mock only**.
+These decisions are not confirmation of current government policy or approval
+for real applicant data.
+
+| Scheme | Outstanding source and fact review |
+|---|---|
+| IGNWPS-MH | Source currentness and independent language review remain open; the BPL card interpretation is a reviewer decision, not a source-stated document requirement. |
+| PM-KISAN-IN | Current landholding cutoff, transfers, guideline currentness and State/UT verification remain unresolved. Mock-only question/privacy metadata approval is not an independent privacy or native-speaker review. |
+| IGNOAPS-MH | Central versus Maharashtra age criteria, citizenship and other-pension conditions remain unresolved. Mock-only question/privacy metadata approval is not an independent privacy or native-speaker review. |
+| APY-IN | Later eligibility circulars were not independently ruled out. Three APY intake questions and their privacy metadata, native-language wording and broader data flow remain pending review. The mock refuses pre-2022-10-01 application dates pending review of historical rules. |
+
+The scheme-specific records are `docs/IGNWPS_MH_RULE_REVIEW_2026-10-30.md`,
+`docs/PMKISAN_RULE_REVIEW_2026-11-02.md`,
+`docs/IGNOAPS_MH_RULE_REVIEW_2026-11-08.md`,
+`docs/APY-IN_RULE_REVIEW_2026-11-11.md`, and
+`docs/APY-IN_FACT_INTAKE_REVIEW_2026-11-11.md`. Do not infer a new approval
+from this summary.
+
+The latest full offline pytest attempt stopped on a Streamlit timeout; the
+affected test passed alone and the UI integration tests passed in separate
+local-port runs. A single green full-suite run is not established.
 
 ## Acceptance still open
 

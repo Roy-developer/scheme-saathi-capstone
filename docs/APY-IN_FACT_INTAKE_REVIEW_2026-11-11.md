@@ -47,6 +47,22 @@ not approve real applicant intake.
 - Obtain human policy review and native-speaker review of the English, Hindi,
   and Marathi questions. The candidate translations are not approved.
 
+## Application-date boundary review (2026-11-12)
+
+The cited tax exclusion starts on 2022-10-01, but the current synthetic mock
+rule applies the tax answer without checking the application date. A local
+synthetic rule-engine probe returned `not_eligible` for a tax payer with both
+2022-09-30 and 2022-10-01 as the application date; existing APY tests use a
+2026 application date. This is not evidence of the correct pre-2022 verdict.
+
+The user selected refusal of earlier application dates pending domain review.
+The synthetic mock now returns `need_more_information` without an eligibility
+verdict for dates before 2022-10-01, and stops asking APY-only questions once
+the unsupported date is known. When the application date is unknown, the mock
+asks for it before issuing a verdict. The reviewed rule package is unchanged.
+Historical rules, source currentness, and privacy and language approval remain
+open; this decision does not authorize real-applicant use.
+
 ## Disposition
 
 **Active for synthetic mock use only**, as explicitly authorized by

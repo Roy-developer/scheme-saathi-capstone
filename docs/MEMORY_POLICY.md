@@ -46,8 +46,23 @@ the current state used by the workflow; it does not prune historical SQLite
 checkpoints created before the current state update. The project approver
 selected no automatic expiry for historical SQLite journey/checkpoint data on
 2026-11-12. Checkpoints remain until explicitly forgotten; the forget action
-removes the conversation's checkpoint thread. Focused memory and SQLite restart
-tests pass, but backup-snapshot deletion behavior is not covered here.
+removes the conversation's live checkpoint thread.
+
+**Backup deletion:** with backups enabled, the API records a pending deletion
+on the configured share before changing live records and refreshes the current
+backups before returning 204. A failed refresh returns 503 and retains the
+marker; startup replays pending deletions before serving. In-process API
+requests wait while deletion runs, preventing concurrent requests from
+reintroducing the same data during the refresh. Synthetic restart tests cover
+stale and partially refreshed snapshots and retain an unrelated journey.
+
+This assumes one backend replica and a correctly functioning durable share;
+Azure execution and failure durability have not been verified. Pending markers
+can temporarily contain a return code and opaque checkpoint IDs, so the share
+requires appropriate access controls. This is logical removal from current
+snapshots, not proof of physical erasure or deletion of Azure snapshots,
+versions, or other external copies. New requests after deletion may create new
+data.
 
 ## Review required
 

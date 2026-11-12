@@ -28,7 +28,7 @@ Imagine Meena, a synthetic widow at a CSC. She returns with code `SAATHI-7K3M`, 
 | More offline injection regexes after E2 injection/ID/scam already runs | Low L15 unlock; stubs still open |
 | Chasing development eligibility accuracy 1.0 / more easy personas | Accuracy theater without dual labels + held-out |
 | LLM judge work unless non-code qualities are actually judged | PDF is code-first |
-| Grafana JSON polish without Role 6 scrape proof | Monitoring checkbox theater |
+| Grafana dashboard polish without Role 6 Azure Monitor proof | Monitoring checkbox theater |
 | Calling E4 “done” on rule-engine-only | Half-claim; LLM arm must stay eval-isolated |
 | Calling E3 “done” on paid **dev** check | Held-out extraction still required |
 | Treating checkpoints / demo checkbox as L9 | PDF: consent, expiry, forget, policy, on/off |
@@ -42,8 +42,8 @@ From `docs/EVALUATION_REPORT.md` and current repo (Nov 2026):
 | Area | Today | PDF-shaped gap |
 |---|---|---|
 | Phase 5 | Still **paused** until Phases 1–4 acceptance | Plan ≠ authorization for paid/held-out |
-| E2 | Offline injection / ID / scam + clean false-block | Memory/approval stubs; own-data-path not in E2 narrative |
-| RT | 30 attacks; ~7 stubs | Stubs ≠ executed 30+ |
+| E2 | Offline injection / ID / scam plus five paired local application-boundary scenarios (20 observations): attacks off 4/5, on 0/5; clean false blocks 0/5 per arm. Dedicated runtime CI gates and report uploads are wired locally. | Off removes one named boundary via isolated unsafe adapters, not all controls. Independent frozen evaluation, wider coverage and remote CI execution remain open. See `eval/reports/e2_runtime_dev_latest.json`. |
+| RT | Separate runtime run passed all 30 approved IDs after the shared masking fix (initially 28 passed, 2 failed); older local helper gate remains separate | Mixed-separator ID and PAN masking regressions now pass on model-input/checkpoint paths. Synthetic local API/MCP/portal evidence uses scripted models, not live LLM efficacy or full L9/E2 validation. See `eval/reports/red_team_runtime_latest.json`; original failed evidence is retained separately. |
 | κ | Harness ready; `smoke_copy` | Role 1 independent labels required |
 | E1 | Config inventory / stub | No forced-C0; no C1 arm; no freeze trio |
 | E3 | Paid **dev** check inventory | Held-out extraction before/after open |
@@ -51,7 +51,7 @@ From `docs/EVALUATION_REPORT.md` and current repo (Nov 2026):
 | Memory | Return-code store | No MEMORY_POLICY, consent, expiry, unified forget, on/off |
 | Held-out | Generator + local folder | **`eval/held_out/local/personas_held_out_v1.json` is staged (`A`)** — exposure risk |
 | Gold schemes | 4 live packages (incl. APY mock) | Not 15 gold; do not imply otherwise |
-| Monitoring | `/metrics` + JSON/rules | Grafana scrape = Role 6 / Phase 6-ish handoff |
+| Monitoring | OpenTelemetry instruments + Azure Monitor export | Managed Grafana dashboards/alerts = Role 6 / Phase 6 handoff |
 
 ---
 
@@ -64,7 +64,7 @@ From `docs/EVALUATION_REPORT.md` and current repo (Nov 2026):
 | **R3 Orchestration** | Forced-C0 flag; C1 eval arm; fixed vs planned question order; STM trim | Read held-out; weaken approval/eligibility for “easier E1” |
 | **R4 Tools/security** | Threat model accuracy; guardrail/quarantine/output/scope implementation; memory ACL hardening | Author **final** attack evidence |
 | **R5 Eval/RT (Balaji)** | Held-out custody; attack authorship; E1–E4 harness/reports; claim matrix honesty; memory-on/off harness | Let builders read HO; defend with defender-authored attacks |
-| **R6 UI/ops** | Consent/forget UI copy; referral UX; Prometheus/Grafana scrape in shared env | Own final eval claims or held-out |
+| **R6 UI/ops** | Consent/forget UI copy; referral UX; Managed Grafana dashboards and alerts in shared env | Own final eval claims or held-out |
 
 **Separation of duties (PDF non-negotiable):** defender ≠ attacker; tuner ≠ held-out author. Exposure → reclassify/replace + disclose.
 
@@ -100,7 +100,7 @@ Phase 5 stays paused for **paid + final held-out** until this wave’s freeze co
 | **G3** | Independent attack authorship process note + `author` / `reviewed_by` metadata | R5 (+ R4 ack) | S | Process note under `eval/red_team/`; no defender-final-attacks |
 | **G4** | Held-out secrecy protocol (Role-5-only path, regenerate policy, exposure → reclassify) | R5 | S | Written protocol + README in `eval/held_out/` |
 | **G5** | EVALUATION_REPORT hygiene: §8 non-claims stay until closed; no stub inflation | R5 | S | Report language matches inventory statuses |
-| **G6** | Monitoring handoff pack for Role 6 (metric names, alert, dashboard JSON) — **do not claim Grafana live** | R5→R6 | S | Handoff note; claim stays “`/metrics` emitted” until scrape proven |
+| **G6** | Monitoring handoff pack for Role 6 (metric names, alert, dashboard JSON) — **do not claim Grafana live** | R5→R6 | S | Handoff note; claim stays “OTel instruments emitted” until Azure Monitor export proven |
 
 **Freeze manifest must pin**
 
@@ -216,7 +216,7 @@ Fill statuses as waves close. Default today: **not claimable** unless noted.
 | L9 Memory | MEMORY_POLICY + on/off report + consent/expiry/forget | R2/R5 | not claimable |
 | L12 Reflexion | HO before/after + rejected lesson + playbook hash | R5 | dev-only (paid check) |
 | L13 personas/κ | ~20 dev + ≥40 HO, dual labels, real κ | R1/R5 | not claimable (smoke κ) |
-| L13 monitoring | Dashboard + alert demonstrated | R6 (+R5 metrics) | partial (`/metrics` only) |
+| L13 monitoring | Dashboard + alert demonstrated | R6 (+R5 metrics) | partial (OTel instruments only; no Azure Monitor or Grafana proof) |
 | L15 threat + RT + E2 | Threat model; 30 executed; ASR off/on; false blocks; own-data | R4/R5 | partial (offline subset) |
 | E1 | Freeze + C0/C1/C2 tables | R3/R5 | not claimable |
 | E2 | Full category off/on incl. memory/approval | R5 | partial |
@@ -239,7 +239,7 @@ Fill statuses as waves close. Default today: **not claimable** unless noted.
 9. “15 gold / extraction signature closed” with 4 live packages.  
 10. “Full L15” from offline injection/ID/scam alone.  
 11. “L9 long-term memory” from return-code / checkpoints alone.  
-12. “Grafana/monitoring complete” from `/metrics` JSON alone.
+12. “Grafana/monitoring complete” from OTel instrument definitions alone.
 
 ---
 
@@ -302,7 +302,7 @@ Wave 1 freeze/claim (R5+R1+R3) ────────────────�
          └─ Wave 4 Eval arms (R3 force-C0/C1; R5 harness)┤
                    dual labels (R1) in parallel           │
                    paid HO only after freeze + Wave 0    │
-Role 6 scrape / referral UX ──────────── P2 / Phase 6 ───┘
+Role 6 Grafana / referral UX ──────────── P2 / Phase 6 ───┘
 ```
 
 **Safe now without unpause:** Wave 0, authorship, ASI06 draft, MEMORY_POLICY, schema design, offline unit tests, forced-C0 **dev** scaffolding, R1 labeling of **development**, easy RT wraps.  
@@ -322,7 +322,7 @@ A wave is done when these exist and match the claim matrix — **not** when “t
 | 3 | Threat model; RT suite executed; E2 off/on + false blocks; own-data; authorship |
 | 4 | Real κ; E1 trio under freeze; E4 both arms isolated; E3 HO; 3× spread |
 
-**Closed for final review (story):** Meena’s journey is comparable under pinned configs; her memory is consented and erasable; attacks Role 5 wrote fail with defences on; C0/C1/C2 cost tables exist; Reflexion and signature ablations are held-out honest; three repeats show spread — and the report says clearly what is still out of scope (15 gold, live Grafana if not scraped).
+**Closed for final review (story):** Meena’s journey is comparable under pinned configs; her memory is consented and erasable; attacks Role 5 wrote fail with defences on; C0/C1/C2 cost tables exist; Reflexion and signature ablations are held-out honest; three repeats show spread — and the report says clearly what is still out of scope (15 gold, live Grafana if not connected to Azure Monitor).
 
 ---
 
@@ -336,7 +336,7 @@ A wave is done when these exist and match the claim matrix — **not** when “t
 | Call L9 done after checkpoint tests | Policy + on/off artifacts missing |
 | Call E4 done after rule accuracy | LLM shadow path missing |
 | Call E3 done after dev check | HO extraction missing |
-| Claim monitoring done | Role 6 has not demonstrated scrape/alert |
+| Claim monitoring done | Role 6 has not demonstrated Azure Monitor data or a Grafana alert |
 | Merge a plan whose DoD is “tests pass” | Rewrite DoD to artifacts first |
 
 ---

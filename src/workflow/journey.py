@@ -44,7 +44,7 @@ from mcp import Client
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 from langchain_core.language_models import BaseChatModel
 
-from src.api.eligibility import EligibilityResponse
+from src.api.eligibility import APY_HISTORICAL_DATE_REASON, EligibilityResponse
 from src.api.applications import (
     call_application_tool,
     check_and_bind_documents,
@@ -84,7 +84,7 @@ from src.workflow.agent_runtime import (
 )
 from src.workflow.errors import MCPToolError
 from src.workflow.conversation_budget import (
-    CURRENT_BUDGET, ConversationBudget, attempted_facts as durable_attempted_facts,
+    COUNT_DOMAIN_CALLS, CURRENT_BUDGET, ConversationBudget, attempted_facts as durable_attempted_facts,
     durable_counters, reserve_counters, reserve_fact,
 )
 from src.workflow.household_memory import (
@@ -95,7 +95,9 @@ from src.workflow.intake import (
     AnswerInterpretation,
     IntakeAgentError,
     interpret_free_text_answer,
+    interpret_answer_with_provider,
     rewrite_scheme_query,
+    rewrite_query_with_provider,
 )
 from src.workflow.input_guardrails import is_prompt_injection
 from src.workflow.question_picker import (
@@ -580,6 +582,8 @@ def build_journey_graph(
     ] = call_application_tool,
     fact_registry: FactRegistry | None = None,
     rule_bundles: Mapping[str, SchemeBundle] | None = None,
+    single_agent_provider: BaseChatModel | None = None,
+    count_domain_calls: bool = False,
 ) -> Any:
     """Build and compile the supervisor journey with a checkpointer.
 
@@ -598,6 +602,54 @@ def build_journey_graph(
         today: Gives the default application date for interviews. Tests
             pass a fixed date so results do not change from day to day.
     """
+
+    if single_agent_provider is not None and (
+        model_provider is not None or eligibility_model_provider is not None
+    ):
+        raise ValueError("The single-agent graph cannot also run specialist models.")
+    if count_domain_calls:
+        if not isinstance(client, ServiceClientRouter):
+            raise ValueError("Domain-call accounting requires the service router.")
+        if (
+            search_tool is not _search_with_mcp
+            or eligibility_tool is not _evaluate_with_mcp
+            or application_tool is not call_application_tool
+        ):
+            raise ValueError("Domain-call accounting requires the routed service adapters.")
+        if (
+            single_agent_provider is None
+            and ((model_provider is None) != (eligibility_model_provider is None))
+        ):
+            raise ValueError("Comparison specialists must use the same pinned model.")
+        if (
+            model_provider is not None and eligibility_model_provider is not None
+            and model_provider.model_name != eligibility_model_provider.model_name
+        ):
+            raise ValueError("Comparison specialists must use the same pinned model.")
+        if (single_agent_provider is not None or model_provider is not None) and (
+            query_rewriter is not rewrite_scheme_query
+            or answer_interpreter is not interpret_free_text_answer
+        ):
+            raise ValueError("Comparison intake readers must use the pinned model.")
+        client = client.with_domain_budget()
+
+    experiment_answer_interpreter = None
+    experiment_provider = single_agent_provider or model_provider
+    if count_domain_calls and experiment_provider is not None:
+        if query_rewriter is rewrite_scheme_query:
+            async def experiment_query_rewriter(query: str) -> str:
+                return await rewrite_query_with_provider(experiment_provider, query)
+            query_rewriter = experiment_query_rewriter
+        if answer_interpreter is interpret_free_text_answer:
+            async def experiment_answer_interpreter(
+                fact: str, question: str, reply: str,
+                *, prior_exchanges: list[str] | None = None,
+            ) -> AnswerInterpretation:
+                return await interpret_answer_with_provider(
+                    experiment_provider, fact, question, reply,
+                    prior_exchanges=prior_exchanges,
+                )
+            answer_interpreter = experiment_answer_interpreter
 
     application_gate = (
         build_application_gate(checkpointer) if checkpointer is not None else None
@@ -1176,8 +1228,8 @@ def build_journey_graph(
                             agent="intake",
                             action="interpret_free_text_answer",
                             model=(
-                                model_provider.model_name
-                                if model_provider is not None
+                                (model_provider or single_agent_provider).model_name
+                                if (model_provider or single_agent_provider) is not None
                                 else DEFAULT_CHAT_MODEL
                             ),
                             input_text=f"{pending_fact}\n{question}\n{reply}",
@@ -1188,6 +1240,7 @@ def build_journey_graph(
                                     prior_exchanges=interp_ctx[-MAX_INTERPRETER_CONTEXT:],
                                 )
                                 if answer_interpreter is interpret_free_text_answer
+                                or answer_interpreter is experiment_answer_interpreter
                                 else answer_interpreter(pending_fact, question, reply)
                             ),
                             failure_type=IntakeAgentError,
@@ -1547,7 +1600,11 @@ def build_journey_graph(
 
         try:
             assessment, budget, trace, react_status = await run_document_specialist(
-                model_provider,
+                (
+                    None if count_domain_calls
+                    and task.operation in {"approve", "reject"}
+                    else model_provider
+                ),
                 scheme_id,
                 state.get("locale", "en"),
                 state.get("agent_budget", {}),
@@ -1870,8 +1927,8 @@ def build_journey_graph(
                     agent="intake",
                     action="rewrite_scheme_query",
                     model=(
-                        model_provider.model_name
-                        if model_provider is not None
+                        (model_provider or single_agent_provider).model_name
+                        if (model_provider or single_agent_provider) is not None
                         else DEFAULT_CHAT_MODEL
                     ),
                     input_text=query,
@@ -2096,6 +2153,10 @@ def build_journey_graph(
                 "handoffs": _report_to_supervisor("eligibility", "tool_error"),
                 **agent_updates,
             }
+        if result.reason == APY_HISTORICAL_DATE_REASON:
+            result = result.model_copy(update={
+                "reason": discovery_message("apy_historical_date", state.get("locale", "en")),
+            })
         message = result.reason
         verdict = CandidateVerdict(
             scheme_id=result.scheme_id,
@@ -2219,7 +2280,10 @@ def build_journey_graph(
             # Preserve retrieval order while grouping passages by scheme.
             "candidate_scheme_ids": candidate_scheme_ids,
             "unprocessed_candidate_ids": excess,
-            "discovery_notices": ["candidate_limit"] if excess else [],
+            "discovery_notices": (
+                (["candidate_limit"] if excess else [])
+                + (["scam_search_filtered"] if getattr(passages, "omitted_count", 0) else [])
+            ),
             "search_calls": search_calls,
             "discovery_events": [DiscoveryEvent(
                 code="candidate_limit" if excess else "search_completed",
@@ -2231,6 +2295,254 @@ def build_journey_graph(
             "conversation": [{"role": "assistant", "content": message}],
             "handoffs": _report_to_supervisor("search", "search_results"),
         }
+
+    async def single_agent_step(state: JourneyState) -> dict[str, Any]:
+        """Run one guarded domain action using the single agent."""
+
+        from src.workflow.agent_runtime import (
+            AgentActionError, AgentRunResult, recover_authorized_action,
+        )
+        from src.workflow.injection_guard import screen_free_text
+        from src.workflow.intake_agent import DescriptionReaderError, read_description_facts
+        from src.workflow.single_agent import run_single_agent_action
+
+        task = state.get("application_task") or {}
+        operation = task.get("operation")
+        expected = {
+            "intake": "collect_information",
+            "search": "search_schemes",
+            "eligibility": "evaluate_eligibility",
+            "documents": "check_documents",
+            "application": {
+                "create_draft": "prepare_draft",
+                "edit_draft": "edit_draft",
+                "submit": "submit_draft",
+            }.get(operation),
+        }.get(state["next_agent"])
+        plan = Plan.model_validate(state["plan_detail"])
+        candidates = [
+            step.scheme_id for step in plan.steps
+            if step.specialist == "eligibility"
+            and step.status in {"in_progress", "pending"}
+            and step.scheme_id is not None
+        ]
+        updates: dict[str, Any] | None = None
+        budget = state.get("agent_budget", {})
+        reader_trace: list[dict[str, object]] = []
+        description_facts: list[dict[str, object]] = []
+        selected_facts: list[dict[str, object]] = []
+        required_facts: set[str] = set()
+        description_processed = False
+        intake_ids = state.get("candidate_scheme_ids") or [state.get("scheme_id", "")]
+        intake_packages = [rule_packages[item] for item in intake_ids if item in rule_packages]
+        intake_scheme = intake_packages[0].scheme_id if intake_packages else ""
+        allowed_facts = tuple(dict.fromkeys(
+            fact for package in intake_packages for fact in package.required_facts
+        ))
+        registered_facts = {definition.fact_id for definition in fact_registry.definitions}
+        discovery_facts = tuple(
+            fact for fact in ("is_widow", "landholding_family_in_state_records")
+            if state.get("multi_scheme") and fact in registered_facts
+        )
+        description = state.get("profile_description")
+        if (
+            expected == "collect_information"
+            and state.get("action") == "interview"
+            and description
+            and not state.get("initial_description_processed")
+            and intake_packages
+            and not any(package.fact_intake_mode == "deterministic_only" for package in intake_packages)
+        ):
+            screened = screen_free_text(description)
+            scam = apply_scam_screen(screened.text)
+            if not scam.flagged:
+                description_processed = True
+                safe_description = mask_sensitive_text(scam.text)
+                reading, budget, reader_trace, _ = await run_accounted_model_call(
+                    agent="single", action="read_initial_description",
+                    model=single_agent_provider.model_name,
+                    input_text=safe_description,
+                    budget=budget,
+                    callback=lambda: read_description_facts(
+                        single_agent_provider, safe_description,
+                        tuple(dict.fromkeys([*allowed_facts, *discovery_facts])),
+                    ),
+                    failure_type=DescriptionReaderError,
+                )
+                confirmed = set((state.get("profile") or {}).keys())
+                confirmed.update(restore_typed_store(state.get("typed_facts")).facts)
+                if reading is not None:
+                    for proposal in reading.facts:
+                        if (
+                            proposal.fact_name not in {*allowed_facts, *discovery_facts}
+                            or proposal.fact_name in confirmed
+                        ):
+                            continue
+                        parsed = parse_interpreted_registered_answer(
+                            fact_registry.get(proposal.fact_name), proposal.value,
+                            state.get("locale", "en"),
+                        )
+                        if parsed.kind == "value" and parsed.value is not None:
+                            description_facts.append({
+                                "fact_name": proposal.fact_name,
+                                "value": encode_wire_value(parsed.value),
+                            })
+
+        async def execute(action: str, argument: object) -> dict[str, object]:
+            nonlocal updates
+            if action == "read_application_status":
+                draft_id = (task.get("arguments") or {}).get("draft_id")
+                if operation not in {"edit_draft", "submit"} or not isinstance(draft_id, str):
+                    raise AgentActionError("No draft is bound to the current task.")
+                try:
+                    result = await application_tool(
+                        specialist_client("application", state["conversation_id"]),
+                        "mock_portal",
+                        {
+                            "action": "get_status",
+                            "journey_id": state["conversation_id"],
+                            "draft_id": draft_id,
+                        },
+                    )
+                except MCPToolError as error:
+                    raise AgentActionError("Draft status is unavailable.") from error
+                status = result.get("status")
+                if status not in {
+                    "submitted", "approved", "draft", "expired", "rejected",
+                    "stale", "not_found",
+                }:
+                    status = "not_found" if result.get("not_found") else "unavailable"
+                return {"status": status}
+            if action == "read_required_facts":
+                if expected != "collect_information" or argument != intake_scheme:
+                    raise AgentActionError("Fact lookup is outside the current intake.")
+                try:
+                    result = await specialist_client("intake", state["conversation_id"]).call_tool(
+                        "required_facts", {"scheme_id": intake_scheme},
+                    )
+                except Exception as error:
+                    raise AgentActionError("Required facts are unavailable.") from error
+                content = getattr(result, "structured_content", None)
+                names = content.get("result") if isinstance(content, dict) else None
+                if (
+                    getattr(result, "is_error", True) or not isinstance(names, list)
+                    or not all(isinstance(item, str) and item in allowed_facts for item in names)
+                ):
+                    raise AgentActionError("Required facts returned an invalid schema.")
+                required_facts.update(names)
+                required_facts.update(discovery_facts)
+                return {"status": "observed", "required_facts": sorted(required_facts)}
+            if action == "propose_profile_facts":
+                if expected != "collect_information" or not required_facts or not isinstance(argument, list):
+                    raise AgentActionError("Read allowed fact names before proposing facts.")
+                allowed_pairs = {
+                    (item["fact_name"], item["value"]) for item in description_facts
+                }
+                for proposal in argument:
+                    pair = (proposal.fact_name, proposal.value)
+                    if proposal.fact_name not in required_facts or pair not in allowed_pairs:
+                        raise AgentActionError("The proposed fact was not observed by the reader.")
+                    selected_facts.append({"fact_name": pair[0], "value": pair[1]})
+                return {"status": "observed", "accepted_count": len(selected_facts)}
+            if action != expected or updates is not None:
+                raise AgentActionError("Action is not authorized by the current task.")
+            action_state = dict(state)
+            if action == "collect_information" and description_processed:
+                action_state["profile_proposals"] = selected_facts
+                action_state["initial_description_processed"] = True
+            scheme_id = argument if isinstance(argument, str) else None
+            selected_plan = plan.model_copy(deep=True)
+            if action == "evaluate_eligibility":
+                if scheme_id not in candidates:
+                    raise AgentActionError("Candidate is outside the current plan.")
+                active = next(
+                    step for step in selected_plan.steps
+                    if step.specialist == "eligibility" and step.status == "in_progress"
+                )
+                chosen = next(
+                    step for step in selected_plan.steps
+                    if step.specialist == "eligibility"
+                    and step.scheme_id == scheme_id
+                    and step.status in {"in_progress", "pending"}
+                )
+                if chosen is not active:
+                    active.status, chosen.status = "pending", "in_progress"
+                action_state["scheme_id"] = scheme_id
+                action_state["plan_detail"] = selected_plan.model_dump(mode="json")
+            node = {
+                "collect_information": intake_agent,
+                "search_schemes": scheme_search_tool,
+                "evaluate_eligibility": eligibility_agent,
+                "check_documents": document_agent,
+                "prepare_draft": application_agent,
+                "edit_draft": application_agent,
+                "submit_draft": application_agent,
+            }[action]
+            updates = await node(action_state)
+            if action == "evaluate_eligibility":
+                updates["scheme_id"] = scheme_id
+                updates["plan_detail"] = selected_plan.model_dump(mode="json")
+            handoffs = updates.get("handoffs") or []
+            return {"status": str(
+                (handoffs[-1].get("payload") or {}).get("status")
+                if handoffs else updates.get("status", "completed")
+            )}
+
+        previous = state.get("handoffs") or []
+        prior_status = next(
+            (
+                event["payload"]["status"]
+                for event in reversed(previous)
+                if (event.get("payload") or {}).get("status") is not None
+            ),
+            None,
+        )
+        budget, trace, status = await run_single_agent_action(
+            single_agent_provider,
+            state.get("locale", "en"),
+            {
+                "required_action": expected,
+                "available_candidate_ids": candidates,
+                "previous_status": prior_status,
+                "intake_scheme_id": intake_scheme,
+                "description_facts": description_facts,
+                "status_read_available": (
+                    operation in {"edit_draft", "submit"}
+                    and isinstance((task.get("arguments") or {}).get("draft_id"), str)
+                ),
+            },
+            budget,
+            execute,
+        )
+        if updates is None and expected is not None:
+            fallback = AgentRunResult(status, durable_counters(budget), trace)
+
+            async def execute_authorized() -> dict[str, object]:
+                return await execute(
+                    expected,
+                    state.get("scheme_id") if expected == "evaluate_eligibility" else None,
+                )
+
+            await recover_authorized_action(fallback, execute_authorized)
+            budget = fallback.budget
+        if updates is None:
+            updates = {
+                "status": "tool_error",
+                "message": "The requested action could not be completed safely.",
+                "eligibility_result": None,
+                "handoffs": _report_to_supervisor(state["next_agent"], "tool_error"),
+            }
+            if task:
+                updates["application_task_error"] = {
+                    "status_code": 409,
+                    "detail": "The requested action could not be completed safely.",
+                }
+        updates["agent_budget"] = durable_counters(budget)
+        updates["agent_trace"] = [*reader_trace, *updates.get("agent_trace", []), *trace]
+        updates["react_status"] = (
+            "model_assisted" if status == "completed" else "deterministic_fallback"
+        )
+        return updates
 
     def route_after_intake(state: JourneyState) -> str:
         """Ask the user if intake has a question; otherwise report back."""
@@ -2248,18 +2560,27 @@ def build_journey_graph(
     graph.add_node("scheme_search_tool", scheme_search_tool)
     graph.add_node("document_agent", document_agent)
     graph.add_node("application_agent", application_agent)
+    if single_agent_provider is not None:
+        graph.add_node("single_agent", single_agent_step)
     graph.add_edge(START, "supervisor")
     # A conditional edge looks at the state and picks the next node. The
     # supervisor stores its choice in "next_agent".
     graph.add_conditional_edges(
         "supervisor",
-        lambda state: state["next_agent"],
+        lambda state: (
+            "single" if single_agent_provider is not None
+            and state["next_agent"] != END
+            and (state.get("application_task") or {}).get("operation")
+            not in {"approve", "reject", "delete_journey"}
+            else state["next_agent"]
+        ),
         {
             "intake": "intake_agent",
             "eligibility": "eligibility_agent",
             "search": "scheme_search_tool",
             "documents": "document_agent",
             "application": "application_agent",
+            **({"single": "single_agent"} if single_agent_provider is not None else {}),
             END: END,
         },
     )
@@ -2269,11 +2590,18 @@ def build_journey_graph(
         {"ask_user": "ask_user", "supervisor": "supervisor"},
     )
     # After the user answers, intake reads the answer and continues.
-    graph.add_edge("ask_user", "intake_agent")
+    graph.add_edge(
+        "ask_user", "single_agent" if single_agent_provider is not None else "intake_agent"
+    )
     graph.add_edge("eligibility_agent", "supervisor")
     graph.add_edge("scheme_search_tool", "supervisor")
     graph.add_edge("document_agent", "supervisor")
     graph.add_edge("application_agent", "supervisor")
+    if single_agent_provider is not None:
+        graph.add_conditional_edges(
+            "single_agent", route_after_intake,
+            {"ask_user": "ask_user", "supervisor": "supervisor"},
+        )
     # compile() turns the wiring into a runnable graph; the checkpointer
     # saves state after every node.
     # The Store keeps per-conversation data (the budget) outside the checkpoints.
@@ -2285,6 +2613,35 @@ def build_journey_graph(
     compiled.fact_registry = fact_registry
     compiled.validate_registered_store = validate_registered_store
     compiled.registry_dependencies = registry_dependencies
+    if count_domain_calls:
+        from src.mcp_servers.service_routing import (
+            ACTOR_TOOLS, DOMAIN_COUNTED_ACTORS, PORTAL_ACTIONS,
+        )
+        from src.workflow.agent_config import (
+            MAX_CONVERSATION_AGENT_STEPS, MAX_CONVERSATION_DOMAIN_TOOL_CALLS,
+            MAX_CONVERSATION_MODEL_CALLS, MAX_CONVERSATION_TOKENS,
+            MAX_CONVERSATION_TOOL_CALLS,
+        )
+
+        compiled.comparison_controls = {
+            "mode": (
+                "single_agent" if single_agent_provider is not None
+                else "specialist_team" if model_provider is not None
+                else "fixed_workflow"
+            ),
+            "model_id": experiment_provider.model_name if experiment_provider else None,
+            "domain_tools_by_actor": {
+                actor: sorted(ACTOR_TOOLS[actor]) for actor in sorted(DOMAIN_COUNTED_ACTORS)
+            },
+            "application_portal_actions": sorted(PORTAL_ACTIONS["application"]),
+            "limits": {
+                "model_calls": MAX_CONVERSATION_MODEL_CALLS,
+                "tool_calls": MAX_CONVERSATION_TOOL_CALLS,
+                "agent_steps": MAX_CONVERSATION_AGENT_STEPS,
+                "tokens": MAX_CONVERSATION_TOKENS,
+                "domain_tool_calls": MAX_CONVERSATION_DOMAIN_TOOL_CALLS,
+            },
+        }
     return compiled
 
 
@@ -2523,18 +2880,25 @@ async def run_application_task(
         raise ApplicationTaskError(404, "Conversation not found.")
     previous_plan = snapshot.values.get("plan_detail")
     version = Plan.model_validate(previous_plan).version + 1 if previous_plan else 1
-    result = await graph.ainvoke(
-        {
-            "conversation_id": str(conversation_id),
-            "application_task": task.model_dump(mode="json"),
-            "application_task_result": None,
-            "application_task_error": None,
-            "plan_detail": None,
-            "plan_version_start": version,
-            "plan_restart_reason": f"The user requested {operation}.",
-        },
-        config=config,
-    )
+    budget_token = None
+    if operation in {"approve", "reject"}:
+        budget_token = COUNT_DOMAIN_CALLS.set(False)
+    try:
+        result = await graph.ainvoke(
+            {
+                "conversation_id": str(conversation_id),
+                "application_task": task.model_dump(mode="json"),
+                "application_task_result": None,
+                "application_task_error": None,
+                "plan_detail": None,
+                "plan_version_start": version,
+                "plan_restart_reason": f"The user requested {operation}.",
+            },
+            config=config,
+        )
+    finally:
+        if budget_token is not None:
+            COUNT_DOMAIN_CALLS.reset(budget_token)
     error = result.get("application_task_error")
     if error:
         raise ApplicationTaskError(error["status_code"], error["detail"])

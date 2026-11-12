@@ -1,6 +1,6 @@
 {
   "experiment_id": "E2",
-  "suite_version": "0.3.0",
+  "suite_version": "0.7.0",
   "mode": "offline_injection_id_scam",
   "defences_off": {
     "case_count": 19,
@@ -355,5 +355,5 @@
       }
     ]
   },
-  "note": "Offline E2 for injection, ID mask, and scam screens. Scam patterns are contextual (fee/OTP/approval lures); clean UPI/WhatsApp mentions are scored under legitimate_work.false_block_rate. The same screen_scam_text helper is wired into live intake description and journey replies. Memory/approval-gate attacks still need live journey runs."
+  "note": "Offline E2 for injection, ID mask, and scam screens. Scam patterns are contextual (fee/OTP/approval lures); clean UPI/WhatsApp mentions are scored under legitimate_work.false_block_rate. The same screen_scam_text helper is wired into live intake description and journey replies. Reviewed memory/approval cases are executed by the separate local red-team integration tests, not this off/on experiment."
 }

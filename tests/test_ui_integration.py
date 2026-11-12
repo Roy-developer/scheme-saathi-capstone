@@ -176,6 +176,77 @@ def _healthy(screen: AppTest) -> None:
     assert not screen.error, [item.value for item in screen.error]
 
 
+@pytest.mark.parametrize("all_scam", [False, True])
+def test_scam_search_omits_flagged_passages_from_api_and_ui(
+    integrated_ui, monkeypatch, all_scam,
+):
+    """Keep clean matches while ignoring scam passages and warning the citizen."""
+
+    original = ServiceClientRouter.call_tool
+    lure = "Visit https://pm-kisan-gov-in-verify.example/otp and enter your OTP."
+    calls = []
+
+    async def poisoned_search(self, name, arguments):
+        result = await original(self, name, arguments)
+        if name == "search_schemes":
+            calls.append(name)
+            records = result.structured_content["result"]
+            assert records
+            for record in (records if all_scam else records[:1]):
+                record["text"] = lure
+        return result
+
+    with monkeypatch.context() as patch:
+        patch.setattr(ServiceClientRouter, "call_tool", poisoned_search)
+        response = integrated_ui.client.get(
+            "/api/v1/schemes/search", params={"query": "widow pension BPL"}
+        )
+        assert response.status_code == 200
+        assert int(response.headers["X-Saathi-Omitted-Scam-Passages"]) >= 1
+        assert bool(response.json()) is not all_scam
+        assert "verify.example" not in response.text
+
+        screen = AppTest.from_file(UI_PATH, default_timeout=TIMEOUT).run()
+        screen.text_input(key="scheme_query").set_value("widow pension BPL")
+        next(item for item in screen.button if item.label == "Search schemes").click().run()
+        _healthy(screen)
+        assert any("flagged and ignored" in item.value for item in screen.warning)
+        result = integrated_ui.requests[-1][3]
+        assert result["status"] == "search_results"
+        assert bool(result["passages"]) is not all_scam
+        assert bool(result["candidate_scheme_ids"]) is not all_scam
+        assert "verify.example" not in json.dumps(result)
+        assert len(calls) == 2, "Filtered search results must not be retried."
+
+    screen = AppTest.from_file(UI_PATH, default_timeout=TIMEOUT).run()
+    screen.text_input(key="scheme_query").set_value("widow pension BPL")
+    _click(screen, "Search schemes")
+    assert integrated_ui.requests[-1][3]["passages"]
+
+
+def _use_free_portal(monkeypatch: pytest.MonkeyPatch) -> str:
+    """Give one test its own portal port.
+
+    The module fixture already runs a portal on the shared port. A test that
+    starts its own app lifespan would otherwise try to bind the same port.
+    """
+
+    import socket
+
+    from src import config as app_config
+    from src.api import portal_service
+
+    with socket.socket() as probe:
+        probe.bind(("127.0.0.1", 0))
+        url = f"http://127.0.0.1:{probe.getsockname()[1]}"
+    monkeypatch.setattr(app_config, "PORTAL_URL", url)
+    monkeypatch.setattr(portal_service, "PORTAL_URL", url)
+    monkeypatch.setattr(api, "PORTAL_URL", url)
+    monkeypatch.setitem(globals(), "PORTAL_URL", url)
+    monkeypatch.setenv("SCHEME_SAATHI_PORTAL_URL", url)
+    return url
+
+
 def _click(screen: AppTest, label: str | None = None, *, key: str | None = None) -> None:
     """Click a rendered widget, including the reruns it schedules."""
 
@@ -349,6 +420,10 @@ def test_development_scholarship_reaches_exact_mock_receipt_through_real_ui(
     monkeypatch.setattr(api, "StdioServerParameters", offline_parameters)
     monkeypatch.setattr(urllib.request, "urlopen", local_http)
     monkeypatch.setattr(api_client, "urlopen", local_http)
+    _use_free_portal(monkeypatch)
+    # This test starts its own lifespan on the shared app. Its clients and
+    # connections are shut down at the end, so restore the module fixture's state.
+    saved_app_state = dict(api.app.state._state)
 
     try:
         with TestClient(api.app) as client:
@@ -650,6 +725,8 @@ def test_development_scholarship_reaches_exact_mock_receipt_through_real_ui(
                     (screen.session_state.conversation_id,),
                 ).fetchone() == (3, 1)
     finally:
+        api.app.state._state.clear()
+        api.app.state._state.update(saved_app_state)
         publish_mock_form_file(
             form_path.name, original_form, form_directory=form_path.parent
         )

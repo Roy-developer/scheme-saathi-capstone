@@ -17,7 +17,7 @@ own branch from `main` and run the app locally.
 | `src/` | Application code (agents, MCP servers, API) |
 | `data/` | Scheme data with source URL and collection date, synthetic personas only |
 | `eval/` | Role 5 PDF eval suite: personas, held-out generator, red-team, E2 off/on, κ, simulated citizen; run `python scripts/run_role5_dev_evals.py` (CI-gated; see [`eval/README.md`](eval/README.md)) |
-| `monitoring/` | Prometheus scrape/alert + Grafana dashboard definitions; the API also supports opt-in OpenTelemetry export to Azure Monitor; see [`docs/MONITORING.md`](docs/MONITORING.md) |
+| `src/observability/` | OpenTelemetry metrics for the API, with opt-in export to Azure Monitor / Application Insights; Managed Grafana dashboards and alerts read that data; see [`docs/MONITORING.md`](docs/MONITORING.md) |
 | `tests/` | Unit tests (at least one per tool) |
 
 ## Team roles

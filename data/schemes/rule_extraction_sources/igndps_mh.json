@@ -1,0 +1,48 @@
+{
+  "scheme_id": "IGNDPS-MH",
+  "scheme_name": "Indira Gandhi National Disability Pension Scheme - Maharashtra",
+  "status": "source_text_for_mock_portal",
+  "note": "Eligibility text copied word for word from the official Maharashtra page, retrieved 2026-11-12. Mock-portal use only. The page states no disability percentage, income or BPL limit, so none is encoded.",
+  "source": {
+    "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+    "source_url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-disability-pension-scheme/",
+    "retrieved": "2026-11-12",
+    "page_last_updated": "29.04.2025"
+  },
+  "reviewer_decisions": {
+    "reviewer": "not recorded",
+    "date": "2026-11-12",
+    "decision": "Mock portal requested by the project owner; no named domain reviewer yet."
+  },
+  "onboarding": {
+    "scheme_name": "Indira Gandhi National Disability Pension Scheme - Maharashtra",
+    "jurisdiction": "IN-MH",
+    "source_id": "IGNDPS-MH",
+    "publication_date": null,
+    "passages": [
+      {
+        "passage_id": "IGNDPS-MH-ELIGIBILITY-01",
+        "section": "eligibility",
+        "text": "A Disable person in the age group of 18 to 79 years is eligible under this Scheme.",
+        "locator": "Scheme page; Eligibility Criteria section",
+        "review_status": "reviewed"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "clause_id": "IGNDPS-MH-ELIGIBILITY-01",
+      "text": "A Disable person in the age group of 18 to 79 years is eligible under this Scheme.",
+      "location": "Eligibility Criteria section",
+      "allowed_fact_ids": [
+        "age",
+        "application_date",
+        "date_of_birth",
+        "has_disability"
+      ],
+      "topic_tags": [
+        "inclusion_clause"
+      ]
+    }
+  ]
+}

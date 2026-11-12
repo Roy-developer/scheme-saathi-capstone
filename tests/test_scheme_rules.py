@@ -38,7 +38,8 @@ def _cases_file(tmp_path: Path, learn_clause: str | None) -> Path:
 def test_every_listed_clause_builds_a_case_from_its_approved_package() -> None:
     cases = scheme_rules.build_cases()
 
-    assert len(cases) == 10
+    # 10 clauses before IGNDPS-MH was onboarded; one more per onboarded scheme.
+    assert len(cases) == 11
     for case in cases:
         assert case.expected_rules and case.topic_tags
         # The approved line comes last; any headings it sits under come first.

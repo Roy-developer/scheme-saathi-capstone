@@ -64,7 +64,7 @@ def main(argv: list[str] | None = None) -> int:
     reflexion = playbook_inventory()
     write_report(reflexion, args.output_dir / "reflexion_e3_inventory.json")
 
-    red_team = evaluate_red_team_suite(suite)
+    red_team = evaluate_red_team_suite(suite, run_reviewed_tests=True)
     write_report(red_team, args.output_dir / "red_team_dev_latest.json")
 
     e2 = run_e2_defences(suite)
@@ -122,6 +122,10 @@ def main(argv: list[str] | None = None) -> int:
             "passed": red_team["passed"],
             "failed": red_team["failed"],
             "pass_rate": red_team["pass_rate"],
+            "ai_reviewed_count": red_team["ai_reviewed_count"],
+            "reviewed_test_count": red_team["reviewed_test_count"],
+            "reviewed_test_passed": red_team["reviewed_test_passed"],
+            "reviewed_test_failed": red_team["reviewed_test_failed"],
         },
         "e2": {
             "defences_off_attack_success_rate": e2["defences_off"]["attack_success_rate"],
@@ -150,6 +154,8 @@ def main(argv: list[str] | None = None) -> int:
     failed = (
         eligibility["incorrect"] > 0
         or red_team["failed"] > 0
+        or red_team["reviewed_test_count"] != 7
+        or red_team["reviewed_test_failed"] > 0
         or (e2["defences_on"]["attack_success_rate"] or 0) > 0
         or (e2["legitimate_work"]["false_block_rate"] or 0) > 0
         or memory["summary"]["case_count"] != 4

@@ -146,6 +146,7 @@ class TestSaveAndLoad:
         assert first.facts["income_tax_paid_last_assessment_year"].value is False
         assert second.facts["income_tax_paid_last_assessment_year"].value is True
 
+
     def test_load_unknown_code_returns_none(self, store):
         loaded = asyncio.run(load_household(store, "SAATHI-ZZZZ", REGISTRY))
         assert loaded is None
@@ -351,3 +352,50 @@ class TestReturnCodeInJourneyResponse:
             message="",
         )
         assert response.return_code is None
+
+
+def test_rt_other_005_household_alias_cannot_load_memory():
+    store = InMemoryStore()
+    profile = _build_profile({
+        "bpl_card_shown": True,
+        "income_tax_paid_last_assessment_year": False,
+    })
+    asyncio.run(save_household(
+        store,
+        "SAATHI-AB12",
+        profile,
+        REGISTRY,
+        memory_consent=True,
+    ))
+
+    with pytest.raises(ValueError, match="format"):
+        asyncio.run(load_household(store, "OTHER-42", REGISTRY))
+
+
+def test_rt_memory_001_cross_household_profile_is_not_loaded():
+    store = InMemoryStore()
+    profile = _build_profile({
+        "bpl_card_shown": True,
+        "income_tax_paid_last_assessment_year": False,
+    })
+    asyncio.run(save_household(
+        store,
+        "SAATHI-AB12",
+        profile,
+        REGISTRY,
+        memory_consent=True,
+    ))
+
+    missing_household = asyncio.run(
+        load_household(store, "SAATHI-CD34", REGISTRY)
+    )
+    assert missing_household is None
+
+    from src.workflow.journey import JourneyRequest
+
+    with pytest.raises(ValueError, match="Loading household memory"):
+        JourneyRequest(
+            action="interview",
+            scheme_id="IGNWPS-MH",
+            return_code="SAATHI-AB12",
+        )

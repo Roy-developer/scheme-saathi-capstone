@@ -1,4 +1,4 @@
-"""Prometheus metrics emission for Role 5 monitoring foundation."""
+"""OpenTelemetry metrics emission for Role 5 monitoring foundation."""
 
 from __future__ import annotations
 
@@ -11,9 +11,6 @@ from src.api.app import app
 from src.observability import metrics
 from src.observability import telemetry
 from src.observability.metrics import (
-    MASKED_ID_HITS_TOTAL,
-    PENDING_APPROVALS,
-    VERDICTS_TOTAL,
     record_masked_id_hits,
     record_pending_approval_created,
     record_pending_approval_resolved,
@@ -52,72 +49,61 @@ def _otel_points(reader: InMemoryMetricReader, name: str) -> list:
     ]
 
 
-def test_metrics_endpoint_exposes_prometheus_text() -> None:
+def test_metrics_route_is_not_exposed() -> None:
     response = client.get("/metrics")
 
-    assert response.status_code == 200
-    assert "text/plain" in response.headers["content-type"]
-    body = response.text
-    assert "scheme_saathi_conversations_total" in body
-    assert "scheme_saathi_verdicts_total" in body
-    assert "scheme_saathi_masked_id_hits_total" in body
-    assert "scheme_saathi_pending_approvals" in body
-    assert "scheme_saathi_cost_usd" in body
-    assert "scheme_saathi_tokens_total" in body
-    assert "scheme_saathi_guardrail_blocks_total" in body
+    assert response.status_code == 404
 
 
-def test_recording_verdict_increments_counter() -> None:
-    before = VERDICTS_TOTAL.labels(
-        scheme_id="IGNWPS-MH", result="eligible"
-    )._value.get()
+def test_recording_verdict_emits_otel_point(otel_reader) -> None:
     record_verdict("IGNWPS-MH", "eligible")
-    after = VERDICTS_TOTAL.labels(
-        scheme_id="IGNWPS-MH", result="eligible"
-    )._value.get()
-    assert after == before + 1
+
+    (verdict,) = _otel_points(otel_reader, "scheme_saathi.verdicts")
+    assert dict(verdict.attributes) == {
+        "scheme_id": "IGNWPS-MH",
+        "result": "eligible",
+    }
+    assert verdict.value == 1
 
 
-def test_cant_tell_alias_records_as_need_more_information() -> None:
-    before = VERDICTS_TOTAL.labels(
-        scheme_id="IGNWPS-MH", result="need_more_information"
-    )._value.get()
+def test_cant_tell_alias_records_as_need_more_information(otel_reader) -> None:
     record_verdict("IGNWPS-MH", "cant_tell")
-    after = VERDICTS_TOTAL.labels(
-        scheme_id="IGNWPS-MH", result="need_more_information"
-    )._value.get()
-    assert after == before + 1
+
+    (verdict,) = _otel_points(otel_reader, "scheme_saathi.verdicts")
+    assert dict(verdict.attributes) == {
+        "scheme_id": "IGNWPS-MH",
+        "result": "need_more_information",
+    }
 
 
-def test_mask_sensitive_text_increments_masked_id_hits() -> None:
-    before = MASKED_ID_HITS_TOTAL.labels(field_type="aadhaar")._value.get()
+def test_mask_sensitive_text_emits_masked_id_hit(otel_reader) -> None:
     masked = mask_sensitive_text("My Aadhaar is 2345 6789 0123 for the form.")
-    after = MASKED_ID_HITS_TOTAL.labels(field_type="aadhaar")._value.get()
+
     assert "[REDACTED_AADHAAR]" in masked
-    assert after == before + 1
+    (hits,) = _otel_points(otel_reader, "scheme_saathi.masked_id_hits")
+    assert dict(hits.attributes) == {"field_type": "aadhaar"}
+    assert hits.value == 1
 
 
-def test_record_masked_id_hits_helper() -> None:
-    before = MASKED_ID_HITS_TOTAL.labels(field_type="phone")._value.get()
+def test_record_masked_id_hits_helper(otel_reader) -> None:
     record_masked_id_hits(2, field_type="phone")
-    assert MASKED_ID_HITS_TOTAL.labels(field_type="phone")._value.get() == before + 2
+
+    (hits,) = _otel_points(otel_reader, "scheme_saathi.masked_id_hits")
+    assert dict(hits.attributes) == {"field_type": "phone"}
+    assert hits.value == 2
 
 
-def test_pending_approvals_gauge() -> None:
-    before = PENDING_APPROVALS._value.get()
-    record_pending_approval_created()
-    assert PENDING_APPROVALS._value.get() == before + 1
+def test_pending_approvals_never_go_below_zero(otel_reader, monkeypatch) -> None:
+    # The open count is process-wide; start from zero so other tests' approvals
+    # cannot leak into this check.
+    monkeypatch.setattr(metrics, "_pending_approvals_open", 0)
     record_pending_approval_resolved()
-    assert PENDING_APPROVALS._value.get() == before
+    assert _otel_points(otel_reader, "scheme_saathi.pending_approvals") == []
 
-
-def test_record_tokens_updates_cost_histogram() -> None:
-    response_before = client.get("/metrics").text
-    record_tokens("test-model", input_tokens=1000, output_tokens=500)
-    body = client.get("/metrics").text
-    assert "scheme_saathi_tokens_total" in body
-    assert "scheme_saathi_cost_usd_count" in body
-    assert "test-model" in body or "scheme_saathi_tokens_total" in response_before
+    record_pending_approval_created()
+    record_pending_approval_resolved()
+    (approvals,) = _otel_points(otel_reader, "scheme_saathi.pending_approvals")
+    assert approvals.value == 0
 
 
 def test_opentelemetry_records_evaluation_and_normalized_verdict(otel_reader) -> None:
@@ -140,10 +126,10 @@ def test_opentelemetry_records_evaluation_and_normalized_verdict(otel_reader) ->
 def test_opentelemetry_preserves_cost_guardrail_and_approval_signals(
     otel_reader,
 ) -> None:
-    metrics.record_tokens("test-model", input_tokens=1000, output_tokens=500)
+    record_tokens("test-model", input_tokens=1000, output_tokens=500)
     metrics.record_guardrail_block("scam_screen", "flagged")
-    metrics.record_pending_approval_created()
-    metrics.record_pending_approval_resolved()
+    record_pending_approval_created()
+    record_pending_approval_resolved()
 
     token_points = _otel_points(otel_reader, "scheme_saathi.tokens")
     assert {point.attributes["direction"]: point.value for point in token_points} == {

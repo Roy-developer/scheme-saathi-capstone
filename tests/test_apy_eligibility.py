@@ -20,6 +20,8 @@ from src.workflow.journey import (
     resume_journey,
     run_journey,
 )
+from src.workflow.question_picker import pick_shared_registered_fact
+from eval.schema import profile_from_mapping
 
 
 SCHEME = "APY-IN"
@@ -48,9 +50,10 @@ def _profile(
     savings_account: bool = True,
     tax_payer: bool = False,
     unknown_fact: str | None = None,
+    as_of: date = AS_OF,
 ) -> HouseholdProfile:
     values = {
-        "application_date": _known(provider, "application_date", AS_OF),
+        "application_date": _known(provider, "application_date", as_of),
         "date_of_birth": _known(provider, "date_of_birth", birth),
         "apy_is_citizen_of_india": _known(
             provider, "apy_is_citizen_of_india", citizen,
@@ -102,6 +105,26 @@ def test_apy_inclusive_age_boundaries(
     assert result.result == expected
 
 
+def test_rt_inflate_001_age_claim_does_not_replace_date_of_birth(
+    provider: RulePackageProvider,
+) -> None:
+    profile = profile_from_mapping(
+        {
+            "application_date": AS_OF,
+            "date_of_birth": date(1986, 11, 11),
+            "apy_is_citizen_of_india": True,
+            "apy_has_savings_bank_account": True,
+            "apy_is_or_has_been_income_tax_payer": False,
+            "age": 39,
+        },
+        provider.registry,
+    )
+
+    assert "age" not in profile.facts
+    assert profile.facts["date_of_birth"].value == date(1986, 11, 11)
+    assert _evaluate(provider, profile).result == "eligible"
+
+
 @pytest.mark.parametrize(
     ("fact_id", "value"),
     [
@@ -151,6 +174,67 @@ def test_apy_unknown_sensitive_answer_needs_more_information(
     assert "apy_is_or_has_been_income_tax_payer" in result.missing_fields
 
 
+@pytest.mark.parametrize("tax_payer", [False, True])
+def test_apy_pre_effective_date_refuses_a_verdict(
+    provider: RulePackageProvider, tax_payer: bool,
+) -> None:
+    result = _evaluate(provider, _profile(
+        provider, birth=date(1990, 1, 1), tax_payer=tax_payer,
+        as_of=date(2022, 9, 30),
+    ))
+
+    assert result.result == "need_more_information"
+    assert "before 1 October 2022" in result.reason
+    assert result.deciding_rule_ids == [] and result.evidence == []
+
+
+@pytest.mark.parametrize("tax_payer", [False, True])
+def test_apy_missing_application_date_requires_date_before_any_verdict(
+    provider: RulePackageProvider, tax_payer: bool,
+) -> None:
+    profile = _profile(
+        provider, birth=date(1990, 1, 1), tax_payer=tax_payer,
+        unknown_fact="application_date",
+    )
+    result = _evaluate(provider, profile)
+
+    assert result.result == "need_more_information"
+    assert result.missing_fields == ["application_date"]
+    assert result.deciding_rule_ids == [] and result.evidence == []
+    assert pick_shared_registered_fact(
+        profile, [provider.packages[SCHEME]], provider.registry,
+    ) == "application_date"
+
+
+@pytest.mark.parametrize(("tax_payer", "expected"), [
+    (False, "eligible"), (True, "not_eligible"),
+])
+def test_apy_effective_date_uses_existing_rules(
+    provider: RulePackageProvider, tax_payer: bool, expected: str,
+) -> None:
+    result = _evaluate(provider, _profile(
+        provider, birth=date(1990, 1, 1), tax_payer=tax_payer,
+        as_of=date(2022, 10, 1),
+    ))
+
+    assert result.result == expected
+
+
+def test_apy_old_date_stops_intake_without_asking_unnecessary_questions(
+    provider: RulePackageProvider,
+) -> None:
+    profile = HouseholdProfile.from_answers(
+        {"application_date": date(2022, 9, 30)}, provider.registry,
+    )
+    assert pick_shared_registered_fact(
+        profile, [provider.packages[SCHEME]], provider.registry,
+    ) is None
+    assert pick_shared_registered_fact(
+        profile, [provider.packages[SCHEME], provider.packages["PM-KISAN-IN"]],
+        provider.registry,
+    ) in provider.packages["PM-KISAN-IN"].required_facts
+
+
 def _build_graph(
     provider: RulePackageProvider,
     answer_interpreter: Callable[
@@ -183,6 +267,59 @@ def _build_graph(
         fact_registry=provider.registry,
         rule_bundles=provider.bundles,
     )
+
+
+@pytest.mark.parametrize(("locale", "message_part"), [
+    ("en", "before 1 October 2022"),
+    ("hi", "1 अक्टूबर 2022"),
+    ("mr", "1 ऑक्टोबर 2022"),
+])
+def test_apy_historical_date_refusal_reaches_journey(
+    provider: RulePackageProvider, locale: str, message_part: str,
+) -> None:
+    async def unused_interpreter(_fact, _question, _reply):
+        return AnswerInterpretation(kind="uncertain", confidence=0.0)
+
+    graph = _build_graph(provider, unused_interpreter)
+    result = asyncio.run(run_journey(
+        graph,
+        JourneyRequest(
+            action="evaluate", scheme_id=SCHEME, locale=locale,
+            profile={
+                "application_date": "2022-09-30",
+                "date_of_birth": "1990-01-01",
+                "apy_is_citizen_of_india": True,
+                "apy_has_savings_bank_account": True,
+                "apy_is_or_has_been_income_tax_payer": True,
+            },
+        ),
+    ))
+
+    assert result.status == "need_more_information"
+    assert result.eligibility_result is not None
+    assert message_part in result.eligibility_result.reason
+    assert result.eligibility_result.deciding_rule_ids == []
+
+
+def test_apy_historical_date_ends_interview_without_more_questions(
+    provider: RulePackageProvider,
+) -> None:
+    async def unused_interpreter(_fact, _question, _reply):
+        return AnswerInterpretation(kind="uncertain", confidence=0.0)
+
+    graph = _build_graph(provider, unused_interpreter)
+    result = asyncio.run(run_journey(
+        graph,
+        JourneyRequest(
+            action="interview", scheme_id=SCHEME,
+            profile={"application_date": "2022-09-30"},
+        ),
+    ))
+
+    assert result.status == "need_more_information"
+    assert result.pending_fact is None
+    assert result.eligibility_result is not None
+    assert "before 1 October 2022" in result.eligibility_result.reason
 
 
 def test_apy_free_text_profile_is_not_sent_to_fact_interpreter(

@@ -34,7 +34,6 @@ dependencies = [
   "qdrant-client[fastembed]>=1.14,<2",
   "langchain-qdrant>=1.1,<2",
   "rank-bm25>=0.2.2,<1",
-  "prometheus_client>=0.21,<1",
   "azure-monitor-opentelemetry>=1.8,<2",
 ]
 

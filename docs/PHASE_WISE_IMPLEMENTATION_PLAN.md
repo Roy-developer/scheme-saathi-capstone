@@ -1098,7 +1098,7 @@ Backend:
 - FastAPI streaming with safe event contracts; UI displays validated progress
   without exposing model reasoning or raw tool errors.
 - One-command Compose starts UI/API, separate MCP services, mock portal, vector
-  store, Prometheus and Grafana. Verify storage/restore/migration behavior;
+  store, and Managed Grafana (Azure) reading App Insights. Verify storage/restore/migration behavior;
   local SQLite files in an ephemeral container are not a cross-revision backup.
 - Traces cover every model/tool call with masking, cost/latency/error outcomes.
   Dashboard: questions/chat, can't-tell rate, waiting approvals, masked-ID hits,

@@ -1,38 +1,34 @@
 # Monitoring (Role 5 -> Role 6)
 
-The API keeps the Prometheus endpoint and additionally exports the same
-instrumentation through OpenTelemetry. Azure Monitor export is enabled only
-when `APPLICATIONINSIGHTS_CONNECTION_STRING` is configured. This preserves the
-local scrape path while allowing the OpenTelemetry implementation from
-`feature/monitoring-otel-on-supervisor` to be used in Azure.
+The API emits all instrumentation through OpenTelemetry. Azure Monitor export
+(Application Insights) is enabled only when `APPLICATIONINSIGHTS_CONNECTION_STRING`
+is configured. Managed Grafana reads from Azure Monitor.
 
 ## Metrics
 
-`GET /metrics` exposes the Prometheus series used by the local dashboard:
+OpenTelemetry instruments use the `scheme_saathi.*` namespace:
 
-| Guide panel | Prometheus metric |
+| Guide panel | OTel instrument |
 |---|---|
-| Questions | `scheme_saathi_questions_total` |
-| Can't-tell rate | `scheme_saathi_verdicts_total{result="need_more_information"}` |
-| Pending approvals | `scheme_saathi_pending_approvals` |
-| Masked-ID hits | `scheme_saathi_masked_id_hits_total{field_type=...}` |
-| Cost | `scheme_saathi_cost_usd` |
-| Latency, tokens, guardrails | `scheme_saathi_request_latency_seconds`, `scheme_saathi_llm_call_seconds`, `scheme_saathi_tokens_total`, `scheme_saathi_guardrail_blocks_total` |
+| Questions | `scheme_saathi.questions` |
+| Can't-tell rate | `scheme_saathi.verdicts` with `result="need_more_information"` |
+| Pending approvals | `scheme_saathi.pending_approvals` |
+| Masked-ID hits | `scheme_saathi.masked_id_hits` with `field_type=...` |
+| Cost | `scheme_saathi.cost_usd` |
+| Latency, tokens, guardrails | `scheme_saathi.request_latency`, `scheme_saathi.llm_call_duration`, `scheme_saathi.tokens`, `scheme_saathi.guardrail_blocks` |
 
-OpenTelemetry instruments use the `scheme_saathi.*` namespace for those same
-signals, including conversations, evaluations, verdicts, questions, masked IDs,
-pending approvals, cost, tokens, LLM/request latency, and guardrail blocks.
+Also emitted: `scheme_saathi.conversations` and `scheme_saathi.evaluations`.
 Verdict `cant_tell` is normalized to `need_more_information`.
 
 ## Local proof
 
-```bash
-python -m uvicorn src.api.app:app --reload --port 8000
-curl -s http://127.0.0.1:8000/metrics
-```
+Without an Application Insights connection string, recording is backend-free
+and no metrics leave the process. To check emission locally, use the in-memory
+reader in `tests/test_observability_metrics.py`:
 
-Without an Application Insights connection string, OpenTelemetry recording is
-backend-free; the Prometheus endpoint remains available for local checks.
+```bash
+python -m pytest -q tests/test_observability_metrics.py
+```
 
 ## Azure handoff
 
@@ -40,12 +36,12 @@ backend-free; the Prometheus endpoint remains available for local checks.
    never commit it or put it in a report.
 2. Verify the API exports metrics to the intended Application Insights resource
    and capture a sanitized query/result as deployment evidence.
-3. If using Prometheus/Grafana instead, point the scraper at the API's
-   `/metrics` route and use the dashboard and alert definitions under `monitoring/`.
+3. Build the Managed Grafana dashboards and alerts against Azure Monitor /
+   Application Insights data.
 4. Do not bake Grafana into the shared FE/BE app image.
 
 The OpenTelemetry exporter being configured in code is not proof of an Azure
-export, dashboard, scrape, or alert in the shared environment.
+export, dashboard, or alert in the shared environment.
 
 ## Shared development spot check (2026-11-12)
 
@@ -59,13 +55,11 @@ A read-only check of the shared development environment found:
   `scheme_saathi.request_latency`, `scheme_saathi.questions`,
   `scheme_saathi.evaluations`, and `scheme_saathi.verdicts`. The query grouped
   only by metric name and did not read dimensions or applicant data.
-- The running revision returned HTTP 404 for `/metrics`; the current branch's
-  Prometheus endpoint has not been deployed and verified.
 - No Azure metric alert rules were configured. A Grafana resource exists, but
   its dashboard contents and alert behavior were not verified.
 
 This confirms some telemetry from the older shared-dev image only. It does not
-complete the current-commit, dashboard, Prometheus, or alert proof.
+complete the current-commit, dashboard, or alert proof.
 
 ## Cost estimate
 
@@ -76,17 +70,15 @@ USD histogram uses environment defaults (override as needed):
 
 ## Readiness
 
-**Implemented locally:** Prometheus scrape endpoint, existing dashboards/alert
-definitions, OpenTelemetry instruments, and opt-in Azure Monitor exporter.
+**Implemented locally:** OpenTelemetry instruments and opt-in Azure Monitor exporter.
 
 **Still needs live evidence or follow-up:**
 
 | Signal / gate | Remaining work |
 |---|---|
 | Journey verdict rate | Journey can re-count accumulated `eligibility_results` on each turn |
-| Pending approvals | Prometheus gauge is per process and not backed by portal truth across replicas/restarts |
+| Pending approvals | Up/down counter is tracked per process and not backed by portal truth across replicas/restarts |
 | Cost / tokens / LLM latency | Estimates; helper LLM paths are not fully counted, and agent `PIIMiddleware` redactions do not increment masked-ID hits |
 | Guardrail blocks | Injection and scam screens are instrumented; attack coverage and UX remain evaluation work |
 | Azure Monitor | Configure the secret in the shared environment and prove data arrives |
-| Alert / dashboard | Demonstrate a working shared-environment alert or scrape; configuration files alone are not proof |
-| Public ingress | Restrict `/metrics` if it is reachable outside trusted internal networks |
+| Managed Grafana | Build and prove dashboards and alerts against Azure Monitor data; configuration files alone are not proof |

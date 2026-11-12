@@ -1391,19 +1391,9 @@
         "APY-IN": {
           "result": "need_more_information",
           "missing_fields": [
-            "date_of_birth",
-            "application_date",
-            "apy_is_citizen_of_india",
-            "apy_has_savings_bank_account",
-            "apy_is_or_has_been_income_tax_payer"
+            "application_date"
           ],
-          "deciding_rule_ids": [
-            "APY-IN-AGE-MIN-01",
-            "APY-IN-AGE-MAX-01",
-            "APY-IN-CITIZEN-01",
-            "APY-IN-SAVINGS-BANK-01",
-            "APY-IN-TAX-PAYER-EXCLUSION-01"
-          ]
+          "deciding_rule_ids": []
         }
       },
       "labels": [

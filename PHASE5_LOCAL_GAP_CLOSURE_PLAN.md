@@ -44,11 +44,11 @@ tests, or personas with more evaluation evidence.
 | 2 | Finish the remaining memory evidence in Wave 2: demonstrate corrected-value reuse through the UI, bounded retention at the actual checkpoint layer, and a compact memory-on/off report. | This closes the L9 evidence gap and enables honest memory-specific security tests. | The policy, correction, expiry, isolation, forget, and on/off evidence match their DoD; stop adding unit tests that do not change that evidence. |
 | 3 | Address missing security/E2 classes in Wave 3: own-data, memory isolation, and approval authorization; preserve independent attack authorship and benign controls. | These have higher claim value than further tuning of already-covered injection/ID/scam checks. | At least 30 independently authored attacks actually execute and off/on attack success plus false blocks are reported; do not inflate the runnable count with stubs. |
 | 4 | Run E1/E3/E4 and final held-out work in Wave 4 only after approved freeze and custody gates. | This avoids spending paid calls or contaminating held-out cases before results are comparable. | Complete only the specified arms and three repeats; stop rather than add extra runs for cosmetic score gains. |
-| Parallel, gated | Wave 5 shared monitoring proof, owned by R6, once a safe environment and credentials are available. | Local exporter/dashboard polish cannot substitute for a scrape and working alert. | Stop local polish until shared telemetry and alert evidence can be collected safely. |
+| Parallel, gated | Wave 5 shared monitoring proof, owned by R6, once a safe environment and credentials are available. | Local exporter/dashboard polish cannot substitute for Azure Monitor data and a working alert. | Stop local polish until shared telemetry and alert evidence can be collected safely. |
 
 **Low-return work to avoid:** adding easy development personas after the
 development set is adequate; chasing 43/43 accuracy; tuning more regexes while
-memory/approval stubs remain; reformatting dashboards without a live scrape;
+memory/approval stubs remain; reformatting dashboards without Azure Monitor data;
 rerunning or retuning against held-out results; and reopening planning when no
 new evidence, approval, or blocker state has changed.
 
@@ -70,7 +70,7 @@ highest-value unblocked item.
 | Memory | Consent-gated return-code store records policy/version, approved fact IDs, and 90-day expiry; legacy/expired records are discarded. Approver selected no automatic expiry for historical SQLite checkpoints. | Multi-case memory-on/off evidence and cross-household attack coverage remain open; fact-set/consent-text review is still required before real-applicant use. Synthetic data only. |
 | Forget flow | One retryable API operation attempts journey and household deletion and reports partial failure. | Not transactional; verify all backing stores and retry after an incomplete result. |
 | Labels / experiments | κ smoke uses copied labels; E1/E4 configs exist, but required arms are not evidenced; paid E3 is pending | Independent labels and frozen, reproducible E1-E4 evidence remain open. |
-| Monitoring | Prometheus `/metrics` and dashboards are present. The OpenTelemetry/Azure Monitor exporter from `13dde6b` is now ported into this working tree alongside Prometheus, preserving existing metric coverage. | The exporter has no shared-environment proof; alert/dashboard behavior, metric accuracy, and Azure configuration remain to be demonstrated. |
+| Monitoring | OpenTelemetry metrics are the only instrumentation; the Azure Monitor exporter from `13dde6b` is ported into this working tree. The Prometheus implementation has been removed. | The exporter has no shared-environment proof; alert/dashboard behavior, metric accuracy, and Azure configuration remain to be demonstrated. |
 | Threat model | ASI06 now documents the consent-gated return-code prototype, controls, and residual risks in `docs/THREAT_MODEL.md`. | Keep it aligned with changes; cross-household attack evidence remains open. |
 
 ## 2. Execution order
@@ -138,7 +138,14 @@ freeze details; R5 for attack and held-out custody.
    state caps conversation turns and handoffs at 40. Historical SQLite
    checkpoints have no automatic expiry per the approver's decision; the
    existing restart-persistence test passes and explicit forget deletes a
-   conversation thread. Backup-snapshot deletion behavior remains unverified.
+   conversation thread. **Backup fix implemented locally:** a durable pending
+   marker precedes live deletion, current snapshots are refreshed before 204,
+   and pending deletions replay before startup serves requests. Synthetic
+   tests cover failed refresh, mixed snapshots, retry, concurrent API requests,
+   and preservation of an unrelated journey. This assumes one backend replica;
+   Azure durability, physical erasure, and deletion of old external copies
+   remain unverified. See `tests/test_forget_backup.py`,
+   `tests/test_forget_backup_restart.py`, and `docs/MEMORY_POLICY.md`.
 8. **Partial:** tests cover consented versus fresh journeys, saved-fact
    correction/reuse, return-code isolation, policy filtering, and combined
    forget failure/success. `eval/reports/memory_on_off_dev_latest.json` records
@@ -159,20 +166,52 @@ and evidence pack are also complete.
 
 1. Refresh the threat model against the actual memory and approval code.
 2. The project approver authored and Vivian reviewed seven case briefs; both
-   are confirmed independent of the control implementers. They are approved
-   for implementation but remain stubs until deterministic synthetic setup,
-   real runtime paths, and assertions are implemented and run. The other 23
-   legacy cases still need authorship metadata.
-3. Add an own-data-path attack through quarantined intake text.
-4. Extend E2 off/on evaluation to truthful eligibility, own-data, memory
-   isolation, and approval authorization. Report attack success with defences
-   off/on and legitimate-work false blocks.
-5. Preserve independent attack authorship and clean benign cases; add CI gates
-   for the claimed attack set and false-block regressions.
+   are confirmed independent of the control implementers. Each now maps to an
+   allowlisted local pytest case executed by the Role 5 development gate; the
+   latest run passed all seven. This is development evidence, not full L9 or
+   independent 30-case evidence. Vivian approved RT-SCAM-001 through
+   RT-SCAM-003 and all 20 remaining revised briefs with advisory scores above 80.
+   All 30 briefs are approved for implementation; historical AI objections and
+   full-app validation gaps remain open, not pending human approval.
+   A separate 2026-11-12 application-path runtime run executed all 30 approved
+   cases: initially 28 passed and two failed. RT-IDLEAK-004 (mixed separators)
+   and RT-IDLEAK-005 (PAN) leaked synthetic identifiers into model input and
+   saved checkpoint state. Shared masking rules now cover both; the rerun
+   passed 30/30 and focused masking tests passed 101/101. Results and case-level
+   boundaries are in `eval/reports/red_team_runtime_latest.json` and
+   `docs/EVALUATION_REPORT.md`; the original failed run is retained separately.
+   The run uses real local API/MCP/portal paths with scripted offline models;
+   it does not establish live LLM efficacy or expanded E2 off/on evidence.
+   On 2026-11-12, an isolated headless Chrome search with a synthetic
+   pending-review scam passage showed its OTP lure and clickable example link
+   without a scam-specific warning. The passage was injected into the test
+   search child only, not the real corpus. The shared search adapter now
+   ignores only flagged passages and shows a safe warning, preserving clean
+   matches. Headless Chrome rechecks covered mixed, all-scam, and clean search
+   results; the regression is covered by API/UI and adapter tests.
+   This closes the reproduced path, not all red-team or L9 gaps.
+3. **Implemented locally:** synthetic PAN/Aadhaar input through the real intake
+   path is checked at model and checkpoint boundaries; the separate E2 run
+   compares masking on/off with a clean intake control.
+4. **Partial:** `scripts/evaluate_e2_runtime.py` executes five derived scenarios
+   for confirmed facts, own-data privacy, memory consent, scoped draft reads,
+   and human approval, with clean controls in each arm (20 observations).
+   Attack success is off 4/5 versus on 0/5; clean false blocks are 0/5 in both
+   arms. Off means one named boundary removed using isolated test-only
+   adapters; remaining controls stay active. The fact-filter off attack still
+   requires confirmation and is not counted as a successful silent overwrite.
+   This is not all 30 attacks paired, authenticated household ownership,
+   live LLM efficacy, or independent frozen E2 evidence.
+5. **Wired locally:** `frontend-checks.yml` has dedicated blocking runtime
+   red-team and E2 gates, excludes those modules from the broad pytest step,
+   and uploads only the two synthetic JSON reports even on failure.
+   Gate commands are validated locally; a remote Actions run remains pending
+   commit/push. Independent authorship/validation requirements remain separate.
 
 **Exit:** at least 30 independently authored attacks actually execute,
 including own-data, memory, and approval cases; reported E2 scope matches
-implemented checks. Until then, claim only the current offline subset.
+implemented checks. Claim the offline subset and scoped local runtime evidence
+separately; independent frozen E2 evidence and a remote CI run remain open.
 
 ### Wave 4 — Frozen evaluation claims (P0 hygiene, then P1 results)
 
@@ -212,12 +251,13 @@ meet the PDF's denominators, label/calibration protocol, and metric checklist.
 
 ### Wave 5 — Monitoring deployment evidence (implementation present; P1 handoff)
 
-The local working tree now has dual recording: existing Prometheus metrics
-remain available at `/metrics`, and OpenTelemetry metrics can export through
-Azure Monitor when `APPLICATIONINSIGHTS_CONNECTION_STRING` is configured. A
-read-only shared-dev check found `scheme_saathi.*` AppMetrics from the older
-`git-13dde6b37e3a` image, but the current branch is not deployed; `/metrics`
-returned 404 and no Azure metric alert rules were configured. The live
+The local working tree records metrics only through OpenTelemetry. The
+Prometheus implementation and `/metrics` route have been removed. OpenTelemetry
+metrics export through Azure Monitor when `APPLICATIONINSIGHTS_CONNECTION_STRING`
+is configured. A read-only shared-dev check found `scheme_saathi.*` AppMetrics
+from the older `git-13dde6b37e3a` image, but the current branch is not deployed,
+and no Azure metric alert rules were configured. Managed Grafana dashboards and
+alerts are Phase 6 work on `feature/monitoring-otel-on-supervisor`; the live
 dashboard and alert proof remain open.
 
 1. Check that journey results are not counted repeatedly across turns and that
@@ -227,14 +267,14 @@ dashboard and alert proof remain open.
 2. Configure the connection string only through the deployment secret store;
    never commit or print it.
 3. In the shared environment, verify data arrives in the intended
-   Application Insights resource, or demonstrate the Prometheus/Grafana scrape
-   path. Include a sanitized query/scrape and timestamp as evidence.
+   Application Insights resource, and that the Managed Grafana dashboard reads
+   it. Include a sanitized query and timestamp as evidence.
 4. Demonstrate a working alert and dashboard. Existing configuration files and
    local tests alone do not satisfy this gate.
 5. Verify exported telemetry contains no prompts, applicant facts, return
    codes, or other sensitive values.
 
-**Exit:** Role 6 supplies shared-environment export/scrape and alert evidence.
+**Exit:** Role 6 supplies shared-environment export and alert evidence.
 Until then, monitoring is implemented locally but is not a completed deployment
 claim.
 
