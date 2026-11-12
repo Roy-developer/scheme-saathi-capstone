@@ -1,5 +1,7 @@
 """Check every gate before a held-out run is allowed. This script never runs the run.
 
+Required approver: R5 (custodian) only, as decided by the project lead.
+
 It reads only the freeze manifest, the threshold sign-off table and the manifest
 hash of the held-out file. It does not open held-out case content.
 
@@ -21,7 +23,9 @@ FREEZE_MANIFEST = PROJECT_ROOT / "eval" / "freeze" / "manifest.json"
 THRESHOLDS = PROJECT_ROOT / "eval" / "THRESHOLD_DECISIONS.md"
 HELD_OUT_MANIFEST = PROJECT_ROOT / "eval" / "held_out" / "manifest.json"
 OVERRIDE_LOG = PROJECT_ROOT / "eval" / "freeze" / "gate_overrides.log"
-REQUIRED_ROLES = ("R1", "R2", "R3", "R4", "R5", "R6")
+# Decided by the project lead: the custodian (R5) is the only required approver
+# for a held-out run. Other owners' sign-offs are recorded but not required.
+REQUIRED_ROLES = ("R5",)
 SIGNOFF_PREFIXES = ("has not signed", "freeze is not approved", "no paid budget cap")
 
 
