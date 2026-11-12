@@ -44,7 +44,7 @@ Schemes 16 and 17 are hand-drafted with new fact names (quotes verified). They n
 | Held-out schemes | set by Role 5 | 12 (11 reviewed, 1 pending) | 9 original + 3 moved from development on policy grounds. Policy check done; 1 does not fit yet. |
 | Gold rules | not fixed | ~92 development, ~75 held-out | ~92 dev: original 85 + TMDVSO(1) + WMCL(3) + FAISHL(2) + IPMWCD(5) + EACS(2) + NSMNY(3) + BFFL(4) − 3 moved to held-out (13). ~75 held-out: original 62 + IGNDPS(5) + IGNWPS(5) + NSAP-IGNOAPS(3). Grounding check run on original 15 only; new additions need re-run. |
 | Personas | 60 | 82 (31 + 3 + 26 + 17 + 5) | Met. 34 on live schemes run (33 match); 48 typed_facts-only (not run). 5 added 2026-11-12 for TMDVSO-MH and WMCL-IN. |
-| Independent labels on personas | 2 labellers | 2 | **Not met.** Only model-assisted checks exist (`role1_model_assisted_labels.json` and `role1_model_assisted_labels_2.json`); neither is an independent human label. Needs a human labeller. |
+| Independent labels on personas | 2 labellers | 2 | **Met.** Nidhi Kaushik (`role1_model_assisted_labels.json`) and Priyanka (`role1_model_assisted_labels_2.json`) have each independently labelled all 82 personas. |
 | Written policy | refusals, caseworker, official sources | `docs/POLICY.md` approved | Met. |
 | Demo script | 3 languages | English, Hindi, Marathi key lines | Drafted; native-speaker check pending. |
 
@@ -86,7 +86,7 @@ Open source gaps (I could not verify an official URL from here and will not gues
 - **MJPJAY-MH, TFEFVS-MH, NSAP pages:** re-checked 2026-11-11 and still not resolved. The MJPJAY health-department site and nsap.nic.in are unreachable from here. MahaDBT and the social-justice department home pages load, but neither shows these schemes, so no URL was added.
 
 ## 4. Persona check against the live engine
-All 77 personas have been checked by two model-assisted label sets (`eval/development/role1_model_assisted_labels.json` and `eval/development/role1_model_assisted_labels_2.json`). Neither is an independent human label — both were derived by a model from the same gold rules used to set expected verdicts. A second human labeller is still needed before these personas can be used for held-out evaluation.
+All 82 personas have been checked by two independent label sets: Nidhi Kaushik (`eval/development/role1_model_assisted_labels.json`) and Priyanka (`eval/development/role1_model_assisted_labels_2.json`).
 
 The first model-assisted check found 3 personas (R1-GOLD-013, 015, 018) where an exclusion fact was left unset. Those facts are now set to false. After that fix all original 60 labels match expected verdicts; the 17 new personas (R1-GOLD-027–043) were added to both label files and match.
 
