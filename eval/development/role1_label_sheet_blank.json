@@ -12,8 +12,8 @@
         "is_widow": true,
         "bpl_card_shown": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "validated from the website: https://sjsa.maharashtra.gov.in/english/IGNWPS"
     },
     {
       "persona_id": "IGNWPS-DEV-002",
@@ -25,8 +25,8 @@
         "is_widow": true,
         "bpl_card_shown": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "validated from the website: https://sjsa.maharashtra.gov.in/english/IGNWPS"
     },
     {
       "persona_id": "IGNWPS-DEV-003",
@@ -38,8 +38,8 @@
         "is_widow": true,
         "bpl_card_shown": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "validated from the website: https://sjsa.maharashtra.gov.in/english/IGNWPS"
     },
     {
       "persona_id": "IGNWPS-DEV-004",
@@ -51,8 +51,8 @@
         "is_widow": true,
         "bpl_card_shown": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "validated from the website: https://sjsa.maharashtra.gov.in/english/IGNWPS"
     },
     {
       "persona_id": "IGNWPS-DEV-005",
@@ -64,8 +64,8 @@
         "is_widow": false,
         "bpl_card_shown": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "validated from the website: https://sjsa.maharashtra.gov.in/english/IGNWPS"
     },
     {
       "persona_id": "IGNWPS-DEV-006",
@@ -77,8 +77,8 @@
         "is_widow": true,
         "bpl_card_shown": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "validated from the website: https://sjsa.maharashtra.gov.in/english/IGNWPS"
     },
     {
       "persona_id": "IGNWPS-DEV-007",
@@ -90,8 +90,8 @@
         "is_widow": true,
         "bpl_card_shown": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "validated from the website: https://sjsa.maharashtra.gov.in/english/IGNWPS"
     },
     {
       "persona_id": "IGNWPS-DEV-008",
@@ -103,8 +103,8 @@
         "is_widow": true,
         "bpl_card_shown": null
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "BPL card is crucial. Source validated from the website: https://sjsa.maharashtra.gov.in/english/IGNWPS"
     },
     {
       "persona_id": "IGNWPS-DEV-009",
@@ -116,8 +116,8 @@
         "is_widow": null,
         "bpl_card_shown": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "Widow related document is important. Validated from the website: https://sjsa.maharashtra.gov.in/english/IGNWPS"
     },
     {
       "persona_id": "IGNWPS-DEV-010",
@@ -129,8 +129,8 @@
         "is_widow": true,
         "bpl_card_shown": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "DOB is crucial. Source validated from the website: https://sjsa.maharashtra.gov.in/english/IGNWPS"
     },
     {
       "persona_id": "IGNWPS-DEV-011",
@@ -142,8 +142,8 @@
         "is_widow": true,
         "bpl_card_shown": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "All validations met. Validated from the website: https://sjsa.maharashtra.gov.in/english/IGNWPS"
     },
     {
       "persona_id": "IGNWPS-DEV-012",
@@ -155,8 +155,8 @@
         "is_widow": true,
         "bpl_card_shown": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Applicant exceeds the maximum age limit of 79. Validated from the website: https://sjsa.maharashtra.gov.in/english/IGNWPS"
     },
     {
       "persona_id": "IGNWPS-DEV-013",
@@ -168,8 +168,8 @@
         "is_widow": true,
         "bpl_card_shown": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Applicant does not meet the minimum age requirement of 40. Validated from the website: https://sjsa.maharashtra.gov.in/english/IGNWPS"
     },
     {
       "persona_id": "PMKISAN-DEV-001",
@@ -185,8 +185,8 @@
         "registered_practicing_professional_member": false,
         "nri_new_beneficiary": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": " Owns cultivable land in state records and no listed exclusion applies."
     },
     {
       "persona_id": "PMKISAN-DEV-002",
@@ -202,8 +202,8 @@
         "registered_practicing_professional_member": false,
         "nri_new_beneficiary": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Does not own cultivable land per state land records."
     },
     {
       "persona_id": "PMKISAN-DEV-003",
@@ -219,8 +219,8 @@
         "registered_practicing_professional_member": false,
         "nri_new_beneficiary": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Exclusion: institutional landholders."
     },
     {
       "persona_id": "PMKISAN-DEV-004",
@@ -236,8 +236,8 @@
         "registered_practicing_professional_member": false,
         "nri_new_beneficiary": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Exclusion: current/former ministers, MPs, MLAs, mayors, district panchayat chairpersons."
     },
     {
       "persona_id": "PMKISAN-DEV-005",
@@ -253,8 +253,8 @@
         "registered_practicing_professional_member": false,
         "nri_new_beneficiary": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Fact says an excluded government employee member. This category is not in the pasted list, which says Exclusions include, so confirm against the source."
     },
     {
       "persona_id": "PMKISAN-DEV-006",
@@ -270,8 +270,8 @@
         "registered_practicing_professional_member": false,
         "nri_new_beneficiary": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Exclusion: pensioners receiving 10,000 or more per month (except Group D)."
     },
     {
       "persona_id": "PMKISAN-DEV-007",
@@ -287,8 +287,8 @@
         "registered_practicing_professional_member": false,
         "nri_new_beneficiary": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Exclusion: income tax payers in the last assessment year."
     },
     {
       "persona_id": "PMKISAN-DEV-008",
@@ -304,8 +304,8 @@
         "registered_practicing_professional_member": true,
         "nri_new_beneficiary": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Exclusion: professionals registered with professional bodies."
     },
     {
       "persona_id": "PMKISAN-DEV-009",
@@ -321,8 +321,8 @@
         "registered_practicing_professional_member": false,
         "nri_new_beneficiary": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Fact says new NRI beneficiary. NRIs are not in the pasted list, so confirm against the source; the rule engine treats this as an exclusion."
     },
     {
       "persona_id": "PMKISAN-DEV-010",
@@ -338,8 +338,8 @@
         "registered_practicing_professional_member": false,
         "nri_new_beneficiary": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": " Land ownership unknown; eligibility needs land in own name per state records."
     },
     {
       "persona_id": "PMKISAN-DEV-011",
@@ -355,16 +355,16 @@
         "registered_practicing_professional_member": false,
         "nri_new_beneficiary": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": " Income tax payer status unknown; it is an exclusion that cannot be ruled out."
     },
     {
       "persona_id": "PMKISAN-DEV-012",
       "scheme_id": "PM-KISAN-IN",
       "description": "Empty profile — every PM-KISAN fact unknown.",
       "facts": null,
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": " No facts known; land ownership and all exclusions unknown."
     },
     {
       "persona_id": "IGNOAPS-DEV-001",
@@ -375,8 +375,8 @@
         "application_date": "2026-11-08",
         "name_on_bpl_list": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Age 64 is below the Maharashtra threshold of 65 (POLICY section 2). The pasted central page says 60, which would make this eligible."
     },
     {
       "persona_id": "IGNOAPS-DEV-002",
@@ -387,8 +387,8 @@
         "application_date": "2026-11-08",
         "name_on_bpl_list": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": " Age 65 meets the Maharashtra threshold and the name is on the BPL list. Citizenship and other central pension are not in the persona facts, so they are assumed not to apply."
     },
     {
       "persona_id": "IGNOAPS-DEV-003",
@@ -399,8 +399,8 @@
         "application_date": "2026-11-08",
         "name_on_bpl_list": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": " Age 85, no upper limit, on the BPL list. Citizenship and other central pension are not in the persona facts, so they are assumed not to apply."
     },
     {
       "persona_id": "IGNOAPS-DEV-004",
@@ -411,8 +411,8 @@
         "application_date": "2026-11-08",
         "name_on_bpl_list": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Must live in a BPL household; name is not on the BPL list."
     },
     {
       "persona_id": "IGNOAPS-DEV-005",
@@ -423,8 +423,8 @@
         "application_date": "2026-11-08",
         "name_on_bpl_list": null
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": " BPL status unknown; it is required."
     },
     {
       "persona_id": "IGNOAPS-DEV-006",
@@ -435,8 +435,8 @@
         "application_date": "2026-11-08",
         "name_on_bpl_list": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": " Date of birth missing, so age cannot be checked."
     },
     {
       "persona_id": "R1-IGNOAPS-003",
@@ -447,8 +447,8 @@
         "application_date": "2026-11-11",
         "name_on_bpl_list": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Age 60 meets the central threshold but not the Maharashtra threshold of 65 (POLICY section 2). Under the pasted central page alone this would be eligible."
     },
     {
       "persona_id": "R1-IGNOAPS-006",
@@ -459,8 +459,8 @@
         "application_date": "2026-11-11",
         "name_on_bpl_list": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Age 64 is below 65 and the name is not on the BPL list."
     },
     {
       "persona_id": "R1-PMKISAN-004",
@@ -476,8 +476,8 @@
         "registered_practicing_professional_member": false,
         "nri_new_beneficiary": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Pension of 10,000 or more is an exclusion (except Group D); government-employee member also flagged."
     },
     {
       "persona_id": "R1-GOLD-001",
@@ -488,8 +488,8 @@
         "is_below_poverty_line": true,
         "age": 59
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Age 59 is below the central threshold of 60."
     },
     {
       "persona_id": "R1-GOLD-002",
@@ -500,8 +500,8 @@
         "is_below_poverty_line": true,
         "age": 60
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": " Indian citizen, age 60 or older, BPL. Citizenship and other central pension are not in the persona facts, so they are assumed not to apply."
     },
     {
       "persona_id": "R1-GOLD-003",
@@ -512,8 +512,8 @@
         "is_widow": true,
         "is_below_poverty_line": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Age 39 is below the central threshold of 60."
     },
     {
       "persona_id": "R1-GOLD-004",
@@ -524,8 +524,8 @@
         "is_widow": true,
         "is_below_poverty_line": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Age 80 is above the central threshold of 79."
     },
     {
       "persona_id": "R1-GOLD-005",
@@ -538,8 +538,8 @@
         "disability_percent": 79,
         "is_below_poverty_line": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Disability 79% is below the central threshold of 80%."
     },
     {
       "persona_id": "R1-GOLD-006",
@@ -552,8 +552,8 @@
         "disability_percent": 80,
         "is_below_poverty_line": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": " Disability 80% meets the central threshold of 80%."
     },
     {
       "persona_id": "R1-GOLD-007",
@@ -566,8 +566,8 @@
         "disability_percent": 85,
         "is_receiving_other_pension": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Age 80 is above the central threshold of 79."
     },
     {
       "persona_id": "R1-GOLD-008",
@@ -580,8 +580,8 @@
         "disability_percent": 85,
         "is_receiving_other_pension": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Already receiving another pension."
     },
     {
       "persona_id": "R1-GOLD-009",
@@ -593,8 +593,8 @@
         "is_resident_of_state": true,
         "is_family_member_of_deceased_breadwinner": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Deceased breadwinner age 17 is below the minimum age limit of 18."
     },
     {
       "persona_id": "R1-GOLD-010",
@@ -606,8 +606,8 @@
         "is_resident_of_state": true,
         "is_family_member_of_deceased_breadwinner": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": " Deceased breadwinner age 59 is within the eligible age limit of 18 to 59."
     },
     {
       "persona_id": "R1-GOLD-011",
@@ -619,8 +619,8 @@
         "is_resident_of_state": true,
         "is_family_member_of_deceased_breadwinner": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Deceased breadwinner age 60 is above the eligible age limit of 18 to 59."
     },
     {
       "persona_id": "R1-GOLD-012",
@@ -631,8 +631,8 @@
         "is_citizen_of_india": true,
         "has_savings_bank_account": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Age 41 is above the eligible age limit of 18 to 40."
     },
     {
       "persona_id": "R1-GOLD-013",
@@ -644,8 +644,8 @@
         "has_savings_bank_account": true,
         "is_income_tax_payer": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": " Age 40 is within the eligible age limit of 18 to 40."
     },
     {
       "persona_id": "R1-GOLD-014",
@@ -656,8 +656,8 @@
         "has_savings_bank_account": true,
         "consents_to_auto_debit": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Age 71 is above the eligible age limit of 18 to 70."
     },
     {
       "persona_id": "R1-GOLD-015",
@@ -669,8 +669,8 @@
         "consents_to_auto_debit": true,
         "is_institutional_account_holder": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": " Age 50 is within the eligible age limit of 18 to 50."
     },
     {
       "persona_id": "R1-GOLD-016",
@@ -684,8 +684,8 @@
         "is_student_in_class_9_or_10": true,
         "family_members_receiving_scholarship": 1
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Annual family income Rs 2,50,001 is above the eligible limit of Rs 2,50,000."
     },
     {
       "persona_id": "R1-GOLD-017",
@@ -699,8 +699,8 @@
         "is_citizen_of_india": true,
         "has_disability": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Annual income Rs 1,00,000 is not below the eligible limit of Rs 1,00,000."
     },
     {
       "persona_id": "R1-GOLD-018",
@@ -716,8 +716,8 @@
         "receives_other_scholarship_or_stipend": false,
         "is_repeating_class": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "[Copilot-filled from the POST-DIS criteria Nidhi pasted 2026-11-12; not an independent human label] Disability 50% (40% or more), income 250000 is within the 2.50 lakh limit, post-matric student, no other scholarship."
     },
     {
       "persona_id": "R1-GOLD-019",
@@ -731,8 +731,8 @@
         "is_student_in_post_matric_course": true,
         "family_members_receiving_scholarship": 1
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Income 250001 is above the 2.50 lakh limit."
     },
     {
       "persona_id": "R1-GOLD-020",
@@ -746,8 +746,8 @@
         "is_student_in_post_matric_course": true,
         "family_members_receiving_scholarship": 3
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Three family members already receive the scholarship, so this student would be beyond the two-sibling limit (not the third sibling)."
     },
     {
       "persona_id": "R1-GOLD-021",
@@ -761,8 +761,8 @@
         "is_student_in_post_matric_course": true,
         "family_members_receiving_scholarship": 1
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Disability 39% is below the required 40%."
     },
     {
       "persona_id": "R1-GOLD-022",
@@ -775,8 +775,8 @@
         "is_resident_of_state": true,
         "has_completed_vocational_training": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": " Disability 40%, resident, citizen and trained all pass, but the pasted criteria also require age 14 to 80 and age is not in the persona facts. Eligible if age is in range."
     },
     {
       "persona_id": "R1-GOLD-023",
@@ -789,8 +789,8 @@
         "is_resident_of_state": true,
         "has_completed_vocational_training": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Disability 39% is below the required 40%."
     },
     {
       "persona_id": "R1-GOLD-024",
@@ -804,8 +804,8 @@
         "age": 17,
         "annual_income_inr": 80000
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Age 17 is below the minimum age of 18."
     },
     {
       "persona_id": "R1-GOLD-025",
@@ -819,8 +819,8 @@
         "age": 51,
         "annual_income_inr": 80000
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Age 51 is above the maximum age of 50."
     },
     {
       "persona_id": "R1-GOLD-026",
@@ -834,8 +834,8 @@
         "is_student_in_class_9_or_10": true,
         "family_members_receiving_scholarship": 3
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": " Only two students per family can receive it, and three family members already do."
     },
     {
       "persona_id": "R1-GOLD-027",
@@ -845,8 +845,8 @@
         "is_war_bereaved_or_disabled_or_casualty": true,
         "has_home_loan": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "War bereaved and has taken a home loan, both required. The 1,00,000 cap applies to the loan amount considered for subsidy, so it does not make the person ineligible."
     },
     {
       "persona_id": "R1-GOLD-028",
@@ -856,8 +856,8 @@
         "is_war_bereaved_or_disabled_or_casualty": true,
         "has_home_loan": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "War bereaved, but has not taken a home loan, which is required."
     },
     {
       "persona_id": "R1-GOLD-029",
@@ -867,8 +867,8 @@
         "is_war_bereaved_or_disabled_or_casualty": false,
         "has_home_loan": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Not a war widow, war bereaved family member, war disabled or attributable peacetime casualty."
     },
     {
       "persona_id": "R1-GOLD-030",
@@ -880,8 +880,8 @@
         "is_from_rural_or_non_tier1_area": true,
         "age": 21
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Woman student from a non-tier-1 area aged between 21 and 40."
     },
     {
       "persona_id": "R1-GOLD-031",
@@ -893,8 +893,8 @@
         "is_from_rural_or_non_tier1_area": true,
         "age": 40
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Woman student from a non-tier-1 area aged between 21 and 40."
     },
     {
       "persona_id": "R1-GOLD-032",
@@ -906,8 +906,8 @@
         "is_from_rural_or_non_tier1_area": false,
         "age": 30
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Woman student from a tier-1 city (not rural/non-tier-1) is not eligible."
     },
     {
       "persona_id": "R1-GOLD-033",
@@ -917,8 +917,8 @@
         "is_construction_worker": true,
         "is_registered_construction_worker": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Construction worker registered with the MH BOCW Board meets both conditions."
     },
     {
       "persona_id": "R1-GOLD-034",
@@ -928,8 +928,8 @@
         "is_construction_worker": true,
         "is_registered_construction_worker": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Construction worker not registered with the MH BOCW Board does not meet both conditions."
     },
     {
       "persona_id": "R1-GOLD-035",
@@ -940,8 +940,8 @@
         "is_institutional_landholder": false,
         "is_income_tax_payer": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Farmer with cultivable land, not an institutional holder, not an income-tax payer is eligible."
     },
     {
       "persona_id": "R1-GOLD-036",
@@ -952,8 +952,8 @@
         "is_institutional_landholder": false,
         "is_income_tax_payer": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Farmer with cultivable land who paid income tax last year is not eligible due to R03 exclusion."
     },
     {
       "persona_id": "R1-GOLD-037",
@@ -964,8 +964,8 @@
         "is_institutional_landholder": false,
         "is_income_tax_payer": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Applicant with no cultivable land is not eligible due to R01 exclusion."
     },
     {
       "persona_id": "R1-GOLD-041",
@@ -977,8 +977,8 @@
         "owns_land_in_own_name": true,
         "is_institutional_landholder": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "MH resident farmer with Aadhaar, 7/12 in own name, not an institutional holder is eligible."
     },
     {
       "persona_id": "R1-GOLD-042",
@@ -990,8 +990,8 @@
         "owns_land_in_own_name": false,
         "is_institutional_landholder": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "MH resident farmer with Aadhaar but 7/12 not in own name is not eligible due to R03 exclusion."
     },
     {
       "persona_id": "R1-GOLD-043",
@@ -1003,8 +1003,8 @@
         "owns_land_in_own_name": true,
         "is_institutional_landholder": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "MH resident with Aadhaar and 7/12 in own name but is an institutional landholder is not eligible due to R04 exclusion."
     },
     {
       "persona_id": "R1-GOLD-044",
@@ -1013,8 +1013,8 @@
       "facts": {
         "belongs_to_vjnt_obc_or_sbc_category": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "VJNT/OBC/SBC community member is eligible due to R01 inclusion."
     },
     {
       "persona_id": "R1-GOLD-045",
@@ -1023,8 +1023,8 @@
       "facts": {
         "belongs_to_vjnt_obc_or_sbc_category": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Applicant not from VJNT/OBC/SBC category is not eligible due to R01 exclusion."
     },
     {
       "persona_id": "R1-GOLD-046",
@@ -1035,8 +1035,8 @@
         "is_pursuing_education_after_class_10": true,
         "is_child_of_estate_clerk_driver_supervisor_or_manager": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Child of SC/ST coffee labourer pursuing education after Class 10, not a supervisor's child is eligible due to R01 inclusion."
     },
     {
       "persona_id": "R1-GOLD-047",
@@ -1047,8 +1047,8 @@
         "is_pursuing_education_after_class_10": true,
         "is_child_of_estate_clerk_driver_supervisor_or_manager": false
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Child of a general estate worker (not SC/ST coffee labourer) is not eligible due to R01 exclusion."
     },
     {
       "persona_id": "R1-GOLD-048",
@@ -1059,8 +1059,8 @@
         "is_pursuing_education_after_class_10": true,
         "is_child_of_estate_clerk_driver_supervisor_or_manager": true
       },
-      "your_label (eligible / not_eligible / need_more_information)": "",
-      "your_reason (rule or source quote)": ""
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Child of SC/ST coffee labourer but also child of a supervisor is not eligible due to R03 exclusion."
     }
   ]
 }

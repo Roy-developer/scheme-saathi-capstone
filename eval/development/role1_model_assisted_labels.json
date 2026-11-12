@@ -550,11 +550,11 @@
     {
       "persona_id": "R1-GOLD-022",
       "scheme_id": "FASETDP-MH",
-      "model_assisted_label": "eligible",
+      "model_assisted_label": "need_more_information",
       "deciding_rules": [],
-      "missing_facts": [],
-      "method": "draft gold rules",
-      "matches_draft_expected": true
+      "missing_facts": ["age"],
+      "method": "draft gold rules; corrected 2026-11-12 at the owner's request because the official criteria also require age 14 to 80",
+      "matches_draft_expected": false
     },
     {
       "persona_id": "R1-GOLD-023",

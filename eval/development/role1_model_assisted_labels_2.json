@@ -393,9 +393,9 @@
     {
       "persona_id": "R1-GOLD-022",
       "scheme_id": "FASETDP-MH",
-      "result": "eligible",
+      "result": "need_more_information",
       "deciding_rule_ids": ["FASETDP-MH-R01", "FASETDP-MH-R02", "FASETDP-MH-R03", "FASETDP-MH-R04", "FASETDP-MH-R05"],
-      "reason": "disability_percent=40 (>= 40 ✓), resident_of_state=true ✓, vocational_training=true ✓, citizen=true ✓, has_disability=true ✓. All pass."
+      "reason": "disability_percent=40 (>= 40 ✓), resident_of_state=true ✓, vocational_training=true ✓, citizen=true ✓, has_disability=true ✓. The official criteria also require age 14 to 80 and age is not in the persona facts. Corrected from eligible on 2026-11-12 at the owner's request."
     },
     {
       "persona_id": "R1-GOLD-023",

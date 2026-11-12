@@ -84,6 +84,7 @@ Open source gaps (I could not verify an official URL from here and will not gues
 - **PMJJBY-IN, PMSBY-IN:** `jansuraksha.in` confirmed as official Jan Suraksha portal by Nidhi Kaushik 2026-11-12. No action needed.
   Confirmed 2026-11-12 by Nidhi Kaushik: jansuraksha.in is the official Jan Suraksha portal. PMJJBY-IN and PMSBY-IN sources are valid.
 - **MJPJAY-MH, TFEFVS-MH, NSAP pages:** re-checked 2026-11-11 and still not resolved. The MJPJAY health-department site and nsap.nic.in are unreachable from here. MahaDBT and the social-justice department home pages load, but neither shows these schemes, so no URL was added.
+- **FASETDP-MH age limit (deferred):** the third-party site jsrr.in reports an age range of 14 to 80. The official passages captured for the scheme have no age rule; the myScheme page's eligibility point 3 was not captured. No age rule was added. Persona R1-GOLD-022 is labelled need_more_information because age is not in its facts. Once point 3 is checked on the official page and confirms an age range, add the passage, an age rule and a persona age.
 
 ## 4. Persona check against the live engine
 The 82 personas have two model-assisted label sets: `eval/development/role1_model_assisted_labels.json` and `eval/development/role1_model_assisted_labels_2.json`. Both were produced by AI sessions. They are consistency checks, not independent human labels, so no kappa can be computed from them yet.
