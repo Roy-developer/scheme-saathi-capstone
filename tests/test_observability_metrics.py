@@ -143,3 +143,21 @@ def test_reject_removes_a_waiting_draft(reader) -> None:
     _track_waiting_approval(draft, {**draft, "rejected": True})
 
     assert sum(p.value for p in _points(reader, "scheme_saathi.waiting_approvals")) == 0
+
+
+def test_aadhaar_like_number_adds_one_masked_hit(reader) -> None:
+    from src.workflow.agent_runtime import mask_sensitive_text
+
+    masked = mask_sensitive_text("My Aadhaar is 1234 5678 9012 please.")
+
+    assert "1234 5678 9012" not in masked
+    (point,) = _points(reader, "scheme_saathi.masked_id_hits")
+    assert point.value == 1
+
+
+def test_plain_text_adds_no_masked_hit(reader) -> None:
+    from src.workflow.agent_runtime import mask_sensitive_text
+
+    mask_sensitive_text("I am a farmer in Maharashtra with a small plot.")
+
+    assert _points(reader, "scheme_saathi.masked_id_hits") == []

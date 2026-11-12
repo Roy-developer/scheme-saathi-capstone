@@ -14,6 +14,7 @@ from langchain_core.tools import BaseTool
 from pydantic import BaseModel, ConfigDict
 
 from src.llm_client import DEFAULT_CHAT_MODEL
+from src.observability.metrics import record_masked_id_hits
 from src.workflow.agent_middleware import (
     model_call_fits,
     reserve_model_call,
@@ -223,8 +224,11 @@ async def recover_authorized_action(
 def mask_sensitive_text(text: str) -> str:
     """Mask common identifiers before free text reaches a model or trace."""
 
+    hits = 0
     for rule in _RESOLVED_PII_RULES:
-        text, _matches = rule.apply(text)
+        text, matches = rule.apply(text)
+        hits += len(matches)
+    record_masked_id_hits(hits)
     return text
 
 
