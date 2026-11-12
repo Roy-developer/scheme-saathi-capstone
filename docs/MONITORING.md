@@ -47,6 +47,26 @@ backend-free; the Prometheus endpoint remains available for local checks.
 The OpenTelemetry exporter being configured in code is not proof of an Azure
 export, dashboard, scrape, or alert in the shared environment.
 
+## Shared development spot check (2026-11-12)
+
+A read-only check of the shared development environment found:
+
+- The API health endpoint returned HTTP 200 and the container app references an
+  Application Insights connection-string setting.
+- The running image is `git-13dde6b37e3a`, not the current
+  `supervisor-redesign-3` commit. A sanitized `AppMetrics` query over the last
+  24 hours returned `scheme_saathi.conversations`,
+  `scheme_saathi.request_latency`, `scheme_saathi.questions`,
+  `scheme_saathi.evaluations`, and `scheme_saathi.verdicts`. The query grouped
+  only by metric name and did not read dimensions or applicant data.
+- The running revision returned HTTP 404 for `/metrics`; the current branch's
+  Prometheus endpoint has not been deployed and verified.
+- No Azure metric alert rules were configured. A Grafana resource exists, but
+  its dashboard contents and alert behavior were not verified.
+
+This confirms some telemetry from the older shared-dev image only. It does not
+complete the current-commit, dashboard, Prometheus, or alert proof.
+
 ## Cost estimate
 
 USD histogram uses environment defaults (override as needed):

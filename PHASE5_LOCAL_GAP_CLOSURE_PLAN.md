@@ -10,12 +10,15 @@ historical SQLite checkpoint pruning and full memory-on/off reporting remain
 open; one deterministic one-case memory-on/off smoke now reports matching
 verdicts and one avoided question. The corrected return-code answer was also
 verified through the real UI load/correct/resave path; UI integration and app
-regressions passed (24). The complete free Role 5 development gate passed with
-43/43 eligibility cases and the existing 23 runnable red-team checks. Synthetic
-Nemotron
-workflow smoke was attempted with a project-configured key, but OpenRouter
-returned HTTP 404 for structured output on three listed free routes. No
-applicant data was sent; the workflow smoke is not counted as evidence.
+regressions passed (24); 101 focused memory/journey/API/UI/evaluation tests and
+four follow-up memory/custody tests passed. The complete free Role 5
+development gate passed with 43/43 eligibility cases and the existing 23
+runnable red-team checks. A read-only shared-dev check found telemetry from the
+older image, but the current branch is not deployed and no alert rules exist.
+Synthetic Nemotron workflow smoke was attempted with a project-configured key,
+but OpenRouter returned HTTP 404 for structured output on three listed free
+routes. No applicant data was sent; the workflow smoke is not counted as
+evidence.
 
 This plan replaces the downloaded Round 2 plan as the working sequence for this
 local branch. It accounts for the monitoring implementation on the feature
@@ -198,9 +201,11 @@ meet the PDF's denominators, label/calibration protocol, and metric checklist.
 
 The local working tree now has dual recording: existing Prometheus metrics
 remain available at `/metrics`, and OpenTelemetry metrics can export through
-Azure Monitor when `APPLICATIONINSIGHTS_CONNECTION_STRING` is configured.
-This intentionally preserves the richer local Prometheus signals rather than
-replacing them with the narrower metrics set from the older feature branch.
+Azure Monitor when `APPLICATIONINSIGHTS_CONNECTION_STRING` is configured. A
+read-only shared-dev check found `scheme_saathi.*` AppMetrics from the older
+`git-13dde6b37e3a` image, but the current branch is not deployed; `/metrics`
+returned 404 and no Azure metric alert rules were configured. The live
+dashboard and alert proof remain open.
 
 1. Check that journey results are not counted repeatedly across turns and that
    labels/values are safe and bounded. Verify dashboard coverage for questions

@@ -25,7 +25,7 @@ python scripts/run_role5_dev_evals.py
 | E4 signature ablation | Rule-engine side via personas; LLM/question ablations pending |
 | 30+ red-team | 30 attacks; 23 offline-runnable; memory/approval still stubs |
 | L9 memory | Synthetic prototype controls and focused evidence: [`docs/MEMORY_POLICY.md`](MEMORY_POLICY.md), [`tests/test_household_memory.py`](../tests/test_household_memory.py), [`tests/test_journey_graph.py`](../tests/test_journey_graph.py), and [`tests/test_household_memory_api.py`](../tests/test_household_memory_api.py). R1/R2 approval, checkpoint-level retention, cross-household attacks, and verdict-agreement/memory-on-off reporting remain pending. |
-| Monitoring / Grafana / alert | Prometheus `/metrics` plus optional OpenTelemetry Azure Monitor export; shared-environment export/dashboard/alert still unverified |
+| Monitoring / Grafana / alert | Read-only shared-dev query confirms OpenTelemetry metrics from the older `git-13dde6b37e3a` image; current-commit Prometheus, dashboard, and alert proof remain incomplete. |
 | CI evaluation gate | Frontend checks runs `run_role5_dev_evals.py` |
 | Three held-out repeats | Pending after freeze |
 
