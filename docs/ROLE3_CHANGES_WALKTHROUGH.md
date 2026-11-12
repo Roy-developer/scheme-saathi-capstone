@@ -3,6 +3,8 @@
 Written for: team members who need to understand, and defend in the viva,
 the role 3 (agents and orchestration) additions made on this branch.
 
+Author: Priyanka Velisetty, with Claude Code (Sonnet 5.5). Date: 2026-11-12.
+
 Role 3's job in the capstone guide is the graph, the planner, the agents, the
 rule extractor and the improvement loop, plus the evidence that they work.
 Most of that already existed. This round closed the **evidence gaps** the
