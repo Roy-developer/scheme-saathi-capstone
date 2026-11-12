@@ -148,3 +148,26 @@ def test_run_stops_when_reported_spend_exceeds_cap(tmp_path, monkeypatch, portal
     with pytest.raises(SystemExit):
         asyncio.run(e1.main_async(args))
     assert not (tmp_path / "out.json").exists()
+
+
+def _igndps_case(persona_suffix: str = "001") -> dict[str, Any]:
+    return next(c for c in e1.load_development_cases()
+                if c["case_id"].startswith(f"GEN-IGNDPS-{persona_suffix}"))
+
+
+# Reproduces the C1 KeyErrors seen in the full dev run. The IGNDPS-MH rule
+# package and the has_disability fact are absent from this repo, so the rule
+# engine cannot decide these cases. Strict xfail: they must start passing
+# once the package and fact are present, without changing expected results.
+@pytest.mark.xfail(strict=True, raises=KeyError,
+                   reason="has_disability is not in src/rules/fact_registry.json")
+def test_igndps_case_fact_is_known_to_registry():
+    case = _igndps_case()
+    e1.rule_engine_verdict(e1.RulePackageProvider(), case["scheme_id"], case["profile"])
+
+
+@pytest.mark.xfail(strict=True, raises=KeyError,
+                   reason="IGNDPS-MH is not a package in src/rules/packages")
+def test_igndps_scheme_has_a_rule_package():
+    provider = e1.RulePackageProvider()
+    provider.packages["IGNDPS-MH"]
