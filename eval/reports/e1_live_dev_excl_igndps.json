@@ -1,0 +1,44 @@
+{
+  "label": "DEVELOPMENT-ONLY functional E1 recount excluding IGNDPS-MH cases. Not a held-out result. Not a claim of agent quality.",
+  "split": "development",
+  "protected": false,
+  "model_id": "openai/gpt-4o-mini",
+  "source_report": "eval/reports/e1_live_dev.json",
+  "no_new_model_calls": true,
+  "exclusion_rule": "GEN-IGNDPS-001..006 (IGNDPS-MH: package and has_disability fact absent from repo)",
+  "excluded_cases": 6,
+  "excluded_observations": 18,
+  "cases_remaining": 58,
+  "per_arm": {
+    "C0": {
+      "cases": 58,
+      "agree": 57,
+      "agreement_rate": 0.9828,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "errors": 0
+    },
+    "C1": {
+      "cases": 58,
+      "agree": 57,
+      "agreement_rate": 0.9828,
+      "model_calls": 116,
+      "input_tokens": 11538,
+      "output_tokens": 2352,
+      "cost_usd": 0.0031419,
+      "errors": 0
+    },
+    "C2": {
+      "cases": 58,
+      "agree": 57,
+      "agreement_rate": 0.9828,
+      "model_calls": 232,
+      "input_tokens": 55635,
+      "output_tokens": 4468,
+      "cost_usd": 0.01102605,
+      "errors": 0
+    }
+  }
+}
