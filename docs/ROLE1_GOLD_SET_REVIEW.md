@@ -44,7 +44,7 @@ Schemes 16 and 17 are hand-drafted with new fact names (quotes verified). They n
 | Held-out schemes | set by Role 5 | 12 (11 reviewed, 1 pending) | 9 original + 3 moved from development on policy grounds. Policy check done; 1 does not fit yet. |
 | Gold rules | not fixed | ~92 development, ~75 held-out | ~92 dev: original 85 + TMDVSO(1) + WMCL(3) + FAISHL(2) + IPMWCD(5) + EACS(2) + NSMNY(3) + BFFL(4) − 3 moved to held-out (13). ~75 held-out: original 62 + IGNDPS(5) + IGNWPS(5) + NSAP-IGNOAPS(3). Grounding check run on original 15 only; new additions need re-run. |
 | Personas | 60 | 82 (31 + 3 + 26 + 17 + 5) | Met. 34 on live schemes run (33 match); 48 typed_facts-only (not run). 5 added 2026-11-12 for TMDVSO-MH and WMCL-IN. |
-| Independent labels on personas | 2 labellers | 2 | **Not met.** Only model-assisted checks exist (`role1_model_assisted_labels.json` for 60 personas and `role1_model_assisted_labels_2.json` for 82). Neither is an independent human label. Needs a human labeller on `role1_label_sheet_nidhi.json`. |
+| Independent labels on personas | 2 labellers | 1 (partial) | **Not met.** Labelled by Nidhi Kaushik, with model assistance and review, on `role1_label_sheet_nidhi.json` (79 of 82 personas). Independent second labeller pending, so no Cohen's kappa yet. Model-assisted checks (`role1_model_assisted_labels.json` for 82 personas and `role1_model_assisted_labels_2.json` for 82) are not independent human labels. |
 | Written policy | refusals, caseworker, official sources | `docs/POLICY.md` approved | Met. |
 | Demo script | 3 languages | English, Hindi, Marathi key lines | Drafted; native-speaker check pending. |
 
