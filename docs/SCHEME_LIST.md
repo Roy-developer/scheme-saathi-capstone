@@ -2,7 +2,7 @@
 
 Generated from `data/schemes/passages/` and `rule_gold_selection.json`. Official = government ministry/department/portal page or PDF; myScheme links are discovery only.
 
-Total schemes: 42 listed (41 distinct, 1 duplicate family entry noted below). Development gold: 22 schemes.
+Total schemes: 42 listed (41 distinct, 1 duplicate family entry noted below). Development gold: 19 schemes.
 
 | # | Scheme ID | Name | Level | Family | Official source URL | Discovery (myScheme) | Collected | Gold rules | Gold split | Live |
 |---|---|---|---|---|---|---|---|---|---|---|
