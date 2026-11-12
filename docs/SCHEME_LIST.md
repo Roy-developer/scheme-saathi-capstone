@@ -22,7 +22,7 @@ Total schemes: 42 listed (41 distinct, 1 duplicate family entry noted below). De
 | 14 | IGNWPSM-MH | Indira Gandhi National Widow Pension Scheme (Maharashtra) | State (MH) | Widow pension | https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/ | https://www.myscheme.gov.in/schemes/ignwpsm | 2026-11-04 | 6 | alternate (duplicate URL with IGNWPS-MH) |  |
 | 15 | IPMWCD-IN | Internship Programme for Women Students / Scholars / Social Activists / Teachers | Central | - | https://wcd.intern.nic.in/aboutproject | https://www.myscheme.gov.in/schemes/ipmwcd | 2026-11-05 | 5 | development |  |
 | 16 | MSY-IN | Mahila Samriddhi Yojana | Central | - | https://www.dosje.gov.in/schemes-and-services/mahila-samridhi-yojna-msy/ | https://www.myscheme.gov.in/schemes/cbssc-msy | 2026-11-03 | 5 | - |  |
-| 17 | MJPJAY-MH | Mahatma Jyotirao Phule Jan Arogya Yojana | State (MH) | - | MISSING (myScheme only) | https://www.myscheme.gov.in/schemes/mjpjay | 2026-11-05 | 1 | - |  |
+| 17 | MJPJAY-MH | Mahatma Jyotirao Phule Jan Arogya Yojana | State (MH) | - | https://mjp.maharashtra.gov.in/ | https://www.myscheme.gov.in/schemes/mjpjay | 2026-11-12 | 1 | - |  |
 | 18 | NSMNY-MH | Namo Shetkari Mahasanman Nidhi Yojana | State (MH) | - | https://nsmny.mahait.org/ | https://www.myscheme.gov.in/schemes/namo_shetkari_mahasanman_nidhi_yojana | 2026-11-05 | 3 | development |  |
 | 19 | NFBSM-MH | National Family Benefit Scheme (Maharashtra) | State (MH) | - | https://sjsa.maharashtra.gov.in/en/scheme/national-family-benefit-scheme/ | https://www.myscheme.gov.in/schemes/nfbsm | 2026-11-05 | 5 | development |  |
 | 20 | NSAP-IGNOAPS-IN | NSAP - Indira Gandhi National Old Age Pension Scheme | Central | Old-age pension | https://web.umang.gov.in/landing/scheme/detail/nsap-indira-gandhi-national-old-age-pension-scheme_nsap-ignoaps.html | - | 2026-11-05 | 3 | heldout (UMANG-only; needs official URL) |  |
@@ -53,4 +53,4 @@ Total schemes: 42 listed (41 distinct, 1 duplicate family entry noted below). De
 
 - Duplicate families are linked by the Family column: widow (IGNWPS-IN, IGNWPS-MH, IGNWPSM-MH), old-age (NSAP-IGNOAPS-IN, IGNOAPS-MH), disability (IGNDPS-IN, IGNDPSM-MH). IGNWPS-MH and IGNWPSM-MH share one source URL — IGNWPS-MH is in the development gold set (live); IGNWPSM-MH is alternate to avoid double-counting. Net distinct schemes: 41.
 - Every scheme in the list now has at least one gold rule. TFEFVSSSHS-MH, TMDVSO-MH and WMCL-IN were added in v0.3.0; TMDVSO-MH and WMCL-IN were human-reviewed by Nidhi Kaushik on 2026-11-11. TFEFVSSSHS-MH is held-out and pending Role 5 confirmation.
-- Only myScheme as a source (needs an official URL before it counts as official): MJPJAY-MH.
+- All 42 schemes now have at least one official government URL.

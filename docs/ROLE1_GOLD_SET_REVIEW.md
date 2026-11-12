@@ -39,7 +39,7 @@ Schemes 16 and 17 are hand-drafted with new fact names (quotes verified). They n
 ## Targets and actual numbers
 | Item | Asked | Actual | Status |
 |---|---|---|---|
-| Schemes listed with URL and collection date | 40-60 | 42 | Met. MJPJAY-MH has only a myScheme URL. |
+| Schemes listed with URL and collection date | 40-60 | 42 | Met. All 42 now have an official URL. |
 | Gold schemes (development) | 15 | 19 (all 19 reviewed) | Met. All 19 human_reviewed. IGNWPSM-MH moved to alternate (double-count). IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN moved to held-out 2026-11-12 (UMANG-only URLs violate POLICY.md §3; MH state counterparts cover same populations in development). |
 | Held-out schemes | set by Role 5 | 12 (11 reviewed, 1 pending) | 9 original + 3 moved from development on policy grounds. Policy check done; 1 does not fit yet. |
 | Gold rules | not fixed | ~92 development, ~75 held-out | ~92 dev: original 85 + TMDVSO(1) + WMCL(3) + FAISHL(2) + IPMWCD(5) + EACS(2) + NSMNY(3) + BFFL(4) − 3 moved to held-out (13). ~75 held-out: original 62 + IGNDPS(5) + IGNWPS(5) + NSAP-IGNOAPS(3). Grounding check run on original 15 only; new additions need re-run. |
