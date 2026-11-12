@@ -257,6 +257,45 @@ def test_extract_route_is_off_by_default_and_needs_a_stored_file(
             assert client.get(f"{base}/suggestion").json()["suggestion"] is None
 
 
+def test_extract_masks_id_numbers_before_parsing_storing_or_logging(
+    client: TestClient, caplog
+) -> None:
+    aadhaar = "2345 6789 0123"
+
+    class Fake:
+        engine = "fake"
+
+        def read_text(self, _content: bytes) -> str:
+            return f"Name: Asha Patil\nAadhaar: {aadhaar}\nDOB: 12-03-1958"
+
+    seen: list[str] = []
+    from src.documents.extraction import parse_suggestion
+
+    def spy(text: str, engine: str):
+        seen.append(text)
+        return parse_suggestion(text, engine)
+
+    conversation = uuid4()
+    base = f"/api/v1/journey/{conversation}/documents/files/identity_proof"
+    with _patched(_values()):
+        client.put(base, content=PNG, headers={"X-File-Name": "id.png"})
+        with (
+            patch("src.api.document_uploads.get_extractor", lambda: Fake()),
+            patch("src.api.document_uploads.parse_suggestion", spy),
+            caplog.at_level("DEBUG"),
+        ):
+            response = client.post(f"{base}/extract")
+            saved = client.get(f"{base}/suggestion").json()
+
+    assert response.status_code == 200
+    assert response.json()["suggestion"]["name"] == "Asha Patil"
+    assert response.json()["suggestion"]["date_of_birth"] == "1958-03-12"
+    assert seen and all(aadhaar not in text for text in seen)
+    assert aadhaar not in response.text
+    assert aadhaar not in str(saved)
+    assert aadhaar not in caplog.text
+
+
 def test_review_signoff_is_recorded_and_voided_by_a_new_file(
     client: TestClient,
 ) -> None:

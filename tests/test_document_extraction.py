@@ -85,25 +85,32 @@ def test_vision_extractor_rejects_pdf_and_failures(monkeypatch) -> None:
         reader.read_text(PNG)
 
 
-def test_get_extractor_prefers_openrouter_then_azure(monkeypatch) -> None:
+def test_get_extractor_never_sends_images_out_unless_switched_on(monkeypatch) -> None:
     for name in (
         "OPENROUTER_API_KEY", "OPENROUTER_API_KEY_FREE", "OPENROUTER_VISION_MODEL",
         "SCHEME_SAATHI_DOCINTEL_ENDPOINT", "SCHEME_SAATHI_DOCINTEL_KEY",
+        extraction.VISION_READER_OPT_IN,
     ):
         monkeypatch.delenv(name, raising=False)
     assert extraction.get_extractor() is None
 
-    monkeypatch.setenv("SCHEME_SAATHI_DOCINTEL_ENDPOINT", "https://x")
-    monkeypatch.setenv("SCHEME_SAATHI_DOCINTEL_KEY", "k")
-    assert extraction.get_extractor().engine == "azure-document-intelligence"
-
+    # An OpenRouter key alone (needed by other features) must not turn on the
+    # outside vision reader: it would receive the unmasked ID image.
     monkeypatch.setenv("OPENROUTER_API_KEY", "chat")
     monkeypatch.setenv("OPENROUTER_API_KEY_FREE", "free")
+    assert extraction.get_extractor() is None
+
+    monkeypatch.setenv(extraction.VISION_READER_OPT_IN, "openrouter")
     monkeypatch.setenv("OPENROUTER_VISION_MODEL", "other/vl:free")
     chosen = extraction.get_extractor()
     assert (chosen.engine, chosen.api_key, chosen.model) == (
         "openrouter-vision", "free", "other/vl:free",
     )
+
+    # The in-tenant reader wins over the outside one when both are set.
+    monkeypatch.setenv("SCHEME_SAATHI_DOCINTEL_ENDPOINT", "https://x")
+    monkeypatch.setenv("SCHEME_SAATHI_DOCINTEL_KEY", "k")
+    assert extraction.get_extractor().engine == "azure-document-intelligence"
 
 
 def test_file_values_are_compared_with_the_profile() -> None:

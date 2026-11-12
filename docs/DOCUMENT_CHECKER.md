@@ -53,12 +53,17 @@ each document with the profile.
   ready or what is still missing, including with partial documents.
 
 ### Optional: suggested values from the file (LLM reading)
-- Turns on when `OPENROUTER_API_KEY_FREE` (or `OPENROUTER_API_KEY`) is set. A vision model
-  on OpenRouter (default `nvidia/nemotron-3.5-super-vl:free`, change with
-  `OPENROUTER_VISION_MODEL`) only transcribes the text of a **JPG or PNG**; plain code then
-  picks the values that sit next to a "Name" or "DOB" label. PDFs must be typed.
-  Azure Document Intelligence (`SCHEME_SAATHI_DOCINTEL_ENDPOINT` and `..._KEY`) is used only
-  when no OpenRouter key is set.
+- Off unless a reader is configured. **Azure Document Intelligence** in our own tenant
+  (`SCHEME_SAATHI_DOCINTEL_ENDPOINT` and `..._KEY`) is preferred.
+- The **OpenRouter vision model** (default `nvidia/nemotron-3.5-super-vl:free`, change with
+  `OPENROUTER_VISION_MODEL`) is used only when switched on explicitly with
+  `SCHEME_SAATHI_VISION_READER=openrouter`. An OpenRouter key alone no longer turns it on,
+  because it sends the whole, unmasked image to an outside provider: an ID number in an
+  image is pixels, so text masking cannot remove it first. Use it with synthetic documents
+  only. It reads only **JPG or PNG**; PDFs must be typed.
+- Either way, the reader only transcribes. The transcript is masked with
+  `mask_sensitive_text` (Aadhaar, phone, email, account numbers), then plain code picks the
+  values that sit next to a "Name" or "DOB" label.
 - Free models may log prompts: synthetic documents only.
 - "Read name and date from file" shows a suggestion. The user must press Accept
   to copy it into the fields. It never fills them silently.

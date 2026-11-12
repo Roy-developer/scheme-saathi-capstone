@@ -9,6 +9,7 @@ eligibility.
 import asyncio
 import hashlib
 import hmac
+import logging
 import os
 from typing import Any
 from urllib.parse import quote, unquote
@@ -37,7 +38,9 @@ from src.documents.uploads import (
 )
 from src.mcp_servers.tools.documents import assess_document_metadata
 from src.rules.facts import HouseholdProfile
+from src.workflow.agent_runtime import mask_sensitive_text
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1/journey/{conversation_id}/documents")
 
 
@@ -225,6 +228,10 @@ def _require_reviewer(request: Request) -> None:
 
     expected = os.environ.get("SCHEME_SAATHI_REVIEWER_CODE", "").strip()
     if not expected:
+        logger.warning(
+            "SCHEME_SAATHI_REVIEWER_CODE is not set: file viewing and sign-off "
+            "are open to anyone with a conversation ID. Set it when deployed."
+        )
         return
     given = request.headers.get("x-reviewer-code", "")
     if not hmac.compare_digest(given.encode("utf-8"), expected.encode("utf-8")):
@@ -367,7 +374,8 @@ async def extract_suggestion(
             store.read_file, str(conversation_id), document_id
         )
         text = await asyncio.to_thread(extractor.read_text, content)
-        found = parse_suggestion(text, extractor.engine)
+        # Mask ID numbers in the transcript before anything else uses it.
+        found = parse_suggestion(mask_sensitive_text(text), extractor.engine)
         saved = await asyncio.to_thread(
             store.save_extraction, str(conversation_id), document_id,
             record.sha256, found.name, found.date_of_birth, found.engine,
