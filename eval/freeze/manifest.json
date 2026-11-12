@@ -1,0 +1,196 @@
+{
+  "approval": {
+    "approved_by": "Roy-developer (lead), 2026-11-12",
+    "approver_role": "Project lead; freeze owner per team roles, to be confirmed in review",
+    "note": "Approves this frozen configuration and the recommended budget cap. A held-out run needs the threshold condition above to be met first.",
+    "paid_budget_cap_usd": 20,
+    "paid_budget_status": "recommended_cap_approved_by_project_lead",
+    "restricted_run_gate": {
+      "authorised": "conditional",
+      "condition": "run only after the threshold sign-offs are recorded in the threshold decisions file"
+    },
+    "status": "approved_by_project_lead",
+    "thresholds_status": "approved_by_roy_developer_lead_2026-11-12_other_owners_still_to_sign"
+  },
+  "attack_suite": {
+    "path": "eval/red_team/attacks_v0.json",
+    "sha256": "789ccc109b139bf1d48a5d8739750505a3e63c9f3620a5ed88202c3904f0ba4e",
+    "suite_version": "0.7.0"
+  },
+  "budgets": {
+    "auxiliary_prompt_token_reserve": 512,
+    "max_agent_steps_per_turn": 3,
+    "max_completion_tokens": 512,
+    "max_conversation_agent_steps": 12,
+    "max_conversation_domain_tool_calls": 24,
+    "max_conversation_history": 40,
+    "max_conversation_model_calls": 8,
+    "max_conversation_tokens": 12000,
+    "max_conversation_tool_calls": 24,
+    "max_handoff_history": 40,
+    "max_trace_events": 40,
+    "model_timeout_seconds": 20,
+    "token_estimate_characters": 3
+  },
+  "memory_policy_version": "1.0.0",
+  "model": {
+    "chat_model": "openai/gpt-4o-mini",
+    "chat_model_env_override": "OPENROUTER_CHAT_MODEL",
+    "production_settings_frozen": "snapshot_recorded_pending_owner_approval",
+    "provider": "openrouter",
+    "reranker_model": "cohere/rerank-v3.5"
+  },
+  "paid_runs": {
+    "requires": "explicit human approval recorded outside this manifest",
+    "status": "BLOCKED"
+  },
+  "playbook": {
+    "path": "data/schemes/rule_extractor_playbook.json",
+    "sha256": "37dc729fddd07cf4653729f1e8d077693d53885a44959af1f2493fe0eb464a68"
+  },
+  "prompts": {
+    "entries": {
+      "application.en": {
+        "sha256": "f63f270889b20e7b7402e6413c10f054f00b8a8b808aa21a1ca0d717371be909"
+      },
+      "application.hi": {
+        "sha256": "82dfdbfbd15ec07e9f0100823adb3a4f467860e2b6f95e7bad70ea3acb6d570c"
+      },
+      "application.mr": {
+        "sha256": "5a80effbaaddab226196f29eb46585c41eb86c2348159b4d6844778837af6609"
+      },
+      "documents.en": {
+        "sha256": "1609e109f152a9fa0df3ec453ea484bc2a342d1e2bed664d9860bfb600f677a8"
+      },
+      "documents.hi": {
+        "sha256": "cef5a1f0fb1bce045774a2c8e9e4d251e3802d4276baceb9d6d09b0a2718e729"
+      },
+      "documents.mr": {
+        "sha256": "8369255428903cb2933c9f37387a067ffaca9fab81a8d89e506df30508c0d22d"
+      },
+      "eligibility.en": {
+        "sha256": "30ae389dcace2968cb03dd97098f9cdd737cfe68a920ae22a37991da3be52a0a"
+      },
+      "eligibility.hi": {
+        "sha256": "425a00564e7dde09c36d38466d8016887271d9a3255d5f3787e4e9b44adea358"
+      },
+      "eligibility.mr": {
+        "sha256": "cd36ee56d040e78d25627701bee1b2595293242a11b785aae40e3ad7dd357bda"
+      },
+      "intake.en": {
+        "sha256": "114497b4eeb6f46d12a8c14951464c0b8dbcd45206bee476cd888239b37e8009"
+      },
+      "intake.hi": {
+        "sha256": "4ef68c4250ddcaa232b7bf513440bba744d80a3f1b461e9f11ab19fca7edada3"
+      },
+      "intake.mr": {
+        "sha256": "70c9ac263f8c798fd4171f177ecba8a988a42603b7d3c603db83a968d769d179"
+      },
+      "single.en": {
+        "sha256": "53f02e25b74c05b23215cd0c44c2615dc9f61c7fcfc90e6b5dafe9b0fc3339ea"
+      },
+      "single.hi": {
+        "sha256": "2f9b6f31eec3961ca2f5ee96135c6f0de56849e56e89513f11959c8c2320eb95"
+      },
+      "single.mr": {
+        "sha256": "4e3ee0f6b024c761c06ece42770b8d1e29dc1bd29320439e0f3529c3efe1dede"
+      },
+      "supervisor.en": {
+        "sha256": "a97da0fb7606cdd7dc4e1d11285a127dc9c66e057a786e910760787d2ff9c25c"
+      },
+      "supervisor.hi": {
+        "sha256": "662c8462fee96e67972758dcc204a3fcabbc7f57bd9155e2a5ac075980aed2cb"
+      },
+      "supervisor.mr": {
+        "sha256": "45bd725b9ed817b4eef2be7aaef02f1726f11009a5245844c79be8daf3dbbdc5"
+      }
+    },
+    "prompt_version": "scheme-saathi-phase4-v1"
+  },
+  "purpose": "Phase 5 evaluation freeze pins (offline). Not an authorization for paid runs.",
+  "rule_packages": {
+    "sha256": {
+      "apy_in.v1.json": "620fa5e02729664af7cd7d6ebc5aea6a498d99e7cb643d99a866094f0c8ff027",
+      "igndps_mh.v1.json": "dade0231fd9097f778a8d40b2119e1d902db14c7cdc5520f8f2fc4a0b16504e4",
+      "ignoaps_mh.v1.json": "cd4652b8a7da119561eee6ee8a532b4059cca8b750c9d323d93c6a05c00a6549",
+      "ignwps_mh.v1.json": "224bf03585d9bb6bc41a64765c890dd84ea36c6006b0907065d9ded8bd5b2c65",
+      "pmkisan_in.v1.json": "fb59df9f7420b29d33f5a41d938cdd00f688db742e62cd989f11a948b11137a1"
+    }
+  },
+  "schema_version": 1,
+  "tool_allowlists": {
+    "mcp_actor_tools": {
+      "api_read": [
+        "evaluate_eligibility",
+        "get_documents",
+        "get_draft",
+        "get_scheme",
+        "get_status",
+        "mock_portal",
+        "required_facts",
+        "search_schemes"
+      ],
+      "application": [
+        "create_draft",
+        "get_draft",
+        "get_status",
+        "mock_portal",
+        "submit_draft"
+      ],
+      "dependency_control": [
+        "mock_portal"
+      ],
+      "documents": [
+        "check_documents",
+        "get_documents"
+      ],
+      "eligibility": [
+        "evaluate_eligibility",
+        "get_scheme",
+        "search_schemes"
+      ],
+      "human_approval": [
+        "mock_portal"
+      ],
+      "intake": [
+        "evaluate_eligibility",
+        "required_facts"
+      ],
+      "session_cleanup": [
+        "mock_portal"
+      ]
+    },
+    "single_agent_c1": [
+      "check_documents",
+      "collect_information",
+      "edit_draft",
+      "evaluate_eligibility",
+      "prepare_draft",
+      "propose_profile_facts",
+      "read_application_status",
+      "read_required_facts",
+      "search_schemes",
+      "submit_draft"
+    ],
+    "specialist_agent_prompts_c2": {
+      "documents": [
+        "inspect_document_metadata"
+      ],
+      "eligibility": [
+        "check_candidate",
+        "handoff_verdict",
+        "refer_for_help",
+        "request_clarification"
+      ],
+      "intake": [
+        "finish_intake",
+        "propose_profile_facts",
+        "read_required_facts"
+      ],
+      "supervisor": [
+        "finish_plan",
+        "propose_plan"
+      ]
+    }
+  }
+}
