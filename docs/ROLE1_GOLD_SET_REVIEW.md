@@ -40,8 +40,8 @@ Schemes 16 and 17 are hand-drafted with new fact names (quotes verified). They n
 | Item | Asked | Actual | Status |
 |---|---|---|---|
 | Schemes listed with URL and collection date | 40-60 | 42 | Met. MJPJAY-MH has only a myScheme URL. |
-| Gold schemes (development) | 15 | 22 (all 22 reviewed) | Met. All 22 human_reviewed. IGNWPSM-MH moved to alternate 2026-11-11 (shared source URL with IGNWPS-MH; double-count). |
-| Held-out schemes | set by Role 5 | 9 (8 reviewed, 1 pending) | Policy check done; 1 does not fit yet. |
+| Gold schemes (development) | 15 | 19 (all 19 reviewed) | Met. All 19 human_reviewed. IGNWPSM-MH moved to alternate (double-count). IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN moved to held-out 2026-11-12 (UMANG-only URLs violate POLICY.md §3; MH state counterparts cover same populations in development). |
+| Held-out schemes | set by Role 5 | 12 (11 reviewed, 1 pending) | 9 original + 3 moved from development on policy grounds. Policy check done; 1 does not fit yet. |
 | Gold rules | not fixed | 89 development, 62 held-out | Quotes verified. |
 | Personas | 60 | 77 (31 + 3 + 26 + 17) | Met. 34 on live schemes run (33 match); 43 typed_facts-only (not run). 17 added 2026-11-11 for 6 new development gold schemes. |
 | Independent labels on personas | 2 labellers | 2 | **Not met.** Only model-assisted checks exist (`role1_model_assisted_labels.json` and `role1_model_assisted_labels_2.json`); neither is an independent human label. Needs a human labeller. |
@@ -78,7 +78,7 @@ All five requests from the original review have been applied directly to the dra
 Open source gaps (I could not verify an official URL from here and will not guess one):
 - **MJPJAY-MH:** only a myScheme page. Needs the state health department page.
 - **TFEFVS-MH (held-out):** only a UMANG page. Needs a Social Justice department or DoSJE page, as TFEFVSSSHS-MH has.
-- **IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN (development):** only a UMANG page each. UMANG is discovery-only per POLICY.md §3. FAISHL-IN and IPMWCD-IN have been added to the development gold set (2026-11-11) as genuine-source replacements. These three remain in the set; Role 5 / Role 1 to decide whether to find official NSAP/MoRD pages or move them to held-out.
+- **IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN:** moved to held-out 2026-11-12. UMANG-only URLs violate POLICY.md §3. Their MH state counterparts (IGNDPSM-MH, IGNWPS-MH, IGNOAPS-MH) remain in development and cover the same populations. These three can be restored to development once official NSAP/MoRD URLs are confirmed.
 - **PMJJBY-IN, PMSBY-IN (development):** use jansuraksha.in (not .gov.in); APY-IN from the same umbrella uses jansuraksha.gov.in. Authenticity to be confirmed.
   Re-checked 2026-11-11: jansuraksha.gov.in loads (national toll-free numbers page), so it is the live government domain. jansuraksha.in loads but shows no content from here, so nothing proves it official. Guessed .gov.in paths for PMJJBY returned 404, so the correct .gov.in PMJJBY and PMSBY URLs are still to be found by a person.
 - **MJPJAY-MH, TFEFVS-MH, NSAP pages:** re-checked 2026-11-11 and still not resolved. The MJPJAY health-department site and nsap.nic.in are unreachable from here. MahaDBT and the social-justice department home pages load, but neither shows these schemes, so no URL was added.
@@ -97,4 +97,4 @@ Of the 77 development personas, 34 expected verdicts concern the 3 live schemes 
 | Date | 2026-11-11 |
 | Commit reviewed | `b6fe75d` |
 | Decision on flagged rules (section 2) | Proposed decisions accepted; section 3 requests go to the gold-set owner |
-| Overall | Accepted for all 22 development schemes. Section 3 changes applied 2026-11-11. All 22 have human_reviewed status in rule_gold_selection.json and their draft files. IGNWPSM-MH moved to alternate (double-count with IGNWPS-MH). |
+| Overall | Accepted for all 19 development schemes. All 19 human_reviewed in rule_gold_selection.json and their draft files. IGNWPSM-MH moved to alternate (double-count). IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN moved to held-out 2026-11-12 (UMANG-only policy violation resolved). |

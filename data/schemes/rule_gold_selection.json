@@ -1,7 +1,7 @@
 {
-  "version": "0.6.0",
+  "version": "0.7.0",
   "created": "2026-11-09",
-  "status": "31 gold schemes: 22 development, 9 held-out. v0.6.0 (2026-11-11): moved IGNWPSM-MH from development to alternate (shares source URL with live IGNWPS-MH; double-count). Development gold is now 22 schemes.",
+  "status": "31 gold schemes: 19 development, 12 held-out. v0.7.0 (2026-11-12): moved IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN from development to held-out — all three have UMANG-only URLs which violates POLICY.md §3 (UMANG is discovery-only). Their MH state counterparts (IGNDPSM-MH, IGNWPS-MH, IGNOAPS-MH) remain in development and cover the same populations. Development gold is now 19 schemes.",
   "selection_rule": "Quote-verified against passages; few unresolved items; no MISSING FIELD or OR-conflict that blocks full encoding; spread of populations and benefit types; families (e.g. all widow pensions) kept in one split.",
   "alternates": [
     "eps",
@@ -11,13 +11,13 @@
     {
       "draft_file": "rule_gold_drafts/ignwps.json",
       "scheme_id": "IGNWPS-IN",
-      "split": "development",
+      "split": "heldout",
       "family": "widow",
       "rules": 5,
       "unresolved": 0,
       "rule_review_flags": 0,
       "review_status": "human_reviewed",
-      "why": "Central widow pension; age 40-79 band, BPL. In active review (untracked docs/IGNWPS_IN_RULE_REVIEW)."
+      "why": "Central widow pension. Moved development→held-out 2026-11-12: UMANG-only URL violates POLICY.md §3 (discovery-only). IGNWPS-MH (state) covers the same population in development. Restore to development once an official NSAP/MoRD URL is confirmed."
     },
     {
       "draft_file": "rule_gold_drafts/ignwps_mh.json",
@@ -33,13 +33,13 @@
     {
       "draft_file": "rule_gold_drafts/nsap_ignoaps.json",
       "scheme_id": "NSAP-IGNOAPS-IN",
-      "split": "development",
+      "split": "heldout",
       "family": "old_age",
       "rules": 3,
       "unresolved": 0,
       "rule_review_flags": 0,
       "review_status": "human_reviewed",
-      "why": "Central old-age pension; age>=60, BPL, citizen."
+      "why": "Central old-age pension. Moved development→held-out 2026-11-12: UMANG-only URL violates POLICY.md §3. IGNOAPS-MH (state) covers the same population in development. Restore once official nsap.nic.in or MoRD URL confirmed."
     },
     {
       "draft_file": "rule_gold_drafts/ignoaps_mh.json",
@@ -78,14 +78,13 @@
     {
       "draft_file": "rule_gold_drafts/igndps.json",
       "scheme_id": "IGNDPS-IN",
-      "split": "development",
+      "split": "heldout",
       "family": "disability",
       "rules": 5,
       "unresolved": 0,
       "rule_review_flags": 0,
       "review_status": "human_reviewed",
-      "why": "Central disability pension; contains a gt-vs-gte 80% CONFLICT, a built-in boundary test once Role 1 settles it.",
-      "relabelled": "Was held-out; errors were read on 2026-11-10 after E3 run 1, so relabelled development."
+      "why": "Central disability pension. Moved development→held-out 2026-11-12: UMANG-only URL violates POLICY.md §3. IGNDPSM-MH (state) covers same population in development. Restore once official URL confirmed. Note: was originally held-out, moved to development on 2026-11-10 after E3 run 1 errors, now returned to held-out on policy grounds."
     },
     {
       "draft_file": "rule_gold_drafts/fadse.json",

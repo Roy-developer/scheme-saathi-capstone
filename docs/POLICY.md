@@ -24,7 +24,7 @@ Hand off, with the facts collected so far and the reason, when:
 6. The request is outside scope (section 1, items 6 and 8).
 
 ## 3. What counts as an official source
-- **Official:** a government ministry, department, agency or statutory-body page or PDF (for example `sjsa.maharashtra.gov.in`, `pmkisan.gov.in`, `scholarships.gov.in`, `jansuraksha.in`, `depwd.gov.in`) or a government scheme-guideline PDF or gazette.
+- **Official:** a government ministry, department, agency or statutory-body page or PDF (for example `sjsa.maharashtra.gov.in`, `pmkisan.gov.in`, `scholarships.gov.in`, `depwd.gov.in`, `jansuraksha.gov.in`) or a government scheme-guideline PDF or gazette. Note: `jansuraksha.in` (without `.gov`) is used by PMJJBY-IN and PMSBY-IN sources but its official status is unconfirmed — treat as pending verification until a `.gov.in` URL is found.
 - **Discovery only:** myScheme (`myscheme.gov.in`), UMANG and aggregator or news pages. They may be used to find a scheme but not as the sole basis for a rule. A scheme with only discovery sources needs an official URL before it counts.
 - **Not acceptable:** blogs, social media, agents' sites, forwarded messages, undated PDFs of unknown origin.
 - Every source records its **URL and collection date**. When sources disagree, the department's own page wins, and the conflict is recorded and referred to a human (section 2, item 2).
