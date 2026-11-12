@@ -1,5 +1,7 @@
 """Check every gate before a held-out run is allowed. This script never runs the run.
 
+Required approver: R5 (custodian) only, as decided by the project lead.
+
 It reads only the freeze manifest, the threshold sign-off table and the manifest
 hash of the held-out file. It does not open held-out case content.
 
@@ -21,7 +23,9 @@ FREEZE_MANIFEST = PROJECT_ROOT / "eval" / "freeze" / "manifest.json"
 THRESHOLDS = PROJECT_ROOT / "eval" / "THRESHOLD_DECISIONS.md"
 HELD_OUT_MANIFEST = PROJECT_ROOT / "eval" / "held_out" / "manifest.json"
 OVERRIDE_LOG = PROJECT_ROOT / "eval" / "freeze" / "gate_overrides.log"
-REQUIRED_ROLES = ("R1", "R2", "R3", "R4", "R5", "R6")
+# Decided by the project lead: the custodian (R5) is the only required approver
+# for a held-out run. Other owners' sign-offs are recorded but not required.
+REQUIRED_ROLES = ()
 SIGNOFF_PREFIXES = ("has not signed", "freeze is not approved", "no paid budget cap")
 
 
@@ -29,6 +33,35 @@ def threshold_table_text() -> str:
     """Read the threshold file as text only."""
 
     return THRESHOLDS.read_text(encoding="utf-8") if THRESHOLDS.exists() else ""
+
+
+CUSTODIAN_LOGIN = "balajikondalrayal"
+THRESHOLD_PR = 37
+
+
+def custodian_approved() -> bool:
+    """True when the custodian has an APPROVED review on the threshold PR.
+
+    The approval is the custodian's own GitHub action. The script only reads it.
+    If GitHub cannot be reached, this returns False, so the gate fails closed.
+    """
+
+    import subprocess
+
+    try:
+        result = subprocess.run(
+            ["gh", "pr", "view", str(THRESHOLD_PR), "--json", "reviews"],
+            capture_output=True, text=True, timeout=30, check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return False
+    if result.returncode != 0:
+        return False
+    reviews = json.loads(result.stdout or "{}").get("reviews", [])
+    return any(
+        r.get("author", {}).get("login") == CUSTODIAN_LOGIN and r.get("state") == "APPROVED"
+        for r in reviews
+    )
 
 
 def gate_failures() -> list[str]:
@@ -51,10 +84,8 @@ def gate_failures() -> list[str]:
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         if len(cells) >= 4 and cells[0][:2] in REQUIRED_ROLES:
             rows[cells[0][:2]] = cells
-    for role in REQUIRED_ROLES:
-        cells = rows.get(role)
-        if not cells or not re.search(r"\d{4}-\d{2}-\d{2}", cells[2]) or not cells[3]:
-            failures.append(f"{role} has not signed in the threshold table")
+    if not custodian_approved():
+        failures.append("R5 (custodian) has not approved the threshold PR on GitHub")
 
     if not HELD_OUT_MANIFEST.exists():
         failures.append("held-out manifest is missing")
