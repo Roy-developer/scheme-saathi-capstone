@@ -265,9 +265,34 @@ it. Checked in code on 2026-11-12.
   `nvidia/nemotron-3.5-super-vl:free`), or to Azure Document Intelligence
   if configured. Masking applies to text, not images, so an Aadhaar card
   photo is sent as is. This departs from "send ID numbers only to
-  mock-portal.submit". Acceptable for synthetic demo data only. Fix: read
-  only with a local OCR engine, or require explicit consent and blank the ID
-  number before sending.
+  mock-portal.submit". Acceptable for synthetic demo data only.
+
+  Text masking cannot help here: in an image the ID number is pixels, so it
+  can only be found by reading the image, and today the outside model is the
+  reader. The rule is to read and mask before anything leaves our control.
+  Proposed fix, smallest first:
+  1. **Read locally, then mask.** Make local OCR (Tesseract or PaddleOCR) or
+     Azure Document Intelligence in our own tenant (already supported in
+     `extraction.py`) the default reader, and pass its text through
+     `mask_sensitive_text` before it is stored or shown. The regex parser
+     already picks the name and date of birth, so no outside model is
+     needed. Switch the OpenRouter vision reader off by default.
+  2. **If a vision model is still wanted, redact the image first.** Use the
+     local OCR word positions to black out ID-number boxes (e.g. Presidio's
+     image redactor), then send only the redacted image.
+  3. **Send less.** Ask for a masked Aadhaar (UIDAI's format shows only the
+     last 4 digits), or crop to the name and date-of-birth area.
+  4. **Provider controls.** If an outside model is used, choose a paid
+     endpoint with no data retention, no training on our data and a known
+     region (DPDP Act), not a free endpoint.
+  5. **Consent.** Before reading, say that the image goes to an outside
+     service and offer typing the values instead.
+  6. **Traces and logs.** Never store the image or its base64 payload in
+     traces or logs, only its hash.
+
+  Test to add: upload an image whose text contains a synthetic Aadhaar
+  number, and check that no outbound request, stored suggestion, trace or
+  log contains the full number.
 - **Injection inside an image.** Text such as "ignore instructions" in an
   image does reach the vision model. Impact is limited: the model has no
   tools, only two regex-picked fields are kept, and a person confirms them.
@@ -321,8 +346,10 @@ against the current fact registry.
   by a stranger.
 - **Document reading sends ID images to an outside model unmasked**, and
   the reviewer code is optional (see "Document uploads and reading"). The
-  fix belongs in the document code (Nidhi): local OCR or consent and
-  blanking first, plus `SCHEME_SAATHI_REVIEWER_CODE` set on every deployment.
+  fix belongs in the document code (Nidhi): make local or in-tenant OCR the
+  default reader and mask its text, switch the outside vision reader off by
+  default, add the no-leak upload test, and set
+  `SCHEME_SAATHI_REVIEWER_CODE` on every deployment.
 - Done since the first version: intake hardening (#21), PII masking on every
   agent and in tool results (#22), 16-digit account numbers (#27), refusing
   requests to misstate facts (#26), and live verification of ASI03 (#18) and
