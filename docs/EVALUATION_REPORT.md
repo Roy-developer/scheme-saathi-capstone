@@ -23,7 +23,7 @@ python scripts/run_role5_dev_evals.py
 | E2 defences off/on | **Offline runnable** for injection / ID / scam + clean-case false-block rate; scam screen also on live intake/journey (see §3) |
 | E3 Reflexion before/after | Playbook inventory free; **paid** OpenRouter runs pending |
 | E4 signature ablation | Rule-engine side via personas; LLM/question ablations pending |
-| 30+ red-team | 30 attacks; 23 offline-runnable; memory/approval still stubs |
+| 30+ red-team | 30 attacks; 23 offline-runnable; seven scenario briefs have independent authorship/review metadata and are approved for implementation, but remain unexecuted stubs |
 | L9 memory | Synthetic prototype controls and focused evidence: [`docs/MEMORY_POLICY.md`](MEMORY_POLICY.md), [`tests/test_household_memory.py`](../tests/test_household_memory.py), [`tests/test_journey_graph.py`](../tests/test_journey_graph.py), and [`tests/test_household_memory_api.py`](../tests/test_household_memory_api.py). The approver selected 90-day return-code memory expiry and no automatic historical-checkpoint expiry; the four-case on/off report is functional development evidence only. Independent cross-household attacks remain pending, and real-applicant use remains out of scope. |
 | Monitoring / Grafana / alert | Read-only shared-dev query confirms OpenTelemetry metrics from the older `git-13dde6b37e3a` image; current-commit Prometheus, dashboard, and alert proof remain incomplete. |
 | CI evaluation gate | Frontend checks runs `run_role5_dev_evals.py` |

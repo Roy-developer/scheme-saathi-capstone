@@ -12,6 +12,7 @@ from src.rules.facts import FactRegistry, HouseholdProfile
 VerdictResult = Literal["eligible", "not_eligible", "need_more_information"]
 EvalSplit = Literal["development", "held_out"]
 LabelStatus = Literal["single", "dual_agreed", "dual_conflict", "pending"]
+AttackReviewStatus = Literal["approved_for_implementation", "changes_requested"]
 AttackCategory = Literal[
     "scam_page",
     "scheme_text_injection",
@@ -189,6 +190,9 @@ class RedTeamCase(StrictFrozen):
     expected_behaviour: str = Field(min_length=1)
     status: Literal["stub", "runnable"] = "stub"
     check: RedTeamCheck | None = None
+    author: str | None = Field(default=None, min_length=1)
+    reviewed_by: str | None = Field(default=None, min_length=1)
+    review_status: AttackReviewStatus | None = None
 
     @model_validator(mode="after")
     def runnable_requires_check(self) -> RedTeamCase:
@@ -199,6 +203,22 @@ class RedTeamCase(StrictFrozen):
         if self.status == "stub" and self.check is not None:
             raise ValueError(
                 f"Attack {self.attack_id!r}: stub cases must not declare a check"
+            )
+        if (self.author is None) != (self.reviewed_by is None):
+            raise ValueError(
+                f"Attack {self.attack_id!r}: author and reviewed_by must be recorded together"
+            )
+        if self.review_status is not None and self.author is None:
+            raise ValueError(
+                f"Attack {self.attack_id!r}: review status requires authorship metadata"
+            )
+        if (
+            self.author is not None
+            and self.reviewed_by is not None
+            and self.author.casefold() == self.reviewed_by.casefold()
+        ):
+            raise ValueError(
+                f"Attack {self.attack_id!r}: author and reviewer must be different"
             )
         return self
 

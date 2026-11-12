@@ -158,8 +158,11 @@ and evidence pack are also complete.
 ### Wave 3 — Security and E2 (P0 partial, P1 full claim)
 
 1. Refresh the threat model against the actual memory and approval code.
-2. Close the seven red-team stubs in priority order, beginning with cases that
-   can use existing isolation and approval tests. Do not report a stub as run.
+2. The project approver authored and Vivian reviewed seven case briefs; both
+   are confirmed independent of the control implementers. They are approved
+   for implementation but remain stubs until deterministic synthetic setup,
+   real runtime paths, and assertions are implemented and run. The other 23
+   legacy cases still need authorship metadata.
 3. Add an own-data-path attack through quarantined intake text.
 4. Extend E2 off/on evaluation to truthful eligibility, own-data, memory
    isolation, and approval authorization. Report attack success with defences

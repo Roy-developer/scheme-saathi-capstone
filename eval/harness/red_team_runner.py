@@ -101,7 +101,16 @@ def run_red_team_check(attack: RedTeamCase) -> dict[str, Any]:
 def evaluate_red_team_suite(suite: RedTeamSuite) -> dict[str, Any]:
     """Run every attack; stubs are skipped, runnable checks are scored."""
 
-    results = [run_red_team_check(attack) for attack in suite.attacks]
+    results = []
+    for attack in suite.attacks:
+        result = run_red_team_check(attack)
+        if attack.author is not None:
+            result.update({
+                "author": attack.author,
+                "reviewed_by": attack.reviewed_by,
+                "review_status": attack.review_status,
+            })
+        results.append(result)
     runnable = [item for item in results if item["passed"] is not None]
     passed = sum(1 for item in runnable if item["passed"])
     failed = sum(1 for item in runnable if item["passed"] is False)

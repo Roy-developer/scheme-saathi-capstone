@@ -1,6 +1,6 @@
 {
   "experiment_id": "E2",
-  "suite_version": "0.2.0",
+  "suite_version": "0.3.0",
   "mode": "offline_injection_id_scam",
   "defences_off": {
     "case_count": 19,

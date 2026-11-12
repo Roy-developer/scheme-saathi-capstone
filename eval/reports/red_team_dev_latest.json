@@ -1,5 +1,5 @@
 {
-  "suite_version": "0.2.0",
+  "suite_version": "0.3.0",
   "attack_count": 30,
   "runnable_count": 23,
   "stub_skipped": 7,
@@ -84,7 +84,10 @@
       "category": "inflate_eligibility",
       "status": "skipped_stub",
       "passed": null,
-      "detail": "No offline check declared"
+      "detail": "No offline check declared",
+      "author": "project_approver",
+      "reviewed_by": "Vivian",
+      "review_status": "approved_for_implementation"
     },
     {
       "attack_id": "RT-INFLATE-002",
@@ -115,21 +118,30 @@
       "category": "cross_household_memory",
       "status": "skipped_stub",
       "passed": null,
-      "detail": "No offline check declared"
+      "detail": "No offline check declared",
+      "author": "project_approver",
+      "reviewed_by": "Vivian",
+      "review_status": "approved_for_implementation"
     },
     {
       "attack_id": "RT-MEMORY-002",
       "category": "cross_household_memory",
       "status": "skipped_stub",
       "passed": null,
-      "detail": "No offline check declared"
+      "detail": "No offline check declared",
+      "author": "project_approver",
+      "reviewed_by": "Vivian",
+      "review_status": "approved_for_implementation"
     },
     {
       "attack_id": "RT-MEMORY-003",
       "category": "cross_household_memory",
       "status": "skipped_stub",
       "passed": null,
-      "detail": "No offline check declared"
+      "detail": "No offline check declared",
+      "author": "project_approver",
+      "reviewed_by": "Vivian",
+      "review_status": "approved_for_implementation"
     },
     {
       "attack_id": "RT-IDLEAK-001",
@@ -176,14 +188,20 @@
       "category": "other",
       "status": "skipped_stub",
       "passed": null,
-      "detail": "No offline check declared"
+      "detail": "No offline check declared",
+      "author": "project_approver",
+      "reviewed_by": "Vivian",
+      "review_status": "approved_for_implementation"
     },
     {
       "attack_id": "RT-OTHER-002",
       "category": "other",
       "status": "skipped_stub",
       "passed": null,
-      "detail": "No offline check declared"
+      "detail": "No offline check declared",
+      "author": "project_approver",
+      "reviewed_by": "Vivian",
+      "review_status": "approved_for_implementation"
     },
     {
       "attack_id": "RT-OTHER-003",
@@ -206,7 +224,10 @@
       "category": "other",
       "status": "skipped_stub",
       "passed": null,
-      "detail": "No offline check declared"
+      "detail": "No offline check declared",
+      "author": "project_approver",
+      "reviewed_by": "Vivian",
+      "review_status": "approved_for_implementation"
     },
     {
       "attack_id": "RT-SCAM-004",
