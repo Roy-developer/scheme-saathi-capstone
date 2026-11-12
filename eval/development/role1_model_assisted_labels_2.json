@@ -543,6 +543,41 @@
       "result": "not_eligible",
       "deciding_rule_ids": ["BFFL-MH-R04"],
       "reason": "is_institutional_landholder=true. R04 exclusion fires; institutional landholders are excluded."
+    },
+    {
+      "persona_id": "R1-GOLD-044",
+      "scheme_id": "TMDVSO-MH",
+      "result": "eligible",
+      "deciding_rule_ids": ["TMDVSO-MH-R01"],
+      "reason": "belongs_to_vjnt_obc_or_sbc_category=true. R01 passes."
+    },
+    {
+      "persona_id": "R1-GOLD-045",
+      "scheme_id": "TMDVSO-MH",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["TMDVSO-MH-R01"],
+      "reason": "belongs_to_vjnt_obc_or_sbc_category=false. R01 fails."
+    },
+    {
+      "persona_id": "R1-GOLD-046",
+      "scheme_id": "WMCL-IN",
+      "result": "eligible",
+      "deciding_rule_ids": ["WMCL-IN-R01", "WMCL-IN-R02"],
+      "reason": "is_child_of_sc_st_coffee_labourer=true (R01), is_pursuing_education_after_class_10=true (R02), is_child_of_estate_clerk_driver_supervisor_or_manager=false (R03 exclusion does not fire). Eligible."
+    },
+    {
+      "persona_id": "R1-GOLD-047",
+      "scheme_id": "WMCL-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["WMCL-IN-R01"],
+      "reason": "is_child_of_sc_st_coffee_labourer=false. R01 fails; not a child of SC/ST coffee labourer."
+    },
+    {
+      "persona_id": "R1-GOLD-048",
+      "scheme_id": "WMCL-IN",
+      "result": "not_eligible",
+      "deciding_rule_ids": ["WMCL-IN-R03"],
+      "reason": "is_child_of_estate_clerk_driver_supervisor_or_manager=true. R03 exclusion fires; children of supervisory staff are excluded."
     }
   ]
 }

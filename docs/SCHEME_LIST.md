@@ -45,12 +45,12 @@ Total schemes: 42 listed (41 distinct, 1 duplicate family entry noted below). De
 | 37 | SBSSPS-MH | Shravanbal Seva State Pension Scheme | State (MH) | - | https://sjsa.maharashtra.gov.in/en/scheme/shravan-bal-rajya-nivruttivetan-yojana/ | https://www.myscheme.gov.in/schemes/sbssps | 2026-11-08 | 5 | - |  |
 | 38 | TCE-SC-IN | Top Class Education Scheme for Scheduled Caste Students | Central | - | https://scholarships.gov.in/public/schemeGuidelines/Top_Class_Education_Scheme_2018.pdf | https://www.myscheme.gov.in/schemes/tce_sc | 2026-11-08 | 6 | heldout |  |
 | 39 | TFEFVS-MH | Tuition Fees and Examination Fees to VJNT Students | State (MH) | - | https://web.umang.gov.in/landing/scheme/detail/tuition-fees-and-examination-fees-to-vjnt-students_tfefvs.html | - | 2026-11-08 | 5 | heldout |  |
-| 40 | TFEFVSSSHS-MH | Tuition Fees and Examination Fees to VJNT/SBC Students Studying in High Schools | State (MH) | - | https://www.dosje.gov.in/schemes-and-services/tuition-fees-and-examination-fees-for-vjnt-sbc-students-studying-in-high-schools/#about-the-scheme | https://www.myscheme.gov.in/schemes/tfefvssshs | 2026-11-08 | 4 | held-out |  |
+| 40 | TFEFVSSSHS-MH | Tuition Fees and Examination Fees to VJNT/SBC Students Studying in High Schools | State (MH) | - | https://www.dosje.gov.in/schemes-and-services/tuition-fees-and-examination-fees-for-vjnt-sbc-students-studying-in-high-schools/#about-the-scheme | https://www.myscheme.gov.in/schemes/tfefvssshs | 2026-11-08 | 4 | heldout |  |
 | 41 | TMDVSO-MH | Training of Motor Driving to VJNT, SBC and OBC | State (MH) | - | https://www.dosje.gov.in/schemes-and-services/training-of-motor-driving-to-vjnt-sbc-obcs/ | https://www.myscheme.gov.in/schemes/tmdvso | 2026-11-08 | 1 | development |  |
 | 42 | WMCL-IN | Welfare Measures for Children of Labourers | Central | - | https://coffeeboard.gov.in/Schemes/MTF_LWM.pdf | https://www.myscheme.gov.in/schemes/wmcl | 2026-11-08 | 3 | development |  |
 
 ## Notes
 
 - Duplicate families are linked by the Family column: widow (IGNWPS-IN, IGNWPS-MH, IGNWPSM-MH), old-age (NSAP-IGNOAPS-IN, IGNOAPS-MH), disability (IGNDPS-IN, IGNDPSM-MH). IGNWPS-MH and IGNWPSM-MH share one source URL — IGNWPS-MH is in the development gold set (live); IGNWPSM-MH is alternate to avoid double-counting. Net distinct schemes: 41.
-- Every scheme in the list now has at least one gold rule. TFEFVSSSHS-MH, TMDVSO-MH and WMCL-IN were added in v0.3.0 and are pending human review.
+- Every scheme in the list now has at least one gold rule. TFEFVSSSHS-MH, TMDVSO-MH and WMCL-IN were added in v0.3.0; TMDVSO-MH and WMCL-IN were human-reviewed by Nidhi Kaushik on 2026-11-11. TFEFVSSSHS-MH is held-out and pending Role 5 confirmation.
 - Only myScheme as a source (needs an official URL before it counts as official): MJPJAY-MH.

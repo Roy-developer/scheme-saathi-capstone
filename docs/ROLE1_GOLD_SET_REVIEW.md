@@ -1,8 +1,8 @@
 # Role 1 gold set review (development schemes)
 
 **Status:** SIGNED OFF by Nidhi Kaushik (Role 1) on 2026-11-11 after her review, with the section 2 decisions accepted.
-**Reviewed material:** the gold drafts, copied from the source clone at commit `b6fe75d` (branch `b_passages_data`, "script for scheme onboarding"). Files: `data/schemes/rule_gold_drafts/`, `data/schemes/rule_gold_selection.json`, `docs/RULE_GOLD_SET_SELECTION.md`.
-**Checked so far (automated):** for all 17 development schemes, every rule's `source_passage_id` exists and its `source_quote` appears verbatim in that passage (0 failures across 89 rules: 85 in the original 15, 4 in the 2 added later). The 9 held-out schemes were checked the same way; one quote (PSGS-DIP-IN-R03) differs from its passage only in whitespace.
+**Reviewed material:** Priyanka's original 15 development gold schemes at commit `b6fe75d` (branch `b_passages_data`). TMDVSO-MH and WMCL-IN reviewed by Nidhi 2026-11-11 (hand-drafted). FAISHL-IN, IPMWCD-IN, EACS-MH, NSMNY-MH, BFFL-MH reviewed by Nidhi 2026-11-11 (promoted from alternates). Files: `data/schemes/rule_gold_drafts/`, `data/schemes/rule_gold_selection.json`, `docs/RULE_GOLD_SET_SELECTION.md`.
+**Checked so far (automated):** for the original 15 development schemes at `b6fe75d`, every rule's `source_passage_id` exists and its `source_quote` appears verbatim in that passage (0 failures across 85 rules). TMDVSO-MH and WMCL-IN (4 rules) were hand-drafted and spot-checked. The 4 schemes added by Nidhi (FAISHL-IN, IPMWCD-IN, EACS-MH, NSMNY-MH, BFFL-MH) were not run through the automated grounding checker — they should be re-run before final evaluation. The 9 original held-out schemes were checked; one quote (PSGS-DIP-IN-R03) differs only in whitespace. IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN are now held-out and were not re-checked. Total development rules: ~92; held-out: ~75.
 **Not yet checked (needs the reviewer):** whether each rule's field, operator and value correctly express its quote, and the source pages themselves. The first-pass verdicts below come from reading each quote against its rule.
 
 ## 1. Per-scheme result
@@ -26,8 +26,8 @@
 | 15 | POST-DIS-IN | 8 | Change needed | R05 and R07, below. |
 | 16 | TMDVSO-MH | 1 | OK | Category rule (VJNT/OBC/SBC = DNT) matches official page. Age/education/fitness not encoded (Motor Vehicle Act); caseworker. Reviewed 2026-11-11. |
 | 17 | WMCL-IN | 3 | OK | SC/ST labourer's child (R01), education after Class 10 (R02), exclusion for supervisory staff (R03) — all match source passages exactly. Per-tier and "first two children" conditions not encoded; caseworker. Reviewed 2026-11-11. |
-| 18 | FAISHL-IN | 2 | OK | War bereaved/disabled/attributable-casualty (R01) and home loan held (R02). R01 from official ksb.gov.in passage; R02 from myScheme but consistent with benefit description on KSB page. Promoted from alternate 2026-11-11 — genuine gov.in source, 0 unresolved. |
-| 19 | IPMWCD-IN | 5 | OK | Women (R01), student/scholar/activist/teacher (R02), from non-tier-1/rural area (R03), age 21-40 (R04-R05). R01-R03 from official wcd.intern.nic.in passage; R04-R05 from myScheme (simple age statement). Prior-selection exclusion not encoded; caseworker. Promoted from alternate 2026-11-11. |
+| 18 | FAISHL-IN | 2 | OK, source flag | R01 from official ksb.gov.in. **R02 (has_home_loan) source is myScheme only** — myScheme is discovery-only per POLICY.md §3. Rule is consistent with the KSB benefit description but lacks an official passage. Needs an official KSB or MoD page confirming the home-loan condition before scoring. |
+| 19 | IPMWCD-IN | 5 | OK, source flag | R01-R03 from official wcd.intern.nic.in. **R04-R05 (age 21-40) source is myScheme only** — discovery-only per POLICY.md §3. Age range is a simple factual statement unlikely to be wrong, but needs an official WCD page or circular confirming 21-40 before scoring. |
 | 20 | EACS-MH | 2 | OK | Construction worker (R01) and registered with MH BOCW Board (R02), both from official mahabocw.in. Child's class level and 75% attendance not encoded; caseworker. |
 | 21 | NSMNY-MH | 3 | OK | Cultivable land ownership (R01), institutional landholder exclusion (R02), income-tax-payer exclusion (R03). All from official nsmny.mahait.org portal. Other exclusions (govt employees, pensioners, NRIs etc.) not encoded; caseworker. |
 | 22 | BFFL-MH | 4 | OK | MH resident (R01), has Aadhaar (R02), 7/12 land record in own name (R03), institutional exclusion (R04). R03/R04 in Marathi — translations confirmed 2026-11-11. Area limits by region not encoded; caseworker. Source: mahadbt.maharashtra.gov.in. |
@@ -42,8 +42,8 @@ Schemes 16 and 17 are hand-drafted with new fact names (quotes verified). They n
 | Schemes listed with URL and collection date | 40-60 | 42 | Met. MJPJAY-MH has only a myScheme URL. |
 | Gold schemes (development) | 15 | 19 (all 19 reviewed) | Met. All 19 human_reviewed. IGNWPSM-MH moved to alternate (double-count). IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN moved to held-out 2026-11-12 (UMANG-only URLs violate POLICY.md §3; MH state counterparts cover same populations in development). |
 | Held-out schemes | set by Role 5 | 12 (11 reviewed, 1 pending) | 9 original + 3 moved from development on policy grounds. Policy check done; 1 does not fit yet. |
-| Gold rules | not fixed | 89 development, 62 held-out | Quotes verified. |
-| Personas | 60 | 77 (31 + 3 + 26 + 17) | Met. 34 on live schemes run (33 match); 43 typed_facts-only (not run). 17 added 2026-11-11 for 6 new development gold schemes. |
+| Gold rules | not fixed | ~92 development, ~75 held-out | ~92 dev: original 85 + TMDVSO(1) + WMCL(3) + FAISHL(2) + IPMWCD(5) + EACS(2) + NSMNY(3) + BFFL(4) − 3 moved to held-out (13). ~75 held-out: original 62 + IGNDPS(5) + IGNWPS(5) + NSAP-IGNOAPS(3). Grounding check run on original 15 only; new additions need re-run. |
+| Personas | 60 | 82 (31 + 3 + 26 + 17 + 5) | Met. 34 on live schemes run (33 match); 48 typed_facts-only (not run). 5 added 2026-11-12 for TMDVSO-MH and WMCL-IN. |
 | Independent labels on personas | 2 labellers | 2 | **Not met.** Only model-assisted checks exist (`role1_model_assisted_labels.json` and `role1_model_assisted_labels_2.json`); neither is an independent human label. Needs a human labeller. |
 | Written policy | refusals, caseworker, official sources | `docs/POLICY.md` approved | Met. |
 | Demo script | 3 languages | English, Hindi, Marathi key lines | Drafted; native-speaker check pending. |
@@ -78,6 +78,7 @@ All five requests from the original review have been applied directly to the dra
 Open source gaps (I could not verify an official URL from here and will not guess one):
 - **MJPJAY-MH:** only a myScheme page. Needs the state health department page.
 - **TFEFVS-MH (held-out):** only a UMANG page. Needs a Social Justice department or DoSJE page, as TFEFVSSSHS-MH has.
+- **FAISHL-IN R02, IPMWCD-IN R04-R05:** myScheme-only source. POLICY.md §3 says myScheme is discovery-only. These rules are plausible but unconfirmed by an official passage. Need official KSB/MoD URL for FAISHL-IN R02 and official WCD circular for IPMWCD-IN R04-R05 before these rules are scored in evaluation.
 - **IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN:** moved to held-out 2026-11-12. UMANG-only URLs violate POLICY.md §3. Their MH state counterparts (IGNDPSM-MH, IGNWPS-MH, IGNOAPS-MH) remain in development and cover the same populations. These three can be restored to development once official NSAP/MoRD URLs are confirmed.
 - **PMJJBY-IN, PMSBY-IN (development):** use jansuraksha.in (not .gov.in); APY-IN from the same umbrella uses jansuraksha.gov.in. Authenticity to be confirmed.
   Re-checked 2026-11-11: jansuraksha.gov.in loads (national toll-free numbers page), so it is the live government domain. jansuraksha.in loads but shows no content from here, so nothing proves it official. Guessed .gov.in paths for PMJJBY returned 404, so the correct .gov.in PMJJBY and PMSBY URLs are still to be found by a person.
