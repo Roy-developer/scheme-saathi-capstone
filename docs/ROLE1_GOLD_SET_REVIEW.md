@@ -87,6 +87,7 @@ Open source gaps (I could not verify an official URL from here and will not gues
 
 ## 4. Persona check against the live engine
 The 82 personas have two model-assisted label sets: `eval/development/role1_model_assisted_labels.json` and `eval/development/role1_model_assisted_labels_2.json`. Both were produced by AI sessions. They are consistency checks, not independent human labels, so no kappa can be computed from them yet.
+Persona files (2026-11-12): `eval/development/personas_v1.json` holds the 34 personas for the three live schemes, so Role 5's harness runs cleanly. `eval/development/gold_scheme_personas_v1.json` holds the 45 gold-only personas. `eval/alternates/personas_alternate_v1.json` holds the 3 IGNWPSM-MH alternate personas, which are not scored.
 
 The first model-assisted check found 3 personas (R1-GOLD-013, 015, 018) where an exclusion fact was left unset. Those facts are now set to false. After that fix all original 60 labels match expected verdicts; the 17 new personas (R1-GOLD-027–043) were added to both label files and match.
 
