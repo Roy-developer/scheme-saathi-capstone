@@ -1,8 +1,10 @@
 """Check every gate before a held-out run is allowed. This script never runs the run.
 
 It reads only the freeze manifest, the threshold sign-off table and the manifest
-hash of the held-out file. It does not open held-out case content. A passing
-gate means the run may be requested; the paid run itself is a separate step.
+hash of the held-out file. It does not open held-out case content.
+
+A lead may override the SIGN-OFF gates with a logged reason. The override never
+skips the held-out file integrity check, and it never runs anything.
 """
 
 from __future__ import annotations
@@ -11,17 +13,26 @@ import hashlib
 import json
 import re
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 FREEZE_MANIFEST = PROJECT_ROOT / "eval" / "freeze" / "manifest.json"
 THRESHOLDS = PROJECT_ROOT / "eval" / "THRESHOLD_DECISIONS.md"
 HELD_OUT_MANIFEST = PROJECT_ROOT / "eval" / "held_out" / "manifest.json"
+OVERRIDE_LOG = PROJECT_ROOT / "eval" / "freeze" / "gate_overrides.log"
 REQUIRED_ROLES = ("R1", "R2", "R3", "R4", "R5", "R6")
+SIGNOFF_PREFIXES = ("has not signed", "freeze is not approved", "no paid budget cap")
+
+
+def threshold_table_text() -> str:
+    """Read the threshold file as text only."""
+
+    return THRESHOLDS.read_text(encoding="utf-8") if THRESHOLDS.exists() else ""
 
 
 def gate_failures() -> list[str]:
-    """Return the reasons the gate fails. An empty list means every gate passes."""
+    """Return every failed gate. An empty list means every gate passes."""
 
     failures: list[str] = []
 
@@ -35,9 +46,8 @@ def gate_failures() -> list[str]:
     if not isinstance(approval.get("paid_budget_cap_usd"), (int, float)):
         failures.append("no paid budget cap recorded")
 
-    text = THRESHOLD_TABLE_TEXT()
-    rows = {}
-    for line in text.splitlines():
+    rows: dict[str, list[str]] = {}
+    for line in threshold_table_text().splitlines():
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         if len(cells) >= 4 and cells[0][:2] in REQUIRED_ROLES:
             rows[cells[0][:2]] = cells
@@ -59,22 +69,56 @@ def gate_failures() -> list[str]:
     return failures
 
 
-def THRESHOLD_TABLE_TEXT() -> str:
-    """Read the threshold file as text only."""
+def write_override_log(reason: str, failures: list[str]) -> None:
+    """Append one audited entry per override: when, why, and which gates were skipped."""
 
-    return THRESHOLDS.read_text(encoding="utf-8") if THRESHOLDS.exists() else ""
+    OVERRIDE_LOG.parent.mkdir(parents=True, exist_ok=True)
+    entry = {
+        "time_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "overridden_by": "project lead (Roy-developer)",
+        "reason": reason,
+        "skipped_gates": failures,
+    }
+    with OVERRIDE_LOG.open("a", encoding="utf-8", newline="\n") as handle:
+        handle.write(json.dumps(entry) + "\n")
 
 
-def main() -> int:
-    """Print the gate status and return 0 only when every gate passes."""
+def main(argv: list[str] | None = None) -> int:
+    """Print gate status. A lead may override sign-off gates with a logged reason."""
+
+    args = list(sys.argv[1:] if argv is None else argv)
+    lead_override: str | None = None
+    if "--lead-override" in args:
+        index = args.index("--lead-override")
+        lead_override = args[index + 1] if index + 1 < len(args) else ""
+        if not lead_override.strip():
+            print('A reason is required: --lead-override "<reason>"')
+            return 2
 
     failures = gate_failures()
-    if failures:
+    if not failures:
+        print("All gates pass. The held-out run may be requested. This check did not run it.")
+        return 0
+
+    integrity = [f for f in failures if not any(p in f for p in SIGNOFF_PREFIXES)]
+    if integrity:
+        print("HELD-OUT RUN BLOCKED. Integrity gates cannot be overridden:")
+        for item in integrity:
+            print(f"  - {item}")
+        return 1
+
+    if lead_override is None:
         print("HELD-OUT RUN BLOCKED. Failed gates:")
         for item in failures:
             print(f"  - {item}")
         return 1
-    print("All gates pass. The held-out run may be requested. This check did not run it.")
+
+    write_override_log(lead_override.strip(), failures)
+    print("LEAD OVERRIDE USED. Sign-off gates skipped and logged:")
+    for item in failures:
+        print(f"  - {item}")
+    print(f"Reason recorded in {OVERRIDE_LOG.relative_to(PROJECT_ROOT)}.")
+    print("Results from this run must be reported as NOT meeting the owner sign-off requirement.")
     return 0
 
 
