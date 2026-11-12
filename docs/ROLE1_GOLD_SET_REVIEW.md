@@ -2,7 +2,7 @@
 
 **Status:** SIGNED OFF by Nidhi Kaushik (Role 1) on 2026-11-11 after her review, with the section 2 decisions accepted.
 **Reviewed material:** Priyanka's original 15 development gold schemes at commit `b6fe75d` (branch `b_passages_data`). TMDVSO-MH and WMCL-IN reviewed by Nidhi 2026-11-11 (hand-drafted). FAISHL-IN, IPMWCD-IN, EACS-MH, NSMNY-MH, BFFL-MH reviewed by Nidhi 2026-11-11 (promoted from alternates). Files: `data/schemes/rule_gold_drafts/`, `data/schemes/rule_gold_selection.json`, `docs/RULE_GOLD_SET_SELECTION.md`.
-**Checked so far (automated):** for the original 15 development schemes at `b6fe75d`, every rule's `source_passage_id` exists and its `source_quote` appears verbatim in that passage (0 failures across 85 rules). TMDVSO-MH and WMCL-IN (4 rules) were hand-drafted and spot-checked. The 4 schemes added by Nidhi (FAISHL-IN, IPMWCD-IN, EACS-MH, NSMNY-MH, BFFL-MH) were not run through the automated grounding checker — they should be re-run before final evaluation. The 9 original held-out schemes were checked; one quote (PSGS-DIP-IN-R03) differs only in whitespace. IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN are now held-out and were not re-checked. Total development rules: ~92; held-out: ~75.
+**Checked so far (automated):** for the original 15 development schemes at `b6fe75d`, every rule's `source_passage_id` exists and its `source_quote` appears verbatim in that passage (0 failures across 85 rules). TMDVSO-MH and WMCL-IN (4 rules) were hand-drafted and spot-checked. The 4 schemes added by Nidhi (FAISHL-IN, IPMWCD-IN, EACS-MH, NSMNY-MH, BFFL-MH) were not run through the automated grounding checker — they should be re-run before final evaluation. The 9 original held-out schemes were checked; one quote (PSGS-DIP-IN-R03) differs only in whitespace. IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN are now alternate and were not re-checked. Total development rules: ~92; held-out: ~62.
 **Not yet checked (needs the reviewer):** whether each rule's field, operator and value correctly express its quote, and the source pages themselves. The first-pass verdicts below come from reading each quote against its rule.
 
 ## 1. Per-scheme result
@@ -40,11 +40,11 @@ Schemes 16 and 17 are hand-drafted with new fact names (quotes verified). They n
 | Item | Asked | Actual | Status |
 |---|---|---|---|
 | Schemes listed with URL and collection date | 40-60 | 42 | Met. All 42 now have an official URL. |
-| Gold schemes (development) | 15 | 19 (all 19 reviewed) | Met. All 19 human_reviewed. IGNWPSM-MH moved to alternate (double-count). IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN moved to held-out 2026-11-12 (UMANG-only URLs violate POLICY.md §3; MH state counterparts cover same populations in development). |
-| Held-out schemes | set by Role 5 | 12 (11 reviewed, 1 pending) | 9 original + 3 moved from development on policy grounds. Policy check done; 1 does not fit yet. |
-| Gold rules | not fixed | ~92 development, ~75 held-out | ~92 dev: original 85 + TMDVSO(1) + WMCL(3) + FAISHL(2) + IPMWCD(5) + EACS(2) + NSMNY(3) + BFFL(4) − 3 moved to held-out (13). ~75 held-out: original 62 + IGNDPS(5) + IGNWPS(5) + NSAP-IGNOAPS(3). Grounding check run on original 15 only; new additions need re-run. |
-| Personas | 60 | 82 (31 + 3 + 26 + 17 + 5) | Met. 34 on live schemes run (33 match); 48 typed_facts-only (not run). 5 added 2026-11-12 for TMDVSO-MH and WMCL-IN. |
-| Independent labels on personas | 2 labellers | 1 (partial) | **Not met.** Labelled by Nidhi Kaushik, with model assistance and review, on `role1_label_sheet_nidhi.json` (79 of 82 personas). Independent second labeller pending, so no Cohen's kappa yet. Model-assisted checks (`role1_model_assisted_labels.json` for 82 personas and `role1_model_assisted_labels_2.json` for 82) are not independent human labels. |
+| Gold schemes (development) | 15 | 19 (all 19 reviewed) | Met. All 19 human_reviewed. IGNWPSM-MH moved to alternate (double-count). IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN moved to alternate 2026-11-12 (UMANG-only URLs violate POLICY.md §3; MH state counterparts cover same populations in development). |
+| Held-out schemes | set by Role 5 | 9 (reviewed) | 9 original. Policy check done; 1 does not fit yet. |
+| Gold rules | not fixed | ~92 development, ~62 held-out | ~92 dev: original 85 + TMDVSO(1) + WMCL(3) + FAISHL(2) + IPMWCD(5) + EACS(2) + NSMNY(3) + BFFL(4) − 3 moved to alternate (13). ~62 held-out: original 62 (IGNDPS, IGNWPS, NSAP-IGNOAPS now alternate). Grounding check run on original 15 only; new additions need re-run. |
+| Personas | 60 | 82 (34 dev-live + 39 gold-only dev + 9 alternate) | Met. 34 on live schemes run (33 match); 39 typed_facts-only gold-only (not run); 9 alternate (not scored). |
+| Independent labels on personas | 2 labellers | 1 (partial) | **Not met.** Labelled by Nidhi Kaushik, with model assistance and review, on `role1_label_sheet_nidhi.json` (73 of 73 development personas). Independent second labeller pending, so no Cohen's kappa yet. Model-assisted checks (`role1_model_assisted_labels.json` for 82 personas and `role1_model_assisted_labels_2.json` for 82) are not independent human labels. |
 | Written policy | refusals, caseworker, official sources | `docs/POLICY.md` approved | Met. |
 | Demo script | 3 languages | English, Hindi, Marathi key lines | Drafted; native-speaker check pending. |
 
@@ -80,7 +80,7 @@ Open source gaps (I could not verify an official URL from here and will not gues
 - **TFEFVS-MH (held-out):** only a UMANG page. Needs a Social Justice department or DoSJE page, as TFEFVSSSHS-MH has.
 - **FAISHL-IN R02:** Resolved 2026-11-12 — re-anchored to FAISHL-IN-BENEFIT-01 from official ksb.gov.in. Home-loan condition is implicit in the benefit description ("interest on loan taken from banks for construction of house"); source flag cleared.
 - **IPMWCD-IN R04-R05:** Resolved 2026-11-12 — wcd.intern.nic.in confirmed as official WCD internship portal by Nidhi Kaushik. Age range 21-40 is on the same portal as R01-R03; source flag cleared.
-- **IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN:** moved to held-out 2026-11-12. UMANG-only URLs violate POLICY.md §3. Their MH state counterparts (IGNDPSM-MH, IGNWPS-MH, IGNOAPS-MH) remain in development and cover the same populations. These three can be restored to development once official NSAP/MoRD URLs are confirmed.
+- **IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN:** moved to alternate 2026-11-12. UMANG-only URLs violate POLICY.md §3. Their MH state counterparts (IGNDPSM-MH, IGNWPS-MH, IGNOAPS-MH) remain in development and cover the same populations. These three can be restored to development once official NSAP/MoRD URLs are confirmed.
 - **PMJJBY-IN, PMSBY-IN:** `jansuraksha.in` confirmed as official Jan Suraksha portal by Nidhi Kaushik 2026-11-12. No action needed.
   Confirmed 2026-11-12 by Nidhi Kaushik: jansuraksha.in is the official Jan Suraksha portal. PMJJBY-IN and PMSBY-IN sources are valid.
 - **MJPJAY-MH, TFEFVS-MH, NSAP pages:** re-checked 2026-11-11 and still not resolved. The MJPJAY health-department site and nsap.nic.in are unreachable from here. MahaDBT and the social-justice department home pages load, but neither shows these schemes, so no URL was added.
@@ -90,7 +90,7 @@ Open source gaps (I could not verify an official URL from here and will not gues
 
 ## 4. Persona check against the live engine
 The 82 personas have two model-assisted label sets: `eval/development/role1_model_assisted_labels.json` and `eval/development/role1_model_assisted_labels_2.json`. Both were produced by AI sessions. They are consistency checks, not independent human labels, so no kappa can be computed from them yet.
-Persona files (2026-11-12): `eval/development/personas_v1.json` holds the 34 personas for the three live schemes, so Role 5's harness runs cleanly. `eval/development/gold_scheme_personas_v1.json` holds the 45 gold-only personas. `eval/alternates/personas_alternate_v1.json` holds the 3 IGNWPSM-MH alternate personas, which are not scored.
+Persona files (2026-11-12): `eval/development/personas_v1.json` holds the 34 personas for the three live schemes, so Role 5's harness runs cleanly. `eval/development/gold_scheme_personas_v1.json` holds the 39 gold-only personas. `eval/alternates/personas_alternate_v1.json` holds the 9 alternate personas (3 IGNWPSM-MH + 6 for IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN), which are not scored.
 
 The first model-assisted check found 3 personas (R1-GOLD-013, 015, 018) where an exclusion fact was left unset. Those facts are now set to false. After that fix all original 60 labels match expected verdicts; the 17 new personas (R1-GOLD-027–043) were added to both label files and match.
 
@@ -109,4 +109,4 @@ Judgment calls made while labelling `role1_label_sheet_nidhi.json`:
 | Date | 2026-11-12 |
 | Commit reviewed | `9feef4e` |
 | Decision on flagged rules (section 2) | Proposed decisions accepted; section 3 requests go to the gold-set owner |
-| Overall | Accepted for all 19 development schemes. All 19 human_reviewed in rule_gold_selection.json and their draft files. IGNWPSM-MH moved to alternate (double-count). IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN moved to held-out 2026-11-12 (UMANG-only policy violation resolved). |
+| Overall | Accepted for all 19 development schemes. All 19 human_reviewed in rule_gold_selection.json and their draft files. IGNWPSM-MH moved to alternate (double-count). IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN moved to alternate 2026-11-12 (UMANG-only policy violation resolved). |

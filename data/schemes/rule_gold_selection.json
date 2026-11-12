@@ -1,24 +1,16 @@
 {
-  "version": "0.7.0",
+  "version": "0.8.0",
   "created": "2026-11-09",
-  "status": "31 gold schemes: 19 development, 12 held-out. v0.7.0 (2026-11-12): moved IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN from development to held-out — all three have UMANG-only URLs which violates POLICY.md §3 (UMANG is discovery-only). Their MH state counterparts (IGNDPSM-MH, IGNWPS-MH, IGNOAPS-MH) remain in development and cover the same populations. Development gold is now 19 schemes.",
+  "status": "32 gold schemes: 19 development, 9 held-out, 4 alternate. v0.8.0 (2026-11-12): moved IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN from held-out to alternates — all three were reviewed line-by-line and have personas/labels built on them, so they cannot serve as a clean held-out set (see RULE_GOLD_SET_SELECTION.md §3). Their MH state counterparts (IGNDPSM-MH, IGNWPS-MH, IGNOAPS-MH) remain in development and cover the same populations. Restore to development once official NSAP/MoRD .gov.in URLs are confirmed.",
   "selection_rule": "Quote-verified against passages; few unresolved items; no MISSING FIELD or OR-conflict that blocks full encoding; spread of populations and benefit types; families (e.g. all widow pensions) kept in one split.",
   "alternates": [
     "eps",
-    "ignwpsm"
+    "igndps",
+    "ignwps",
+    "ignwpsm",
+    "nsap_ignoaps"
   ],
   "schemes": [
-    {
-      "draft_file": "rule_gold_drafts/ignwps.json",
-      "scheme_id": "IGNWPS-IN",
-      "split": "heldout",
-      "family": "widow",
-      "rules": 5,
-      "unresolved": 0,
-      "rule_review_flags": 0,
-      "review_status": "human_reviewed",
-      "why": "Central widow pension. Moved development→held-out 2026-11-12: UMANG-only URL violates POLICY.md §3 (discovery-only). IGNWPS-MH (state) covers the same population in development. Restore to development once an official NSAP/MoRD URL is confirmed."
-    },
     {
       "draft_file": "rule_gold_drafts/ignwps_mh.json",
       "scheme_id": "IGNWPS-MH",
@@ -31,15 +23,15 @@
       "why": "Maharashtra widow pension; same band, already used in Reflexion dev work."
     },
     {
-      "draft_file": "rule_gold_drafts/nsap_ignoaps.json",
-      "scheme_id": "NSAP-IGNOAPS-IN",
-      "split": "heldout",
-      "family": "old_age",
-      "rules": 3,
+      "draft_file": "rule_gold_drafts/ignwps.json",
+      "scheme_id": "IGNWPS-IN",
+      "split": "alternate",
+      "family": "widow",
+      "rules": 5,
       "unresolved": 0,
       "rule_review_flags": 0,
       "review_status": "human_reviewed",
-      "why": "Central old-age pension. Moved development→held-out 2026-11-12: UMANG-only URL violates POLICY.md §3. IGNOAPS-MH (state) covers the same population in development. Restore once official nsap.nic.in or MoRD URL confirmed."
+      "why": "Moved to alternate 2026-11-12: reviewed line-by-line with personas and labels built on it, so cannot serve as clean held-out. UMANG-only URL violates POLICY.md §3. IGNWPS-MH (state) covers same population in development. Restore to development once official NSAP/MoRD URL confirmed."
     },
     {
       "draft_file": "rule_gold_drafts/ignoaps_mh.json",
@@ -51,6 +43,17 @@
       "rule_review_flags": 0,
       "review_status": "human_reviewed",
       "why": "MH old-age pension; age>=65, exclusion on other pension; has a playbook run."
+    },
+    {
+      "draft_file": "rule_gold_drafts/nsap_ignoaps.json",
+      "scheme_id": "NSAP-IGNOAPS-IN",
+      "split": "alternate",
+      "family": "old_age",
+      "rules": 3,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Moved to alternate 2026-11-12: reviewed line-by-line with personas and labels built on it, so cannot serve as clean held-out. UMANG-only URL violates POLICY.md §3. IGNOAPS-MH (state) covers same population in development. Restore to development once official nsap.nic.in or MoRD URL confirmed."
     },
     {
       "draft_file": "rule_gold_drafts/pm_kisan.json",
@@ -78,13 +81,13 @@
     {
       "draft_file": "rule_gold_drafts/igndps.json",
       "scheme_id": "IGNDPS-IN",
-      "split": "heldout",
+      "split": "alternate",
       "family": "disability",
       "rules": 5,
       "unresolved": 0,
       "rule_review_flags": 0,
       "review_status": "human_reviewed",
-      "why": "Central disability pension. Moved development→held-out 2026-11-12: UMANG-only URL violates POLICY.md §3. IGNDPSM-MH (state) covers same population in development. Restore once official URL confirmed. Note: was originally held-out, moved to development on 2026-11-10 after E3 run 1 errors, now returned to held-out on policy grounds."
+      "why": "Moved to alternate 2026-11-12: reviewed line-by-line with personas and labels built on it, so cannot serve as clean held-out. UMANG-only URL violates POLICY.md §3. IGNDPSM-MH (state) covers same population in development. Restore to development once official URL confirmed."
     },
     {
       "draft_file": "rule_gold_drafts/fadse.json",

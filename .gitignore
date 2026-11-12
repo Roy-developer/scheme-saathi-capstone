@@ -15,3 +15,6 @@ data/schemes/.document_checklists.lock
 data/schemes/.document_checklists.revision
 eval/reports/*.json
 eval/held_out/local/
+.idea/
+*.sqlite3-shm
+*.sqlite3-wal

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "artifact_status": "all_candidate_meanings_reviewed_for_gold_evaluation_only",
-  "field_count": 52,
+  "field_count": 74,
   "source_inventory": "rule_gold_field_review_inventory.json",
   "review_policy": "All 52 candidate meanings have an English meaning/value-type review for gold-rule evaluation only. Scheme-specific differences and evidence limits are recorded per field. These decisions do not approve shared intake, translations, privacy, fact-registry activation, model calls, or production. Fields with reconciliation notes must be resolved before using the affected gold rules as evaluation inputs.",
   "fields": [
@@ -2700,29 +2700,425 @@
         "advisory_model": "nvidia/nemotron-3.5-lightning:free",
         "model_advice_handling": "Advisory only; the model output had an overlapping classification and overgeneralized scheme-specific meanings. Final definitions were independently narrowed to cited clauses; limitations are recorded above."
       }
+    },
+    {
+      "field_id": "belongs_to_vjnt_obc_or_sbc_category",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "draft_origin": "English meaning drafted from reviewed gold quotes; unapproved",
+      "candidate_definition": "Whether the applicant belongs to a Denotified Tribe (DNT), Nomadic Tribe (NT), Other Backward Class (OBC), or Special Backward Class (SBC) category as required by the cited scheme clause.",
+      "candidate_scope": "applicant",
+      "candidate_value_type": "boolean",
+      "candidate_unit": null,
+      "candidate_sensitivity": "sensitive",
+      "candidate_questions": null,
+      "review_notes": [
+        "DNT/SBC/OBC are Maharashtra-specific community categories; approved here only for TMDVSO-MH evaluation. Reviewed by Role 1 gold-set owner (NidhiShreeish)."
+      ],
+      "observed_operators": ["eq"],
+      "evidence": [
+        {
+          "scheme_id": "TMDVSO-MH",
+          "rule_id": "TMDVSO-MH-R01",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "TMDVSO-MH-BENEFICIARY-01",
+          "gold_source_quote": "Eligible DNT/SBC/OBC community members",
+          "official_passage_text": "Eligible DNT/SBC/OBC community members"
+        }
+      ],
+      "meaning_review": {
+        "status": "approved_for_gold_evaluation_only",
+        "reviewer": "NidhiShreeish",
+        "reviewed_on": "2026-11-12",
+        "decision_scope": "Narrow English meaning for gold evaluation of TMDVSO-MH only; not approval for fact-registry activation, applicant intake, localization, privacy, or production use.",
+        "rationale": "The cited clause directly names DNT/SBC/OBC community membership as the beneficiary condition. Approved narrowly; category verification and certificate evidence remain scheme-specific."
+      }
+    },
+    {
+      "field_id": "is_child_of_sc_st_coffee_labourer",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "draft_origin": "English meaning drafted from reviewed gold quotes; unapproved",
+      "candidate_definition": "Whether the applicant is a child of an SC/ST labourer working in coffee plantations or licensed coffee curing works.",
+      "candidate_scope": "applicant",
+      "candidate_value_type": "boolean",
+      "candidate_unit": null,
+      "candidate_sensitivity": null,
+      "candidate_questions": null,
+      "review_notes": [
+        "Composite fact: combines SC/ST community status with parent's occupation. Approved only for WMCL-IN evaluation. Reviewed by Role 1 gold-set owner (NidhiShreeish)."
+      ],
+      "observed_operators": ["eq"],
+      "evidence": [
+        {
+          "scheme_id": "WMCL-IN",
+          "rule_id": "WMCL-IN-R01",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "WMCL-IN-ELIGIBILITY-01",
+          "gold_source_quote": "Children of SC / ST labourers working in coffee plantations and Licensed Coffee Curing Works",
+          "official_passage_text": "Children of SC / ST labourers working in coffee plantations and Licensed Coffee Curing Works"
+        }
+      ],
+      "meaning_review": {
+        "status": "approved_for_gold_evaluation_only",
+        "reviewer": "NidhiShreeish",
+        "reviewed_on": "2026-11-12",
+        "decision_scope": "Narrow English meaning for gold evaluation of WMCL-IN only; not approval for fact-registry activation, applicant intake, localization, privacy, or production use.",
+        "rationale": "The cited clause directly names children of SC/ST coffee plantation and curing-works labourers as the eligible group."
+      }
+    },
+    {
+      "field_id": "is_pursuing_education_after_class_10",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "draft_origin": "English meaning drafted from reviewed gold quotes; unapproved",
+      "candidate_definition": "Whether the applicant is pursuing higher education after completing Class 10.",
+      "candidate_scope": "applicant",
+      "candidate_value_type": "boolean",
+      "candidate_unit": null,
+      "candidate_sensitivity": null,
+      "candidate_questions": null,
+      "review_notes": [
+        "Specific educational tiers (stipend, incentive, financial assistance) have different conditions not encoded. Approved only for WMCL-IN evaluation. Reviewed by Role 1 gold-set owner (NidhiShreeish)."
+      ],
+      "observed_operators": ["eq"],
+      "evidence": [
+        {
+          "scheme_id": "WMCL-IN",
+          "rule_id": "WMCL-IN-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "WMCL-IN-ELIGIBILITY-01",
+          "gold_source_quote": "pursuing higher education after X Class",
+          "official_passage_text": "pursuing higher education after X Class"
+        }
+      ],
+      "meaning_review": {
+        "status": "approved_for_gold_evaluation_only",
+        "reviewer": "NidhiShreeish",
+        "reviewed_on": "2026-11-12",
+        "decision_scope": "Narrow English meaning for gold evaluation of WMCL-IN only; not approval for fact-registry activation, applicant intake, localization, privacy, or production use.",
+        "rationale": "The cited clause directly states higher education after Class 10 as an eligibility condition."
+      }
+    },
+    {
+      "field_id": "is_child_of_estate_clerk_driver_supervisor_or_manager",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "draft_origin": "English meaning drafted from reviewed gold quotes; unapproved",
+      "candidate_definition": "Whether the applicant is a child of a clerk, driver, supervisor, or manager of a coffee estate or curing works.",
+      "candidate_scope": "applicant",
+      "candidate_value_type": "boolean",
+      "candidate_unit": null,
+      "candidate_sensitivity": null,
+      "candidate_questions": null,
+      "review_notes": [
+        "Exclusion fact: applies when true. Approved only for WMCL-IN evaluation. Reviewed by Role 1 gold-set owner (NidhiShreeish)."
+      ],
+      "observed_operators": ["eq"],
+      "evidence": [
+        {
+          "scheme_id": "WMCL-IN",
+          "rule_id": "WMCL-IN-R03",
+          "kind": "exclusion",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "WMCL-IN-EXCLUSION-01",
+          "gold_source_quote": "Children of Clerks, Drivers, Supervisors and Managers of Estate / Curing works are not entitled for these benefits.",
+          "official_passage_text": "Children of Clerks, Drivers, Supervisors and Managers of Estate / Curing works are not entitled for these benefits."
+        }
+      ],
+      "meaning_review": {
+        "status": "approved_for_gold_evaluation_only",
+        "reviewer": "NidhiShreeish",
+        "reviewed_on": "2026-11-12",
+        "decision_scope": "Narrow English meaning for gold evaluation of WMCL-IN only; not approval for fact-registry activation, applicant intake, localization, privacy, or production use.",
+        "rationale": "The cited exclusion directly names children of clerks, drivers, supervisors, and managers of the estate or curing works."
+      }
+    },
+    {
+      "field_id": "has_home_loan",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "draft_origin": "English meaning drafted from reviewed gold quotes; unapproved",
+      "candidate_definition": "Whether the applicant has taken a loan from a bank for the construction of a house.",
+      "candidate_scope": "applicant",
+      "candidate_value_type": "boolean",
+      "candidate_unit": null,
+      "candidate_sensitivity": "sensitive",
+      "candidate_questions": null,
+      "review_notes": [
+        "Loan condition is implicit in the benefit description (subsidy requires an existing loan). The Rs 1,00,000 cap is a benefit limit, not an eligibility rule. Approved only for FAISHL-IN evaluation. Reviewed by Role 1 gold-set owner (NidhiShreeish)."
+      ],
+      "observed_operators": ["eq"],
+      "evidence": [
+        {
+          "scheme_id": "FAISHL-IN",
+          "rule_id": "FAISHL-IN-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "FAISHL-IN-BENEFIT-01",
+          "gold_source_quote": "Reimbursement of interest on loan taken from banks for construction of house to War Bereaved, War Disabled and Attributable Peace time casualties is provided out of AFFD Fund.",
+          "official_passage_text": "Reimbursement of interest on loan taken from banks for construction of house to War Bereaved, War Disabled and Attributable Peace time casualties is provided out of AFFD Fund."
+        }
+      ],
+      "meaning_review": {
+        "status": "approved_for_gold_evaluation_only",
+        "reviewer": "NidhiShreeish",
+        "reviewed_on": "2026-11-12",
+        "decision_scope": "Narrow English meaning for gold evaluation of FAISHL-IN only; not approval for fact-registry activation, applicant intake, localization, privacy, or production use.",
+        "rationale": "The benefit description directly requires an existing bank loan for house construction; the subsidy presupposes the loan."
+      }
+    },
+    {
+      "field_id": "is_war_bereaved_or_disabled_or_casualty",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "draft_origin": "English meaning drafted from reviewed gold quotes; unapproved",
+      "candidate_definition": "Whether the applicant is a War Bereaved, War Disabled, or Attributable Peacetime casualty as defined by the Kendriya Sainik Board.",
+      "candidate_scope": "applicant",
+      "candidate_value_type": "boolean",
+      "candidate_unit": null,
+      "candidate_sensitivity": "sensitive",
+      "candidate_questions": null,
+      "review_notes": [
+        "The three sub-categories (bereaved, disabled, peacetime casualty) are treated as one composite fact for FAISHL-IN. Approved only for FAISHL-IN evaluation. Reviewed by Role 1 gold-set owner (NidhiShreeish)."
+      ],
+      "observed_operators": ["eq"],
+      "evidence": [
+        {
+          "scheme_id": "FAISHL-IN",
+          "rule_id": "FAISHL-IN-R01",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "FAISHL-IN-ELIGIBILITY-01",
+          "gold_source_quote": "This facility is applicable for War Bereaved, War Disabled and Attributable Peacetime casualties only.",
+          "official_passage_text": "This facility is applicable for War Bereaved, War Disabled and Attributable Peacetime casualties only."
+        }
+      ],
+      "meaning_review": {
+        "status": "approved_for_gold_evaluation_only",
+        "reviewer": "NidhiShreeish",
+        "reviewed_on": "2026-11-12",
+        "decision_scope": "Narrow English meaning for gold evaluation of FAISHL-IN only; not approval for fact-registry activation, applicant intake, localization, privacy, or production use.",
+        "rationale": "The cited clause directly names all three eligible categories; approved as one composite boolean for evaluation."
+      }
+    },
+    {
+      "field_id": "is_from_rural_or_non_tier1_area",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "draft_origin": "English meaning drafted from reviewed gold quotes; unapproved",
+      "candidate_definition": "Whether the applicant is from a non-Tier-I city or a rural part of India.",
+      "candidate_scope": "applicant",
+      "candidate_value_type": "boolean",
+      "candidate_unit": null,
+      "candidate_sensitivity": null,
+      "candidate_questions": null,
+      "review_notes": [
+        "Tier-I classification is not defined in the cited clause; approved only for IPMWCD-IN evaluation. Reviewed by Role 1 gold-set owner (NidhiShreeish)."
+      ],
+      "observed_operators": ["eq"],
+      "evidence": [
+        {
+          "scheme_id": "IPMWCD-IN",
+          "rule_id": "IPMWCD-IN-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "IPMWCD-IN-ELIGIBILITY-01",
+          "gold_source_quote": "from non-tier-I cities and rural parts of India",
+          "official_passage_text": "The women students, scholars, social activists and teachers from non-tier-I cities and rural parts of India"
+        }
+      ],
+      "meaning_review": {
+        "status": "approved_for_gold_evaluation_only",
+        "reviewer": "NidhiShreeish",
+        "reviewed_on": "2026-11-12",
+        "decision_scope": "Narrow English meaning for gold evaluation of IPMWCD-IN only; not approval for fact-registry activation, applicant intake, localization, privacy, or production use.",
+        "rationale": "The cited clause directly names non-Tier-I cities and rural areas as the geographic eligibility condition."
+      }
+    },
+    {
+      "field_id": "is_student_scholar_activist_or_teacher",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "draft_origin": "English meaning drafted from reviewed gold quotes; unapproved",
+      "candidate_definition": "Whether the applicant is a student, scholar, social activist, or teacher.",
+      "candidate_scope": "applicant",
+      "candidate_value_type": "boolean",
+      "candidate_unit": null,
+      "candidate_sensitivity": null,
+      "candidate_questions": null,
+      "review_notes": [
+        "Composite occupational fact; four sub-categories (student, scholar, activist, teacher) are treated as one for IPMWCD-IN. Approved only for IPMWCD-IN evaluation. Reviewed by Role 1 gold-set owner (NidhiShreeish)."
+      ],
+      "observed_operators": ["eq"],
+      "evidence": [
+        {
+          "scheme_id": "IPMWCD-IN",
+          "rule_id": "IPMWCD-IN-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "IPMWCD-IN-ELIGIBILITY-01",
+          "gold_source_quote": "The women students, scholars, social activists and teachers",
+          "official_passage_text": "The women students, scholars, social activists and teachers from non-tier-I cities and rural parts of India"
+        }
+      ],
+      "meaning_review": {
+        "status": "approved_for_gold_evaluation_only",
+        "reviewer": "NidhiShreeish",
+        "reviewed_on": "2026-11-12",
+        "decision_scope": "Narrow English meaning for gold evaluation of IPMWCD-IN only; not approval for fact-registry activation, applicant intake, localization, privacy, or production use.",
+        "rationale": "The cited clause directly names four occupational categories; approved as one composite boolean for evaluation."
+      }
+    },
+    {
+      "field_id": "is_construction_worker",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "draft_origin": "English meaning drafted from reviewed gold quotes; unapproved",
+      "candidate_definition": "Whether the applicant is engaged in building or other construction work.",
+      "candidate_scope": "applicant",
+      "candidate_value_type": "boolean",
+      "candidate_unit": null,
+      "candidate_sensitivity": null,
+      "candidate_questions": null,
+      "review_notes": [
+        "Approved only for EACS-MH evaluation. Reviewed by Role 1 gold-set owner (NidhiShreeish)."
+      ],
+      "observed_operators": ["eq"],
+      "evidence": [
+        {
+          "scheme_id": "EACS-MH",
+          "rule_id": "EACS-MH-R01",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "EACS-MH-ELIGIBILITY-01",
+          "gold_source_quote": "The worker should be engaged in a building or other construction work.",
+          "official_passage_text": "The worker should be engaged in a building or other construction work."
+        }
+      ],
+      "meaning_review": {
+        "status": "approved_for_gold_evaluation_only",
+        "reviewer": "NidhiShreeish",
+        "reviewed_on": "2026-11-12",
+        "decision_scope": "Narrow English meaning for gold evaluation of EACS-MH only; not approval for fact-registry activation, applicant intake, localization, privacy, or production use.",
+        "rationale": "The cited clause directly requires the applicant to be engaged in building or construction work."
+      }
+    },
+    {
+      "field_id": "is_registered_construction_worker",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "draft_origin": "English meaning drafted from reviewed gold quotes; unapproved",
+      "candidate_definition": "Whether the applicant is registered under the Maharashtra Building and Other Construction Workers Welfare Board.",
+      "candidate_scope": "applicant",
+      "candidate_value_type": "boolean",
+      "candidate_unit": null,
+      "candidate_sensitivity": null,
+      "candidate_questions": null,
+      "review_notes": [
+        "Approved only for EACS-MH evaluation; the registration authority is Maharashtra-specific. Reviewed by Role 1 gold-set owner (NidhiShreeish)."
+      ],
+      "observed_operators": ["eq"],
+      "evidence": [
+        {
+          "scheme_id": "EACS-MH",
+          "rule_id": "EACS-MH-R02",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "EACS-MH-ELIGIBILITY-02",
+          "gold_source_quote": "The worker should be registered under the Maharashtra Building & Other Construction Workers Welfare Board.",
+          "official_passage_text": "The worker should be registered under the Maharashtra Building & Other Construction Workers Welfare Board."
+        }
+      ],
+      "meaning_review": {
+        "status": "approved_for_gold_evaluation_only",
+        "reviewer": "NidhiShreeish",
+        "reviewed_on": "2026-11-12",
+        "decision_scope": "Narrow English meaning for gold evaluation of EACS-MH only; not approval for fact-registry activation, applicant intake, localization, privacy, or production use.",
+        "rationale": "The cited clause directly requires registration under the Maharashtra BOCW Welfare Board."
+      }
+    },
+    {
+      "field_id": "owns_land_in_own_name",
+      "review_status": "meaning_approved_for_gold_evaluation_only",
+      "draft_origin": "English meaning drafted from reviewed gold quotes; unapproved",
+      "candidate_definition": "Whether the applicant owns land registered in their own name (7/12 extract).",
+      "candidate_scope": "applicant",
+      "candidate_value_type": "boolean",
+      "candidate_unit": null,
+      "candidate_sensitivity": "sensitive",
+      "candidate_questions": null,
+      "review_notes": [
+        "Source passage is in Marathi; joint-owner exception needs review. Approved only for BFFL-MH evaluation. Reviewed by Role 1 gold-set owner (NidhiShreeish)."
+      ],
+      "observed_operators": ["eq"],
+      "evidence": [
+        {
+          "scheme_id": "BFFL-MH",
+          "rule_id": "BFFL-MH-R03",
+          "kind": "eligibility",
+          "operator": "eq",
+          "value": true,
+          "unit": null,
+          "source_passage_id": "BFFL-MH-ELIGIBILITY-03",
+          "gold_source_quote": "शेतकऱ्यास स्वतःच्या नावावर ७/१२ असणे आवश्यक आहे.",
+          "official_passage_text": "शेतकऱ्यास स्वतःच्या नावावर ७/१२ असणे आवश्यक आहे."
+        }
+      ],
+      "meaning_review": {
+        "status": "approved_for_gold_evaluation_only",
+        "reviewer": "NidhiShreeish",
+        "reviewed_on": "2026-11-12",
+        "decision_scope": "Narrow English meaning for gold evaluation of BFFL-MH only; not approval for fact-registry activation, applicant intake, localization, privacy, or production use.",
+        "rationale": "The Marathi source directly requires the farmer to have a 7/12 extract in their own name; approved pending joint-owner exception review."
+      }
     }
   ],
   "review_summary": {
-    "reviewed_on": "2026-11-11",
-    "meaning_approved_for_gold_evaluation_only": 16,
+    "reviewed_on": "2026-11-12",
+    "meaning_approved_for_gold_evaluation_only": 27,
     "pending_human_review": 36,
     "approved_field_ids": [
+      "belongs_to_vjnt_obc_or_sbc_category",
       "consents_to_auto_debit",
       "disability_percent",
       "has_completed_vocational_training",
+      "has_home_loan",
       "is_admitted_to_aicte_diploma_first_year_or_lateral_entry",
       "is_admitted_to_notified_institution_full_time",
+      "is_child_of_estate_clerk_driver_supervisor_or_manager",
+      "is_child_of_sc_st_coffee_labourer",
+      "is_construction_worker",
       "is_distance_education",
       "is_first_year_student",
+      "is_from_rural_or_non_tier1_area",
       "is_institutional_account_holder",
+      "is_pursuing_education_after_class_10",
       "is_receiving_other_pension",
+      "is_registered_construction_worker",
       "is_regular_full_time_pg_first_year",
       "is_remarried",
       "is_repeating_class",
       "is_scheduled_caste",
       "is_scheduled_tribe",
       "is_student_in_class_9_or_10",
-      "is_vjnt"
+      "is_student_scholar_activist_or_teacher",
+      "is_vjnt",
+      "is_war_bereaved_or_disabled_or_casualty",
+      "owns_land_in_own_name"
     ],
     "note": "No model calls made; no new facts added to the app registry."
   },
