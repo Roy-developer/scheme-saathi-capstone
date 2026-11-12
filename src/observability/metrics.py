@@ -8,9 +8,10 @@ offline runs and tests need no backend.
 from __future__ import annotations
 
 import time
+from collections import OrderedDict
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Iterator
+from typing import Iterator, Mapping
 
 from opentelemetry import metrics as otel_metrics
 
@@ -76,6 +77,31 @@ def record_verdict(scheme_id: str, result: str) -> None:
     """Count a rule-engine or journey verdict."""
 
     _instruments.verdicts.add(1, {"scheme_id": scheme_id, "result": result})
+
+
+_MAX_TRACKED_CONVERSATIONS = 10_000
+_last_counted_verdicts: OrderedDict[str, dict[str, str]] = OrderedDict()
+
+
+def record_new_verdicts(
+    conversation_id: str, verdicts: Mapping[str, str], source: str = "journey"
+) -> None:
+    """Count a scheme's verdict only when it differs from the last one counted.
+
+    Journey replies repeat every verdict already reached in the conversation,
+    so counting each reply would overcount.
+    """
+
+    counted = _last_counted_verdicts.setdefault(conversation_id, {})
+    _last_counted_verdicts.move_to_end(conversation_id)
+    while len(_last_counted_verdicts) > _MAX_TRACKED_CONVERSATIONS:
+        _last_counted_verdicts.popitem(last=False)
+    for scheme_id, result in verdicts.items():
+        if counted.get(scheme_id) == result:
+            continue
+        counted[scheme_id] = result
+        record_evaluation(scheme_id, source=source)
+        record_verdict(scheme_id, result)
 
 
 def record_question(scheme_id: str | None) -> None:

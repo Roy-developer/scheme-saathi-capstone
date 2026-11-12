@@ -1,3 +1,5 @@
+import uuid
+
 import pytest
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import InMemoryMetricReader
@@ -80,3 +82,32 @@ def test_telemetry_stays_off_without_connection_string(monkeypatch) -> None:
     monkeypatch.delenv("APPLICATIONINSIGHTS_CONNECTION_STRING", raising=False)
 
     configure_telemetry()
+
+
+def test_repeated_verdict_in_same_conversation_counts_once(reader) -> None:
+    conversation = str(uuid.uuid4())
+    metrics.record_new_verdicts(conversation, {"IGNWPS-MH": "eligible"})
+    metrics.record_new_verdicts(conversation, {"IGNWPS-MH": "eligible"})
+
+    (point,) = _points(reader, "scheme_saathi.verdicts")
+    assert point.value == 1
+
+
+def test_changed_verdict_counts_again(reader) -> None:
+    conversation = str(uuid.uuid4())
+    metrics.record_new_verdicts(conversation, {"IGNWPS-MH": "eligible"})
+    metrics.record_new_verdicts(conversation, {"IGNWPS-MH": "not_eligible"})
+
+    points = {
+        dict(point.attributes)["result"]: point.value
+        for point in _points(reader, "scheme_saathi.verdicts")
+    }
+    assert points == {"eligible": 1, "not_eligible": 1}
+
+
+def test_same_verdict_in_different_conversations_counts_each(reader) -> None:
+    metrics.record_new_verdicts(str(uuid.uuid4()), {"PM-KISAN-IN": "eligible"})
+    metrics.record_new_verdicts(str(uuid.uuid4()), {"PM-KISAN-IN": "eligible"})
+
+    (point,) = _points(reader, "scheme_saathi.verdicts")
+    assert point.value == 2

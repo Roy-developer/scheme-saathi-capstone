@@ -86,6 +86,7 @@ from src.observability.metrics import (
     observe_duration,
     record_conversation,
     record_evaluation,
+    record_new_verdicts,
     record_question,
     record_verdict,
 )
@@ -671,14 +672,15 @@ def _record_journey_metrics(endpoint: str, result: JourneyResponse) -> None:
         elif result.candidate_scheme_ids:
             scheme_id = result.candidate_scheme_ids[0]
         record_question(scheme_id)
-    if result.eligibility_results:
-        for scheme_id, verdict in result.eligibility_results.items():
-            record_evaluation(scheme_id, source="journey")
-            record_verdict(scheme_id, verdict.result)
-    elif result.eligibility_result is not None:
-        scheme_id = result.eligibility_result.scheme_id
-        record_evaluation(scheme_id, source="journey")
-        record_verdict(scheme_id, result.eligibility_result.result)
+    verdicts = {
+        scheme_id: verdict.result
+        for scheme_id, verdict in result.eligibility_results.items()
+    }
+    if not verdicts and result.eligibility_result is not None:
+        verdicts = {
+            result.eligibility_result.scheme_id: result.eligibility_result.result,
+        }
+    record_new_verdicts(str(result.conversation_id), verdicts)
 
 
 @app.post("/api/v1/journey", response_model=JourneyResponse)
