@@ -77,12 +77,25 @@ def build_manifest() -> dict:
             "status": "BLOCKED",
             "requires": "explicit human approval recorded outside this manifest",
         },
+        "approval": {
+            "status": "approved_by_project_lead",
+            "approved_by": "Roy-developer (lead), 2026-11-12",
+            "approver_role": "Project lead; freeze owner per team roles, to be confirmed in review",
+            "paid_budget_cap_usd": 20,
+            "paid_budget_status": "recommended_cap_approved_by_project_lead",
+            "restricted_run_gate": {
+                "authorised": "conditional",
+                "condition": "run only after the threshold sign-offs are recorded in the threshold decisions file",
+            },
+            "thresholds_status": "approved_by_roy_developer_lead_2026-11-12_other_owners_still_to_sign",
+            "note": "Approves this frozen configuration and the recommended budget cap. A held-out run needs the threshold condition above to be met first.",
+        },
         "model": {
             "provider": "openrouter",
             "chat_model": _string_constant(LLM_CLIENT_PATH, "DEFAULT_CHAT_MODEL"),
             "chat_model_env_override": "OPENROUTER_CHAT_MODEL",
             "reranker_model": _string_constant(SCHEME_SEARCH_PATH, "OPENROUTER_RERANKER_MODEL"),
-            "production_settings_frozen": "TBD_FIXED_BEFORE_RUN",
+            "production_settings_frozen": "snapshot_recorded_pending_owner_approval",
         },
         "prompts": {
             "prompt_version": agent_config.PROMPT_VERSION,
@@ -105,7 +118,7 @@ def build_manifest() -> dict:
             if PLAYBOOK_PATH.exists()
             else "absent"
         ),
-        "memory_policy_version": "TBD_WAVE_2",
+        "memory_policy_version": "1.0.0",
     }
 
 

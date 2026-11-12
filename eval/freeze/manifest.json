@@ -1,4 +1,17 @@
 {
+  "approval": {
+    "approved_by": "Roy-developer (lead), 2026-11-12",
+    "approver_role": "Project lead; freeze owner per team roles, to be confirmed in review",
+    "note": "Approves this frozen configuration and the recommended budget cap. A held-out run needs the threshold condition above to be met first.",
+    "paid_budget_cap_usd": 20,
+    "paid_budget_status": "recommended_cap_approved_by_project_lead",
+    "restricted_run_gate": {
+      "authorised": "conditional",
+      "condition": "run only after the threshold sign-offs are recorded in the threshold decisions file"
+    },
+    "status": "approved_by_project_lead",
+    "thresholds_status": "approved_by_roy_developer_lead_2026-11-12_other_owners_still_to_sign"
+  },
   "attack_suite": {
     "path": "eval/red_team/attacks_v0.json",
     "sha256": "789ccc109b139bf1d48a5d8739750505a3e63c9f3620a5ed88202c3904f0ba4e",
@@ -19,11 +32,11 @@
     "model_timeout_seconds": 20,
     "token_estimate_characters": 3
   },
-  "memory_policy_version": "TBD_WAVE_2",
+  "memory_policy_version": "1.0.0",
   "model": {
     "chat_model": "openai/gpt-4o-mini",
     "chat_model_env_override": "OPENROUTER_CHAT_MODEL",
-    "production_settings_frozen": "TBD_FIXED_BEFORE_RUN",
+    "production_settings_frozen": "snapshot_recorded_pending_owner_approval",
     "provider": "openrouter",
     "reranker_model": "cohere/rerank-v3.5"
   },
