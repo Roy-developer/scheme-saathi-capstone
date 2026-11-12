@@ -86,6 +86,8 @@ Open source gaps (I could not verify an official URL from here and will not gues
 - **MJPJAY-MH, TFEFVS-MH, NSAP pages:** re-checked 2026-11-11 and still not resolved. The MJPJAY health-department site and nsap.nic.in are unreachable from here. MahaDBT and the social-justice department home pages load, but neither shows these schemes, so no URL was added.
 - **FASETDP-MH age limit (deferred):** the third-party site jsrr.in reports an age range of 14 to 80. The official passages captured for the scheme have no age rule; the myScheme page's eligibility point 3 was not captured. No age rule was added. Persona R1-GOLD-022 is labelled need_more_information because age is not in its facts. Once point 3 is checked on the official page and confirms an age range, add the passage, an age rule and a persona age.
 
+- **PRE-DIS-IN income limit (source not official):** the gold rule uses family income <= Rs 2,50,000. A private (non-official) page gives Rs 2,00,000. Decision 2026-11-12 (Nidhi Kaushik): keep Rs 2,50,000. No official link is available, so this is recorded as unverified against an official page. The personas near the limit (R1-GOLD-016, income 250,001) are labelled not eligible under either figure, so the labels do not depend on it. Re-check on the official page if one becomes available.
+
 ## 4. Persona check against the live engine
 The 82 personas have two model-assisted label sets: `eval/development/role1_model_assisted_labels.json` and `eval/development/role1_model_assisted_labels_2.json`. Both were produced by AI sessions. They are consistency checks, not independent human labels, so no kappa can be computed from them yet.
 Persona files (2026-11-12): `eval/development/personas_v1.json` holds the 34 personas for the three live schemes, so Role 5's harness runs cleanly. `eval/development/gold_scheme_personas_v1.json` holds the 45 gold-only personas. `eval/alternates/personas_alternate_v1.json` holds the 3 IGNWPSM-MH alternate personas, which are not scored.
@@ -94,7 +96,13 @@ The first model-assisted check found 3 personas (R1-GOLD-013, 015, 018) where an
 
 Of the 77 development personas, 34 expected verdicts concern the 3 live schemes (IGNWPS-MH, IGNOAPS-MH, PM-KISAN-IN). Running through the rule engine: **33 match** (IGNWPS-DEV-007 is a wording difference only: `cant_tell` vs `need_more_information`). The remaining 43 personas cover gold-only schemes and need a human independent label.
 
-## 5. Sign-off (reviewer completes)
+## 5. Label decisions (Nidhi Kaushik, 2026-11-12)
+Judgment calls made while labelling `role1_label_sheet_nidhi.json`:
+- **IGNOAPS-MH age:** the Maharashtra threshold of 65 overrides the central 60 (POLICY.md section 2). R1-IGNOAPS-003 (age 60) and IGNOAPS-DEV-001 (age 64) are labelled not eligible. The central-only scheme NSAP-IGNOAPS-IN keeps 60.
+- **Two-per-family limit (PRE-DIS, POST-DIS):** the limit of 2 includes the applicant, so a family where 3 members already receive the scholarship is not eligible (R1-GOLD-020, R1-GOLD-026).
+- **FAISHL-IN home loan:** a home loan is required, as the official eligibility text states. R1-GOLD-028 (no home loan) is not eligible. The Rs 1,00,000 cap applies to the loan amount considered for subsidy, not to eligibility.
+
+## 6. Sign-off (reviewer completes)
 | Field | Value |
 |---|---|
 | Reviewer | Nidhi Kaushik  |

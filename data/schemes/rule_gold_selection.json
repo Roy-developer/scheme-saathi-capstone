@@ -289,7 +289,7 @@
       "rules": 1,
       "unresolved": 2,
       "rule_review_flags": 1,
-      "review_status": "pending_human_review",
+      "review_status": "human_reviewed",
       "why": "Motor-driving training; only the category rule can be encoded, the rest goes to a caseworker. Reviewed by Nidhi Kaushik (Role 1) 2026-11-11."
     },
     {
@@ -300,7 +300,7 @@
       "rules": 3,
       "unresolved": 3,
       "rule_review_flags": 3,
-      "review_status": "pending_human_review",
+      "review_status": "human_reviewed",
       "why": "Coffee Board stipend for children of SC/ST plantation labourers; exclusion for supervisory staff. Reviewed by Nidhi Kaushik (Role 1) 2026-11-11."
     },
     {
@@ -311,7 +311,7 @@
       "rules": 2,
       "unresolved": 0,
       "rule_review_flags": 0,
-      "review_status": "pending_human_review",
+      "review_status": "human_reviewed",
       "why": "Home loan interest subsidy for war bereaved/disabled ex-servicemen; 2 clean rules, genuine ksb.gov.in source. Promoted from alternate 2026-11-11 — official gov.in URL, no UMANG dependency."
     },
     {
@@ -322,7 +322,7 @@
       "rules": 5,
       "unresolved": 0,
       "rule_review_flags": 0,
-      "review_status": "pending_human_review",
+      "review_status": "human_reviewed",
       "why": "MoWCD internship for women from non-tier-1/rural areas; age 21-40, 5 clean rules, genuine wcd.intern.nic.in source. Promoted from alternate 2026-11-11 — adds women/geography diversity to gold set."
     },
     {
@@ -333,7 +333,7 @@
       "rules": 2,
       "unresolved": 0,
       "rule_review_flags": 0,
-      "review_status": "pending_human_review",
+      "review_status": "human_reviewed",
       "why": "Education assistance for children of registered BOCW workers; 2 clean rules, genuine mahabocw.in source. Adds construction-worker population to gold set."
     },
     {
@@ -344,7 +344,7 @@
       "rules": 3,
       "unresolved": 0,
       "rule_review_flags": 0,
-      "review_status": "pending_human_review",
+      "review_status": "human_reviewed",
       "why": "Maharashtra state farmer income support (MH counterpart to PM-KISAN); 3 clean rules including 2 exclusions, genuine nsmny.mahait.org portal."
     },
     {
@@ -366,7 +366,7 @@
       "rules": 4,
       "unresolved": 0,
       "rule_review_flags": 2,
-      "review_status": "pending_human_review",
+      "review_status": "human_reviewed",
       "why": "MH horticulture plantation scheme; 4 rules (MH resident, Aadhaar, 7/12 land record, institutional exclusion); 2 Marathi passages translated and confirmed 2026-11-11; genuine mahadbt.maharashtra.gov.in source."
     }
   ],
