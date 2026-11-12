@@ -101,6 +101,10 @@ from src.workflow.intake_agent import (
     propose_initial_registered_facts,
 )
 from src.workflow.scam_screen import apply_scam_screen, scam_warning_for_locale
+from src.workflow.honesty_guard import (
+    check_for_misstatement,
+    misstatement_refusal,
+)
 from src.workflow.supervisor_agent import (
     propose_supervisor_plan,
 )
@@ -1030,7 +1034,18 @@ def build_journey_graph(
             package.fact_intake_mode == "deterministic_only"
             for package in intake_packages
         )
+        # Set when the description asks Saathi to misstate a fact; shown
+        # before the next question (docs/POLICY.md section 1, item 2).
+        honesty_notice: str | None = None
         if (
+            description
+            and not state.get("initial_description_processed")
+            and check_for_misstatement(description).flagged
+        ):
+            # Do not read facts from a request to misstate them; ask each
+            # fact directly instead.
+            honesty_notice = misstatement_refusal(locale)
+        elif (
             description
             and not state.get("initial_description_processed")
             and not deterministic_fact_intake
@@ -1267,6 +1282,8 @@ def build_journey_graph(
         if next_fact is not None:
             definition = fact_registry.get(next_fact)
             question = registry_question_for(definition, state.get("locale", "en"))
+            if honesty_notice:
+                question = f"{honesty_notice}\n\n{question}"
             return {
                 **common,
                 "profile": profile_data,
@@ -2693,6 +2710,22 @@ async def resume_journey(
             "message": INPUT_GUARDRAIL_MESSAGES[
                 saved.get("locale", "en")
             ],
+        })
+    if check_for_misstatement(message).flagged:
+        # A reply that asks Saathi to misstate a fact is not recorded (it
+        # never reaches the parser, so "just put yes" is not read as yes):
+        # refuse, say why, and ask the same question again.
+        # docs/POLICY.md section 1, item 2.
+        if not snapshot.interrupts:
+            raise JourneyNotWaitingError(str(conversation_id))
+        response = _to_response(conversation_id, saved)
+        refusal = misstatement_refusal(saved.get("locale", "en"))
+        question = saved.get("question") or saved.get("message") or ""
+        refused_question = f"{refusal}\n\n{question}".strip()
+        return response.model_copy(update={
+            "status": "awaiting_answer",
+            "message": refused_question,
+            "question": refused_question,
         })
     refused = await _check_registry_dependencies(
         graph, conversation_id, snapshot.values or {}
