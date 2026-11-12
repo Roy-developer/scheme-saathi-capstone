@@ -350,6 +350,27 @@ against the current fact registry.
   default reader and mask its text, switch the outside vision reader off by
   default, add the no-leak upload test, and set
   `SCHEME_SAATHI_REVIEWER_CODE` on every deployment.
+- **"Can't tell" verdicts are not referred to a human caseworker (L14).**
+  The guide asks that "can't tell" verdicts and conflicting documents go to a
+  caseworker. Today a `need_more_information` verdict is shown as "can't
+  tell" with the missing facts, and the document checker lists mismatches,
+  but nothing routes either case to a person; "caseworker" appears only in
+  the honesty-guard text. Current control: no draft can be prepared without
+  an eligible verdict, and every draft needs human approval. Smallest fix: a
+  clear "a caseworker needs to check this" notice on both cases, with a test.
+- **No output guardrail on the final reply (L15).** Input is guarded
+  (injection guard, quarantined reader, honesty guard, masking), but nothing
+  checks the reply before it is shown. Current control: verdicts are not
+  written by a model. The rule engine returns them, and every `Rule` must
+  carry a `source_clause_id` (`src/rules/models.py`), so the deciding clause
+  comes from code. Smallest fix: a check that every verdict shown has a
+  clause ID and that unknown facts are stated as unknown, with a test.
+- **"Only official sources supply rules" is not enforced in code.**
+  `RuleSource.source_url` accepts any valid URL (`HttpUrl`). Current control:
+  every rule package is human-reviewed before publishing, and today's
+  packages cite only government sites (`*.gov.in`). Smallest fix: when a
+  package is loaded, reject a `source_url` outside an allow-list
+  (`myscheme.gov.in`, `*.gov.in`, `*.nic.in`).
 - Done since the first version: intake hardening (#21), PII masking on every
   agent and in tool results (#22), 16-digit account numbers (#27), refusing
   requests to misstate facts (#26), and live verification of ASI03 (#18) and
