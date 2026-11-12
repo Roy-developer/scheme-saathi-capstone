@@ -41,7 +41,9 @@ from src.workflow.journey import (
 )
 from src.workflow.state import Handoff
 
-PUBLISH_PROCESS_START_TIMEOUT_SECONDS = 30
+# A spawned child imports the whole app before it signals ready. Under full-suite
+# load that took longer than 30 seconds, so the wait gets more headroom.
+PUBLISH_PROCESS_START_TIMEOUT_SECONDS = 120
 PORTAL_COMMIT_BARRIER_TIMEOUT_SECONDS = 40
 
 

@@ -16,7 +16,7 @@ import pytest
 from src.rule_extraction_reflexion import scheme_rules
 from src.rules.data_provider import RulePackageProvider
 from src.rule_extraction_reflexion.onboarding import (
-    OnboardingRefused, ProjectPaths, _json_like, apply_onboarding, plan_onboarding,
+    OnboardingRefused, ProjectPaths, _json_like, _registry_snapshot, apply_onboarding, plan_onboarding,
 )
 
 REAL_ROOT = Path(__file__).parents[1]
@@ -192,6 +192,18 @@ def _not_approved_for_mock_portal(paths: ProjectPaths) -> None:
     staged.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
 
 
+def _fact_changed_without_version_bump(paths: ProjectPaths) -> None:
+    """Record the registry as it is, then change one fact definition under the same version."""
+
+    raw = paths.fact_registry.read_bytes()
+    data = json.loads(raw)
+    paths.registry_snapshot.write_bytes(
+        _registry_snapshot(data["registry_version"], raw)
+    )
+    data["definitions"][0]["meaning"] += " (edited without a version bump)"
+    paths.fact_registry.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
 def _break_another_live_package(paths: ProjectPaths) -> None:
     other = paths.packages / "ignwps_mh.v1.json"
     other.write_bytes(other.read_bytes() + b"\n")
@@ -204,6 +216,7 @@ def _break_another_live_package(paths: ProjectPaths) -> None:
         (_no_passages, "no \"onboarding\" block"),
         (_no_staged_package, "No approved package"),
         (_not_approved_for_mock_portal, "not approved for the mock portal"),
+        (_fact_changed_without_version_bump, "was not bumped"),
         (_break_another_live_package, "loader would refuse"),
     ],
 )

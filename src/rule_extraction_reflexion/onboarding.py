@@ -69,6 +69,11 @@ class ProjectPaths:
         return self.rules / "fact_registry.json"
 
     @property
+    def registry_snapshot(self) -> Path:
+        """Record of each fact definition set, keyed by registry version."""
+        return self.rules / "fact_registry_snapshot.json"
+
+    @property
     def bundle_registry(self) -> Path:
         return self.rules / "bundle_registry.json"
 
@@ -299,6 +304,40 @@ def _check_in_a_copy(paths: ProjectPaths, scheme_id: str, changes: dict[Path, by
             raise OnboardingRefused(f"The search passages are invalid: {error}") from error
 
 
+def _definitions_sha(registry_raw: bytes) -> str:
+    """Hash the fact definitions in canonical order, ignoring file formatting."""
+
+    definitions = json.loads(registry_raw)["definitions"]
+    canonical = json.dumps(
+        sorted(definitions, key=lambda item: item["fact_id"]),
+        sort_keys=True, ensure_ascii=False, separators=(",", ":"),
+    ).encode("utf-8")
+    return _sha256(canonical)
+
+
+def _registry_snapshot(version: str, registry_raw: bytes) -> bytes:
+    """The snapshot that describes the registry as it will be written."""
+
+    data = {"registry_version": version, "definitions_sha256": _definitions_sha(registry_raw)}
+    return (json.dumps(data, indent=2) + "\n").encode("utf-8")
+
+
+def _require_registry_snapshot_matches(paths: ProjectPaths, version: str, registry_raw: bytes) -> None:
+    """Refuse fact changes that reuse a registry version without a version bump."""
+
+    if not paths.registry_snapshot.exists():
+        return
+    recorded = json.loads(paths.registry_snapshot.read_bytes())
+    if (
+        recorded["registry_version"] == version
+        and recorded["definitions_sha256"] != _definitions_sha(registry_raw)
+    ):
+        raise OnboardingRefused(
+            f"Fact definitions changed but registry version {version} was not bumped. "
+            "Bump the version, update every bundle's registry_version, then onboard."
+        )
+
+
 def plan_onboarding(scheme_id: str, paths: ProjectPaths) -> OnboardingPlan:
     """Work out and check every change for a scheme, writing nothing.
 
@@ -345,6 +384,7 @@ def plan_onboarding(scheme_id: str, paths: ProjectPaths) -> OnboardingPlan:
 
     registry_raw = paths.fact_registry.read_bytes()
     registry = FactRegistry.model_validate_json(registry_raw)
+    _require_registry_snapshot_matches(paths, registry.registry_version, registry_raw)
     facts = _bundle_facts(package, registry)
     new_registry, cited = _with_scheme_source_on_facts(
         registry_raw, facts, str(package.source.source_url),
@@ -373,11 +413,13 @@ def plan_onboarding(scheme_id: str, paths: ProjectPaths) -> OnboardingPlan:
         cases_raw, source["cases"], staged.name, package_sha,
     )
 
+    final_registry = new_registry if cited else registry_raw
     changes = {
         target: package_raw,
         paths.bundle_registry: _json_like(bundles_raw, bundles),
         passages_path: _json_like(corpus_raw, corpus),
         paths.cases: new_cases,
+        paths.registry_snapshot: _registry_snapshot(registry.registry_version, final_registry),
     }
     summary = [
         f"Move package: {staged.name} -> src/rules/packages/",

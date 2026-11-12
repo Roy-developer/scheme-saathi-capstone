@@ -30,7 +30,11 @@ draft rules, but a draft is never approved or used at runtime.
    onboarding refuses.
 
 2. **Register any new facts first.** Every fact the case file lists must exist in
-   `src/rules/fact_registry.json`, or `extract` stops with a `KeyError`. Add each
+   `src/rules/fact_registry.json`, or `extract` stops with a `KeyError`.
+   If you change an existing fact's definition, bump `registry_version` and
+   update every bundle's `registry_version` first. The planner refuses
+   onboarding when definitions change under an unchanged version, using
+   `src/rules/fact_registry_snapshot.json`. Add each
    fact with its question text in English, Hindi and Marathi, its privacy policy,
    and its review fields. Mark reviews `pending` until they are done.
 
