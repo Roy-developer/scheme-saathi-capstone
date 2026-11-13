@@ -14,8 +14,8 @@ def test_development_gold_cases_validate_with_only_the_temporary_overlay(
     monkeypatch,
 ) -> None:
     cases, registry = build_development_gold_cases()
-    assert len(cases) == 89
-    assert sum(len(case.expected_rules) for case in cases) == 105
+    assert len(cases) == 90
+    assert sum(len(case.expected_rules) for case in cases) == 106
     assert len(registry.overlay_fact_ids) == 37
     assert registry.active_fact_count == 18
     assert all(case.expected_rules for case in cases)

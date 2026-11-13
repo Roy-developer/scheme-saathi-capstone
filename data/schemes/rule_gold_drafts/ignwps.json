@@ -66,9 +66,6 @@
     }
   ],
   "unresolved": [
-    {
-      "rule_id": "IGNWPS-IN-R02",
-      "conflict": "NSAP portal FAQ Q17 (official, IGNWPS-IN-ELIGIBILITY-01) says 40-59 years; UMANG/MRD benefit page (discovery-only, IGNWPS-IN-BENEFIT-01) says 40-79 years. Value set to 79 pending official NSAP guidelines PDF. Needs domain owner sign-off per POLICY.md §2."
-    }
+    "CONFLICT: IGNWPS-IN-R02 age cap. NSAP FAQ Q17 (official) says 40-59; UMANG benefit page (discovery-only) says 40-79. Set to 79 pending the official NSAP guidelines PDF. Needs domain owner sign-off per POLICY.md §2."
   ]
 }
