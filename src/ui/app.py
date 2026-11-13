@@ -11,7 +11,10 @@ The screen never decides eligibility. It calls the journey API, which runs
 the LangGraph supervisor and the deterministic rule engine.
 """
 
+import html
 import os
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import date
 from uuid import UUID, uuid4
 
@@ -241,6 +244,8 @@ COPY = {
         "finder_help": "Ask in English, Hindi, or Marathi. Your query is sent to OpenRouter for search phrasing and embeddings; do not enter personal or financial identifiers. Search returns citations and does not decide eligibility.",
         "finder_query": "What support or scheme are you looking for?",
         "finder_submit": "Search schemes",
+        "loading_search": "Searching for schemes",
+        "loading_reply": "Saathi is thinking",
         "finder_error": "Scheme search is unavailable",
         "finder_empty": "No matching passages were found. Try different wording.",
         "finder_choose": "Choose a scheme to explore",
@@ -410,6 +415,8 @@ COPY = {
         "finder_help": "अंग्रेज़ी, हिन्दी या मराठी में पूछें। खोज के लिए आपका प्रश्न OpenRouter को भेजा जाता है; व्यक्तिगत या वित्तीय पहचान संख्या न लिखें। खोज स्रोत सहित अंश दिखाती है, पात्रता तय नहीं करती।",
         "finder_query": "आप किस सहायता या योजना की तलाश में हैं?",
         "finder_submit": "योजनाएँ खोजें",
+        "loading_search": "योजनाएँ खोजी जा रही हैं",
+        "loading_reply": "साथी सोच रहा है",
         "finder_error": "योजना खोज उपलब्ध नहीं है",
         "finder_empty": "मिलते-जुलते अंश नहीं मिले। प्रश्न को दूसरे शब्दों में लिखें।",
         "finder_choose": "देखने के लिए योजना चुनें",
@@ -579,6 +586,8 @@ COPY = {
         "finder_help": "इंग्रजी, हिंदी किंवा मराठीत विचारा. शोधासाठी तुमचा प्रश्न OpenRouter कडे पाठवला जातो; वैयक्तिक किंवा आर्थिक ओळख क्रमांक देऊ नका. शोधात स्रोतासह उतारे दिसतात; पात्रता ठरत नाही.",
         "finder_query": "तुम्ही कोणत्या मदतीचा किंवा योजनेचा शोध घेत आहात?",
         "finder_submit": "योजना शोधा",
+        "loading_search": "योजना शोधत आहे",
+        "loading_reply": "साथी विचार करत आहे",
         "finder_error": "योजना शोध उपलब्ध नाही",
         "finder_empty": "जुळणारे उतारे सापडले नाहीत. प्रश्न वेगळ्या शब्दांत विचारा.",
         "finder_choose": "पाहण्यासाठी योजना निवडा",
@@ -789,6 +798,65 @@ PLAN_STEP_ICONS = {
     "skipped": "⏭️",
     "failed": "❌",
 }
+
+
+LOADING_CSS = """
+<style>
+.saathi-loading {
+    align-items: center;
+    background: rgba(42, 127, 143, 0.12);
+    border-radius: 12px;
+    display: flex;
+    font-weight: 600;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+    padding: 0.75rem 1rem;
+}
+.saathi-loading .dot {
+    animation: saathi-pulse 0.9s infinite ease-in-out;
+    background: #2a7f8f;
+    border-radius: 50%;
+    display: inline-block;
+    height: 0.6rem;
+    width: 0.6rem;
+}
+.saathi-loading .dot:nth-child(2) { animation-delay: 0.15s; }
+.saathi-loading .dot:nth-child(3) { animation-delay: 0.3s; }
+@keyframes saathi-pulse {
+    0%, 80%, 100% { opacity: 0.2; transform: scale(0.7); }
+    40% { opacity: 1; transform: scale(1.2); }
+}
+</style>
+"""
+
+
+def show_loading(message: str):
+    """Show three pulsing dots and a message; returns the slot to clear.
+
+    Streamlit sends this to the browser before the blocking call starts, so
+    the person sees that something is happening.
+    """
+
+    placeholder = st.empty()
+    placeholder.markdown(
+        LOADING_CSS
+        + '<div class="saathi-loading" role="status">'
+        + '<span class="dot"></span><span class="dot"></span><span class="dot"></span>'
+        + f"<span>{html.escape(message)}…</span></div>",
+        unsafe_allow_html=True,
+    )
+    return placeholder
+
+
+@contextmanager
+def fetching(message: str) -> Iterator[None]:
+    """Show the loading dots while the API is working, then remove them."""
+
+    placeholder = show_loading(message)
+    try:
+        yield
+    finally:
+        placeholder.empty()
 
 
 SCROLL_ANCHOR_ID = "saathi-latest"
@@ -1006,11 +1074,12 @@ def start_candidate_interview(
 
     st.session_state.interview_error = None
     try:
-        journey = run_journey(
-            interview_request(
-                locale, profile_description, candidate_scheme_ids=candidate_ids
+        with fetching(COPY[locale]["loading_reply"]):
+            journey = run_journey(
+                interview_request(
+                    locale, profile_description, candidate_scheme_ids=candidate_ids
+                )
             )
-        )
     except JourneyApiError as error:
         st.session_state.interview_error = str(error)
         return
@@ -1113,9 +1182,10 @@ def render_candidate_interview(
         if reply:
             st.session_state.interview_error = None
             try:
-                journey = send_journey_message(
-                    st.session_state.conversation_id, reply
-                )
+                with fetching(text["loading_reply"]):
+                    journey = send_journey_message(
+                        st.session_state.conversation_id, reply
+                    )
             except JourneyApiError as error:
                 st.session_state.interview_error = str(error)
             else:
@@ -2449,9 +2519,10 @@ def start_interview(
 
     st.session_state.interview_error = None
     try:
-        journey = run_journey(
-            interview_request(locale, profile_description, scheme_id=scheme_id)
-        )
+        with fetching(COPY[locale]["loading_reply"]):
+            journey = run_journey(
+                interview_request(locale, profile_description, scheme_id=scheme_id)
+            )
     except JourneyApiError as error:
         st.session_state.interview_error = str(error)
     else:
@@ -2722,9 +2793,10 @@ def render_interview(
         if reply:
             st.session_state.interview_error = None
             try:
-                journey = send_journey_message(
-                    st.session_state.conversation_id, reply
-                )
+                with fetching(text["loading_reply"]):
+                    journey = send_journey_message(
+                        st.session_state.conversation_id, reply
+                    )
             except JourneyApiError as error:
                 st.session_state.interview_error = str(error)
             else:
@@ -3029,6 +3101,9 @@ else:
         if not query.strip():
             st.session_state.scheme_search_error = text["finder_empty"]
         else:
+            # Bring the results into view once they arrive.
+            st.session_state.scroll_to_latest = True
+            search_loading = show_loading(text["loading_search"])
             try:
                 journey = run_journey(
                     JourneyRequest(
@@ -3077,6 +3152,8 @@ else:
                 st.session_state.journey_react_status = journey.react_status
             except JourneyApiError as error:
                 st.session_state.scheme_search_error = str(error)
+            finally:
+                search_loading.empty()
 
     if st.session_state.scheme_search_error:
         st.error(
@@ -3086,6 +3163,7 @@ else:
 
     search_results = st.session_state.scheme_search_results
     if search_results is not None:
+        mark_scroll_target()
         render_agent_observability(text)
         render_discovery_notices(locale)
         if st.session_state.scheme_search_message:
