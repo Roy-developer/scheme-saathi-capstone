@@ -21,7 +21,7 @@ python scripts/run_role5_dev_evals.py
 | Dual independent labels + κ | κ harness ready; smoke uses copied labels — **Role 1 must replace** |
 | Simulated citizen (hidden profile) | `eval/harness/simulated_citizen.py` offline stand-in |
 | Code-first eligibility scoring | `evaluate_eligibility_dev.py` / held-out script |
-| E1 cost-benefit | Config inventoried; live C0/C1/C2 still blocked on Phase freeze |
+| E1 cost-benefit | Team-override development comparison recorded (held-out waived); journey-wired C1 + budget/model pins; not PDF HO |
 | E2 defences off/on | Offline injection / ID / scam report plus eight local application-boundary comparisons (incl. scam_intake). Off arms remove one boundary, not all controls; scripted models; not independent/frozen (see §3). |
 | E3 Reflexion before/after | Check-split 1.0.0 closed; playbooks 1.1.0/1.1.1/1.1.2 frozen; team-override n=13 recorded (not PDF unseen HO) |
 | E4 signature ablation | Team-override n=46 recorded (shadow + offline/journey Q-order + multilingual LLM); not PDF HO |
@@ -161,9 +161,22 @@ context, so “I get my pension by UPI” stays clean while
 
 ## 4. Held-out (Role-5-only)
 
+Protected personas stay in gitignored `eval/held_out/local/`. CI only runs the
+custody guard (`scripts/check_held_out_custody.py`); it never scores HO fixtures.
+Reporting pattern: run locally as Role 5 → commit a **sanitized** report under
+`eval/reports/` plus IDs/hash in `eval/held_out/manifest.json` (no profiles).
+
+**E1 held-out path (2026-11-14):** Local custody
+`personas_held_out_v1.json` (n=40, sha256 pinned in the manifest). Journey-wired
+C0/C1/C2 live score: **40/40** task_success each arm (free Nemotron) in
+`eval/reports/e1_held_out_journey_live_2026-11-14.json`. Seeds are transformed
+development personas — **not** dual-labelled; **not** a final PDF held-out claim.
+
 ```bash
 python scripts/generate_held_out_personas.py
 python scripts/evaluate_eligibility_held_out.py
+python scripts/run_e1_live.py --held-out --yes --free-model \
+  --out eval/reports/e1_held_out_journey_live_2026-11-14.json
 ```
 
 Do not commit `eval/held_out/local/`. Do not tune against held-out results.
@@ -199,6 +212,25 @@ Also recorded: `eval/reports/e3_lesson_generation_cost.json`,
 python scripts/evaluate_reflexion_playbook_dev.py
 python scripts/evaluate_extraction_held_out.py --before --runs 3 --yes
 python scripts/evaluate_extraction_held_out.py --after --playbook 1.1.2 --runs 3 --yes
+```
+
+**E1 cost-benefit (2026-11-14):** Freeze pin `e1_team_override_freeze` with
+journey-wired C1 (`single_agent_provider`). Team-override free-Nemotron live:
+**79/79** task_success on C0/C1/C2 (C1/C2 ~0.85s median vs C0 ~0.02s). Prior
+gpt-4o-mini token/$ comparison still shows C2 costing more (~$0.0115 vs ~$0.0033)
+with no quality upside. Protected local held-out (n=40) scored **40/40** via
+`--held-out` — transformed seeds, **not** dual-labelled PDF. Thresholds: lead +
+R5 report-only; R1/R3 still open. Evidence:
+`eval/reports/e1_team_override_journey_live_2026-11-14.json`,
+`eval/reports/e1_held_out_journey_live_2026-11-14.json`,
+`docs/e1_team_override_status_2026-11-14.md`.
+
+```bash
+python scripts/summarize_e1_live_report.py
+python scripts/run_e1_live.py --team-override --yes --free-model \
+  --out eval/reports/e1_team_override_journey_live_2026-11-14.json
+python scripts/run_e1_live.py --held-out --yes --free-model \
+  --out eval/reports/e1_held_out_journey_live_2026-11-14.json
 ```
 
 **E4 signature ablation (team override, 2026-11-13):** Waives PDF ≥40 unseen
@@ -244,7 +276,7 @@ Configuration alone is not deployment evidence.
 
 1. Role 1 dual-labels held-out (and preferably development) independently.
 2. True PDF unseen held-out extraction (optional; team currently uses n=13 all-live override for E3).
-3. Live E1 after agent freeze; optional PDF held-out E4 if that claim is required; three held-out repeats with spread.
+3. PDF held-out E1 (protected set + owner-signed thresholds + fresh freeze-pinned journey-C1 live run); optional PDF held-out E4; three held-out repeats with spread. Team-override E1 development comparison is recorded separately.
 4. Independent red-team subset: fill `eval/red_team/independent_subset_v1_blank.json` per `INDEPENDENT_VALIDATION.md`, then pass `python scripts/check_independent_red_team.py` through `independent_subset_claimable` (author ≠ reviewer; execution validation accepted). Live LLM efficacy remains a separate arm.
 5. Different-family LLM judge calibrated on 20+ human labels (if non-code qualities are judged).
 6. Role 6 proves the deployed metrics reach the shared monitoring environment and demonstrates a working alert.

@@ -60,6 +60,11 @@ E4_PERSONA_SET = ROOT / "eval" / "development" / "personas_v1.json"
 E4_RUNNER = ROOT / "scripts" / "evaluate_e4_signature_ablation.py"
 E4_LLM_ARM = ROOT / "eval" / "harness" / "e4_llm_arm.py"
 E4_SHADOW = ROOT / "eval" / "harness" / "e4_shadow.py"
+E1_STATUS_DOC = ROOT / "docs" / "e1_team_override_status_2026-11-14.md"
+E1_LIVE_RUNNER = ROOT / "scripts" / "run_e1_live.py"
+E1_HARNESS = ROOT / "eval" / "harness" / "e1_runner.py"
+E1_SINGLE_AGENT = ROOT / "src" / "workflow" / "single_agent.py"
+E1_EXPERIMENT = ROOT / "eval" / "experiments" / "e1_agent_cost.json"
 SCHEME_RULES_PATH = ROOT / "src" / "rule_extraction_reflexion" / "scheme_rules.py"
 EXTRACTION_HO_MANIFEST = ROOT / "eval" / "held_out" / "extraction" / "manifest.json"
 
@@ -327,6 +332,56 @@ def build_manifest() -> dict:
             }
             if E4_PERSONA_SET.exists() and E4_RUNNER.exists() and E4_LLM_ARM.exists()
             else {"status": "e4_team_override_artifacts_missing"}
+        ),
+        "e1_team_override_freeze": (
+            {
+                "scope": (
+                    "E1 C0/C1/C2 cost-benefit team-override on development "
+                    "personas. Not PDF unseen held-out."
+                ),
+                "paid_run_gate": {
+                    "authorised": True,
+                    "note": (
+                        "Team-override live/free-model evaluate authorised; "
+                        "not PDF unseen held-out."
+                    ),
+                },
+                "model_id": "openai/gpt-4o-mini",
+                "budget": {
+                    "model_calls": agent_config.MAX_CONVERSATION_MODEL_CALLS,
+                    "agent_tool_calls": agent_config.MAX_CONVERSATION_TOOL_CALLS,
+                    "domain_calls": agent_config.MAX_CONVERSATION_DOMAIN_TOOL_CALLS,
+                    "agent_steps": agent_config.MAX_CONVERSATION_AGENT_STEPS,
+                    "total_tokens": agent_config.MAX_CONVERSATION_TOKENS,
+                    "max_completion_tokens": agent_config.MAX_COMPLETION_TOKENS,
+                },
+                "runner": {
+                    "path": "scripts/run_e1_live.py",
+                    "sha256": sha256_file(E1_LIVE_RUNNER),
+                },
+                "modules": {
+                    "e1_runner": {
+                        "path": "eval/harness/e1_runner.py",
+                        "sha256": sha256_file(E1_HARNESS),
+                    },
+                    "single_agent": {
+                        "path": "src/workflow/single_agent.py",
+                        "sha256": sha256_file(E1_SINGLE_AGENT),
+                    },
+                },
+                "experiment": {
+                    "path": "eval/experiments/e1_agent_cost.json",
+                    "sha256": sha256_file(E1_EXPERIMENT),
+                },
+                "status_doc": "docs/e1_team_override_status_2026-11-14.md",
+            }
+            if (
+                E1_LIVE_RUNNER.exists()
+                and E1_HARNESS.exists()
+                and E1_SINGLE_AGENT.exists()
+                and E1_EXPERIMENT.exists()
+            )
+            else {"status": "e1_team_override_artifacts_missing"}
         ),
         "memory_policy_version": "1.0.0",
     }

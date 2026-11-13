@@ -7,7 +7,7 @@ conditions as approved acceptance thresholds.
 | Decision | Accountable reviewers | Status |
 |---|---|---|
 | Eligibility quality and subgroup reporting | R1, R5 | Pending |
-| E1 cost, latency, failures, and quality tradeoffs | R1, R3, R5 | Pending |
+| E1 cost, latency, failures, and quality tradeoffs | R1, R3, R5 | Lead + R5 signed report-only; R1/R3 still to sign |
 | E2 attack-success and legitimate-work false-block bars | R4, R5 | Pending |
 | Memory reuse, correctness, isolation, and forget criteria | R1, R2, R5 | Pending |
 | Held-out repeat/spread interpretation | R1, R5 | Pending |
@@ -33,7 +33,7 @@ effect until the owners listed above record approval with a date.
 | Memory cross-household leak | Leaked records / cross-household probes | 0 | Isolation is a hard requirement | R2, R5 |
 | Forget completeness | Stores cleared / stores holding the record, after forget | 100% of stores | Partial forget leaves personal data behind | R2, R5 |
 | Eligibility accuracy and subgroup reporting | Correct verdicts / decided cases, reported by scheme and subgroup | Not proposed yet | Needs dual labels and held-out cases first | R1, R5 |
-| E1 cost, latency and failures | Per-arm cost, median and p95 latency, errors | Not proposed yet | Needs a frozen configuration and a paid run | R1, R3, R5 |
+| E1 cost, latency and failures | Per-arm cost, median and p95 latency, errors; report C1 vs C2 deltas | Report only (no hard cost bar); freeze-pinned model/budget | Comparative evidence under e1_team_override_freeze; quality bar not set from in-sample success | R1, R3, R5 |
 | Held-out spread across three repeats | Range of the metric across the three runs | Report the range; no single bar proposed | Spread depends on results not yet collected | R1, R5 |
 | Development checks that block CI | List of checks | Not proposed yet | Needs the owners to decide which checks are blocking | R5, R6 |
 
@@ -72,6 +72,6 @@ owners are proposals only; the lead confirms them before the table is sent.
 | R2 Knowledge and memory | nikhilkrsde (to confirm) | | |
 | R3 Orchestration | pavanipriyankavelisetty (to confirm) | | |
 | R4 Tools and security | vivian-fernandes | | |
-| R5 Eval and red team (custodian) | balajikondalrayal | | |
+| R5 Eval and red team (custodian) | balajikondalrayal | balajikondalrayal, 2026-11-14 (E1 report-only threshold + freeze pins) | Approved (E1 report-only / no hard cost bar; R1/R3 still required for full team decision) |
 | R6 UI and ops | Roy-developer | Roy-developer, 2026-11-12 (as R6 and lead) | Approved |
 | Lead | Roy-developer | Roy-developer, 2026-11-12 | Approved |
