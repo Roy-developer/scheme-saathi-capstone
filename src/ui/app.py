@@ -210,6 +210,7 @@ COPY = {
         "prepare_draft": "Prepare synthetic draft",
         "demo_warning": "Demo checklist only. These are not verified official document requirements. Uploaded files are stored but not read or authenticated.",
         "synthetic_application": "Synthetic application",
+        "application_not_available": "This scheme has no document checklist or application form in this demo yet. Please ask a human caseworker which documents to bring and how to apply.",
         "resolve_mismatch": "Mismatch found. Correct the entered fields and recheck, or ask a human caseworker.",
         "new_draft": "Start a new draft using current answers",
         "scheme_label": "Scheme",
@@ -381,6 +382,7 @@ COPY = {
         "prepare_draft": "कृत्रिम मसौदा तैयार करें",
         "demo_warning": "केवल प्रदर्शन सूची। ये आधिकारिक रूप से सत्यापित आवश्यकताएँ नहीं हैं; अपलोड की गई फ़ाइलें सहेजी जाती हैं, पर पढ़ी या प्रमाणित नहीं की जातीं।",
         "synthetic_application": "कृत्रिम आवेदन",
+        "application_not_available": "इस डेमो में इस योजना के लिए अभी कोई दस्तावेज़ सूची या आवेदन फ़ॉर्म नहीं है। कौन-से दस्तावेज़ लाने हैं और आवेदन कैसे करना है, यह किसी कर्मचारी से पूछें।",
         "resolve_mismatch": "अंतर मिला। दर्ज जानकारी सुधारकर फिर जाँचें या मानव केसवर्कर से पूछें।",
         "new_draft": "वर्तमान उत्तरों से नया मसौदा शुरू करें",
         "scheme_label": "योजना",
@@ -552,6 +554,7 @@ COPY = {
         "prepare_draft": "कृत्रिम मसुदा तयार करा",
         "demo_warning": "फक्त प्रात्यक्षिक यादी. या अधिकृतरीत्या पडताळलेल्या आवश्यकता नाहीत; अपलोड केलेल्या फाइल्स जतन होतात, पण वाचल्या किंवा प्रमाणित केल्या जात नाहीत.",
         "synthetic_application": "कृत्रिम अर्ज",
+        "application_not_available": "या डेमोमध्ये या योजनेसाठी अद्याप कागदपत्रांची यादी किंवा अर्जाचा फॉर्म नाही. कोणती कागदपत्रे आणायची आणि अर्ज कसा करायचा, हे संबंधित कर्मचाऱ्याला विचारा.",
         "resolve_mismatch": "तफावत आढळली. नोंद दुरुस्त करून पुन्हा तपासा किंवा मानवी केसवर्करला विचारा.",
         "new_draft": "सध्याच्या उत्तरांवरून नवीन मसुदा सुरू करा",
         "scheme_label": "योजना",
@@ -2069,6 +2072,13 @@ def _form_values_from_session(
     return values
 
 
+def application_is_available(assessment: dict[str, object]) -> bool:
+    """True when the scheme has a document checklist or a form to fill in."""
+
+    form_preview = assessment.get("form_preview") or {}
+    return bool(assessment.get("groups")) or form_preview.get("status") != "unavailable"
+
+
 def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
     """Render the API-backed synthetic checklist and exact-draft approval flow."""
 
@@ -2104,7 +2114,11 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
 
             assessment = flow_state.get("assessment")
             form_missing: set[str] = set()
-            if assessment:
+            if assessment and not application_is_available(assessment):
+                # e.g. IGNDPS-MH: nothing to upload or fill in, so say so
+                # instead of showing empty tabs and an unusable draft step.
+                st.info(text["application_not_available"])
+            elif assessment:
                 form_preview = assessment.get("form_preview", {})
                 if form_preview.get("status") != "unavailable":
                     form_missing = _render_form_preview(
