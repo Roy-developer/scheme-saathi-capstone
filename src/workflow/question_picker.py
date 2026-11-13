@@ -63,9 +63,13 @@ def pick_shared_registered_fact(
                 for fact_id in store.missing_inputs(rule.field, registry)
                 if fact_id not in skipped_facts
             ).keys())
-        counts.update(
-            fact_id
+        # A worked-out fact such as age (from date of birth and application
+        # date) can never be answered directly, so ask for its inputs instead.
+        counts.update(dict.fromkeys(
+            input_id
             for fact_id in package.required_facts
-            if fact_id not in store.facts and fact_id not in skipped_facts
-        )
+            if fact_id not in store.facts
+            for input_id in store.missing_inputs(fact_id, registry)
+            if input_id not in skipped_facts
+        ).keys())
     return max(counts, key=counts.get) if counts else None
