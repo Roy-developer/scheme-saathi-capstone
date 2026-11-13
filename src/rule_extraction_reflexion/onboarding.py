@@ -319,6 +319,12 @@ def plan_onboarding(scheme_id: str, paths: ProjectPaths) -> OnboardingPlan:
         )
     package_raw = staged.read_bytes()
     package = RulePackage.model_validate_json(package_raw)
+    # Only a package a person has approved for the mock portal may go live.
+    if package.approval_status != "approved_for_mock_portal":
+        raise OnboardingRefused(
+            f"{staged.name} is not approved for the mock portal "
+            f"(status: {package.approval_status}); nothing to do."
+        )
     package_sha = _sha256(package_raw)
     target = paths.packages / staged.name
     if target.exists():

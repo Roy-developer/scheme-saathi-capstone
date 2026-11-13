@@ -32,11 +32,13 @@ from src.workflow.agent_runtime import (
 from src.workflow.application_agent import run_application_specialist
 
 
-AGENTS = ["supervisor", "intake", "eligibility", "documents", "application"]
+AGENTS = ["supervisor", "intake", "eligibility", "documents", "application", "single"]
 
 # (label, raw value as a person might type it, expected placeholder)
 PII_SAMPLES = [
     ("aadhaar", "234567890123", "[REDACTED_AADHAAR]"),
+    ("mixed_separator_aadhaar", "0000:0000- 0004", "[REDACTED_AADHAAR]"),
+    ("pan", "XXXXX0000X", "[REDACTED_PAN]"),
     ("phone", "9876543210", "[REDACTED_PHONE]"),
     ("email", "asha.devi@example.invalid", "[REDACTED_EMAIL]"),
     ("bank_account", "123456789012345", "[REDACTED_ACCOUNT]"),
@@ -231,6 +233,7 @@ def test_sixteen_digit_grouped_number_is_fully_masked():
     ("card 0012 3456 7890 1234 is mine", ("0012", "1234"), "[REDACTED_ACCOUNT]"),
     ("card 0012-3456-7890-1234", ("0012", "1234"), "[REDACTED_ACCOUNT]"),
     ("card 0012.3456.7890.1234", ("0012", "1234"), "[REDACTED_ACCOUNT]"),
+    ("card 0012:3456- 7890:1234", ("0012", "1234"), "[REDACTED_ACCOUNT]"),
     ("aadhaar 2345 6789 0123 please", ("2345", "0123"), "[REDACTED_AADHAAR]"),
     ("aadhaar 234567890123", ("234567890123",), "[REDACTED_AADHAAR]"),
     ("आधार २३४५ ६७८९ ०१२३", ("२३४५", "०१२३"), "[REDACTED_AADHAAR]"),
@@ -253,6 +256,7 @@ NOT_PII = [
     "2024-05-12 10:30:00", "12.05.2024 - 15.06.2024", "12.05.1984 15.06.2020",
     "1.0.0", "v2.14.3", "Rs 1,50,000", "₹2,500 per month", "1500.50",
     "PMKISAN-LAND-CUTOFF-01", "FASETDP-MH-R01", "IGNWPS-MH", "revision 3",
+    "draft-XXXXX0000X", "XXXXX0000X-revision", "prefix_XXXXX0000X",
     "a3f1c9e2" * 8,                            # sha256-style fingerprint
     "4f8b2c1d9e7a6b5c4d3e2f1a0b9c8d7e",        # uuid4().hex
     "receipt 7c9e6679-7425-40de-944b-e07fc1f90ae7",

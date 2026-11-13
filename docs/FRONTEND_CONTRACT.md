@@ -196,6 +196,13 @@ Forget deletes the conversation's journey, revision approval pauses, its
 budget record (LangGraph `Store`, namespace `("budget",)`), portal drafts and profile/document/rule
 dependencies without deleting another conversation. Read-only draft/status
 requests do not recreate those dependency rows.
+When backups are enabled, a 204 also follows refresh of the current backup;
+an incomplete deletion or backup refresh returns 503 and should be retried.
+
+The synthetic APY eligibility check returns `need_more_information` without a
+verdict for application dates before 1 October 2022, pending review of the
+historical rules. It requires the application date before issuing any APY
+verdict.
 
 Document checks, draft creation/listing, edits and approval continue through
 the additive `/api/v1/journey/{conversation_id}` routes. On refresh the UI

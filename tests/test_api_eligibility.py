@@ -63,6 +63,26 @@ def test_api_routes_through_four_discovered_mcp_services(client: TestClient) -> 
     )
 
 
+def test_apy_historical_date_is_refused_through_api_and_mcp(client: TestClient) -> None:
+    profile = {
+        "application_date": "2022-09-30",
+        "date_of_birth": "1990-01-01",
+        "apy_is_citizen_of_india": True,
+        "apy_has_savings_bank_account": True,
+        "apy_is_or_has_been_income_tax_payer": True,
+    }
+    direct = client.post("/api/v1/schemes/APY-IN/evaluate", json=profile)
+    journey = client.post("/api/v1/journey", json={
+        "action": "evaluate", "scheme_id": "APY-IN", "profile": profile,
+    })
+
+    assert direct.status_code == journey.status_code == 200
+    for result in (direct.json(), journey.json()["eligibility_result"]):
+        assert result["result"] == "need_more_information"
+        assert "before 1 October 2022" in result["reason"]
+        assert result["deciding_rule_ids"] == []
+
+
 def test_multi_candidate_evaluate_returns_distinct_verdicts(client):
     response = client.post("/api/v1/journey", json={
         "action": "evaluate",

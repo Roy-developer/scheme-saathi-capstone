@@ -44,7 +44,7 @@ _CallResult = TypeVar("_CallResult")
 # The same rules feed PIIMiddleware for agents and mask_sensitive_text for
 # everything else (traces, intake text, search queries).
 #
-# Digits may be grouped by up to three spaces, dots or hyphens
+# Digits may be grouped by up to three spaces, dots, colons or hyphens
 # ("2345.6789.0123", "2345 - 6789 - 0123"). A number glued to a letter,
 # underscore or hyphen is part of an ID (draft UUIDs, hex fingerprints,
 # rule IDs), and a number starting with a date (12.05.2024, 2024-05-12) is
@@ -66,16 +66,19 @@ _NOT_A_DATE = (
     r"(?!(?:\d{1,2}[./-]\d{1,2}[./-]\d{2,4}|\d{4}[./-]\d{1,2}[./-]\d{1,2})(?!\d))"
     r"(?!(?<=\d[./-])(?:\d{1,2}[./-])?\d{1,4}(?!\d))"   # nor the rest of one
 )
-_DIGIT_GAP = r"[\s.\-]{0,3}"
+_DIGIT_GAP = r"[\s.:\-]{0,3}"
 _ID_END = r"(?![\w-])"
 # Exactly 12 digits make an Aadhaar. A longer grouped number (a 16-digit
 # card or account, "0012 3456 7890 1234") is left to the account rule so
 # no group of it stays visible.
 _NOT_PART_OF_LONGER_NUMBER = (
-    rf"(?<!\d)(?<!\d[\s.\-])(?<!\d[\s.\-]{{2}})(?<!\d[\s.\-]{{3}})"
+    rf"(?<!\d)(?<!\d[\s.:\-])(?<!\d[\s.:\-]{{2}})(?<!\d[\s.:\-]{{3}})"
 )
 PII_RULES = (
     RedactionRule("email"),
+    RedactionRule("pan", detector=(
+        _NOT_INSIDE_ID + r"[A-Za-z]{5}[0-9]{4}[A-Za-z]" + _ID_END
+    )),
     RedactionRule("aadhaar", detector=(
         _NOT_PART_OF_LONGER_NUMBER + _NOT_INSIDE_ID + _NOT_A_DATE
         + rf"(?:\d{_DIGIT_GAP}){{11}}\d" + _ID_END + rf"(?!{_DIGIT_GAP}\d)"

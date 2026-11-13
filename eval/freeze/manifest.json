@@ -14,7 +14,7 @@
   },
   "attack_suite": {
     "path": "eval/red_team/attacks_v0.json",
-    "sha256": "789ccc109b139bf1d48a5d8739750505a3e63c9f3620a5ed88202c3904f0ba4e",
+    "sha256": "5419658db14c5c3484c0a12037dd6f172dd7eeea08478d8d8af35b3fdbb6a733",
     "suite_version": "0.7.0"
   },
   "budgets": {
@@ -46,7 +46,7 @@
   },
   "playbook": {
     "path": "data/schemes/rule_extractor_playbook.json",
-    "sha256": "37dc729fddd07cf4653729f1e8d077693d53885a44959af1f2493fe0eb464a68"
+    "sha256": "6543e8ca4cae008d8d79cc64fb72eb7669be17e894ec89d15d91f3cc8d4e07e7"
   },
   "prompts": {
     "entries": {
@@ -113,8 +113,8 @@
       "apy_in.v1.json": "620fa5e02729664af7cd7d6ebc5aea6a498d99e7cb643d99a866094f0c8ff027",
       "igndps_mh.v1.json": "dade0231fd9097f778a8d40b2119e1d902db14c7cdc5520f8f2fc4a0b16504e4",
       "ignoaps_mh.v1.json": "cd4652b8a7da119561eee6ee8a532b4059cca8b750c9d323d93c6a05c00a6549",
-      "ignwps_mh.v1.json": "224bf03585d9bb6bc41a64765c890dd84ea36c6006b0907065d9ded8bd5b2c65",
-      "pmkisan_in.v1.json": "fb59df9f7420b29d33f5a41d938cdd00f688db742e62cd989f11a948b11137a1"
+      "ignwps_mh.v1.json": "8db9a7379944f72a79168df1f9986cb2f316d47f50bc3951c280d3a91590c3bd",
+      "pmkisan_in.v1.json": "d4b05cc2d15bb5e0873d4611b8be9c39237617f34993f012811edd2f6381edce"
     }
   },
   "schema_version": 1,

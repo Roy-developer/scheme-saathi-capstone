@@ -58,6 +58,8 @@ CURRENT_BUDGET: ContextVar[ConversationBudget | None] = ContextVar(
     "conversation_budget", default=None,
 )
 
+COUNT_DOMAIN_CALLS: ContextVar[bool] = ContextVar("count_domain_calls", default=True)
+
 
 def durable_counters(counters: dict[str, int]) -> dict[str, int]:
     """Merge a graph snapshot with reservations saved before a failed node."""

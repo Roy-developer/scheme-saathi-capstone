@@ -1,0 +1,67 @@
+{
+  "package_version": "1.0.0",
+  "scheme_id": "IGNDPS-MH",
+  "approval_status": "approved_for_mock_portal",
+  "reviewer_name": "project owner (mock portal; approval recorded from request, no named domain reviewer)",
+  "reviewed_at": "2026-11-12",
+  "approval_scope": "synthetic_mock_portal_only",
+  "source": {
+    "publisher": "Social Justice & Special Assistance Department, Government of Maharashtra",
+    "source_url": "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-disability-pension-scheme/",
+    "collected_at": "2026-11-12",
+    "official_eligibility_text": "A Disable person in the age group of 18 to 79 years is eligible under this Scheme.",
+    "publication_date_status": "not_confirmed"
+  },
+  "required_facts": [
+    "age",
+    "application_date",
+    "date_of_birth",
+    "has_disability"
+  ],
+  "age_as_of": "application_date",
+  "age_boundaries_inclusive": true,
+  "documents_status": "not_verified",
+  "reasons": {
+    "eligible": "All reviewed mock conditions are met: aged 65 or above on the application date, and the applicant's name is on the BPL list.",
+    "not_eligible": "One or more required mock scheme conditions are not met.",
+    "need_more_information": "Some details are still needed before this mock check can be completed."
+  },
+  "notice": "This mock result uses the eligibility criteria published by the Maharashtra Social Justice department (page last updated 29.04.2025). It is not a government decision; BPL-list status and other records are not verified.",
+  "unresolved_checks": [
+    "Central NSAP guideline age threshold (60) versus the Maharashtra page (65)",
+    "Whether Indian citizenship is a condition",
+    "Whether non-receipt of any other pension is a condition"
+  ],
+  "rules": [
+    {
+      "rule_id": "IGNDPS-MH-AGE-GTE",
+      "field": "age",
+      "operator": "gte",
+      "value": 18,
+      "unit": "years",
+      "source_clause_id": "IGNDPS-MH-ELIGIBILITY-01",
+      "source_text": "A Disable person in the age group of 18 to 79 years is eligible under this Scheme.",
+      "source_location": "Eligibility Criteria section"
+    },
+    {
+      "rule_id": "IGNDPS-MH-AGE-LTE",
+      "field": "age",
+      "operator": "lte",
+      "value": 79,
+      "unit": "years",
+      "source_clause_id": "IGNDPS-MH-ELIGIBILITY-01",
+      "source_text": "A Disable person in the age group of 18 to 79 years is eligible under this Scheme.",
+      "source_location": "Eligibility Criteria section"
+    },
+    {
+      "rule_id": "IGNDPS-MH-HAS_DISABILITY-EQ",
+      "field": "has_disability",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_clause_id": "IGNDPS-MH-ELIGIBILITY-01",
+      "source_text": "A Disable person in the age group of 18 to 79 years is eligible under this Scheme.",
+      "source_location": "Eligibility Criteria section"
+    }
+  ]
+}
