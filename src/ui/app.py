@@ -21,6 +21,7 @@ from uuid import UUID, uuid4
 import streamlit as st
 import streamlit.components.v1 as components
 
+from src.documents.checklists import CHECKLIST_DIRECTORY
 from src.rules.data_provider import RulePackageProvider
 from src.ui.api_client import (
     ApplicationApiError,
@@ -1821,18 +1822,25 @@ def render_document_checker(
             st.write(f'- {labels.get(locale, labels.get("en", ""))}')
 
 
+def scheme_has_document_checklist(scheme_id: str) -> bool:
+    """True when the demo has a document checklist for this scheme."""
+
+    return (CHECKLIST_DIRECTORY / f"{scheme_id}.json").is_file()
+
+
 def should_offer_document_readiness(
     candidate_verdicts: dict[str, dict[str, object]],
 ) -> bool:
-    """Offer readiness only when at least one scheme was actually checked.
+    """Offer readiness only when a checked scheme has documents to upload.
 
-    Document checklists exist only for schemes with reviewed rules, so a
-    result list of information-only (or failed) schemes has nothing to rank.
+    Information-only or failed schemes have nothing to rank, and neither does
+    a checked scheme without a checklist (e.g. IGNDPS-MH), even if eligible.
     """
 
     return any(
         verdict.get("result") not in {"information_only", "tool_error"}
-        for verdict in candidate_verdicts.values()
+        and scheme_has_document_checklist(scheme_id)
+        for scheme_id, verdict in candidate_verdicts.items()
     )
 
 
