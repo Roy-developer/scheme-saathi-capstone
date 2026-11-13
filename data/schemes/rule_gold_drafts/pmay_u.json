@@ -2,7 +2,7 @@
   "scheme_id": "PMAY-U-IN",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "PMAY-U-IN-R01",
@@ -27,13 +27,45 @@
       "source_quote": "All eligible beneficiaries (including family members) should have an Aadhaar/ Aadhaar Virtual ID",
       "needs_human_review": false,
       "note": "Also applies to family members."
+    },
+    {
+      "rule_id": "PMAY-U-IN-R03",
+      "kind": "eligibility",
+      "field": "lives_in_urban_area",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMAY-U-IN-ELIGIBILITY-01",
+      "source_quote": "living in urban areas",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PMAY-U-IN-R04",
+      "kind": "exclusion",
+      "field": "owns_pucca_house_anywhere",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMAY-U-IN-EXCLUSION-01",
+      "source_quote": "If the user owns a pucca house anywhere in India",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PMAY-U-IN-R05",
+      "kind": "exclusion",
+      "field": "availed_housing_scheme_last_20_years",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMAY-U-IN-EXCLUSION-01",
+      "source_quote": "If they have availed benefit under any Housing scheme of Central/State/UT government in past 20 years.",
+      "needs_human_review": false,
+      "note": null
     }
   ],
   "unresolved": [
-    "MISSING FIELD: owns_pucca_house_anywhere_in_india (ELIGIBILITY-01 and EXCLUSION-01).",
-    "MISSING FIELD: has_availed_housing_scheme_benefit_in_last_20_years (ELIGIBILITY-03 and EXCLUSION-01).",
-    "MISSING FIELD: lives_in_urban_area (ELIGIBILITY-01).",
-    "MISSING FIELD: income category EWS/LIG/MIG and vertical choice; States may redefine the EWS income limit (ELIGIBILITY-02).",
-    "Income limit of Rs 9 lakh is the national MIG ceiling; States/UTs may redefine EWS criteria with MoHUA concurrence."
+    "Income category EWS/LIG/MIG decides the vertical; States/UTs may redefine the EWS limit (ELIGIBILITY-02). Only the national Rs 9 lakh ceiling is encoded."
   ]
 }

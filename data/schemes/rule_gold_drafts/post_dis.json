@@ -2,7 +2,7 @@
   "scheme_id": "POST-DIS-IN",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "POST-DIS-IN-R01",
@@ -51,13 +51,57 @@
       "source_quote": "Family income up to Rs. 2.5 lakh per year.",
       "needs_human_review": false,
       "note": null
+    },
+    {
+      "rule_id": "POST-DIS-IN-R05",
+      "kind": "eligibility",
+      "field": "is_student_in_post_matric_course",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "POST-DIS-IN-ELIGIBILITY-01",
+      "source_quote": "Students in Class 11 or 12.\nStudents in Diploma, Degree or Post-Graduate courses.",
+      "needs_human_review": false,
+      "note": "Post-matric covers Class 11/12 and also Diploma, Degree and Post-Graduate courses; both are in the source passage."
+    },
+    {
+      "rule_id": "POST-DIS-IN-R06",
+      "kind": "exclusion",
+      "field": "receives_other_scholarship_or_stipend",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "POST-DIS-IN-ELIGIBILITY-05",
+      "source_quote": "The student should not receive another post-scholarship or stipend.",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "POST-DIS-IN-R07",
+      "kind": "eligibility",
+      "field": "family_members_receiving_scholarship",
+      "operator": "lte",
+      "value": 2,
+      "unit": null,
+      "source_passage_id": "POST-DIS-IN-EXCLUSION-02",
+      "source_quote": "Scholarship will not be given to more than two students from a family.",
+      "needs_human_review": true,
+      "note": "Counting decision (2026-11-11): the limit of 2 includes this applicant. The fact counts total family members receiving the scholarship including the applicant. The source ('not more than two students from a family') supports this. Twin/multiple-birth exception is noted in unresolved; not encoded."
+    },
+    {
+      "rule_id": "POST-DIS-IN-R08",
+      "kind": "exclusion",
+      "field": "is_repeating_class",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "POST-DIS-IN-EXCLUSION-04",
+      "source_quote": "If a student has to repeat a class",
+      "needs_human_review": false,
+      "note": null
     }
   ],
   "unresolved": [
-    "MISSING FIELD: student currently in Class 11/12 or a Diploma, Degree or Post-Graduate course.",
-    "MISSING FIELD: student receives another post-scholarship or stipend.",
-    "MISSING FIELD: number of children/students from the same family already receiving the scholarship (max 2; twins allowed).",
-    "MISSING FIELD: student is repeating a class.",
     "NOTE: UDID Card and Aadhaar Card are listed under eligibility but as documents; has_aadhaar not encoded."
   ]
 }

@@ -2,7 +2,7 @@
   "scheme_id": "PMJJBY-IN",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "PMJJBY-IN-R01",
@@ -14,7 +14,7 @@
       "source_passage_id": "PMJJBY-IN-ELIGIBILITY-01",
       "source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 50 years are eligible to join.",
       "needs_human_review": false,
-      "note": "ELIGIBILITY-03 says 18 years completed."
+      "note": "ELIGIBILITY-03 says 18 years completed. End values included (Priyanka (gold-set owner) decision 2026-11-10)."
     },
     {
       "rule_id": "PMJJBY-IN-R02",
@@ -26,7 +26,7 @@
       "source_passage_id": "PMJJBY-IN-ELIGIBILITY-01",
       "source_quote": "All individual account holders of participating banks/ Post office in the age group of 18 to 50 years are eligible to join.",
       "needs_human_review": false,
-      "note": "ELIGIBILITY-03 says 50 years (age nearer birthday)."
+      "note": "ELIGIBILITY-03 says 50 years (age nearer birthday). End values included (Priyanka (gold-set owner) decision 2026-11-10)."
     },
     {
       "rule_id": "PMJJBY-IN-R03",
@@ -39,12 +39,34 @@
       "source_quote": "All individual account holders of participating banks/ Post office",
       "needs_human_review": true,
       "note": "Passage says bank or Post Office account holder; savings account is the closest profile field."
+    },
+    {
+      "rule_id": "PMJJBY-IN-R04",
+      "kind": "exclusion",
+      "field": "is_institutional_account_holder",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMJJBY-IN-ELIGIBILITY-05",
+      "source_quote": "All bank account holders other than institutional account holders are eligible",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PMJJBY-IN-R05",
+      "kind": "eligibility",
+      "field": "consents_to_auto_debit",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PMJJBY-IN-ELIGIBILITY-03",
+      "source_quote": "who give their consent to join / enable auto-debit",
+      "needs_human_review": false,
+      "note": "Also requires the bank to participate; not encoded."
     }
   ],
   "unresolved": [
-    "Age basis differs: ELIGIBILITY-03 says 18 years completed and 50 years (age nearer birthday); whether the end values are included is not stated.",
-    "MISSING FIELD: is_institutional_account_holder (ELIGIBILITY-05: institutional account holders are not eligible; is_institutional_landholder is about land, not accounts).",
-    "MISSING FIELD: has_auto_debit_consent (ELIGIBILITY-03) and whether the bank participates in the scheme.",
+    "Age basis differs: ELIGIBILITY-03 says 18 years completed and 50 years (age nearer birthday); end values treated as included per Priyanka (gold-set owner) decision 2026-11-10.",
     "Cover ends at age 55 (EXCLUSION-01); entry is not possible beyond 50. Not encoded as a rule."
   ]
 }

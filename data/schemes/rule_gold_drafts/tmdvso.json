@@ -2,11 +2,23 @@
   "scheme_id": "TMDVSO-MH",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
-  "rules": [],
+  "review_status": "human_reviewed",
+  "rules": [
+    {
+      "rule_id": "TMDVSO-MH-R01",
+      "kind": "eligibility",
+      "field": "belongs_to_vjnt_obc_or_sbc_category",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "TMDVSO-MH-BENEFICIARY-01",
+      "source_quote": "Eligible DNT/SBC/OBC community members",
+      "needs_human_review": true,
+      "note": "New fact. Official department page; the myScheme page (TMDVSO-MH-ELIGIBILITY-01) says the same."
+    }
+  ],
   "unresolved": [
-    "No rule could be expressed with the available fields.",
-    "MISSING FIELD: belongs to VJNT, OBC or SBC category.",
-    "MISSING FIELD: meets age, education and fitness conditions of the Motor Vehicle Act (limits are not stated in the passages)."
+    "Age, education and fitness are \"as per the Motor Vehicle Act\" with no figures on the page, so they are not encoded; route to a caseworker.",
+    "Domicile of Maharashtra appears only in the documents list, not as an eligibility sentence."
   ]
 }
