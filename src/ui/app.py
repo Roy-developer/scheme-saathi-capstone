@@ -720,11 +720,11 @@ def clear_interview_state() -> None:
 
 # One icon per PlanStep.status, so the plan reads like a checklist.
 PLAN_STEP_ICONS = {
-    "pending": "?",
-    "in_progress": "?",
-    "done": "?",
-    "skipped": "?",
-    "failed": "?",
+    "pending": "⬜",
+    "in_progress": "⏳",
+    "done": "✅",
+    "skipped": "⏭️",
+    "failed": "❌",
 }
 
 
@@ -2244,7 +2244,7 @@ def render_plan(plan_detail: dict | None, text: dict[str, str]) -> None:
     with st.container(border=True):
         st.markdown(f'**{text["plan_title"]}**')
         for step in plan_detail["steps"]:
-            icon = PLAN_STEP_ICONS.get(step["status"], "?")
+            icon = PLAN_STEP_ICONS.get(step["status"], "•")
             st.markdown(f'{icon} {step["goal"]}')
         if plan_detail.get("replan_reason"):
             st.caption(plan_detail["replan_reason"])
@@ -2276,11 +2276,11 @@ def render_verdict(
 
     # Green for eligible, red for not eligible, yellow for "need more".
     if result["result"] == "eligible":
-        st.success(f'? {text["eligible"]}')
+        st.success(f'✅ {text["eligible"]}')
     elif result["result"] == "not_eligible":
         # PM-KISAN wording reminds the user this is the 2020 mock check.
         st.error(
-            "? "
+            "⛔ "
             + text[
                 "pmkisan_potential"
                 if scheme_id == "PM-KISAN-IN"
@@ -2288,7 +2288,7 @@ def render_verdict(
             ]
         )
     else:
-        st.warning(f'?? {text["cant_tell"]}')
+        st.warning(f'⚠️ {text["cant_tell"]}')
     st.write(result["reason"])
     # Optional parts only show when the package provides them.
     if result.get("notice"):

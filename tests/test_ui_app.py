@@ -364,7 +364,7 @@ def test_pmkisan_continue_opens_chat_that_asks_then_shows_verdict() -> None:
         assert interview_request.citizen_present is True
         # The plan checklist and the first question are on screen.
         markdown = [element.value for element in app.markdown]
-        assert "? Learn about you" in markdown
+        assert "⏳ Learn about you" in markdown
         assert question in markdown
         assert app.query_params["scheme"] == "PM-KISAN-IN"
         assert app.query_params["conversation"] == str(conversation_id)
