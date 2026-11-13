@@ -3,7 +3,10 @@
 import json
 import os
 from pathlib import Path
+import shutil
 from uuid import uuid4
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 # Must run before any src module reads the portal URL. Under pytest-xdist each
 # worker (gw0, gw1, ...) gets its own portal port, so parallel runs don't collide.
@@ -115,3 +118,37 @@ def remove_test_databases():
     for database in _DATABASES:
         for suffix in ("", "-wal", "-shm"):
             database.with_name(database.name + suffix).unlink(missing_ok=True)
+
+
+@pytest.fixture(scope="session")
+def _worker_scheme_data(tmp_path_factory) -> Path:
+    """Give each xdist worker its own copy of the document data.
+
+    The app takes a publication lock on this data even to read it, so parallel
+    workers sharing the repository's files queue on one lock and time out.
+    """
+
+    source = PROJECT_ROOT / "data" / "schemes"
+    worker = os.getenv("PYTEST_XDIST_WORKER", "main")
+    destination = tmp_path_factory.mktemp(f"schemes-{worker}") / "schemes"
+    destination.mkdir(parents=True)
+    shutil.copytree(source / "document_checklists", destination / "document_checklists")
+    shutil.copytree(source / "mock_forms", destination / "mock_forms")
+    shutil.copy(source / "document_evidence.json", destination / "document_evidence.json")
+    return destination
+
+
+@pytest.fixture(autouse=True)
+def _isolated_document_data(monkeypatch: pytest.MonkeyPatch, _worker_scheme_data: Path) -> None:
+    from src.documents import checklists, forms, publication
+
+    destination = _worker_scheme_data
+    checklist_directory = destination / "document_checklists"
+    evidence_file = destination / "document_evidence.json"
+    form_directory = destination / "mock_forms"
+    monkeypatch.setattr(checklists, "CHECKLIST_DIRECTORY", checklist_directory)
+    monkeypatch.setattr(checklists, "EVIDENCE_FILE", evidence_file)
+    monkeypatch.setattr(publication, "CHECKLIST_DIRECTORY", checklist_directory)
+    monkeypatch.setattr(publication, "EVIDENCE_FILE", evidence_file)
+    monkeypatch.setattr(forms, "FORM_DIRECTORY", form_directory)
+    monkeypatch.setattr(forms, "test_scheme_data_directory", lambda: destination)
