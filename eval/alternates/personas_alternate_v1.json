@@ -1,0 +1,106 @@
+{
+  "dataset_version": "1.5.0",
+  "split": "development",
+  "protected": false,
+  "annotation_note": "Personas for IGNWPSM-MH, which was moved to alternate (duplicate URL with IGNWPS-MH). Not scored against the development gold set. Moved out of eval/development/personas_v1.json because the persona schema allows only development or held_out.",
+  "personas": [
+    {
+      "persona_id": "R1-GOLD-038",
+      "boundary_family": "ignwpsm-age-lower",
+      "split": "alternate",
+      "protected": false,
+      "description": "MH widow aged exactly 40, BPL, not receiving other pension: at the lower age boundary.",
+      "typed_facts": {
+        "is_widow": true,
+        "age": 40,
+        "is_below_poverty_line": true,
+        "is_resident_of_state": true,
+        "is_receiving_other_pension": false
+      },
+      "expected_by_scheme": {
+        "IGNWPSM-MH": {
+          "result": "eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNWPSM-MH-R01",
+            "IGNWPSM-MH-R02",
+            "IGNWPSM-MH-R03",
+            "IGNWPSM-MH-R04",
+            "IGNWPSM-MH-R05",
+            "IGNWPSM-MH-R06"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi",
+          "scheme_id": "IGNWPSM-MH",
+          "result": "eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-039",
+      "boundary_family": "ignwpsm-age-lower",
+      "split": "alternate",
+      "protected": false,
+      "description": "MH widow aged 39: one year below the lower boundary; R01 fails.",
+      "typed_facts": {
+        "is_widow": true,
+        "age": 39,
+        "is_below_poverty_line": true,
+        "is_resident_of_state": true,
+        "is_receiving_other_pension": false
+      },
+      "expected_by_scheme": {
+        "IGNWPSM-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNWPSM-MH-R01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi",
+          "scheme_id": "IGNWPSM-MH",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-GOLD-040",
+      "boundary_family": "ignwpsm-pension-bar",
+      "split": "alternate",
+      "protected": false,
+      "description": "MH widow aged 55, BPL, already receiving another social security pension: R06 fails.",
+      "typed_facts": {
+        "is_widow": true,
+        "age": 55,
+        "is_below_poverty_line": true,
+        "is_resident_of_state": true,
+        "is_receiving_other_pension": true
+      },
+      "expected_by_scheme": {
+        "IGNWPSM-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNWPSM-MH-R06"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi",
+          "scheme_id": "IGNWPSM-MH",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    }
+  ]
+}

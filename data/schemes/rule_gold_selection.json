@@ -1,25 +1,13 @@
 {
-  "version": "0.2.0",
+  "version": "0.9.0",
   "created": "2026-11-09",
-  "status": "23 gold schemes: 15 development, 8 held-out. All 23 human_reviewed (held-out 8 marked on owner instruction 2026-11-10).",
+  "status": "32 gold schemes: 22 development, 9 held-out, 1 alternate (IGNWPSM-MH). v0.9.0 (2026-11-12): restored IGNDPS-IN, IGNWPS-IN, NSAP-IGNOAPS-IN to development after official NSAP portal (nsap.dord.gov.in) confirmed as valid .gov.in source.",
   "selection_rule": "Quote-verified against passages; few unresolved items; no MISSING FIELD or OR-conflict that blocks full encoding; spread of populations and benefit types; families (e.g. all widow pensions) kept in one split.",
   "alternates": [
     "eps",
-    "ipmwcd",
-    "faishl"
+    "ignwpsm"
   ],
   "schemes": [
-    {
-      "draft_file": "rule_gold_drafts/ignwps.json",
-      "scheme_id": "IGNWPS-IN",
-      "split": "development",
-      "family": "widow",
-      "rules": 5,
-      "unresolved": 0,
-      "rule_review_flags": 0,
-      "review_status": "human_reviewed",
-      "why": "Central widow pension; age 40-79 band, BPL. In active review (untracked docs/IGNWPS_IN_RULE_REVIEW)."
-    },
     {
       "draft_file": "rule_gold_drafts/ignwps_mh.json",
       "scheme_id": "IGNWPS-MH",
@@ -32,15 +20,14 @@
       "why": "Maharashtra widow pension; same band, already used in Reflexion dev work."
     },
     {
-      "draft_file": "rule_gold_drafts/nsap_ignoaps.json",
-      "scheme_id": "NSAP-IGNOAPS-IN",
+      "draft_file": "rule_gold_drafts/ignwps.json",
+      "scheme_id": "IGNWPS-IN",
       "split": "development",
-      "family": "old_age",
-      "rules": 3,
+      "family": "widow",
+      "rules": 5,
       "unresolved": 0,
       "rule_review_flags": 0,
-      "review_status": "human_reviewed",
-      "why": "Central old-age pension; age>=60, BPL, citizen."
+      "review_status": "human_reviewed"
     },
     {
       "draft_file": "rule_gold_drafts/ignoaps_mh.json",
@@ -52,6 +39,16 @@
       "rule_review_flags": 0,
       "review_status": "human_reviewed",
       "why": "MH old-age pension; age>=65, exclusion on other pension; has a playbook run."
+    },
+    {
+      "draft_file": "rule_gold_drafts/nsap_ignoaps.json",
+      "scheme_id": "NSAP-IGNOAPS-IN",
+      "split": "development",
+      "family": "old_age",
+      "rules": 3,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed"
     },
     {
       "draft_file": "rule_gold_drafts/pm_kisan.json",
@@ -84,9 +81,7 @@
       "rules": 5,
       "unresolved": 0,
       "rule_review_flags": 0,
-      "review_status": "human_reviewed",
-      "why": "Central disability pension; contains a gt-vs-gte 80% CONFLICT, a built-in boundary test once Role 1 settles it.",
-      "relabelled": "Was held-out; errors were read on 2026-11-10 after E3 run 1, so relabelled development."
+      "review_status": "human_reviewed"
     },
     {
       "draft_file": "rule_gold_drafts/fadse.json",
@@ -271,6 +266,105 @@
       "rule_review_flags": 2,
       "review_status": "human_reviewed",
       "why": "VJNT fee reimbursement; category, income band, failures <= 1, post-matric."
+    },
+    {
+      "draft_file": "rule_gold_drafts/tfefvssshs.json",
+      "scheme_id": "TFEFVSSSHS-MH",
+      "split": "heldout",
+      "family": "tuition_fee_vjnt",
+      "rules": 4,
+      "unresolved": 4,
+      "rule_review_flags": 4,
+      "review_status": "pending_human_review",
+      "why": "Same family as held-out TFEFVS-MH (tuition and exam fees for VJNT students), so it goes to the same split to avoid leakage. Pending Role 5 confirmation; must not be used to tune."
+    },
+    {
+      "draft_file": "rule_gold_drafts/tmdvso.json",
+      "scheme_id": "TMDVSO-MH",
+      "split": "development",
+      "family": "training",
+      "rules": 1,
+      "unresolved": 2,
+      "rule_review_flags": 1,
+      "review_status": "human_reviewed",
+      "why": "Motor-driving training; only the category rule can be encoded, the rest goes to a caseworker. Reviewed by Nidhi Kaushik (Role 1) 2026-11-11."
+    },
+    {
+      "draft_file": "rule_gold_drafts/wmcl.json",
+      "scheme_id": "WMCL-IN",
+      "split": "development",
+      "family": "education_support",
+      "rules": 3,
+      "unresolved": 3,
+      "rule_review_flags": 3,
+      "review_status": "human_reviewed",
+      "why": "Coffee Board stipend for children of SC/ST plantation labourers; exclusion for supervisory staff. Reviewed by Nidhi Kaushik (Role 1) 2026-11-11."
+    },
+    {
+      "draft_file": "rule_gold_drafts/faishl.json",
+      "scheme_id": "FAISHL-IN",
+      "split": "development",
+      "family": "defence_welfare",
+      "rules": 2,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Home loan interest subsidy for war bereaved/disabled ex-servicemen; 2 clean rules, genuine ksb.gov.in source. Promoted from alternate 2026-11-11 — official gov.in URL, no UMANG dependency."
+    },
+    {
+      "draft_file": "rule_gold_drafts/ipmwcd.json",
+      "scheme_id": "IPMWCD-IN",
+      "split": "development",
+      "family": "women_internship",
+      "rules": 5,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "MoWCD internship for women from non-tier-1/rural areas; age 21-40, 5 clean rules, genuine wcd.intern.nic.in source. Promoted from alternate 2026-11-11 — adds women/geography diversity to gold set."
+    },
+    {
+      "draft_file": "rule_gold_drafts/eacs1t7a8t10.json",
+      "scheme_id": "EACS-MH",
+      "split": "development",
+      "family": "construction_worker",
+      "rules": 2,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Education assistance for children of registered BOCW workers; 2 clean rules, genuine mahabocw.in source. Adds construction-worker population to gold set."
+    },
+    {
+      "draft_file": "rule_gold_drafts/namo_shetkari_mahasanman_nidhi_yojana.json",
+      "scheme_id": "NSMNY-MH",
+      "split": "development",
+      "family": "farmer_income",
+      "rules": 3,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Maharashtra state farmer income support (MH counterpart to PM-KISAN); 3 clean rules including 2 exclusions, genuine nsmny.mahait.org portal."
+    },
+    {
+      "draft_file": "rule_gold_drafts/ignwpsm.json",
+      "scheme_id": "IGNWPSM-MH",
+      "split": "alternate",
+      "family": "widow",
+      "rules": 6,
+      "unresolved": 0,
+      "rule_review_flags": 0,
+      "review_status": "human_reviewed",
+      "why": "Moved from development to alternate 2026-11-11: shares source URL with IGNWPS-MH (sjsa.maharashtra.gov.in/…/indira-gandhi-national-widow-pension-scheme/); keeping both in the gold set double-counts the scheme. IGNWPS-MH kept (live package). IGNWPSM-MH available as alternate if a second MH widow-pension scheme is ever needed."
+    },
+    {
+      "draft_file": "rule_gold_drafts/bhausaheb_fundkar.json",
+      "scheme_id": "BFFL-MH",
+      "split": "development",
+      "family": "horticulture",
+      "rules": 4,
+      "unresolved": 0,
+      "rule_review_flags": 2,
+      "review_status": "human_reviewed",
+      "why": "MH horticulture plantation scheme; 4 rules (MH resident, Aadhaar, 7/12 land record, institutional exclusion); 2 Marathi passages translated and confirmed 2026-11-11; genuine mahadbt.maharashtra.gov.in source."
     }
   ],
   "not_used_needs_or_logic": [
