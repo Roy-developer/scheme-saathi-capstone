@@ -162,3 +162,47 @@ def test_azure_exporter_is_configured_only_with_connection_string(monkeypatch) -
     telemetry.configure_telemetry()
     telemetry.configure_telemetry()
     assert calls == [True]
+
+
+def test_journey_verdict_counts_once_per_conversation(otel_reader) -> None:
+    metrics._counted_verdicts.clear()
+    for _ in range(3):
+        metrics.record_journey_verdict("conv-once", "IGNWPS-MH", "eligible")
+
+    (verdict,) = _otel_points(otel_reader, "scheme_saathi.verdicts")
+    assert verdict.value == 1
+
+
+def test_journey_verdict_counts_again_only_when_it_changes(otel_reader) -> None:
+    metrics._counted_verdicts.clear()
+    metrics.record_journey_verdict("conv-change", "IGNWPS-MH", "cant_tell")
+    metrics.record_journey_verdict("conv-change", "IGNWPS-MH", "cant_tell")
+    metrics.record_journey_verdict("conv-change", "IGNWPS-MH", "eligible")
+
+    counts = sorted(
+        (dict(point.attributes)["result"], point.value)
+        for point in _otel_points(otel_reader, "scheme_saathi.verdicts")
+    )
+    assert counts == [("eligible", 1), ("need_more_information", 1)]
+
+
+def test_tool_span_hashes_the_journey_and_omits_arguments(monkeypatch) -> None:
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+    from opentelemetry.sdk.trace.export.in_memory_span_exporter import (
+        InMemorySpanExporter,
+    )
+
+    exporter = InMemorySpanExporter()
+    provider = TracerProvider()
+    provider.add_span_processor(SimpleSpanProcessor(exporter))
+    monkeypatch.setattr(metrics, "_tracer", provider.get_tracer("test"))
+
+    with metrics.tool_span("journey-agent", "mock_portal", "raw-journey-id"):
+        pass
+
+    (span,) = exporter.get_finished_spans()
+    attributes = dict(span.attributes)
+    assert attributes["tool"] == "mock_portal"
+    assert attributes["journey"] == metrics.correlation_id("raw-journey-id")
+    assert "raw-journey-id" not in str(attributes)

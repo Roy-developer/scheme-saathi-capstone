@@ -780,7 +780,7 @@ def test_registered_date_question_accepts_an_old_date_of_birth() -> None:
     ) as send_reply, patch(
         "src.ui.api_client.list_application_drafts", return_value=[],
     ):
-        app = AppTest.from_file(app_path)
+        app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS)
         app.query_params["conversation"] = str(conversation_id)
         app.query_params["scheme"] = "IGNOAPS-MH"
         app.run()
