@@ -151,4 +151,9 @@ def _isolated_document_data(monkeypatch: pytest.MonkeyPatch, _worker_scheme_data
     monkeypatch.setattr(publication, "CHECKLIST_DIRECTORY", checklist_directory)
     monkeypatch.setattr(publication, "EVIDENCE_FILE", evidence_file)
     monkeypatch.setattr(forms, "FORM_DIRECTORY", form_directory)
-    monkeypatch.setattr(forms, "test_scheme_data_directory", lambda: destination)
+    from src.config import test_scheme_data_directory as configured_scheme_data
+
+    # A test that sets its own rule-package directory keeps its own form data.
+    monkeypatch.setattr(
+        forms, "test_scheme_data_directory", lambda: configured_scheme_data() or destination,
+    )
