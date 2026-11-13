@@ -3,12 +3,58 @@
   "schema_version": "1",
   "origin": "hand_drafted",
   "review_status": "pending_human_review",
-  "rules": [],
+  "rules": [
+    {
+      "rule_id": "TFEFVSSSHS-MH-R01",
+      "kind": "eligibility",
+      "field": "belongs_to_vjnt_or_sbc_category",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "TFEFVSSSHS-MH-ELIGIBILITY-01",
+      "source_quote": "Student should belong to VJNT/SBC Category.",
+      "needs_human_review": true,
+      "note": "New fact; category is self-declared and needs a caste or category certificate."
+    },
+    {
+      "rule_id": "TFEFVSSSHS-MH-R02",
+      "kind": "eligibility",
+      "field": "is_student_in_class_9_to_12",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "TFEFVSSSHS-MH-BENEFICIARY-01",
+      "source_quote": "DNT and SBC Students studying in classes 9-12",
+      "needs_human_review": true,
+      "note": "New fact. The page also says the student must be in a recognised High School."
+    },
+    {
+      "rule_id": "TFEFVSSSHS-MH-R03",
+      "kind": "eligibility",
+      "field": "class_failure_count",
+      "operator": "lte",
+      "value": 1,
+      "unit": null,
+      "source_passage_id": "TFEFVSSSHS-MH-ELIGIBILITY-04",
+      "source_quote": "One’s failure is eligible. Twice failure is not eligible.",
+      "needs_human_review": true,
+      "note": "New fact: number of times the student has failed. Read \"once\" as at most one failure."
+    },
+    {
+      "rule_id": "TFEFVSSSHS-MH-R04",
+      "kind": "exclusion",
+      "field": "receives_other_scholarship_or_stipend",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "TFEFVSSSHS-MH-EXCLUSION-01",
+      "source_quote": "Students getting benefit of other scholarships are not eligible.",
+      "needs_human_review": true,
+      "note": "Exclusion: applies when true."
+    }
+  ],
   "unresolved": [
-    "No rule could be expressed with the available fields: 'No limit of age or income' states no constraint.",
-    "MISSING FIELD: belongs to VJNT/SBC category.",
-    "MISSING FIELD: student in classes 9-12 of a recognised High School.",
-    "MISSING FIELD: number of failures (once allowed, twice not eligible).",
-    "MISSING FIELD: receives other scholarships (exclusion, TFEFVSSSHS-MH-EXCLUSION-01); is_receiving_other_pension covers pensions only."
+    "\"No limit of age or income\" states no constraint, so no rule was written for it.",
+    "Application goes through the headmaster; not an eligibility rule."
   ]
 }

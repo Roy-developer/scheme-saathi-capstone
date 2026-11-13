@@ -2,7 +2,7 @@
   "scheme_id": "PSGS-DIP-IN",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "PSGS-DIP-IN-R01",
@@ -27,13 +27,67 @@
       "source_quote": "Family income from all sources should not be more than Rs. 8 lakh per annum during the current financial year",
       "needs_human_review": false,
       "note": "Rs. 8 lakh = 800000; limit is inclusive ('not more than')."
+    },
+    {
+      "rule_id": "PSGS-DIP-IN-R03",
+      "kind": "eligibility",
+      "field": "is_admitted_to_aicte_diploma_first_year_or_lateral_entry",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-01",
+      "source_quote": "should be admitted to First year of Diploma level course OR Second year of Diploma level course through lateral entry",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PSGS-DIP-IN-R04",
+      "kind": "eligibility",
+      "field": "family_members_receiving_scholarship",
+      "operator": "lte",
+      "value": 2,
+      "unit": null,
+      "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-01",
+      "source_quote": "Maximum two girls child per family are eligible.",
+      "needs_human_review": false,
+      "note": "Counts girls in the family receiving this scheme, including the applicant."
+    },
+    {
+      "rule_id": "PSGS-DIP-IN-R05",
+      "kind": "eligibility",
+      "field": "qualifying_exam_gap_years",
+      "operator": "lte",
+      "value": 2,
+      "unit": null,
+      "source_passage_id": "PSGS-DIP-IN-ELIGIBILITY-02",
+      "source_quote": "should not be more than two years",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PSGS-DIP-IN-R06",
+      "kind": "exclusion",
+      "field": "has_failed_or_dropped_out",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PSGS-DIP-IN-EXCLUSION-01",
+      "source_quote": "If a candidate failed/ drop out in subsequent year",
+      "needs_human_review": false,
+      "note": null
+    },
+    {
+      "rule_id": "PSGS-DIP-IN-R07",
+      "kind": "exclusion",
+      "field": "receives_other_scholarship_or_stipend",
+      "operator": "eq",
+      "value": true,
+      "unit": null,
+      "source_passage_id": "PSGS-DIP-IN-EXCLUSION-02",
+      "source_quote": "does not receive any financial assistance in shape of scholarship",
+      "needs_human_review": false,
+      "note": null
     }
   ],
-  "unresolved": [
-    "MISSING FIELD: admitted to first year of diploma (or second year via lateral entry) in an AICTE approved institution.",
-    "MISSING FIELD: maximum two girl children per family.",
-    "MISSING FIELD: gap of not more than two years between qualifying examination and diploma admission.",
-    "MISSING FIELD: receives any other scholarship, stipend or salary during the course (exclusion, PSGS-DIP-IN-EXCLUSION-02).",
-    "MISSING FIELD: failed or dropped out in a subsequent year (exclusion, PSGS-DIP-IN-EXCLUSION-01)."
-  ]
+  "unresolved": []
 }
