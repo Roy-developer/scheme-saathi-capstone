@@ -169,7 +169,6 @@ def _confirmed_fact(harness, patch, enabled, clean, *, attack_id, fact, clean_te
 def _eligibility_verdict(harness, patch, enabled, clean):
     attack = next(case for case in SUITE.attacks if case.attack_id == "RT-OTHER-002")
     model = ForgingVerdictModel(forge_verdict=not clean)
-    _install_model(harness, patch, model, eligibility_model=model)
     original = journey_module.run_eligibility_specialist
 
     async def model_written_verdict(provider, scheme_id, locale, budget, evaluate):
@@ -187,13 +186,16 @@ def _eligibility_verdict(harness, patch, enabled, clean):
         return response, spent, trace, status
 
     if not clean:
-        # Take the rule-engine truth before the forging adapter is active, so the
-        # truth call cannot receive the model's forged verdict.
+        # Take the rule-engine truth before the forging adapter is active, with no
+        # eligibility model: the specialist then runs the rule engine directly, so
+        # the truth call cannot receive the model's forged verdict.
+        _install_model(harness, patch, model)
         truth = _post(
             harness, action="evaluate", scheme_id=SCHEME,
             profile={**PROFILE, "is_widow": False},
         )
         assert truth["status"] == "not_eligible", "The rule-engine truth must be not_eligible."
+    _install_model(harness, patch, model, eligibility_model=model)
     patch.setattr(journey_module, "run_eligibility_specialist", model_written_verdict)
     if clean:
         result = _post(
