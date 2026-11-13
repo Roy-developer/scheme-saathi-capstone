@@ -42,9 +42,10 @@
     },
     "case_file": {
       "path": "data/schemes/rule_extraction_cases_dev.json",
-      "sha256": "ee660996c50949c29d95415cb30ab8cf28ccc4e4bd55569642979edf06a28767"
+      "sha256": "431765d7c2c8b8547458be2cddecaf8bed739424515b5dfd6a8577ea0fb5f53f"
     },
     "case_ids": [
+      "APY-IN-EXCLUSION-01",
       "IGNOAPS-MH-ELIGIBILITY-01",
       "IGNWPS-MH-ELIGIBILITY-01",
       "PMKISAN-GUIDELINES-2020-3",
@@ -122,6 +123,47 @@
       "version": "1.1.1"
     },
     "scope": "Accuracy follow-up playbook 1.1.1 (1.1.0 + APY multi-condition and PM-KISAN pension boolean lessons). Team-override evaluate."
+  },
+  "e3_playbook_1_1_2_freeze": {
+    "paid_run_gate": {
+      "authorised": true,
+      "note": "Team-override free-model evaluate authorised; not PDF unseen held-out."
+    },
+    "playbook": {
+      "content_hash": "ccc0bda165b3a62dc31e2051669c6b4abe96f0a09ab8a105cb5c29d8c2cfb7c4",
+      "file_sha256": "3b47b7e6c67f6d895cbee3860e314fd3f21713e8349b82532f3433ce9d3eebf6",
+      "lesson_count": 6,
+      "path": "data/schemes/playbooks/1.1.2.json",
+      "version": "1.1.2"
+    },
+    "scope": "Accuracy follow-up playbook 1.1.2 (1.1.1 + APY multi-sentence clause text lesson). Pair with build_cases unique source_text join."
+  },
+  "e4_team_override_freeze": {
+    "modules": {
+      "e4_llm_arm": {
+        "path": "eval/harness/e4_llm_arm.py",
+        "sha256": "d1ba575eaa259d0d281b6b5803b020f895e8bd68b8c648606979bb13a9a5b87b"
+      },
+      "e4_shadow": {
+        "path": "eval/harness/e4_shadow.py",
+        "sha256": "8f76be6bb76657f85c402c80ef14fe10be4979a82905ab48ee5bfc761efa9af5"
+      }
+    },
+    "paid_run_gate": {
+      "authorised": true,
+      "note": "Team-override free-model evaluate authorised; not PDF unseen held-out."
+    },
+    "persona_set": {
+      "case_count": 46,
+      "path": "eval/development/personas_v1.json",
+      "sha256": "af05c1cb52a547fcd7c0a56e1a76079dc38bc434438bb38b04d0c1c51c1061e8"
+    },
+    "runner": {
+      "path": "scripts/evaluate_e4_signature_ablation.py",
+      "sha256": "ece9c94a3a552ce49e7b6bdb6d70890a47104f7f67bec5446c2a9b230a4b20b3"
+    },
+    "scope": "E4 signature ablation team-override on development personas (n=46). Not PDF unseen held-out.",
+    "status_doc": "docs/e4_team_override_status_2026-11-13.md"
   },
   "memory_policy_version": "1.0.0",
   "model": {
@@ -283,64 +325,5 @@
         "propose_plan"
       ]
     }
-  },
-  "e3_playbook_1_1_2_freeze": {
-    "paid_run_gate": {
-      "authorised": true,
-      "note": "Team-override free-model evaluate authorised; not PDF unseen held-out."
-    },
-    "playbook": {
-      "content_hash": "ccc0bda165b3a62dc31e2051669c6b4abe96f0a09ab8a105cb5c29d8c2cfb7c4",
-      "file_sha256": "3b47b7e6c67f6d895cbee3860e314fd3f21713e8349b82532f3433ce9d3eebf6",
-      "lesson_count": 6,
-      "path": "data/schemes/playbooks/1.1.2.json",
-      "version": "1.1.2"
-    },
-    "scope": "Accuracy follow-up playbook 1.1.2 (1.1.1 + APY multi-sentence clause text lesson). Pair with build_cases unique source_text join."
-  },
-  "e4_team_override_freeze": {
-    "paid_run_gate": {
-      "authorised": true,
-      "note": "Team-override free-model E4 evaluate authorised; not PDF unseen held-out."
-    },
-    "bar": "team_override_dev_personas",
-    "persona_set": {
-      "path": "eval/development/personas_v1.json",
-      "sha256": "af05c1cb52a547fcd7c0a56e1a76079dc38bc434438bb38b04d0c1c51c1061e8",
-      "persona_count": 46,
-      "case_count": 46,
-      "split": "development",
-      "protected": false
-    },
-    "model": {
-      "constant": "nvidia/nemotron-3.5-lightning:free",
-      "env_override": "OPENROUTER_RULE_EXTRACTION_MODEL",
-      "key": "OPENROUTER_API_KEY_FREE"
-    },
-    "artifacts": {
-      "runner": {
-        "path": "scripts/evaluate_e4_signature_ablation.py",
-        "sha256": "404dd5d19bd6cf3c7daeb8d2016cc3ebfa77dec00489ce6ae169a1a179221ac0"
-      },
-      "llm_arm": {
-        "path": "eval/harness/e4_llm_arm.py",
-        "sha256": "d1ba575eaa259d0d281b6b5803b020f895e8bd68b8c648606979bb13a9a5b87b"
-      },
-      "shadow": {
-        "path": "eval/harness/e4_shadow.py",
-        "sha256": "8f76be6bb76657f85c402c80ef14fe10be4979a82905ab48ee5bfc761efa9af5"
-      },
-      "status_doc": "docs/e4_team_override_status_2026-11-13.md"
-    },
-    "metrics": [
-      "boundary_error_count_llm",
-      "boundary_error_count_rules",
-      "questions_per_conversation",
-      "verdict_agreement_hi_mr_en",
-      "cost_per_case",
-      "median_latency",
-      "p95_latency"
-    ],
-    "scope": "E4 signature ablation on development personas under team override. Not PDF unseen held-out."
   }
 }

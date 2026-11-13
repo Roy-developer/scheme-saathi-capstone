@@ -54,6 +54,12 @@ CASES_PATH = ROOT / "data" / "schemes" / "rule_extraction_cases_dev.json"
 E3_PLAYBOOK_PATH = ROOT / "data" / "schemes" / "playbooks" / "1.0.0.json"
 E3_PLAYBOOK_1_1_0_PATH = ROOT / "data" / "schemes" / "playbooks" / "1.1.0.json"
 E3_PLAYBOOK_1_1_1_PATH = ROOT / "data" / "schemes" / "playbooks" / "1.1.1.json"
+E3_PLAYBOOK_1_1_2_PATH = ROOT / "data" / "schemes" / "playbooks" / "1.1.2.json"
+E4_STATUS_DOC = ROOT / "docs" / "e4_team_override_status_2026-11-13.md"
+E4_PERSONA_SET = ROOT / "eval" / "development" / "personas_v1.json"
+E4_RUNNER = ROOT / "scripts" / "evaluate_e4_signature_ablation.py"
+E4_LLM_ARM = ROOT / "eval" / "harness" / "e4_llm_arm.py"
+E4_SHADOW = ROOT / "eval" / "harness" / "e4_shadow.py"
 SCHEME_RULES_PATH = ROOT / "src" / "rule_extraction_reflexion" / "scheme_rules.py"
 EXTRACTION_HO_MANIFEST = ROOT / "eval" / "held_out" / "extraction" / "manifest.json"
 
@@ -254,6 +260,73 @@ def build_manifest() -> dict:
             }
             if E3_PLAYBOOK_1_1_1_PATH.exists()
             else {"status": "playbook_missing"}
+        ),
+        "e3_playbook_1_1_2_freeze": (
+            {
+                "scope": (
+                    "Accuracy follow-up playbook 1.1.2 (1.1.1 + APY multi-sentence "
+                    "clause text lesson). Pair with build_cases unique source_text join."
+                ),
+                "playbook": {
+                    "version": "1.1.2",
+                    "path": "data/schemes/playbooks/1.1.2.json",
+                    "content_hash": playbook_content_hash(E3_PLAYBOOK_1_1_2_PATH),
+                    "file_sha256": sha256_file(E3_PLAYBOOK_1_1_2_PATH),
+                    "lesson_count": len(
+                        json.loads(E3_PLAYBOOK_1_1_2_PATH.read_text(encoding="utf-8"))[
+                            "lessons"
+                        ]
+                    ),
+                },
+                "paid_run_gate": {
+                    "authorised": True,
+                    "note": "Team-override free-model evaluate authorised; not PDF unseen held-out.",
+                },
+            }
+            if E3_PLAYBOOK_1_1_2_PATH.exists()
+            else {"status": "playbook_missing"}
+        ),
+        "e4_team_override_freeze": (
+            {
+                "scope": (
+                    "E4 signature ablation team-override on development personas "
+                    "(n=46). Not PDF unseen held-out."
+                ),
+                "paid_run_gate": {
+                    "authorised": True,
+                    "note": (
+                        "Team-override free-model evaluate authorised; "
+                        "not PDF unseen held-out."
+                    ),
+                },
+                "persona_set": {
+                    "path": "eval/development/personas_v1.json",
+                    "sha256": sha256_file(E4_PERSONA_SET),
+                    "case_count": sum(
+                        len(p.get("expected_by_scheme") or {})
+                        for p in json.loads(
+                            E4_PERSONA_SET.read_text(encoding="utf-8")
+                        ).get("personas", [])
+                    ),
+                },
+                "runner": {
+                    "path": "scripts/evaluate_e4_signature_ablation.py",
+                    "sha256": sha256_file(E4_RUNNER),
+                },
+                "modules": {
+                    "e4_llm_arm": {
+                        "path": "eval/harness/e4_llm_arm.py",
+                        "sha256": sha256_file(E4_LLM_ARM),
+                    },
+                    "e4_shadow": {
+                        "path": "eval/harness/e4_shadow.py",
+                        "sha256": sha256_file(E4_SHADOW),
+                    },
+                },
+                "status_doc": "docs/e4_team_override_status_2026-11-13.md",
+            }
+            if E4_PERSONA_SET.exists() and E4_RUNNER.exists() and E4_LLM_ARM.exists()
+            else {"status": "e4_team_override_artifacts_missing"}
         ),
         "memory_policy_version": "1.0.0",
     }
