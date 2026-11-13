@@ -2,7 +2,7 @@
   "scheme_id": "IPMWCD-IN",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "IPMWCD-IN-R01",
@@ -50,7 +50,7 @@
       "source_passage_id": "IPMWCD-IN-ELIGIBILITY-02",
       "source_quote": "The age of the applicant should be between 21 to 40 years.",
       "needs_human_review": false,
-      "note": null
+      "note": "Source: wcd.intern.nic.in (official WCD internship portal, confirmed 2026-11-12 by Nidhi Kaushik)."
     },
     {
       "rule_id": "IPMWCD-IN-R05",
@@ -62,7 +62,7 @@
       "source_passage_id": "IPMWCD-IN-ELIGIBILITY-02",
       "source_quote": "The age of the applicant should be between 21 to 40 years.",
       "needs_human_review": false,
-      "note": null
+      "note": "Source: wcd.intern.nic.in (official WCD internship portal, confirmed 2026-11-12 by Nidhi Kaushik)."
     }
   ],
   "unresolved": []

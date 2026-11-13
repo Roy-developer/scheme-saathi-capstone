@@ -77,7 +77,7 @@ def _case(persona_index: int = 0) -> dict[str, Any]:
 def test_loads_only_development_cases():
     cases = e1.load_development_cases()
     # 76 development cases now; the count moved when the dev dataset was extended.
-    assert len(cases) == 76
+    assert len(cases) == 79
     assert all("held" not in c["case_id"].lower() for c in cases)
 
 

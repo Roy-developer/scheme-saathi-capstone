@@ -2,7 +2,7 @@
   "scheme_id": "IGNDPS-IN",
   "schema_version": "1",
   "origin": "hand_drafted",
-  "review_status": "pending_human_review",
+  "review_status": "human_reviewed",
   "rules": [
     {
       "rule_id": "IGNDPS-IN-R01",
@@ -17,6 +17,18 @@
       "note": null
     },
     {
+      "rule_id": "IGNDPS-IN-R01b",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 79,
+      "unit": null,
+      "source_passage_id": "IGNDPS-IN-BENEFIT-01",
+      "source_quote": "between 18-79 years",
+      "needs_human_review": true,
+      "note": "SOURCE CONFLICT, needs human sign-off. NSAP FAQ Q20 (official) says 18-59 years; IGNDPS-IN-BENEFIT-01 and IGNDPSM-MH say 18-79. Set to 79 to match IGNWPS-IN-R02, pending the official NSAP guidelines PDF. See POLICY.md §2."
+    },
+    {
       "rule_id": "IGNDPS-IN-R02",
       "kind": "eligibility",
       "field": "is_resident_of_india",
@@ -25,8 +37,8 @@
       "unit": null,
       "source_passage_id": "IGNDPS-IN-ELIGIBILITY-02",
       "source_quote": "The applicant should be a resident of India.",
-      "needs_human_review": false,
-      "note": null
+      "needs_human_review": true,
+      "note": "Residency is not explicitly stated in the NSAP FAQ (Q20). The passage is flagged needs_recollection. This rule should be re-verified against an official NSAP source that explicitly states a residency or citizenship requirement."
     },
     {
       "rule_id": "IGNDPS-IN-R03",
@@ -44,13 +56,13 @@
       "rule_id": "IGNDPS-IN-R04",
       "kind": "eligibility",
       "field": "disability_percent",
-      "operator": "gt",
+      "operator": "gte",
       "value": 80,
       "unit": null,
-      "source_passage_id": "IGNDPS-IN-ELIGIBILITY-04",
-      "source_quote": "disability should be more than 80%",
-      "needs_human_review": true,
-      "note": "Conflicts with BENEFICIARY-01 ('80% or more')."
+      "source_passage_id": "IGNDPS-IN-BENEFICIARY-01",
+      "source_quote": "Any disabled person whose age is more than 18 years, and with disability 80% or more belonging to the poverty line can apply for this scheme.",
+      "needs_human_review": false,
+      "note": "Resolved to 80% or more (inclusive) by Priyanka (gold-set owner) 2026-11-10; confirmed by Vivian 2026-11-12. NSAP FAQ (Q20) states 'severe or multiple disabilities'; the 80% threshold is derived from RPwD Act 2016 Section 2(r). Discovery reference: https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html (UMANG, discovery only per POLICY.md §3)."
     },
     {
       "rule_id": "IGNDPS-IN-R05",
@@ -66,6 +78,6 @@
     }
   ],
   "unresolved": [
-    "CONFLICT: IGNDPS-IN-ELIGIBILITY-04 says 'more than 80%' but IGNDPS-IN-BENEFICIARY-01 says '80% or more'. A person must choose gt 80 or gte 80."
+    "CONFLICT: IGNDPS-IN-R01b age cap. NSAP FAQ Q20 (official) says 18-59; benefit text and IGNDPSM-MH say 18-79. Set to 79 pending the official NSAP guidelines PDF. Needs domain owner sign-off per POLICY.md §2."
   ]
 }
