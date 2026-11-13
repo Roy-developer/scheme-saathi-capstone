@@ -100,6 +100,7 @@ from src.workflow.intake import (
     rewrite_query_with_provider,
 )
 from src.workflow.input_guardrails import is_prompt_injection
+from src.workflow.injection_guard import screen_free_text
 from src.workflow.question_picker import (
     pick_shared_registered_fact,
 )
@@ -1224,8 +1225,10 @@ def build_journey_graph(
                     )
                     return response
                 if (
-                    definition.value_type in {"boolean", "date"}
-                        and not deterministic_fact_intake
+                    # Free text already is the answer for a text fact; every
+                    # other type may be read, then confirmed by the person.
+                    definition.value_type != "text"
+                    and not deterministic_fact_intake
                     and isinstance(reply, str)
                     and pending_fact not in attempted
                 ):
@@ -1291,7 +1294,9 @@ def build_journey_graph(
                             else:
                                 return ask_to_confirm(
                                     pending_fact,
-                                    value.isoformat() if hasattr(value, "isoformat") else value,
+                                    value if isinstance(value, bool)
+                                    else value.isoformat() if hasattr(value, "isoformat")
+                                    else str(value),
                                     "answer_interpretation",
                                 )
                 if pending_fact not in skipped:
@@ -3090,7 +3095,10 @@ async def resume_journey(
     config = _thread_config(conversation_id)
     snapshot = await graph.aget_state(config)
     saved = snapshot.values or {}
-    if is_prompt_injection(message):
+    # A typed answer is screened like any other free text: an embedded
+    # instruction, fake tool call or field assignment ("is_widow=true") is
+    # refused and never reaches the parser or the answer reader.
+    if is_prompt_injection(message) or screen_free_text(message).flagged:
         if not snapshot.interrupts:
             raise JourneyNotWaitingError(str(conversation_id))
         response = _to_response(conversation_id, saved)

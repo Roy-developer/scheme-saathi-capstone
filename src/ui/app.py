@@ -218,6 +218,8 @@ COPY = {
         "interview_start": "Start questions",
         "interview_restart": "Start again",
         "interview_reply": "Type your answer (yes / no / don't know, a date like 1958-05-05, or your own words)",
+        "quick_answer": "Quick answer",
+        "free_text_hint": "You can also type your answer in your own words in the box below. Saathi will check what it understood with you before saving it.",
         "send_answer": "Send answer",
         "interview_error": "Could not continue the conversation",
         "widow_mode": "How do you want to check?",
@@ -383,7 +385,9 @@ COPY = {
         "agent_no_calls": "कोई मॉडल कॉल नहीं हुई; नियतात्मक प्रवाह सक्रिय है।",
         "interview_start": "प्रश्न शुरू करें",
         "interview_restart": "फिर से शुरू करें",
-        "interview_reply": "अपना उत्तर लिखें (हाँ / नहीं / मुझे नहीं पता, या 1958-05-05 जैसी तारीख)",
+        "interview_reply": "अपना उत्तर लिखें (हाँ / नहीं / मुझे नहीं पता, 1958-05-05 जैसी तारीख, या अपने शब्दों में)",
+        "quick_answer": "त्वरित उत्तर",
+        "free_text_hint": "आप नीचे के बॉक्स में अपने शब्दों में भी उत्तर लिख सकते हैं। सहेजने से पहले साथी आपसे पूछेगा कि उसने सही समझा या नहीं।",
         "send_answer": "उत्तर भेजें",
         "interview_error": "बातचीत जारी नहीं रह सकी",
         "widow_mode": "आप कैसे जाँच करना चाहते हैं?",
@@ -549,7 +553,9 @@ COPY = {
         "agent_no_calls": "मॉडेल कॉल झालेला नाही; निर्धारक प्रवाह सक्रिय आहे.",
         "interview_start": "प्रश्न सुरू करा",
         "interview_restart": "पुन्हा सुरू करा",
-        "interview_reply": "तुमचे उत्तर लिहा (होय / नाही / माहित नाही किंवा 1958-05-05 अशी तारीख)",
+        "interview_reply": "तुमचे उत्तर लिहा (होय / नाही / माहित नाही, 1958-05-05 अशी तारीख किंवा तुमच्या शब्दांत)",
+        "quick_answer": "झटपट उत्तर",
+        "free_text_hint": "तुम्ही खालील बॉक्समध्ये तुमच्या शब्दांतही उत्तर लिहू शकता. जतन करण्यापूर्वी साथी त्याने काय समजले ते तुमच्याकडून तपासेल.",
         "send_answer": "उत्तर पाठवा",
         "interview_error": "संभाषण पुढे नेता आले नाही",
         "widow_mode": "तुम्हाला कशी तपासणी करायची आहे?",
@@ -2368,7 +2374,7 @@ def registered_answer_input(
                 "mr": ("होय", "नाही", "माहित नाही"),
             }[locale]
             selected = st.radio(
-                text["interview_reply"],
+                text["quick_answer"],
                 labels,
                 index=None,
                 key=key,
@@ -2386,7 +2392,7 @@ def registered_answer_input(
             minimum = question.get("minimum")
             maximum = question.get("maximum")
             selected = st.number_input(
-                text["interview_reply"],
+                text["quick_answer"],
                 min_value=minimum,
                 max_value=maximum,
                 value=None,
@@ -2405,7 +2411,7 @@ def registered_answer_input(
                 unknown_label, key=f"{key}_unknown"
             )
             selected = st.text_input(
-                text["interview_reply"],
+                text["quick_answer"],
                 max_chars=MAX_JOURNEY_REPLY_LENGTH,
                 disabled=is_unknown,
                 key=key,
@@ -2418,7 +2424,7 @@ def registered_answer_input(
         elif value_type == "date":
             is_unknown = st.checkbox(unknown_label, key=f"{key}_unknown")
             selected = st.date_input(
-                text["interview_reply"],
+                text["quick_answer"],
                 value=None,
                 min_value=REGISTERED_DATE_MIN,
                 max_value=REGISTERED_DATE_MAX,
@@ -2437,7 +2443,7 @@ def registered_answer_input(
             }
             options = [unknown_label, *labels]
             selected = st.selectbox(
-                text["interview_reply"],
+                text["quick_answer"],
                 options,
                 index=None,
                 key=key,
@@ -2452,7 +2458,7 @@ def registered_answer_input(
                 unknown_label, key=f"{key}_unknown"
             )
             selected = st.text_input(
-                text["interview_reply"],
+                text["quick_answer"],
                 max_chars=min(
                     int(question["max_length"]), MAX_JOURNEY_REPLY_LENGTH
                 ),
@@ -2481,6 +2487,9 @@ def journey_reply(text: dict[str, str], locale: str) -> str | None:
         if definition
         else None
     )
+    if definition and not definition.get("confirming"):
+        # The controls are shortcuts; typed answers take the same checked path.
+        st.caption(text["free_text_hint"])
     typed = st.chat_input(text["interview_reply"], max_chars=MAX_JOURNEY_REPLY_LENGTH)
     return selected or typed
 

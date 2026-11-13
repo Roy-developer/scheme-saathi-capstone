@@ -654,7 +654,7 @@ def test_registry_decimal_question_submits_exact_text_at_precision_boundary() ->
         course_widget = next(
             widget
             for widget in app.selectbox
-            if widget.label == "Type your answer (yes / no / don't know, a date like 1958-05-05, or your own words)"
+            if widget.label == "Quick answer"
         )
         course_widget.set_value("Science")
         next(button for button in app.button if button.label == "Send answer").click().run()
@@ -870,6 +870,53 @@ def test_registered_question_also_accepts_a_typed_answer() -> None:
         assert not app.exception
         assert [call.args for call in send_reply.call_args_list] == [
             (str(conversation_id), "third of march 1950"),
+        ]
+
+
+def test_yes_no_buttons_are_shortcuts_and_own_words_are_offered() -> None:
+    """A yes/no question keeps its quick buttons and invites a typed answer."""
+
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    conversation_id = uuid4()
+    question = "Are you a widow?"
+    waiting = JourneyResponse(
+        conversation_id=conversation_id,
+        plan="Learn about you -> Check the rules",
+        plan_detail=_plan("in_progress", "pending"),
+        status="awaiting_answer",
+        message=question,
+        question=question,
+        pending_fact="is_widow",
+        question_definition=QuestionPresentation(
+            fact_id="is_widow", value_type="boolean", choices=[],
+        ),
+        conversation=[{"role": "assistant", "content": question}],
+    )
+    with patch(
+        "src.ui.api_client.get_journey_state", return_value=waiting
+    ), patch(
+        "src.ui.api_client.send_journey_message", side_effect=[waiting],
+    ) as send_reply, patch(
+        "src.ui.api_client.list_application_drafts", return_value=[],
+    ):
+        app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS)
+        app.query_params["conversation"] = str(conversation_id)
+        app.query_params["scheme"] = "IGNWPS-MH"
+        app.run()
+        assert not app.exception
+
+        buttons = app.radio(key=f"registered_answer_{conversation_id}_is_widow")
+        assert buttons.label == "Quick answer"
+        assert list(buttons.options) == ["Yes", "No", "I don't know"]
+        shown = " ".join(element.value for element in app.caption)
+        assert "in your own words" in shown
+        assert len(app.chat_input) == 1
+
+        app.chat_input[0].set_value("yes, my husband passed away").run()
+
+        assert not app.exception
+        assert [call.args for call in send_reply.call_args_list] == [
+            (str(conversation_id), "yes, my husband passed away"),
         ]
 
 
