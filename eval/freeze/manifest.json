@@ -32,6 +32,44 @@
     "model_timeout_seconds": 20,
     "token_estimate_characters": 3
   },
+  "e3_extraction_freeze": {
+    "approval": {
+      "approved_on": "2026-11-13",
+      "note": "Budget and freeze approved by the project lead on behalf of Role 5. Results are directional: 6 cases.",
+      "paid_budget_cap_usd": 20,
+      "runs": "3 repeats, before (no playbook) and after (1.0.0), check split only",
+      "status": "approved_by_project_lead_on_behalf_of_role5"
+    },
+    "case_file": {
+      "path": "data/schemes/rule_extraction_cases_dev.json",
+      "sha256": "9ac740ac873cdd50126bf5cb901fb254fc9591c4c896acfed7263d6867965532"
+    },
+    "case_ids": [
+      "IGNOAPS-MH-ELIGIBILITY-01",
+      "IGNWPS-MH-ELIGIBILITY-01",
+      "PMKISAN-GUIDELINES-2020-3",
+      "PMKISAN-GUIDELINES-2020-4.1(b)(iv)",
+      "PMKISAN-GUIDELINES-2020-4.1(b)(v)",
+      "PMKISAN-GUIDELINES-2020-4.1(b)(vi)"
+    ],
+    "extraction_model": {
+      "constant": "nvidia/nemotron-3.5-lightning:free",
+      "env_override": "OPENROUTER_RULE_EXTRACTION_MODEL"
+    },
+    "extraction_prompt": {
+      "hash_method": "sha256 of the UTF-8 bytes of the string value, imported not read from source",
+      "name": "EXTRACTION_SYSTEM_PROMPT",
+      "sha256": "b52aaca54e871c605d4e7c66a1f457f382963040e8747f9b6025aa3fce5061d5"
+    },
+    "playbook": {
+      "content_hash": "a60303d5a255b5abef4dfd896c8dae0bba6c16488cea4b8de0157c2f69ee1401",
+      "file_sha256": "b83d0a57734f71dc311ada6f3c47ec97d2d79a0efdde879ed8869920b4e50303",
+      "path": "data/schemes/playbooks/1.0.0.json",
+      "version": "1.0.0"
+    },
+    "scope": "Reflexion E3 before/after on the development check split. Development only; not held-out.",
+    "split": "check"
+  },
   "memory_policy_version": "1.0.0",
   "model": {
     "chat_model": "openai/gpt-4o-mini",
