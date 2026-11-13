@@ -61,7 +61,7 @@ def test_shadow_result_never_changes_rule_verdict():
 def test_shadow_agreement_counts_match_recorded_cases():
     report = asyncio.run(e4_shadow.run_shadow_comparison())
 
-    assert report["case_count"] == 43
+    assert report["case_count"] == 46
     assert report["agree"] == sum(c["agree"] for c in report["cases"])
     assert report["disagree"] == report["case_count"] - report["agree"]
     assert report["agree"] == 14
@@ -112,7 +112,7 @@ def test_shadow_model_is_offline_scripted_fake():
 def test_both_question_orders_reach_same_verdict_on_dev_personas():
     report = e4_shadow.run_question_order_ablation()
 
-    assert report["case_count"] == 43
+    assert report["case_count"] == 46
     assert report["verdict_match_count"] == report["case_count"]
     for row in report["cases"]:
         assert row["fixed"]["verdict"] == row["planned"]["verdict"], row["persona_id"]
@@ -130,7 +130,7 @@ def test_question_order_counts_are_reported_per_order():
     assert report["planned_questions_total"] == sum(
         r["planned"]["questions"] for r in report["cases"]
     )
-    assert report["fixed_questions_total"] == 187
+    assert report["fixed_questions_total"] == 192
     assert report["planned_questions_total"] == 177
 
 
