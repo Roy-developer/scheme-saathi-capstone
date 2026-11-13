@@ -50,28 +50,6 @@ def _string_constant(path: Path, name: str) -> str:
     return match.group(1)
 
 
-CASES_PATH = ROOT / "data" / "schemes" / "rule_extraction_cases_dev.json"
-E3_PLAYBOOK_PATH = ROOT / "data" / "schemes" / "playbooks" / "1.0.0.json"
-SCHEME_RULES_PATH = ROOT / "src" / "rule_extraction_reflexion" / "scheme_rules.py"
-
-
-def e3_check_case_ids() -> list[str]:
-    cases = json.loads(CASES_PATH.read_text(encoding="utf-8"))
-    cases = cases["cases"] if isinstance(cases, dict) else cases
-    return sorted(c["clause_id"] for c in cases if c.get("split") == "check")
-
-
-def extraction_prompt_sha256() -> str:
-    sys.path.insert(0, str(ROOT))
-    from src.rule_extraction_reflexion.extractor import EXTRACTION_SYSTEM_PROMPT
-
-    return sha256_text(EXTRACTION_SYSTEM_PROMPT)
-
-
-def playbook_content_hash() -> str:
-    return json.loads(E3_PLAYBOOK_PATH.read_text(encoding="utf-8"))["content_hash"]
-
-
 def build_manifest() -> dict:
     sys.path.insert(0, str(ROOT))
     from src.mcp_servers.service_routing import ACTOR_TOOLS
@@ -141,37 +119,6 @@ def build_manifest() -> dict:
             if PLAYBOOK_PATH.exists()
             else "absent"
         ),
-        "e3_extraction_freeze": {
-            "scope": "Reflexion E3 before/after on the development check split. Development only; not held-out.",
-            "split": "check",
-            "case_ids": e3_check_case_ids(),
-            "case_file": {
-                "path": "data/schemes/rule_extraction_cases_dev.json",
-                "sha256": sha256_file(CASES_PATH),
-            },
-            "extraction_model": {
-                "constant": _string_constant(SCHEME_RULES_PATH, "DEFAULT_EXTRACTION_MODEL"),
-                "env_override": "OPENROUTER_RULE_EXTRACTION_MODEL",
-            },
-            "extraction_prompt": {
-                "name": "EXTRACTION_SYSTEM_PROMPT",
-                "hash_method": "sha256 of the UTF-8 bytes of the string value, imported not read from source",
-                "sha256": extraction_prompt_sha256(),
-            },
-            "playbook": {
-                "version": "1.0.0",
-                "path": "data/schemes/playbooks/1.0.0.json",
-                "content_hash": playbook_content_hash(),
-                "file_sha256": sha256_file(E3_PLAYBOOK_PATH),
-            },
-            "approval": {
-                "status": "approved_by_project_lead_on_behalf_of_role5",
-                "approved_on": "2026-11-13",
-                "paid_budget_cap_usd": 20,
-                "runs": "3 repeats, before (no playbook) and after (1.0.0), check split only",
-                "note": "Budget and freeze approved by the project lead on behalf of Role 5. Results are directional: 6 cases.",
-            },
-        },
         "memory_policy_version": "1.0.0",
     }
 
