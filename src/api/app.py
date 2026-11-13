@@ -56,6 +56,7 @@ from src.observability.metrics import (
     record_pending_approval_created,
     record_pending_approval_resolved,
     record_question,
+    record_journey_verdict,
     record_verdict,
 )
 from src.observability.telemetry import configure_telemetry
@@ -801,11 +802,13 @@ def _record_journey_metrics(endpoint: str, result: JourneyResponse) -> None:
     if result.eligibility_results:
         for scheme_id, verdict in result.eligibility_results.items():
             record_evaluation(scheme_id, source="journey")
-            record_verdict(scheme_id, verdict.result)
+            record_journey_verdict(str(result.conversation_id), scheme_id, verdict.result)
     elif result.eligibility_result is not None:
         scheme_id = result.eligibility_result.scheme_id
         record_evaluation(scheme_id, source="journey")
-        record_verdict(scheme_id, result.eligibility_result.result)
+        record_journey_verdict(
+            str(result.conversation_id), scheme_id, result.eligibility_result.result,
+        )
 
 
 @app.post("/api/v1/journey", response_model=JourneyResponse)
