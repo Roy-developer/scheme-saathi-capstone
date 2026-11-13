@@ -55,7 +55,7 @@
     {
       "rule_id": "PM-KISAN-IN-R05",
       "kind": "exclusion",
-      "field": "family_has_government_employee",
+      "field": "excluded_government_employee_member",
       "operator": "eq",
       "value": true,
       "unit": null,
@@ -67,7 +67,7 @@
     {
       "rule_id": "PM-KISAN-IN-R06",
       "kind": "exclusion",
-      "field": "family_has_pensioner_monthly_10000_or_more",
+      "field": "pension_at_least_10000_excluding_stated_grades",
       "operator": "eq",
       "value": true,
       "unit": null,

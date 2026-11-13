@@ -104,8 +104,8 @@ FIELD_TYPES: dict[str, Literal["bool", "number"]] = {
     "is_enrolled_in_pm_sym_or_pm_lvm": "bool",
     # PM-KISAN / land / housing facts
     "family_has_constitutional_post_holder": "bool",
-    "family_has_government_employee": "bool",
-    "family_has_pensioner_monthly_10000_or_more": "bool",
+    "excluded_government_employee_member": "bool",
+    "pension_at_least_10000_excluding_stated_grades": "bool",
     "family_has_registered_professional": "bool",
     "owned_cultivable_land_on_2019_02_01": "bool",
     "is_name_in_land_records": "bool",
