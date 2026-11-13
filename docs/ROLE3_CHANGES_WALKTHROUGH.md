@@ -1,169 +1,258 @@
-# Role 3 work on 2026-11-12: what changed and why
+# Role 3: Agents and orchestration — what the code does and why
 
-Written for: team members who need to understand, and defend in the viva,
-the role 3 (agents and orchestration) additions made on this branch.
+Role 3: Priyanka Velisetty. Prepared with Claude Code (Sonnet 5.5).
+Last updated: 2026-11-13.
 
-Author: Priyanka Velisetty, with Claude Code (Sonnet 5.5). Date: 2026-11-12.
+Role 3 owns the **brain** of Scheme Saathi: the graph that runs a citizen's
+journey, the supervisor that plans it, the specialist agents that carry out
+each step, the rule extractor and its improvement loop, and the evidence that
+this design is worth its cost. Role 3 does **not** decide who is eligible (the
+rule engine does, in plain code), and does **not** own the tool servers, the
+security controls or the held-out evaluation (roles 4 and 5).
 
-Role 3's job in the capstone guide is the graph, the planner, the agents, the
-rule extractor and the improvement loop, plus the evidence that they work.
-Most of that already existed. This round closed the **evidence gaps** the
-guide asks for. Nothing here changes how a citizen's request is decided: the
-rule engine still decides every verdict, and a person still approves every
-submission.
+One rule runs through everything below: **the model chooses, our code runs.**
+A model can only name an action from a short allow-list. Code validates the
+choice, performs it, and returns the result as data. No model writes a
+verdict, approves a form or changes a stored fact on its own.
 
-## What was already done (not touched)
+---
 
-- LangGraph graph with typed state, conditional edges, SQLite checkpointer.
-- Supervisor, intake, eligibility, documents and application agents.
-- Question picker, rule extractor, Reflexion playbook 1.0.0 (frozen).
-  Recorded results: baseline 6/27, then 9/15 to 15/15 with the lesson, 18/18
-  with IGNOAPS (`RULE_EXTRACTION_REFLEXION_CODE_WALKTHROUGH.md`).
+## 1. The journey graph (`src/workflow/journey.py`)
 
-## What was pending, and the step taken for each
+A LangGraph state machine. Seven nodes:
 
-| # | Guide requirement | Gap found | What I added | Why it is needed |
-|---|---|---|---|---|
-| 1 | L11 / E1: "single-agent baseline with the same tools and budget" | No C1 existed; the E1 config was a stub | `src/workflow/single_agent.py`, a `single` prompt in `agent_config.py`, `tests/test_single_agent_baseline.py` | Without a baseline you cannot say whether a team of agents is worth its cost. |
-| 2 | L8: "same persona gets same verdicts in Hindi, Marathi, English"; "measure questions per conversation" | Neither was measured | `eval/harness/interview_sim.py`, `scripts/evaluate_interview_ablation_dev.py`, `tests/test_interview_ablation.py` | These are signature challenge B and the E4 question-order arm. |
-| 3 | L8: "stop the process mid-run and resume it" | Only in-process SQLite reopen tests existed | `scripts/demo_resume_after_kill.py` (two scenarios) | A real hard kill is the evidence the guide asks for; reopening a DB in one process is weaker. |
-| 4 | L8: "a graph diagram" | None generated | `scripts/export_graph_diagram.py` and `docs/GRAPH_DIAGRAM.md` | Generated from the compiled graph, so it cannot drift from the code. |
-| 5 | E1: compare C0, C1, C2 on the same cases | No runner | `eval/harness/e1_runner.py`, `eval/harness/dry_run_model.py`, `scripts/evaluate_e1_dry_run.py`, `scripts/run_e1_live.py`, `tests/test_e1_runner.py` | One harness, config-driven, as the guide requires. |
+| Node | What it does |
+|---|---|
+| `supervisor` | Writes the visible plan, hands each step to one specialist, replans when a result changes it, ends the run |
+| `intake_agent` | Gathers household facts, asking only questions that can still change a verdict |
+| `ask_user` | Pauses the graph with `interrupt()` and waits for the person's answer |
+| `eligibility_agent` | Asks the rule engine for a verdict on one scheme and reports it |
+| `scheme_search_tool` | Hybrid search over source-cited scheme clauses |
+| `document_agent` | Read-only: compares the entered documents against the scheme checklist |
+| `application_agent` | The only node allowed to write drafts and submit; needs exact human approval |
 
-### Step 1: single-agent baseline (C1)
+Every specialist reports back to the supervisor; only intake can route to
+`ask_user` and back. The diagram is generated from the compiled graph, so it
+cannot drift from the code: `python scripts/export_graph_diagram.py` writes
+`docs/GRAPH_DIAGRAM.md`.
 
-One agent holds every read tool (`check_candidate`, `inspect_documents`,
-`finish_baseline`) and runs through the same `run_agent` path as the team, so
-PII masking, durable budget, tool allow-list and traces are identical. It has
-no portal-write tool, because approval-gated drafting is the same in every
-configuration. Verdicts still come only from the rule engine; the model only
-chooses which candidate to check. A rejected action stops the run
-(fail-closed). *Why:* a fair comparison needs identical safety controls and
-budget, so any difference comes from the decision structure alone.
+**How the L8 minimum bar is met**
 
-### Step 2: language parity and question count
+- *Typed state:* `src/workflow/state.py` defines `Plan`, `PlanStep`,
+  `Handoff`, `CandidateVerdict`, `PlanChange` and `JourneyHistoryEvent` as
+  strict models that reject undeclared fields, so an agent cannot pass data
+  the contract does not name.
+- *Conditional edges:* the supervisor picks the next specialist from state
+  (`next_agent`); intake chooses between asking again and returning.
+- *Persistent checkpointer:* `AsyncSqliteSaver` in `src/api/app.py`. State is
+  saved after every node, so a run survives a restart.
+- *Human control:* `ask_user` uses `interrupt()`, and the draft approval gate
+  (`src/workflow/application_gate.py`) is a second checkpointed graph with its
+  own `interrupt()`, keyed per conversation, draft and revision.
+- *Self-correction:* when a verdict contradicts the plan (for example, a
+  scheme turns out ineligible), the supervisor replans, bumps the plan version
+  and records why (`replan_reason` in `supervisor.py`).
 
-A hidden persona card answers in English, Hindi or Marathi using the words
-the real parser accepts; each reply goes through the production
-`parse_registered_answer`. Two strategies are compared: **planned** (the
-production picker asks only what a still-undecided rule needs) and **fixed**
-(ask every required fact). Result on 31 development personas: 0 verdict
-differences across languages, all verdicts match the expected labels, mean
-questions 4.19 planned vs 5.35 fixed. *Why:* shows the verdict does not
-depend on the language and that planned questioning asks fewer questions.
-*Limit:* one scheme per persona, no model involved, development data only.
+## 2. The supervisor and the planner
 
-### Step 3: kill and resume
+`src/workflow/supervisor.py` holds pure functions (no graph, no I/O, so they
+are easy to test): `build_initial_plan`, `build_application_plan`,
+`advance_plan`, `plan_summary` and `replan_reason`, with goal text in English,
+Hindi and Marathi.
 
-`python scripts/demo_resume_after_kill.py` (interview) and `... application`.
-A first process starts the work, then dies with `os._exit(137)`; a separate
-new process continues from the on-disk checkpoint. The application scenario
-kills after a human approval exists on an exact draft; the new process finds
-the same fingerprint, refuses a wrong-fingerprint submit (409) and submits
-once with the saved approval. The demo uses its own portal ports (8791/8792)
-so it cannot collide with a running dev stack, and removes only orphaned
-portals on those ports. *Limit:* SQLite checkpointer, single worker.
+`src/workflow/supervisor_agent.py` adds an optional model layer: the model may
+*propose* a plan by naming step IDs through `propose_plan` and `finish_plan`.
+Code checks the IDs against the known steps and their dependencies. If the
+model is absent, fails or proposes something invalid, the deterministic plan
+(configuration **C0**) runs instead. The plan is never allowed to invent
+steps, decide eligibility or call tools directly.
 
-### Step 4: graph diagram
+## 3. The specialist agents
 
-`python scripts/export_graph_diagram.py` compiles the real graph (no model, no
-network) and writes Mermaid to `docs/GRAPH_DIAGRAM.md`, with a note on each
-node and where each minimum-bar item lives.
+Each specialist is a LangChain `create_agent` run through one shared function,
+`run_agent` in `src/workflow/agent_runtime.py`. That function attaches the
+same safeguards to every agent, so no agent can opt out:
 
-### Step 5: E1 harness, dry run, then a live run
+- **PII masking** (`PIIMiddleware`) on the task message and on every tool
+  result, before the model sees them (Aadhaar, PAN, phone, account, email).
+- **Tool allow-list:** the agent receives only its own tools.
+- **Durable budget** (`DurableBudgetMiddleware`, `conversation_budget.py`):
+  model calls, tokens, tool calls and agent steps are counted per conversation
+  and saved *before* each call, so a crash cannot reset the allowance. Limits
+  live in `agent_config.py` (8 model calls, 24 tool calls, 12 agent steps,
+  12,000 tokens, 512 completion tokens, 20 s timeout).
+- **Scrubbed trace** (`ScrubbedTraceMiddleware`): one metadata-only event per
+  model stop and tool call, with no prompts and no applicant values.
+- **Fail closed:** a rejected action raises `AgentActionError`, which stops
+  the run instead of continuing.
+- **Versioned prompts** per agent and language (`agent_config.py`).
 
-`run_e1` runs C0 (fixed workflow, no model), C1 (single agent) and C2 (the
-eligibility and document specialists) on the same cases, tools and budget,
-and reports task success, errors, model calls, tokens, median and 95th
-percentile latency. The model is pluggable:
+| Agent | File | What the model may do | What code keeps |
+|---|---|---|---|
+| Intake | `intake_agent.py` | Propose facts that a quarantined, tool-free reader found in the person's text | The person must confirm a fact before the profile changes; confirmed facts are never overwritten; no ID or financial numbers are requested |
+| Eligibility | `eligibility_agent.py` | `check_candidate`, then hand off the observed verdict, request clarification for observed missing facts, or refer for help | The verdict comes from the rule engine only; the model cannot supply or change it. If the model is unavailable the rule engine still runs directly |
+| Documents | `document_agent.py` | Inspect entered metadata and hand off the matching checklist result | Name and date comparison is code; no OCR or authenticity claim |
+| Application | `application_agent.py` | Run the one backend-selected prepare, edit, submit or status action | Never approves or rejects; submits only when code confirms an exact, unexpired approval |
 
-- **Dry run** (scripted fake model): proves the wiring only; never an E1
-  result.
-- **Live run** (`scripts/run_e1_live.py`): real OpenRouter calls using the
-  model in `.env`, on development personas only, with caps on cases and total
-  calls. The key is never printed.
+**Choosing what to ask** (`question_picker.py`): `pick_next_registered_fact`
+asks only for a fact that a still-undecided rule needs;
+`pick_shared_registered_fact` prefers a fact shared by the most unresolved
+schemes. This is the "planned" question order in experiment E4.
 
-## E1 live result (development personas, not the final claim)
+## 4. Hooks and safeguards that role 3 relies on
 
-Model `openai/gpt-4.1-mini` for C1 and C2, 31 development cases, 3 repeats
-in one event loop, 435 model calls in total, 0 errors. Raw report:
-`eval/reports/e1_live_dev_latest.json` (reports are not committed, so these
-numbers are copied here).
+Middleware in `agent_middleware.py` and `agent_runtime.py` is the hook layer
+around model calls and tool calls. Input guards (`injection_guard.py`,
+`input_guardrails.py`, `scam_screen.py`) screen free text before an agent sees
+it. The threat model and tool permissions belong to role 4
+(`docs/THREAT_MODEL.md`, `docs/MCP_PERMISSIONS_WALKTHROUGH.md`); role 3's job is
+that every agent runs through them. `docs/HOOKS_WALKTHROUGH.md` explains each
+hook with its test.
 
-| Config | Task success (3 repeats) | Model calls / case | Tokens / case | Median latency | 95th-pct latency |
-|---|---|---|---|---|---|
-| C0 fixed workflow | 31, 31, 31 of 31 | 0 | 0 | about 0 ms | about 0 ms |
-| C1 single agent | 31, 31, 31 of 31 | 2.23 | 670 | 2.04 to 2.06 s | 3.1 to 3.7 s |
-| C2 specialist team | 31, 31, 31 of 31 | 2.45 | 706 | 2.11 to 2.34 s | 4.6 to 4.7 s |
+## 5. The rule extractor and the improvement loop
 
-Reading it honestly:
-- Accuracy is identical because the rule engine decides every verdict in all
-  three configurations; the models only choose which tool to call and when
-  to stop. The agents did not make any verdict worse, and did not make any
-  better.
-- The team (C2) used about 10% more model calls, about 5% more tokens and
-  had a higher 95th-percentile latency than the single agent (C1). For
-  these tasks, with one scheme per case, the team bought no accuracy.
-- A fixed workflow (C0) is free and equally correct here. Any claim that
-  agents are worth their cost has to rest on tasks where the rule engine
-  alone is not enough (free-text intake, several candidate schemes), and on
-  the held-out set. This run does not show that.
-- Token counts come from the scrubbed traces; treat them as indicative, not
-  as billed cost.
+`src/rule_extraction_reflexion/` reads official scheme clauses into rules and
+improves over time without ever deciding anyone's eligibility.
 
-## Problems found along the way
+1. A model writes rules from an approved clause.
+2. Code compares them with the approved rule package (the model never sees it).
+3. For a difference, the model writes a **lesson**, held as *pending*.
+4. A person approves or rejects the lesson; approved lessons are frozen into a
+   numbered **playbook** (`data/schemes/playbooks/1.0.0.json`).
+5. Next time, the model reads a clause together with the matching lessons.
 
-- **Event loop bug in my own live script.** The first full live run showed
-  one C1 error in repeats 2 and 3. Cause: one `asyncio.run` per repeat closed
-  the loop under a cached HTTP client. Fixed by running all repeats in one
-  loop; the affected run is kept as `eval/reports/e1_live_dev_run1_loop_bug.json`
-  and is not quoted.
-- **Stale demo.** `scripts/demo_approval_gate_live.py` uses document IDs
-  (`age_proof`, `bpl_proof`) that are not on the current IGNWPS-MH checklist,
-  so its document step likely fails. Not changed (role 4's demo).
-- **Stale status text** in `eval/experiments/e3_playbook.json`: real E3
-  results already exist in the walkthrough document.
-- **Environment.** The venv was missing `prometheus_client`; installed by you,
-  after which the previously failing agent tests passed.
+Nothing activates a rule automatically; people approve everything. Recorded
+development results (full detail in
+`docs/RULE_EXTRACTION_REFLEXION_CODE_WALKTHROUGH.md`): 6/27 exact on the first
+baseline, 8/27 after adding clause headings, 9/15 to 15/15 on unseen "check"
+clauses after the approved lesson, and 18/18 with IGNOAPS added. The
+frozen-pin check on the development check split (6 cases, 3 repeats, 36 calls,
+0 USD on a free model) recorded 9/18 raw exact without the playbook and 18/18
+with it, with no regressions (`eval/reports/e3_before_after_dev_2026-11-13.json`).
+The sample is small (three schemes, one model) and is not held-out.
 
-## What the numbers do and do not show
+## 6. Experiments role 3 supplies code for
 
-- E1 live numbers in this repo are **development** data. The held-out set
-  belongs to role 5, and I did not read it, because the person tuning the
-  agent must not see the held-out cases.
-- C0, C1 and C2 all get the same verdicts because the rule engine decides
-  them in every configuration. The comparison is therefore about cost and
-  latency, not accuracy.
-- Changing the embedding or vision model in `.env` does not affect E1 (no
-  retrieval in it) but does affect retrieval/Recall@5 and needs a re-index.
+The guide asks whether a team of agents is worth its cost. Three
+configurations run on the same cases, model, tools and budget:
 
-## Still open for role 3 (needs people or budget, not code)
+- **C0** fixed workflow (no model),
+- **C1** one agent holding every domain tool,
+- **C2** the specialist team.
 
-1. Final E1 run on role 5's held-out set with the fixed final model IDs,
-   repeated three times, spread reported.
-2. E3 confirmation with more runs (paid) and refreshing its stale status.
-3. E4 LLM-direct eligibility arm (evaluation-only path; compare boundary
-   errors with the rule engine) on held-out personas.
+What exists in the code:
 
-## Files added or changed
+- **C1, the journey single agent** (`src/workflow/single_agent.py`): one agent
+  with all ten domain actions (`SINGLE_AGENT_TOOLS`), wired into the same graph
+  (`single_agent_provider` in `build_journey_graph`) and running under the same
+  PII masking, budget, allow-list and fail-closed rules. It cannot approve a
+  form or write portal arguments; approval stays a separate human action.
+- **A restricted baseline** (`src/workflow/single_agent_baseline.py`): a
+  smaller C1 with only `check_candidate`, `inspect_documents` and
+  `finish_baseline`, and no portal-write tool. It refuses to inspect documents
+  for an ineligible scheme and cannot finish before every candidate is checked.
+  Tests: `tests/test_single_agent_baseline.py`.
+- **Parity checks:** `tests/test_e1_arm_parity.py` fails if the arms stop
+  sharing capabilities and budget ceilings.
+- **E1 harness and live development run:** `eval/harness/e1_runner.py`,
+  `scripts/evaluate_e1_workflow.py` and `scripts/run_e1_live.py`.
+- **E4 offline path** (`eval/harness/e4_shadow.py`, from main): an isolated,
+  non-authoritative shadow eligibility proposal beside the rule engine, plus
+  a planned-vs-fixed question count (fixed 187 vs planned 177, same verdicts).
+- **E4 question order, three languages** (`eval/harness/interview_sim.py`,
+  `scripts/evaluate_interview_ablation_dev.py`,
+  `tests/test_interview_ablation.py`): a hidden persona card answers in
+  English, Hindi or Marathi, each reply goes through the production
+  `parse_registered_answer`, and the *planned* picker is compared with a
+  *fixed* order that asks every required fact.
 
-Added: `src/workflow/single_agent.py`, `eval/harness/interview_sim.py`,
-`eval/harness/e1_runner.py`, `eval/harness/dry_run_model.py`,
-`scripts/demo_resume_after_kill.py`, `scripts/export_graph_diagram.py`,
-`scripts/evaluate_interview_ablation_dev.py`, `scripts/evaluate_e1_dry_run.py`,
-`scripts/run_e1_live.py`, `docs/GRAPH_DIAGRAM.md`, and three test files.
-Changed: `src/workflow/agent_config.py` (new prompt only),
-`eval/experiments/e1_agent_cost.json`, `eval/experiments/e4_signature_ablation.json`,
-`docs/CONTRIBUTIONS.md`.
+**Development results** (31 development personas, not held-out, one scheme per
+case; indicative only):
 
+| Measure | Result |
+|---|---|
+| Same persona, English vs Hindi vs Marathi | 0 verdict differences; all match the labels |
+| Questions per interview | 4.19 planned vs 5.35 fixed |
+| E1 live run, `openai/gpt-4.1-mini`, 3 repeats, 435 calls, 0 errors | C0, C1, C2 each 31/31 every repeat |
+| Model calls per case, C1 vs C2 | 2.23 vs 2.45 |
+| Tokens per case, C1 vs C2 | 670 vs 706 |
+| Median / 95th-percentile latency, C1 vs C2 | about 2.05 s / 3.1–3.7 s vs 2.1–2.3 s / 4.6–4.7 s |
 
-## Merge note (2026-11-13)
+How to read it: accuracy is identical because the rule engine decides every
+verdict in all three arms, so the comparison is about cost and latency. The
+team used roughly 10% more calls and 5% more tokens than the single agent and
+bought no accuracy on these simple, single-scheme cases. A fixed workflow is
+free and equally correct here. A claim that agents are worth their cost has to
+rest on harder tasks and the held-out set. The live figures above come from an
+earlier run with the author's own runner (commit `a3fef77`); the team harness's
+own development reports are in `eval/reports/e1_live_dev*.json`.
 
-When merging with main, `eval/harness/e1_runner.py`, `scripts/run_e1_live.py` and
-`src/workflow/single_agent.py` existed on both sides. Main's versions (team E1
-harness, live development runner and the journey-integrated C1 agent) were kept.
-My earlier standalone versions of the E1 runner, dry-run model and dry-run script
-were dropped; they remain in commit a3fef77. My restricted eligibility/documents
-baseline now lives in `src/workflow/single_agent_baseline.py` with
-`tests/test_single_agent_baseline.py`. Where this document names the dropped
-files, read them as main's equivalents.
+## 7. Stop mid-run and resume (L8 evidence)
+
+`python scripts/demo_resume_after_kill.py` (interview scenario) and
+`... application`. A first process starts the work and dies with
+`os._exit(137)`; a separate new process continues from the on-disk checkpoint.
+In the application scenario the kill happens after a human approval exists on
+an exact draft; the new process finds the same fingerprint, refuses a submit
+with the wrong fingerprint (409) and submits once with the saved approval. The
+demo uses its own portal ports (8791 and 8792) so it cannot clash with a
+running dev stack. Limit: one worker, SQLite checkpointer.
+
+## 8. Tests that cover role 3
+
+`test_journey_graph.py`, `test_supervisor.py`, `test_planning_and_intake_agents.py`,
+`test_intake_agent.py`, `test_phase3_agents.py`,
+`test_document_and_application_agents.py`, `test_single_agent_journey.py`,
+`test_single_agent_baseline.py`, `test_e1_*`, `test_interview_ablation.py`,
+`test_cross_journey_isolation.py`, `test_rule_extraction_reflexion.py`,
+`test_reflexion_models.py`, `test_reflexion_e3_eval.py`, and the per-agent
+PII check in `test_pii_masking.py`. Latest full local run on the merged branch:
+1298 passed, 2 failed. Both failures were environmental: a missing local
+`azure` package, and a OneDrive file-sync clash on a temporary file in
+`tests/fixtures`. Neither is in role 3 code.
+
+## 9. Limits to state honestly
+
+- E1 numbers here are development data. The held-out set belongs to role 5 and
+  was never read while tuning agents.
+- The planner and intake model layers fall back to deterministic code, so a
+  weak model degrades to C0 rather than to a wrong answer.
+- The checkpointer is SQLite on a single worker; scaling out needs a shared
+  store.
+- Reflexion results rest on three schemes and one model.
+- `scripts/demo_approval_gate_live.py` (role 4's demo) uses document IDs that
+  are not on the current checklist and probably fails; it was not changed.
+
+## 10. What is still open for role 3
+
+1. Final E1 run on role 5's held-out set with fixed model IDs and three
+   repeats, reporting the spread.
+2. E3 final claim on the protected held-out extraction cases (Role 5). The
+   development before/after result is recorded and the experiment file's
+   status now reflects it.
+3. E4 final claim: the isolated shadow path and the question-order ablation
+   already exist offline (`eval/harness/e4_shadow.py`, `tests/test_e4_shadow.py`).
+   The shadow proposer there is a scripted stub, so a live LLM arm that reads
+   retrieved scheme text, run on held-out personas, is still needed. That run
+   belongs to Role 5.
+4. The "score the extractor against 15 gold schemes" item in the roles plan:
+   only four rule packages are active today (`eval/CLAIM_MATRIX.md` marks the
+   15-scheme claim "not claimable"). Extending it depends on Role 1's gold
+   rules; the extractor and its scoring code already work per scheme.
+
+## 11. If asked in the viva
+
+- *Why not let the model decide eligibility?* It can be wrong or manipulated;
+  rule-engine verdicts are reproducible and traceable to a clause.
+- *What stops an agent doing something unsafe?* It only holds an allow-list of
+  tools, every call passes PII masking and a durable budget, and a rejected
+  action stops the run.
+- *What happens if the process dies mid-conversation?* The SQLite checkpoint
+  and the saved budget let a new process continue; the kill demo shows it.
+- *Show a rejected lesson.* The first lessons were vague ("ensure ... accurately
+  reflected") and four new ones repeated each other; the vague ones were
+  rejected, and only the clearest duplicate was approved (reflexion walkthrough,
+  problems 17 and 18; the review command requires a reason for every rejection).
+- *Is the multi-agent team worth it?* On these development cases it cost more
+  than a single agent and gained nothing in accuracy; the held-out run decides
+  the final claim.

@@ -1,7 +1,7 @@
 {
   "experiment_id": "E4",
   "title": "Scheme Saathi signature ablation",
-  "status": "config_stub_not_runnable",
+  "status": "partial_offline_dev_only_held_out_and_live_llm_arm_pending",
   "description": "Compare direct LLM eligibility from retrieved text versus the rule engine (count boundary errors). Also compare planned question order versus a fixed questionnaire for the same persona.",
   "controls": {
     "llm_eligibility_path": "evaluation_only_never_live_authority",
@@ -20,5 +20,6 @@
   ],
   "note": "Development rule-engine scoring for boundary personas is available now via scripts/evaluate_eligibility_dev.py. The LLM-side and questioning ablations remain blocked.",
   "code_only_results_dev": "scripts/evaluate_interview_ablation_dev.py: 31 dev cases, 0 en/hi/mr verdict breaks, mean questions planned 4.19 vs fixed 5.35 (simulated citizen answers parsed by production parser; no LLM). Held-out and LLM-eligibility arms still pending.",
-  "blocker": "Needs held-out personas, simulated citizen, and an isolated LLM-eligibility path that cannot write live verdicts."
+  "offline_code": "eval/harness/e4_shadow.py (isolated, non-authoritative shadow proposal vs rule engine; planned vs fixed question order), tested in tests/test_e4_shadow.py. The shadow proposer is a scripted stub, so its agreement (14 of 43) is a wiring check, not a measure of an LLM.",
+  "blocker": "A live LLM arm that sees retrieved scheme text, and the held-out personas (Role 5), are still required for the final E4 claim."
 }

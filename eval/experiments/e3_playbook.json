@@ -1,7 +1,7 @@
 {
   "experiment_id": "E3",
   "title": "Did the Reflexion lessons help?",
-  "status": "playbook_ready_paid_runs_pending",
+  "status": "development_before_after_recorded_held_out_pending",
   "description": "Compare extraction exact-match rates on development check-split cases before and after frozen playbook 1.0.0. Include lesson-generation cost and any regressing case. Held-out extraction cases remain Role-5-only and are not in this repo.",
   "controls": {
     "playbook_path": "data/schemes/playbooks/1.0.0.json",
@@ -33,5 +33,6 @@
     "after": "python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --playbook 1.0.0 --runs 3 --yes",
     "compare": "python scripts/evaluate_reflexion_playbook_dev.py --before <before.json> --after <after.json>"
   },
-  "blocker": "Paid OpenRouter evaluate runs and a protected held-out extraction set are still required for the final E3 claim. The current exclusion lesson will not apply to inclusion_clause check cases (IGNWPS/IGNOAPS)."
+  "development_result": "eval/reports/e3_before_after_dev_2026-11-13.json: development check split, 6 cases x3 repeats. Raw exact 9/18 without a playbook, 18/18 with playbook 1.0.0; cases passing all runs 3/6 to 6/6; 0 regressions; 36 model calls, 0 USD (free model). Directional, not held-out.",
+  "blocker": "A protected held-out extraction set (Role 5) is still required for the final E3 claim."
 }
