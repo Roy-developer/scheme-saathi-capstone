@@ -13,3 +13,6 @@
 !retrieval_canonical_dev_bm25_only.json
 !retrieval_canonical_dev_bm25_minilm_rrf.json
 !e3_before_after_dev_2026-11-13.json
+!e3_lesson_generation_cost.json
+!e3_rejected_lesson_example.json
+!e3_team_override_before_after_2026-11-13.json

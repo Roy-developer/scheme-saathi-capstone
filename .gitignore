@@ -22,6 +22,7 @@ eval/reports/*.json
 !eval/reports/experiments_inventory.json
 !eval/reports/simulated_citizen_smoke.json
 eval/held_out/local/
+eval/held_out/extraction/local/
 .idea/
 
 # SQLite write-ahead and shared-memory files from test runs

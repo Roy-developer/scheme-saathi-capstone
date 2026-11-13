@@ -1,0 +1,103 @@
+{
+  "purpose": "Team override: all live package clauses (n=13). Not PDF ≥40 unseen held-out.",
+  "status": "ready_for_evaluate",
+  "bar": "team_override_all_live_clauses",
+  "protected": true,
+  "split": "team_override",
+  "case_count": 13,
+  "target_case_count": 13,
+  "local_file": "eval/held_out/extraction/local/cases_all_live_clauses_v1.json",
+  "sha256": "15c7a51f005804a7dec30d9de73e8d8cf74189ce778f8ab97bd73810d3739fe7",
+  "cases": [
+    {
+      "id": "APY-IN-ELIGIBILITY-01",
+      "package": "apy_in.v1.json"
+    },
+    {
+      "id": "APY-IN-EXCLUSION-01",
+      "package": "apy_in.v1.json"
+    },
+    {
+      "id": "IGNDPS-MH-ELIGIBILITY-01",
+      "package": "igndps_mh.v1.json"
+    },
+    {
+      "id": "IGNOAPS-MH-ELIGIBILITY-01",
+      "package": "ignoaps_mh.v1.json"
+    },
+    {
+      "id": "IGNWPS-MH-ELIGIBILITY-01",
+      "package": "ignwps_mh.v1.json"
+    },
+    {
+      "id": "PMKISAN-GUIDELINES-2020-3",
+      "package": "pmkisan_in.v1.json"
+    },
+    {
+      "id": "PMKISAN-GUIDELINES-2020-4.1(a)",
+      "package": "pmkisan_in.v1.json"
+    },
+    {
+      "id": "PMKISAN-GUIDELINES-2020-4.1(b)(i)-(ii)",
+      "package": "pmkisan_in.v1.json"
+    },
+    {
+      "id": "PMKISAN-GUIDELINES-2020-4.1(b)(iii)",
+      "package": "pmkisan_in.v1.json"
+    },
+    {
+      "id": "PMKISAN-GUIDELINES-2020-4.1(b)(iv)",
+      "package": "pmkisan_in.v1.json"
+    },
+    {
+      "id": "PMKISAN-GUIDELINES-2020-4.1(b)(v)",
+      "package": "pmkisan_in.v1.json"
+    },
+    {
+      "id": "PMKISAN-GUIDELINES-2020-4.1(b)(vi)",
+      "package": "pmkisan_in.v1.json"
+    },
+    {
+      "id": "PMKISAN-GUIDELINES-2020-4.1(c)",
+      "package": "pmkisan_in.v1.json"
+    }
+  ],
+  "overlap_with_development_extraction": {
+    "already_in_dev_case_file": [
+      "IGNDPS-MH-ELIGIBILITY-01",
+      "IGNOAPS-MH-ELIGIBILITY-01",
+      "IGNWPS-MH-ELIGIBILITY-01",
+      "PMKISAN-GUIDELINES-2020-3",
+      "PMKISAN-GUIDELINES-2020-4.1(a)",
+      "PMKISAN-GUIDELINES-2020-4.1(b)(i)-(ii)",
+      "PMKISAN-GUIDELINES-2020-4.1(b)(iii)",
+      "PMKISAN-GUIDELINES-2020-4.1(b)(iv)",
+      "PMKISAN-GUIDELINES-2020-4.1(b)(v)",
+      "PMKISAN-GUIDELINES-2020-4.1(b)(vi)",
+      "PMKISAN-GUIDELINES-2020-4.1(c)"
+    ],
+    "new_vs_dev_case_file": [
+      "APY-IN-ELIGIBILITY-01",
+      "APY-IN-EXCLUSION-01"
+    ],
+    "note": "Most clause IDs were already used in development learn/check. Do not claim PDF unseen held-out."
+  },
+  "dual_labels": {
+    "required": false,
+    "status": "waived_package_gold_is_authority",
+    "note": "Team override: expected rules are the approved package rules (Role 1 package approval), not a new dual-label pass.",
+    "labelers": []
+  },
+  "live_package_clause_capacity": {
+    "unique_source_clause_ids": 13,
+    "note": "Override target equals live unique clause count."
+  },
+  "blocker": null,
+  "playbook_for_after_arm": "1.1.1",
+  "updated_on": "2026-11-13",
+  "override": {
+    "replaces": "PDF-shaped ≥40 unseen extraction cases",
+    "decided": "team override to use all 13 live clauses",
+    "claim_level": "team_override_all_live_clauses; not PDF held-out"
+  }
+}

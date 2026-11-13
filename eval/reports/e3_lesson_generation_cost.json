@@ -1,0 +1,48 @@
+{
+  "metric": "lesson_generation_cost",
+  "scope": "E3 Reflexion; development / team-override; not PDF unseen held-out",
+  "recorded_on": "2026-11-13",
+  "currency": "USD",
+  "items": [
+    {
+      "item": "inclusion_lesson_drafts_IGNWPS_IGNOAPS_IGNDPS",
+      "method": "hand_written_from_source_text",
+      "model_calls": 0,
+      "cost_usd": 0.0,
+      "basis": "docs/lesson_drafts_inclusion_2026-11-13.md states no model or OpenRouter call was made"
+    },
+    {
+      "item": "accuracy_lessons_APY_and_PMKISAN_pension_for_1_1_1",
+      "method": "hand_written_from_failure_review",
+      "model_calls": 0,
+      "cost_usd": 0.0,
+      "basis": "scripts/freeze_e3_playbook_1_1_1.py; no OpenRouter call to draft these lessons"
+    },
+    {
+      "item": "e3_evaluate_check_split_before_after_36_calls",
+      "method": "openrouter_free_model",
+      "model_calls": 36,
+      "cost_usd": 0.0,
+      "basis": "eval/reports/e3_before_after_dev_2026-11-13.json"
+    },
+    {
+      "item": "e3_evaluate_team_override_n13_78_calls",
+      "method": "openrouter_free_model",
+      "model_calls": 78,
+      "cost_usd": 0.0,
+      "basis": "eval/reports/e3_team_override_before_after_2026-11-13.json; OPENROUTER_API_KEY_FREE"
+    },
+    {
+      "item": "exclusion_lesson_in_playbook_1_0_0",
+      "method": "prior_reflexion_learn_path",
+      "model_calls": null,
+      "cost_usd": null,
+      "basis": "Historical learn run not separately metered in committed evidence; not claimed as $0"
+    }
+  ],
+  "totals": {
+    "metered_cost_usd": 0.0,
+    "unmetered_items": ["exclusion_lesson_in_playbook_1_0_0"],
+    "claim": "All metered lesson drafts and evaluate arms in this pack are $0 on the free route. The original 1.0.0 exclusion-lesson learn cost remains unknown/unmetered."
+  }
+}

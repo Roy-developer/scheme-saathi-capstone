@@ -84,7 +84,7 @@ STORE_FILE = PROJECT_ROOT / "data" / "runtime" / "reflexion_lessons.sqlite3"
 REPORT_DIR = PROJECT_ROOT / "data" / "runtime" / "reflexion_reports"
 DRAFT_DIR = PROJECT_ROOT / "data" / "runtime" / "reflexion_drafts"
 PLAYBOOK_DIR = PROJECT_ROOT / "data" / "schemes" / "playbooks"
-SPLITS = ("learn", "check")
+SPLITS = ("learn", "check", "team_override")
 DEFAULT_EXTRACTION_MODEL = "nvidia/nemotron-3.5-lightning:free"
 NEMOTRON_COMPLETION_TOKENS = 2048
 
@@ -197,6 +197,58 @@ def _rule_text(rule) -> str:
     return f"{rule.field} {rule.operator} {rule.value}{' ' + rule.unit if rule.unit else ''}"
 
 
+def _is_transient_provider_error(error: BaseException) -> bool:
+    name = type(error).__name__.lower()
+    text = str(error).lower()
+    markers = (
+        "ratelimit",
+        "rate limit",
+        "429",
+        "free-models-per-min",
+        "timeout",
+        "timed out",
+        "temporarily",
+        "503",
+        "502",
+        "connection",
+    )
+    return any(m in name for m in markers) or any(m in text for m in markers)
+
+
+async def _evaluate_case_with_backoff(
+    model: BaseChatModel,
+    case: RuleExtractionCase,
+    registry: FactRegistry,
+    playbook,
+    *,
+    max_attempts: int = 10,
+) -> tuple[str, object]:
+    """Run one case; sleep and retry on free-tier 429/timeouts."""
+
+    delay = 25.0
+    for attempt in range(1, max_attempts + 1):
+        try:
+            report = await evaluate_cases(model, [case], registry, playbook=playbook)
+            result = report.results[0]
+            status = "exact" if result.exact_match else "different"
+            detail = {d.rule_id: list(d.attributes) for d in result.differences}
+            return status, detail
+        except ValueError as error:
+            return "rejected", rejection_detail(error)
+        except Exception as error:  # noqa: BLE001 — provider errors vary by SDK
+            if not _is_transient_provider_error(error) or attempt == max_attempts:
+                raise
+            print(
+                f"{case.case_id:<40} transient "
+                f"{type(error).__name__} (attempt {attempt}/{max_attempts}); "
+                f"sleeping {delay:.0f}s",
+                flush=True,
+            )
+            await asyncio.sleep(delay)
+            delay = min(delay * 1.5, 120.0)
+    raise RuntimeError("unreachable")
+
+
 async def evaluate(
     model: BaseChatModel, cases: list[RuleExtractionCase], registry: FactRegistry,
     *, runs: int, playbook_version: str | None, store_path: Path = STORE_FILE,
@@ -211,20 +263,20 @@ async def evaluate(
     rows = []
     for case in cases:
         for run in range(1, runs + 1):
-            try:
-                # One case per call so one rejected reply does not stop the others.
-                report = await evaluate_cases(model, [case], registry, playbook=playbook)
-                result = report.results[0]
-                status = "exact" if result.exact_match else "different"
-                detail = {d.rule_id: list(d.attributes) for d in result.differences}
-            except ValueError as error:
-                # Keep the whole message: it shows what the model actually wrote.
-                status, detail = "rejected", rejection_detail(error)
+            # One case per call so one rejected reply does not stop the others.
+            status, detail = await _evaluate_case_with_backoff(
+                model, case, registry, playbook,
+            )
             rows.append({"case": case.case_id, "run": run, "status": status, "detail": detail})
-            print(f"{case.case_id:<40} run {run}: {status:<9} {detail or ''}")
+            print(f"{case.case_id:<40} run {run}: {status:<9} {detail or ''}", flush=True)
+            # Pace free-tier OpenRouter (~20 RPM) between successful calls.
+            await asyncio.sleep(3.5)
     summary = {
         "when": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "playbook": playbook_version,
+        "model": os.getenv(
+            "OPENROUTER_RULE_EXTRACTION_MODEL", DEFAULT_EXTRACTION_MODEL,
+        ),
         "exact": sum(r["status"] == "exact" for r in rows),
         "total": len(rows),
         "rows": rows,
@@ -452,6 +504,11 @@ def main(argv: list[str] | None = None) -> None:
 
     evaluate_cmd = commands.add_parser("evaluate", help="Measure extraction with model calls; never learns.")
     evaluate_cmd.add_argument("--split", choices=SPLITS, help="Only this split (default: every case).")
+    evaluate_cmd.add_argument(
+        "--cases",
+        type=Path,
+        help="Optional case file (default: data/schemes/rule_extraction_cases_dev.json).",
+    )
     evaluate_cmd.add_argument("--playbook", help="Frozen playbook version to use.")
     evaluate_cmd.add_argument("--runs", type=int, default=1)
     evaluate_cmd.add_argument("--yes", action="store_true", help="Send the model calls.")
@@ -490,7 +547,7 @@ def main(argv: list[str] | None = None) -> None:
     STORE_FILE.parent.mkdir(parents=True, exist_ok=True)
 
     if args.command == "evaluate":
-        cases = build_cases(args.split)
+        cases = build_cases(args.split, path=args.cases)
         if _confirm_model_calls(len(cases) * args.runs, args.yes):
             model, name = project_model()
             print(f"model: {name}\n")

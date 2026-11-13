@@ -12,28 +12,28 @@
       "title": "Does the agent team justify its cost?",
       "status": "config_stub_not_runnable",
       "blocker": "Requires frozen Phase 5 agents/guardrails and a protected held-out set.",
-      "path": "C:\\Users\\Admin\\OneDrive\\Documents\\Saathi\\scheme-saathi-capstone\\eval\\experiments\\e1_agent_cost.json"
+      "path": "/Users/b0k03mk/Documents/Projects/Personal/scheme-saathi-capstone/eval/experiments/e1_agent_cost.json"
     },
     {
       "experiment_id": "E2",
       "title": "Do the defences work?",
-      "status": "offline_defences_off_on_runnable",
-      "blocker": "Live memory/approval-gate attacks and independent attack authorship still required before the full PDF E2 claim.",
-      "path": "C:\\Users\\Admin\\OneDrive\\Documents\\Saathi\\scheme-saathi-capstone\\eval\\experiments\\e2_defences.json"
+      "status": "offline_and_scoped_application_ablation_runnable",
+      "blocker": "Independent validation, frozen evaluation coverage and remote CI execution remain open. Dedicated runtime CI gates are wired locally but not pushed. Seven local single-boundary comparisons do not complete the full PDF E2 claim.",
+      "path": "/Users/b0k03mk/Documents/Projects/Personal/scheme-saathi-capstone/eval/experiments/e2_defences.json"
     },
     {
       "experiment_id": "E3",
       "title": "Did the Reflexion lessons help?",
-      "status": "playbook_ready_paid_runs_pending",
-      "blocker": "Paid OpenRouter evaluate runs and a protected held-out extraction set are still required for the final E3 claim. The current exclusion lesson will not apply to inclusion_clause check cases (IGNWPS/IGNOAPS).",
-      "path": "C:\\Users\\Admin\\OneDrive\\Documents\\Saathi\\scheme-saathi-capstone\\eval\\experiments\\e3_playbook.json"
+      "status": "team_override_n13_playbook_1_1_1_accuracy_rerun",
+      "blocker": null,
+      "path": "/Users/b0k03mk/Documents/Projects/Personal/scheme-saathi-capstone/eval/experiments/e3_playbook.json"
     },
     {
       "experiment_id": "E4",
       "title": "Scheme Saathi signature ablation",
       "status": "config_stub_not_runnable",
       "blocker": "Needs held-out personas, simulated citizen, and an isolated LLM-eligibility path that cannot write live verdicts.",
-      "path": "C:\\Users\\Admin\\OneDrive\\Documents\\Saathi\\scheme-saathi-capstone\\eval\\experiments\\e4_signature_ablation.json"
+      "path": "/Users/b0k03mk/Documents/Projects/Personal/scheme-saathi-capstone/eval/experiments/e4_signature_ablation.json"
     }
   ]
 }

@@ -1,0 +1,105 @@
+{
+  "scope": "E3 team-override all-live-clauses (n=13) with playbook 1.1.1. NOT PDF unseen held-out.",
+  "bar": "team_override_all_live_clauses",
+  "model": "nvidia/nemotron-3.5-lightning:free",
+  "key": "OPENROUTER_API_KEY_FREE from .env",
+  "rule": "A case passes only if every repeat is exact (all-runs rule).",
+  "playbook_after": "1.1.1",
+  "playbook_after_hash": "3875375cfbd297c20490bf5063ca638e9d5822de2f23b6b8de48abda70263677",
+  "before": {
+    "playbook": null,
+    "raw_exact": 15,
+    "raw_total": 39,
+    "cases_passing_all_runs": 4,
+    "cases": 13,
+    "source": "data/runtime/reflexion_reports/evaluate_2026-11-13T173219.json",
+    "source_sha256": "b000bda757afa5105f24306ce0ff38f0d0eacf98f1a9cd471829b44776b60e12"
+  },
+  "after": {
+    "playbook": "1.1.1",
+    "raw_exact": 36,
+    "raw_total": 39,
+    "cases_passing_all_runs": 12,
+    "cases": 13,
+    "source": "data/runtime/reflexion_reports/evaluate_2026-11-13T173645.json",
+    "source_sha256": "082923026a47b360bf9da4edd085e2c2baff104118cf5067ae7973375fae390f"
+  },
+  "per_case_all_runs": {
+    "APY-IN-ELIGIBILITY-01": {
+      "before": false,
+      "after": false
+    },
+    "APY-IN-EXCLUSION-01": {
+      "before": false,
+      "after": true
+    },
+    "IGNDPS-MH-ELIGIBILITY-01": {
+      "before": true,
+      "after": true
+    },
+    "IGNOAPS-MH-ELIGIBILITY-01": {
+      "before": true,
+      "after": true
+    },
+    "IGNWPS-MH-ELIGIBILITY-01": {
+      "before": true,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-3": {
+      "before": true,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(a)": {
+      "before": false,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(b)(i)-(ii)": {
+      "before": false,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(b)(iii)": {
+      "before": false,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(b)(iv)": {
+      "before": false,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(b)(v)": {
+      "before": false,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(b)(vi)": {
+      "before": false,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(c)": {
+      "before": false,
+      "after": true
+    }
+  },
+  "improved": [
+    "APY-IN-EXCLUSION-01",
+    "PMKISAN-GUIDELINES-2020-4.1(a)",
+    "PMKISAN-GUIDELINES-2020-4.1(b)(i)-(ii)",
+    "PMKISAN-GUIDELINES-2020-4.1(b)(iii)",
+    "PMKISAN-GUIDELINES-2020-4.1(b)(iv)",
+    "PMKISAN-GUIDELINES-2020-4.1(b)(v)",
+    "PMKISAN-GUIDELINES-2020-4.1(b)(vi)",
+    "PMKISAN-GUIDELINES-2020-4.1(c)"
+  ],
+  "regressed": [],
+  "still_failing_after": [
+    "APY-IN-ELIGIBILITY-01"
+  ],
+  "model_calls": 78,
+  "cost": {
+    "usd": 0.0,
+    "basis": "OpenRouter free route via OPENROUTER_API_KEY_FREE"
+  },
+  "claim_level": "team_override_all_live_clauses; not PDF unseen held-out",
+  "compared_to_playbook_1_1_0": {
+    "previous_after_all_runs": 11,
+    "note": "Prior 1.1.0 after arm was 11/13 all-runs"
+  }
+}

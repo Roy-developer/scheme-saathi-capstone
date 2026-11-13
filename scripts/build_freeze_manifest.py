@@ -52,7 +52,10 @@ def _string_constant(path: Path, name: str) -> str:
 
 CASES_PATH = ROOT / "data" / "schemes" / "rule_extraction_cases_dev.json"
 E3_PLAYBOOK_PATH = ROOT / "data" / "schemes" / "playbooks" / "1.0.0.json"
+E3_PLAYBOOK_1_1_0_PATH = ROOT / "data" / "schemes" / "playbooks" / "1.1.0.json"
+E3_PLAYBOOK_1_1_1_PATH = ROOT / "data" / "schemes" / "playbooks" / "1.1.1.json"
 SCHEME_RULES_PATH = ROOT / "src" / "rule_extraction_reflexion" / "scheme_rules.py"
+EXTRACTION_HO_MANIFEST = ROOT / "eval" / "held_out" / "extraction" / "manifest.json"
 
 
 def e3_check_case_ids() -> list[str]:
@@ -68,8 +71,66 @@ def extraction_prompt_sha256() -> str:
     return sha256_text(EXTRACTION_SYSTEM_PROMPT)
 
 
-def playbook_content_hash() -> str:
-    return json.loads(E3_PLAYBOOK_PATH.read_text(encoding="utf-8"))["content_hash"]
+def playbook_content_hash(path: Path = E3_PLAYBOOK_PATH) -> str:
+    return json.loads(path.read_text(encoding="utf-8"))["content_hash"]
+
+
+def e3_playbook_1_1_0_freeze() -> dict:
+    """Pins for playbook 1.1.0. Does not authorize a paid or held-out run."""
+
+    if not E3_PLAYBOOK_1_1_0_PATH.exists():
+        return {
+            "status": "playbook_missing",
+            "path": "data/schemes/playbooks/1.1.0.json",
+        }
+    ho = {}
+    if EXTRACTION_HO_MANIFEST.exists():
+        ho = json.loads(EXTRACTION_HO_MANIFEST.read_text(encoding="utf-8"))
+    return {
+        "scope": (
+            "Reflexion E3 playbook 1.1.0 pins (exclusion + approved inclusion "
+            "lessons). Not a held-out or paid-run authorization."
+        ),
+        "playbook": {
+            "version": "1.1.0",
+            "path": "data/schemes/playbooks/1.1.0.json",
+            "content_hash": playbook_content_hash(E3_PLAYBOOK_1_1_0_PATH),
+            "file_sha256": sha256_file(E3_PLAYBOOK_1_1_0_PATH),
+            "lesson_count": 3,
+            "lesson_tags": ["exclusion_clause", "inclusion_clause"],
+        },
+        "extraction_model": {
+            "constant": _string_constant(SCHEME_RULES_PATH, "DEFAULT_EXTRACTION_MODEL"),
+            "env_override": "OPENROUTER_RULE_EXTRACTION_MODEL",
+        },
+        "extraction_prompt": {
+            "name": "EXTRACTION_SYSTEM_PROMPT",
+            "hash_method": "sha256 of the UTF-8 bytes of the string value, imported not read from source",
+            "sha256": extraction_prompt_sha256(),
+        },
+        "held_out_extraction": {
+            "manifest": "eval/held_out/extraction/manifest.json",
+            "status": ho.get("status", "missing_manifest"),
+            "case_count": ho.get("case_count", 0),
+            "blocker": ho.get("blocker"),
+        },
+        "paid_run_gate": {
+            "authorised": False,
+            "budget_cap_usd": 20,
+            "requires": (
+                "explicit go-ahead after held-out extraction cases exist with "
+                "dual independent labels; see docs/e3_pdf_path_status_2026-11-13.md"
+            ),
+        },
+        "approval": {
+            "status": "playbook_frozen_paid_held_out_not_authorised",
+            "approved_on": "2026-11-13",
+            "note": (
+                "1.1.0 playbook file frozen from approved drafts. "
+                "Paid/held-out evaluate remains blocked until custody + go-ahead."
+            ),
+        },
+    }
 
 
 def build_manifest() -> dict:
@@ -172,6 +233,28 @@ def build_manifest() -> dict:
                 "note": "Budget and freeze approved by the project lead on behalf of Role 5. Results are directional: 6 cases.",
             },
         },
+        "e3_playbook_1_1_0_freeze": e3_playbook_1_1_0_freeze(),
+        "e3_playbook_1_1_1_freeze": (
+            {
+                "scope": (
+                    "Accuracy follow-up playbook 1.1.1 (1.1.0 + APY multi-condition "
+                    "and PM-KISAN pension boolean lessons). Team-override evaluate."
+                ),
+                "playbook": {
+                    "version": "1.1.1",
+                    "path": "data/schemes/playbooks/1.1.1.json",
+                    "content_hash": playbook_content_hash(E3_PLAYBOOK_1_1_1_PATH),
+                    "file_sha256": sha256_file(E3_PLAYBOOK_1_1_1_PATH),
+                    "lesson_count": 5,
+                },
+                "paid_run_gate": {
+                    "authorised": True,
+                    "note": "Team-override free-model evaluate authorised; not PDF unseen held-out.",
+                },
+            }
+            if E3_PLAYBOOK_1_1_1_PATH.exists()
+            else {"status": "playbook_missing"}
+        ),
         "memory_policy_version": "1.0.0",
     }
 

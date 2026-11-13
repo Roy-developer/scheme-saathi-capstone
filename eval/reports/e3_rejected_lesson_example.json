@@ -1,0 +1,14 @@
+{
+  "metric": "rejected_lesson_example",
+  "scope": "E3 Reflexion evidence; development drafts only; not held-out",
+  "recorded_on": "2026-11-13",
+  "decision": "rejected",
+  "clause_id": "IGNDPS-MH-ELIGIBILITY-01",
+  "tags": ["inclusion_clause"],
+  "reviewer_id": "Roy-developer",
+  "rejection_reason": "Dev split is null (learn refuses null split), and package reasons.eligible text was copied from IGNOAPS and must be fixed before any lesson from this clause can be approved.",
+  "draft_source": "docs/lesson_drafts_inclusion_2026-11-13.md",
+  "decision_source": "docs/e3_lesson_decision_2026-11-13.md",
+  "playbook_impact": "No playbook 1.1.0 file created; data/schemes/playbooks/1.0.0.json unchanged",
+  "note": "This is the human-reviewed rejected-lesson example required by eval/experiments/e3_playbook.json. It was never frozen or exported."
+}

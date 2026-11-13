@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 from eval.harness.reflexion_e3 import (
@@ -20,6 +21,15 @@ from src.rule_extraction_reflexion.models import (
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEV_SET = PROJECT_ROOT / "eval" / "development" / "personas_v1.json"
 PLAYBOOK = PROJECT_ROOT / "data" / "schemes" / "playbooks" / "1.0.0.json"
+PLAYBOOK_1_1_0 = PROJECT_ROOT / "data" / "schemes" / "playbooks" / "1.1.0.json"
+PLAYBOOK_1_1_1 = PROJECT_ROOT / "data" / "schemes" / "playbooks" / "1.1.1.json"
+EXTRACTION_HO_MANIFEST = (
+    PROJECT_ROOT / "eval" / "held_out" / "extraction" / "manifest.json"
+)
+E3_BEFORE_AFTER = PROJECT_ROOT / "eval" / "reports" / "e3_before_after_dev_2026-11-13.json"
+E3_LESSON_COST = PROJECT_ROOT / "eval" / "reports" / "e3_lesson_generation_cost.json"
+E3_REJECTED = PROJECT_ROOT / "eval" / "reports" / "e3_rejected_lesson_example.json"
+E3_EXPERIMENT = PROJECT_ROOT / "eval" / "experiments" / "e3_playbook.json"
 
 
 def test_committed_playbook_verifies() -> None:
@@ -77,6 +87,64 @@ def test_compare_playbook_evaluations_detects_improvement_and_regression() -> No
     assert comparison["improved_case_ids"] == ["b"]
     assert comparison["regressed_case_ids"] == ["a"]
     assert comparison["delta_exact_matches"] == 0
+
+
+def test_playbook_1_1_0_includes_exclusion_and_approved_inclusion() -> None:
+    snapshot = load_and_verify_playbook(PLAYBOOK_1_1_0)
+    assert snapshot.version == "1.1.0"
+    assert len(snapshot.lessons) == 3
+    tags = {tag for lesson in snapshot.lessons for tag in lesson.tags}
+    assert tags == {"exclusion_clause", "inclusion_clause"}
+    # Exclusion lesson retained from 1.0.0
+    assert any(
+        lesson.lesson_id
+        == "3dae54216ec572a646f95287aec6b113f1d088c8f147032f690651dd542f1e32"
+        for lesson in snapshot.lessons
+    )
+
+
+def test_playbook_1_1_1_adds_apy_and_pension_accuracy_lessons() -> None:
+    snapshot = load_and_verify_playbook(PLAYBOOK_1_1_1)
+    assert snapshot.version == "1.1.1"
+    assert len(snapshot.lessons) == 5
+    text = " ".join(lesson.instruction for lesson in snapshot.lessons).lower()
+    assert "savings bank" in text or "citizenship" in text
+    assert "boolean" in text or "eq false" in text
+
+
+def test_extraction_manifest_uses_team_override_all_live_clauses() -> None:
+    manifest = json.loads(EXTRACTION_HO_MANIFEST.read_text(encoding="utf-8"))
+    assert manifest["status"] == "ready_for_evaluate"
+    assert manifest["bar"] == "team_override_all_live_clauses"
+    assert manifest["case_count"] == 13
+    assert manifest["target_case_count"] == 13
+    assert manifest["override"]["claim_level"].startswith("team_override")
+    assert manifest["dual_labels"]["status"] == "waived_package_gold_is_authority"
+    assert "not PDF" in manifest["override"]["claim_level"]
+
+
+def test_e3_directional_evidence_pack_is_complete() -> None:
+    experiment = json.loads(E3_EXPERIMENT.read_text(encoding="utf-8"))
+    assert "team_override" in experiment["status"]
+    assert "1_1_1" in experiment["status"] or Path(
+        experiment["evidence"]["playbook_1_1_1"]
+    ).name == "1.1.1.json"
+    assert experiment["evidence"]["before_after"].endswith("e3_before_after_dev_2026-11-13.json")
+
+    before_after = json.loads(E3_BEFORE_AFTER.read_text(encoding="utf-8"))
+    assert before_after["before"]["cases_passing_all_runs"] == 3
+    assert before_after["after"]["cases_passing_all_runs"] == 6
+    assert before_after["regressed"] == []
+    assert before_after["lesson_generation_cost"].endswith("e3_lesson_generation_cost.json")
+    assert before_after["rejected_lesson_example"].endswith("e3_rejected_lesson_example.json")
+
+    cost = json.loads(E3_LESSON_COST.read_text(encoding="utf-8"))
+    assert cost["totals"]["metered_cost_usd"] == 0.0
+    assert "exclusion_lesson_in_playbook_1_0_0" in cost["totals"]["unmetered_items"]
+
+    rejected = json.loads(E3_REJECTED.read_text(encoding="utf-8"))
+    assert rejected["decision"] == "rejected"
+    assert rejected["clause_id"] == "IGNDPS-MH-ELIGIBILITY-01"
 
 
 def test_development_personas_include_ignoaps_and_score_clean() -> None:

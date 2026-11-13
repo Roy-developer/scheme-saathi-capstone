@@ -29,16 +29,125 @@
     }
   },
   "cases": [
-    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-3", "context": [], "topic_tags": ["inclusion_clause"], "split": "check"},
-    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-4.1(a)", "context": ["PMKISAN-4.1-HEADING"], "topic_tags": ["exclusion_clause"], "split": "learn"},
-    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(i)-(ii)", "context": ["PMKISAN-4.1-HEADING", "PMKISAN-4.1(b)-HEADING"], "topic_tags": ["exclusion_clause"], "split": "learn"},
-    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(iii)", "context": ["PMKISAN-4.1-HEADING", "PMKISAN-4.1(b)-HEADING"], "topic_tags": ["exclusion_clause"], "split": "learn"},
-    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(iv)", "context": ["PMKISAN-4.1-HEADING", "PMKISAN-4.1(b)-HEADING"], "topic_tags": ["exclusion_clause"], "split": "check"},
-    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(v)", "context": ["PMKISAN-4.1-HEADING", "PMKISAN-4.1(b)-HEADING"], "topic_tags": ["exclusion_clause"], "split": "check"},
-    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(vi)", "context": ["PMKISAN-4.1-HEADING", "PMKISAN-4.1(b)-HEADING"], "topic_tags": ["exclusion_clause"], "split": "check"},
-    {"package": "pmkisan_in.v1.json", "clause_id": "PMKISAN-GUIDELINES-2020-4.1(c)", "context": ["PMKISAN-4.1-HEADING"], "topic_tags": ["exclusion_clause"], "split": "learn"},
-    {"package": "ignwps_mh.v1.json", "clause_id": "IGNWPS-MH-ELIGIBILITY-01", "context": [], "topic_tags": ["inclusion_clause"], "split": "check"},
-    {"package": "ignoaps_mh.v1.json", "package_sha256": "cd4652b8a7da119561eee6ee8a532b4059cca8b750c9d323d93c6a05c00a6549", "clause_id": "IGNOAPS-MH-ELIGIBILITY-01", "context": [], "topic_tags": ["inclusion_clause"], "split": "check"},
-    {"package": "igndps_mh.v1.json", "package_sha256": "dade0231fd9097f778a8d40b2119e1d902db14c7cdc5520f8f2fc4a0b16504e4", "clause_id": "IGNDPS-MH-ELIGIBILITY-01", "context": [], "topic_tags": ["inclusion_clause"], "split": null}
+    {
+      "package": "pmkisan_in.v1.json",
+      "clause_id": "PMKISAN-GUIDELINES-2020-3",
+      "context": [],
+      "topic_tags": [
+        "inclusion_clause"
+      ],
+      "split": "check"
+    },
+    {
+      "package": "pmkisan_in.v1.json",
+      "clause_id": "PMKISAN-GUIDELINES-2020-4.1(a)",
+      "context": [
+        "PMKISAN-4.1-HEADING"
+      ],
+      "topic_tags": [
+        "exclusion_clause"
+      ],
+      "split": "learn"
+    },
+    {
+      "package": "pmkisan_in.v1.json",
+      "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(i)-(ii)",
+      "context": [
+        "PMKISAN-4.1-HEADING",
+        "PMKISAN-4.1(b)-HEADING"
+      ],
+      "topic_tags": [
+        "exclusion_clause"
+      ],
+      "split": "learn"
+    },
+    {
+      "package": "pmkisan_in.v1.json",
+      "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(iii)",
+      "context": [
+        "PMKISAN-4.1-HEADING",
+        "PMKISAN-4.1(b)-HEADING"
+      ],
+      "topic_tags": [
+        "exclusion_clause"
+      ],
+      "split": "learn"
+    },
+    {
+      "package": "pmkisan_in.v1.json",
+      "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(iv)",
+      "context": [
+        "PMKISAN-4.1-HEADING",
+        "PMKISAN-4.1(b)-HEADING"
+      ],
+      "topic_tags": [
+        "exclusion_clause"
+      ],
+      "split": "check"
+    },
+    {
+      "package": "pmkisan_in.v1.json",
+      "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(v)",
+      "context": [
+        "PMKISAN-4.1-HEADING",
+        "PMKISAN-4.1(b)-HEADING"
+      ],
+      "topic_tags": [
+        "exclusion_clause"
+      ],
+      "split": "check"
+    },
+    {
+      "package": "pmkisan_in.v1.json",
+      "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(vi)",
+      "context": [
+        "PMKISAN-4.1-HEADING",
+        "PMKISAN-4.1(b)-HEADING"
+      ],
+      "topic_tags": [
+        "exclusion_clause"
+      ],
+      "split": "check"
+    },
+    {
+      "package": "pmkisan_in.v1.json",
+      "clause_id": "PMKISAN-GUIDELINES-2020-4.1(c)",
+      "context": [
+        "PMKISAN-4.1-HEADING"
+      ],
+      "topic_tags": [
+        "exclusion_clause"
+      ],
+      "split": "learn"
+    },
+    {
+      "package": "ignwps_mh.v1.json",
+      "clause_id": "IGNWPS-MH-ELIGIBILITY-01",
+      "context": [],
+      "topic_tags": [
+        "inclusion_clause"
+      ],
+      "split": "check"
+    },
+    {
+      "package": "ignoaps_mh.v1.json",
+      "package_sha256": "cd4652b8a7da119561eee6ee8a532b4059cca8b750c9d323d93c6a05c00a6549",
+      "clause_id": "IGNOAPS-MH-ELIGIBILITY-01",
+      "context": [],
+      "topic_tags": [
+        "inclusion_clause"
+      ],
+      "split": "check"
+    },
+    {
+      "package": "igndps_mh.v1.json",
+      "package_sha256": "b479a572fa05af8509943bc884ba48410f8bf12f9b264d6a216810de7424efb0",
+      "clause_id": "IGNDPS-MH-ELIGIBILITY-01",
+      "context": [],
+      "topic_tags": [
+        "inclusion_clause"
+      ],
+      "split": null
+    }
   ]
 }
