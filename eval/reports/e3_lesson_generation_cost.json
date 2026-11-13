@@ -19,6 +19,13 @@
       "basis": "scripts/freeze_e3_playbook_1_1_1.py; no OpenRouter call to draft these lessons"
     },
     {
+      "item": "accuracy_lesson_APY_multi_sentence_for_1_1_2",
+      "method": "hand_written_from_failure_review",
+      "model_calls": 0,
+      "cost_usd": 0.0,
+      "basis": "scripts/freeze_e3_playbook_1_1_2.py; no OpenRouter call to draft this lesson"
+    },
+    {
       "item": "e3_evaluate_check_split_before_after_36_calls",
       "method": "openrouter_free_model",
       "model_calls": 36,
@@ -26,11 +33,11 @@
       "basis": "eval/reports/e3_before_after_dev_2026-11-13.json"
     },
     {
-      "item": "e3_evaluate_team_override_n13_78_calls",
+      "item": "e3_evaluate_team_override_n13_1_1_2_rerun_78_calls",
       "method": "openrouter_free_model",
       "model_calls": 78,
       "cost_usd": 0.0,
-      "basis": "eval/reports/e3_team_override_before_after_2026-11-13.json; OPENROUTER_API_KEY_FREE"
+      "basis": "eval/reports/e3_team_override_before_after_2026-11-13.json after 1.1.2 (before 39 + after 39); OPENROUTER_API_KEY_FREE"
     },
     {
       "item": "exclusion_lesson_in_playbook_1_0_0",

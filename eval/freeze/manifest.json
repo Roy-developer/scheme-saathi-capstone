@@ -283,5 +283,19 @@
         "propose_plan"
       ]
     }
+  },
+  "e3_playbook_1_1_2_freeze": {
+    "paid_run_gate": {
+      "authorised": true,
+      "note": "Team-override free-model evaluate authorised; not PDF unseen held-out."
+    },
+    "playbook": {
+      "content_hash": "ccc0bda165b3a62dc31e2051669c6b4abe96f0a09ab8a105cb5c29d8c2cfb7c4",
+      "file_sha256": "3b47b7e6c67f6d895cbee3860e314fd3f21713e8349b82532f3433ce9d3eebf6",
+      "lesson_count": 6,
+      "path": "data/schemes/playbooks/1.1.2.json",
+      "version": "1.1.2"
+    },
+    "scope": "Accuracy follow-up playbook 1.1.2 (1.1.1 + APY multi-sentence clause text lesson). Pair with build_cases unique source_text join."
   }
 }

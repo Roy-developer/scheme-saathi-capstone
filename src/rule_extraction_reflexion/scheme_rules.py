@@ -139,8 +139,14 @@ def build_cases(
         # A list item is shown after the headings it sits under in the source
         # (e.g. "shall not be eligible"), as a person reading the document sees it.
         # One clause, one ID, so the model cannot cite a heading instead.
+        # Include every distinct source_text for the clause (APY joins age +
+        # citizenship sentences under one clause_id).
+        clause_texts: list[str] = []
+        for rule in rules:
+            if rule.source_text and rule.source_text not in clause_texts:
+                clause_texts.append(rule.source_text)
         text = "\n".join(
-            [contexts[name]["text"] for name in entry.get("context", [])] + [rules[0].source_text]
+            [contexts[name]["text"] for name in entry.get("context", [])] + clause_texts
         )
         cases.append(RuleExtractionCase(
             case_id=entry["clause_id"],

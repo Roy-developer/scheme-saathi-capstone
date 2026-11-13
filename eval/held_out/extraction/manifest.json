@@ -7,7 +7,7 @@
   "case_count": 13,
   "target_case_count": 13,
   "local_file": "eval/held_out/extraction/local/cases_all_live_clauses_v1.json",
-  "sha256": "15c7a51f005804a7dec30d9de73e8d8cf74189ce778f8ab97bd73810d3739fe7",
+  "sha256": "0298f2ef76f84693ce62cb231cb52e5a81a1f0db644c07d57137647e13e4bd31",
   "cases": [
     {
       "id": "APY-IN-ELIGIBILITY-01",
@@ -64,6 +64,8 @@
   ],
   "overlap_with_development_extraction": {
     "already_in_dev_case_file": [
+      "APY-IN-ELIGIBILITY-01",
+      "APY-IN-EXCLUSION-01",
       "IGNDPS-MH-ELIGIBILITY-01",
       "IGNOAPS-MH-ELIGIBILITY-01",
       "IGNWPS-MH-ELIGIBILITY-01",
@@ -76,10 +78,7 @@
       "PMKISAN-GUIDELINES-2020-4.1(b)(vi)",
       "PMKISAN-GUIDELINES-2020-4.1(c)"
     ],
-    "new_vs_dev_case_file": [
-      "APY-IN-ELIGIBILITY-01",
-      "APY-IN-EXCLUSION-01"
-    ],
+    "new_vs_dev_case_file": [],
     "note": "Most clause IDs were already used in development learn/check. Do not claim PDF unseen held-out."
   },
   "dual_labels": {
@@ -93,7 +92,7 @@
     "note": "Override target equals live unique clause count."
   },
   "blocker": null,
-  "playbook_for_after_arm": "1.1.1",
+  "playbook_for_after_arm": "1.1.0",
   "updated_on": "2026-11-13",
   "override": {
     "replaces": "PDF-shaped ≥40 unseen extraction cases",

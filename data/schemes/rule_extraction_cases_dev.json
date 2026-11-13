@@ -148,6 +148,26 @@
         "inclusion_clause"
       ],
       "split": null
+    },
+    {
+      "package": "apy_in.v1.json",
+      "package_sha256": "620fa5e02729664af7cd7d6ebc5aea6a498d99e7cb643d99a866094f0c8ff027",
+      "clause_id": "APY-IN-ELIGIBILITY-01",
+      "context": [],
+      "topic_tags": [
+        "inclusion_clause"
+      ],
+      "split": "learn"
+    },
+    {
+      "package": "apy_in.v1.json",
+      "package_sha256": "620fa5e02729664af7cd7d6ebc5aea6a498d99e7cb643d99a866094f0c8ff027",
+      "clause_id": "APY-IN-EXCLUSION-01",
+      "context": [],
+      "topic_tags": [
+        "exclusion_clause"
+      ],
+      "split": "check"
     }
   ]
 }

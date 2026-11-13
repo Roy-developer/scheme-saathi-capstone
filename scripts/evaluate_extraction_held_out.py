@@ -73,7 +73,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dry-run", action="store_true", help="Only print gate status.")
     parser.add_argument("--before", action="store_true", help="Evaluate with no playbook.")
     parser.add_argument("--after", action="store_true", help="Evaluate with playbook.")
-    parser.add_argument("--playbook", default="1.1.1")
+    parser.add_argument("--playbook", default="1.1.2")
     parser.add_argument("--runs", type=int, default=3)
     parser.add_argument("--yes", action="store_true", help="Send model calls.")
     args = parser.parse_args(argv)

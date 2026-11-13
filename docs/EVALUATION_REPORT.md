@@ -23,7 +23,7 @@ python scripts/run_role5_dev_evals.py
 | Code-first eligibility scoring | `evaluate_eligibility_dev.py` / held-out script |
 | E1 cost-benefit | Config inventoried; live C0/C1/C2 still blocked on Phase freeze |
 | E2 defences off/on | Offline injection / ID / scam report plus a separate five-scenario local application-boundary comparison: off 4/5, on 0/5 attack success; no clean false blocks. Off arms remove one boundary, not all controls (see §3). |
-| E3 Reflexion before/after | Check-split 1.0.0 closed; playbooks 1.1.0/1.1.1 frozen; team-override n=13 recorded (not PDF unseen HO) |
+| E3 Reflexion before/after | Check-split 1.0.0 closed; playbooks 1.1.0/1.1.1/1.1.2 frozen; team-override n=13 recorded (not PDF unseen HO) |
 | E4 signature ablation | Rule-engine side via personas; LLM/question ablations pending |
 | 30+ red-team | All 30 briefs approved. After fixing mixed-separator identifier and PAN masking, the separate application-path runtime run on 2026-11-12 passed **30/30** (initially 28/30). Real local API/graph/MCP/portal paths use synthetic inputs and scripted offline models, not live LLM efficacy evidence. The older 30-check helper/local-pytest gate is separate. |
 | L9 memory | Synthetic prototype controls and focused evidence: [`docs/MEMORY_POLICY.md`](MEMORY_POLICY.md), [`tests/test_household_memory.py`](../tests/test_household_memory.py), [`tests/test_journey_graph.py`](../tests/test_journey_graph.py), and [`tests/test_household_memory_api.py`](../tests/test_household_memory_api.py). The approver selected 90-day return-code memory expiry and no automatic historical-checkpoint expiry; the four-case on/off report is functional development evidence only. The red-team checks do not replace full L9 evidence or authorize real-applicant use. |
@@ -207,11 +207,12 @@ Before (no playbook): 3/6 all-runs. After playbook `1.0.0`: 6/6. Regressions: no
 Evidence: `eval/reports/e3_before_after_dev_2026-11-13.json`.
 
 **Team-override all-live clauses (n=13):** Waives PDF ≥40 unseen held-out.
-Playbooks `1.1.0` then accuracy follow-up `1.1.1` frozen. Before/after ×3 on
-free Nemotron (`OPENROUTER_API_KEY_FREE`): see
-`eval/reports/e3_team_override_before_after_2026-11-13.json` (and any newer
-`1.1.1` summary after re-run). Claim level: **not** PDF unseen held-out
-(11/13 clause IDs already appear in the development extraction file).
+Playbooks `1.1.0` → `1.1.1` → `1.1.2` frozen. `build_cases` joins all unique
+`source_text` lines per clause (APY multi-sentence). Before/after ×3 on free
+Nemotron (`OPENROUTER_API_KEY_FREE`): **6/13 → 13/13** all-runs, 0 regressions
+(`eval/reports/e3_team_override_before_after_2026-11-13.json`). Claim level:
+**not** PDF unseen held-out (11/13 clause IDs already appear in the development
+extraction file).
 
 Also recorded: `eval/reports/e3_lesson_generation_cost.json`,
 `eval/reports/e3_rejected_lesson_example.json`,
@@ -220,7 +221,7 @@ Also recorded: `eval/reports/e3_lesson_generation_cost.json`,
 ```bash
 python scripts/evaluate_reflexion_playbook_dev.py
 python scripts/evaluate_extraction_held_out.py --before --runs 3 --yes
-python scripts/evaluate_extraction_held_out.py --after --playbook 1.1.1 --runs 3 --yes
+python scripts/evaluate_extraction_held_out.py --after --playbook 1.1.2 --runs 3 --yes
 ```
 
 ## 7. Monitoring
