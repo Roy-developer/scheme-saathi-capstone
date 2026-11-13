@@ -32,6 +32,41 @@
     "model_timeout_seconds": 20,
     "token_estimate_characters": 3
   },
+  "e1_team_override_freeze": {
+    "budget": {
+      "agent_steps": 12,
+      "agent_tool_calls": 24,
+      "domain_calls": 24,
+      "max_completion_tokens": 512,
+      "model_calls": 8,
+      "total_tokens": 12000
+    },
+    "experiment": {
+      "path": "eval/experiments/e1_agent_cost.json",
+      "sha256": "2710bf75baaa4be9d29f7e97e93c5e54c65c5ce3fb23fd08a273be7aecfc0a56"
+    },
+    "model_id": "openai/gpt-4o-mini",
+    "modules": {
+      "e1_runner": {
+        "path": "eval/harness/e1_runner.py",
+        "sha256": "dc9490ee48195bbf05d052a7ad8b791e1ded72f83ebfaf52e1ff1559d4dc570d"
+      },
+      "single_agent": {
+        "path": "src/workflow/single_agent.py",
+        "sha256": "3e004d897dca039b0a792b63df09024805a27ef96e494ce798d0a507a2ab375f"
+      }
+    },
+    "paid_run_gate": {
+      "authorised": true,
+      "note": "Team-override live/free-model evaluate authorised; not PDF unseen held-out."
+    },
+    "runner": {
+      "path": "scripts/run_e1_live.py",
+      "sha256": "7909d59cda59ae297996303d3d75fa691e7d465098989245c656afed7978281e"
+    },
+    "scope": "E1 C0/C1/C2 cost-benefit team-override on development personas. Not PDF unseen held-out.",
+    "status_doc": "docs/e1_team_override_status_2026-11-14.md"
+  },
   "e3_extraction_freeze": {
     "approval": {
       "approved_on": "2026-11-13",

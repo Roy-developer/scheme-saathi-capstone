@@ -1,0 +1,69 @@
+{
+  "label": "TEAM-OVERRIDE development E1 (held-out waived). Not a PDF unseen held-out cost-benefit claim.",
+  "claim_level": "team_override_dev_personas",
+  "source_report": "eval/reports/e1_live_dev.json",
+  "no_new_model_calls": true,
+  "model_id": "openai/gpt-4o-mini",
+  "c1_path_at_source": "ad-hoc create_agent evaluate tool (superseded by journey.single_agent_provider in run_e1_live.py)",
+  "budget_pins": {
+    "model_calls": 8,
+    "agent_tool_calls": 24,
+    "domain_calls": 24,
+    "agent_steps": 12,
+    "total_tokens": 12000,
+    "max_completion_tokens": 512
+  },
+  "cases": 64,
+  "observation_count": 192,
+  "per_arm": {
+    "C0": {
+      "cases": 64,
+      "task_success": 58,
+      "task_success_rate": 0.9062,
+      "errors": 0,
+      "model_calls": 0,
+      "model_calls_per_case": 0.0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0.0,
+      "cost_per_case_usd": 0.0,
+      "median_latency_seconds": 0.058,
+      "p95_latency_seconds": 0.084
+    },
+    "C1": {
+      "cases": 64,
+      "task_success": 58,
+      "task_success_rate": 0.9062,
+      "errors": 6,
+      "model_calls": 122,
+      "model_calls_per_case": 1.9062,
+      "input_tokens": 12036,
+      "output_tokens": 2478,
+      "cost_usd": 0.0032922,
+      "cost_per_case_usd": 5.144e-05,
+      "median_latency_seconds": 1.746,
+      "p95_latency_seconds": 2.044
+    },
+    "C2": {
+      "cases": 64,
+      "task_success": 58,
+      "task_success_rate": 0.9062,
+      "errors": 0,
+      "model_calls": 244,
+      "model_calls_per_case": 3.8125,
+      "input_tokens": 58071,
+      "output_tokens": 4696,
+      "cost_usd": 0.01152825,
+      "cost_per_case_usd": 0.00018013,
+      "median_latency_seconds": 4.345,
+      "p95_latency_seconds": 5.111
+    }
+  },
+  "total_cost_usd": 0.01482045,
+  "interpretation": "C0/C1/C2 task_success rates match on this synthetic evaluate set; C2 costs more model calls/tokens than C1. Does not establish a specialist-team quality benefit. Not PDF held-out.",
+  "remaining_for_pdf": [
+    "protected held-out eval set",
+    "owner-signed E1 thresholds beyond lead report-only",
+    "fresh live run on journey-wired C1 under freeze pins"
+  ]
+}
