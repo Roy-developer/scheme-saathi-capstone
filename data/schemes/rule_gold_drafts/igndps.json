@@ -17,6 +17,18 @@
       "note": null
     },
     {
+      "rule_id": "IGNDPS-IN-R01b",
+      "kind": "eligibility",
+      "field": "age",
+      "operator": "lte",
+      "value": 59,
+      "unit": null,
+      "source_passage_id": "IGNDPS-IN-ELIGIBILITY-01",
+      "source_quote": "The applicant must be in the age group of 18-59 years.",
+      "needs_human_review": true,
+      "note": "SOURCE CONFLICT — same FAQ source issue as IGNWPS-IN-R02. NSAP FAQ Q20 (IGNDPS-IN-ELIGIBILITY-01, official) states '18-59 years'. If the revised NSAP guidelines confirm the widow/disability ceiling was raised to 79, this rule may also need updating. Value set to 59 from the FAQ pending official NSAP guidelines PDF confirmation. Needs domain owner sign-off per POLICY.md §2."
+    },
+    {
       "rule_id": "IGNDPS-IN-R02",
       "kind": "eligibility",
       "field": "is_resident_of_india",
@@ -65,5 +77,10 @@
       "note": null
     }
   ],
-  "unresolved": []
+  "unresolved": [
+    {
+      "rule_id": "IGNDPS-IN-R01b",
+      "conflict": "NSAP FAQ Q20 (official) says 18-59 years. If the revised NSAP guidelines confirm the disability ceiling was raised to 79 (consistent with IGNWPS-IN), this value needs updating. Needs domain owner sign-off per POLICY.md §2."
+    }
+  ]
 }

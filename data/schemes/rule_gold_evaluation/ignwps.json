@@ -21,12 +21,12 @@
       "kind": "eligibility",
       "field": "age",
       "operator": "lte",
-      "value": 59,
+      "value": 79,
       "unit": "years",
-      "source_passage_id": "IGNWPS-IN-ELIGIBILITY-01",
-      "source_quote": "The applicant must be a widow in the age group of 40-59 years.",
-      "needs_human_review": false,
-      "note": "Updated from 79 to 59: the NSAP portal FAQ (Q17) specifies the central scheme age range as 40-59. The previous value of 79 was from a myScheme page and likely reflected a state-supplemented extension. The central scheme ceiling is 59."
+      "source_passage_id": "IGNWPS-IN-BENEFIT-01",
+      "source_quote": "Widows between 40 years and 79 years",
+      "needs_human_review": true,
+      "note": "SOURCE CONFLICT — needs human sign-off. NSAP portal FAQ Q17 (IGNWPS-IN-ELIGIBILITY-01, official source per POLICY.md §3) states '40-59 years'. UMANG/MRD benefit page (IGNWPS-IN-BENEFIT-01, discovery-only per POLICY.md §3) states 'between 40 years and 79 years'. The Maharashtra department page and current practice also cite 79. The FAQ likely predates a revised NSAP guideline raising the ceiling; IGNWPS-MH already encodes 79. Rule value set to 79 pending official NSAP guidelines PDF confirmation. See POLICY.md §2."
     },
     {
       "rule_id": "IGNWPS-IN-R03",
@@ -65,5 +65,10 @@
       "note": "Pension is discontinued on remarriage. The source passage (IGNWPS-IN-EXCLUSION-01) is flagged needs_recollection — discontinuation conditions are not explicitly listed in the NSAP FAQ (Q17-Q19). This rule should be verified against an official NSAP source."
     }
   ],
-  "unresolved": []
+  "unresolved": [
+    {
+      "rule_id": "IGNWPS-IN-R02",
+      "conflict": "NSAP portal FAQ Q17 (official, IGNWPS-IN-ELIGIBILITY-01) says 40-59 years; UMANG/MRD benefit page (discovery-only, IGNWPS-IN-BENEFIT-01) says 40-79 years. Value set to 79 pending official NSAP guidelines PDF. Needs domain owner sign-off per POLICY.md §2."
+    }
+  ]
 }

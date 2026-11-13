@@ -9,13 +9,13 @@
 
 | # | Scheme | Rules | First-pass verdict | Why / change needed |
 |---|---|---|---|---|
-| 1 | IGNWPS-IN | 5 | OK | Age 40-79, widow, BPL, remarriage exclusion all match their quotes. |
+| 1 | IGNWPS-IN | 5 | CONFLICT — needs_human_review | R02 age cap: source conflict between NSAP FAQ Q17 (official, 40-59) and UMANG benefit page (discovery-only, 40-79). Value reverted to 79 per current practice; needs domain owner sign-off and official NSAP guidelines PDF. See R02 note and `unresolved` in ignwps.json. |
 | 2 | IGNWPS-MH | 4 | OK | Matches the quote. Same rules as the live package. |
 | 3 | NSAP-IGNOAPS-IN | 3 | OK | Citizen, BPL, age >= 60. |
 | 4 | IGNOAPS-MH | 4 | OK, with a gap | Age >= 65 (differs from central 60), state resident, no other pension. The live package only checks age and BPL list, so R03/R04 are not live yet. |
 | 5 | PM-KISAN-IN | 10 | Change needed | See flagged rules R09 and R10. Fact names also differ from the live package (`family_has_*` vs live facts). |
 | 6 | IGNDPSM-MH | 6 | OK | Age 18-79, 80% disability, no other pension. |
-| 7 | IGNDPS-IN | 5 | OK, confirm | 80% inclusive is a project-owner decision (2026-11-10); one passage says "more than 80%". |
+| 7 | IGNDPS-IN | 6 | CONFLICT — needs_human_review | R01b (age lte 59) added: upper age cap was missing. Same FAQ source issue as IGNWPS-IN-R02 — NSAP FAQ Q20 says 18-59 but revised guidelines may raise ceiling to 79. Needs domain owner sign-off. R04 (80% disability): Role 1 decision after brainstorming (2026-11-10); one passage says "more than 80%". |
 | 8 | FADSE-MH | 7 | OK | Age 18-50, income strictly below Rs 1,00,000, 40% disability. |
 | 9 | FASETDP-MH | 5 | OK | Matches the quotes. |
 | 10 | NFBSM-MH | 5 | OK | Breadwinner age 18-59, BPL, resident, family member. |
