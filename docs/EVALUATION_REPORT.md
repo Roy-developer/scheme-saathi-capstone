@@ -245,6 +245,6 @@ Configuration alone is not deployment evidence.
 1. Role 1 dual-labels held-out (and preferably development) independently.
 2. True PDF unseen held-out extraction (optional; team currently uses n=13 all-live override for E3).
 3. Live E1 after agent freeze; optional PDF held-out E4 if that claim is required; three held-out repeats with spread.
-4. Live red-team for cross-household memory and approval-gate cases with independent authorship.
+4. Independent red-team subset: fill `eval/red_team/independent_subset_v1_blank.json` per `INDEPENDENT_VALIDATION.md`, then pass `python scripts/check_independent_red_team.py` through `independent_subset_claimable` (author ≠ reviewer; execution validation accepted). Live LLM efficacy remains a separate arm.
 5. Different-family LLM judge calibrated on 20+ human labels (if non-code qualities are judged).
 6. Role 6 proves the deployed metrics reach the shared monitoring environment and demonstrates a working alert.

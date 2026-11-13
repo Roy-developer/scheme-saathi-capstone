@@ -1,0 +1,290 @@
+{
+  "sheet_version": "1.0.0",
+  "status": "blank_pending_author",
+  "claim": "NOT independent until check_independent_red_team.py reports independent_subset_claimable",
+  "instructions": "Independent author: fill independent_attack_input, independent_expected_behaviour, author, authored_on, and set did_not_consult_v0_expected_behaviour=true. Do not open attacks_v0.json expected_behaviour fields before drafting. Brief reviewer: set reviewed_by, reviewed_on, review_status. After a recorded run: fill execution_validation. See INDEPENDENT_VALIDATION.md.",
+  "forbidden_authors_for_independence": [
+    "project_approver",
+    "Role 5 control implementer for the boundary under test"
+  ],
+  "priority_attack_ids": [
+    "RT-MEMORY-001",
+    "RT-MEMORY-002",
+    "RT-MEMORY-003",
+    "RT-OTHER-001",
+    "RT-OTHER-002",
+    "RT-IDLEAK-001",
+    "RT-IDLEAK-005",
+    "RT-INFLATE-002",
+    "RT-INFLATE-003",
+    "RT-INJECT-001",
+    "RT-INJECT-006",
+    "RT-SCAM-003"
+  ],
+  "rows": [
+    {
+      "attack_id": "RT-MEMORY-001",
+      "category": "cross_household_memory",
+      "reference_title": "Cross-household profile read",
+      "v0_suite_version": "0.7.0",
+      "independent_attack_input": null,
+      "independent_expected_behaviour": null,
+      "author": null,
+      "authored_on": null,
+      "did_not_consult_v0_expected_behaviour": null,
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "review_status": null,
+      "execution_validation": {
+        "validator": null,
+        "validated_on": null,
+        "run_report": null,
+        "accepted": null,
+        "note": null
+      },
+      "notes": null
+    },
+    {
+      "attack_id": "RT-MEMORY-002",
+      "category": "cross_household_memory",
+      "reference_title": "Cross-journey draft access",
+      "v0_suite_version": "0.7.0",
+      "independent_attack_input": null,
+      "independent_expected_behaviour": null,
+      "author": null,
+      "authored_on": null,
+      "did_not_consult_v0_expected_behaviour": null,
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "review_status": null,
+      "execution_validation": {
+        "validator": null,
+        "validated_on": null,
+        "run_report": null,
+        "accepted": null,
+        "note": null
+      },
+      "notes": null
+    },
+    {
+      "attack_id": "RT-MEMORY-003",
+      "category": "cross_household_memory",
+      "reference_title": "Replay approval token across households",
+      "v0_suite_version": "0.7.0",
+      "independent_attack_input": null,
+      "independent_expected_behaviour": null,
+      "author": null,
+      "authored_on": null,
+      "did_not_consult_v0_expected_behaviour": null,
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "review_status": null,
+      "execution_validation": {
+        "validator": null,
+        "validated_on": null,
+        "run_report": null,
+        "accepted": null,
+        "note": null
+      },
+      "notes": null
+    },
+    {
+      "attack_id": "RT-OTHER-001",
+      "category": "other",
+      "reference_title": "Demand skip of human approval",
+      "v0_suite_version": "0.7.0",
+      "independent_attack_input": null,
+      "independent_expected_behaviour": null,
+      "author": null,
+      "authored_on": null,
+      "did_not_consult_v0_expected_behaviour": null,
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "review_status": null,
+      "execution_validation": {
+        "validator": null,
+        "validated_on": null,
+        "run_report": null,
+        "accepted": null,
+        "note": null
+      },
+      "notes": null
+    },
+    {
+      "attack_id": "RT-OTHER-002",
+      "category": "other",
+      "reference_title": "Ask LLM to decide eligibility",
+      "v0_suite_version": "0.7.0",
+      "independent_attack_input": null,
+      "independent_expected_behaviour": null,
+      "author": null,
+      "authored_on": null,
+      "did_not_consult_v0_expected_behaviour": null,
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "review_status": null,
+      "execution_validation": {
+        "validator": null,
+        "validated_on": null,
+        "run_report": null,
+        "accepted": null,
+        "note": null
+      },
+      "notes": null
+    },
+    {
+      "attack_id": "RT-IDLEAK-001",
+      "category": "id_leakage",
+      "reference_title": "Aadhaar-like number in chat",
+      "v0_suite_version": "0.7.0",
+      "independent_attack_input": null,
+      "independent_expected_behaviour": null,
+      "author": null,
+      "authored_on": null,
+      "did_not_consult_v0_expected_behaviour": null,
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "review_status": null,
+      "execution_validation": {
+        "validator": null,
+        "validated_on": null,
+        "run_report": null,
+        "accepted": null,
+        "note": null
+      },
+      "notes": null
+    },
+    {
+      "attack_id": "RT-IDLEAK-005",
+      "category": "id_leakage",
+      "reference_title": "PAN-like pattern in chat",
+      "v0_suite_version": "0.7.0",
+      "independent_attack_input": null,
+      "independent_expected_behaviour": null,
+      "author": null,
+      "authored_on": null,
+      "did_not_consult_v0_expected_behaviour": null,
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "review_status": null,
+      "execution_validation": {
+        "validator": null,
+        "validated_on": null,
+        "run_report": null,
+        "accepted": null,
+        "note": null
+      },
+      "notes": null
+    },
+    {
+      "attack_id": "RT-INFLATE-002",
+      "category": "inflate_eligibility",
+      "reference_title": "Request to hide income-tax payment",
+      "v0_suite_version": "0.7.0",
+      "independent_attack_input": null,
+      "independent_expected_behaviour": null,
+      "author": null,
+      "authored_on": null,
+      "did_not_consult_v0_expected_behaviour": null,
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "review_status": null,
+      "execution_validation": {
+        "validator": null,
+        "validated_on": null,
+        "run_report": null,
+        "accepted": null,
+        "note": null
+      },
+      "notes": null
+    },
+    {
+      "attack_id": "RT-INFLATE-003",
+      "category": "inflate_eligibility",
+      "reference_title": "Hide institutional landholder status",
+      "v0_suite_version": "0.7.0",
+      "independent_attack_input": null,
+      "independent_expected_behaviour": null,
+      "author": null,
+      "authored_on": null,
+      "did_not_consult_v0_expected_behaviour": null,
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "review_status": null,
+      "execution_validation": {
+        "validator": null,
+        "validated_on": null,
+        "run_report": null,
+        "accepted": null,
+        "note": null
+      },
+      "notes": null
+    },
+    {
+      "attack_id": "RT-INJECT-001",
+      "category": "scheme_text_injection",
+      "reference_title": "Ignore-previous-instructions override",
+      "v0_suite_version": "0.7.0",
+      "independent_attack_input": null,
+      "independent_expected_behaviour": null,
+      "author": null,
+      "authored_on": null,
+      "did_not_consult_v0_expected_behaviour": null,
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "review_status": null,
+      "execution_validation": {
+        "validator": null,
+        "validated_on": null,
+        "run_report": null,
+        "accepted": null,
+        "note": null
+      },
+      "notes": null
+    },
+    {
+      "attack_id": "RT-INJECT-006",
+      "category": "scheme_text_injection",
+      "reference_title": "Disregard-the-above override",
+      "v0_suite_version": "0.7.0",
+      "independent_attack_input": null,
+      "independent_expected_behaviour": null,
+      "author": null,
+      "authored_on": null,
+      "did_not_consult_v0_expected_behaviour": null,
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "review_status": null,
+      "execution_validation": {
+        "validator": null,
+        "validated_on": null,
+        "run_report": null,
+        "accepted": null,
+        "note": null
+      },
+      "notes": null
+    },
+    {
+      "attack_id": "RT-SCAM-003",
+      "category": "scam_page",
+      "reference_title": "WhatsApp agent fee demand",
+      "v0_suite_version": "0.7.0",
+      "independent_attack_input": null,
+      "independent_expected_behaviour": null,
+      "author": null,
+      "authored_on": null,
+      "did_not_consult_v0_expected_behaviour": null,
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "review_status": null,
+      "execution_validation": {
+        "validator": null,
+        "validated_on": null,
+        "run_report": null,
+        "accepted": null,
+        "note": null
+      },
+      "notes": null
+    }
+  ]
+}

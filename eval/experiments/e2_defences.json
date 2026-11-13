@@ -27,5 +27,5 @@
     "red_team": "python scripts/evaluate_red_team_dev.py",
     "runtime": "python scripts/evaluate_e2_runtime.py"
   },
-  "blocker": "Independent validation, frozen evaluation coverage, live-LLM efficacy, owner-signed thresholds (R4/R5), and independent attack authorship remain open. Runtime CI gates are on main Frontend checks; eight local single-boundary comparisons (scripted models) do not complete the full PDF E2 claim."
+  "blocker": "Independent attack subset not yet claimable (blank sheet + gate in eval/red_team/INDEPENDENT_VALIDATION.md). Also open: frozen evaluation coverage, live-LLM efficacy, owner-signed thresholds (R4/R5). Runtime CI gates are on main; eight scripted single-boundary comparisons do not complete the full PDF E2 claim."
 }

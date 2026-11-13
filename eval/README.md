@@ -36,6 +36,7 @@ local until the workflow changes are pushed and run in GitHub Actions.
 | E2 off/on | `python scripts/evaluate_e2_defences_dev.py` |
 | Application-boundary E2 off/on | `python scripts/evaluate_e2_runtime.py` (five paired scenarios; dedicated CI step) |
 | Application-path red-team 30 | `python scripts/evaluate_red_team_runtime.py` (scripted offline models; dedicated CI step) |
+| Independent red-team subset gate | `python scripts/check_independent_red_team.py` (blank sheet until humans sign; see `eval/red_team/INDEPENDENT_VALIDATION.md`) |
 | Memory on/off smoke | `python scripts/evaluate_household_memory_dev.py` |
 | E3 inventory | `python scripts/evaluate_reflexion_playbook_dev.py` |
 | Monitoring handoff | OpenTelemetry export to Azure Monitor; live Managed Grafana evidence remains with Role 6 |
