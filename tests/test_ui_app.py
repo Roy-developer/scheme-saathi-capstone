@@ -786,9 +786,15 @@ def test_registered_date_question_accepts_an_old_date_of_birth() -> None:
         app.run()
         assert not app.exception
 
-        picker = app.date_input(key=f"registered_answer_{conversation_id}_date_of_birth")
-        assert picker.min == date(1900, 1, 1)
-        picker.set_value(date(1950, 3, 3))
+        prefix = f"registered_answer_{conversation_id}_date_of_birth"
+        year = app.selectbox(key=f"{prefix}_year")
+        # Years run newest first and reach back to 1900, so an old-age
+        # applicant's birth year is one pick away (no calendar decade jumps).
+        assert year.options[0] == str(date.today().year + 1)
+        assert year.options[-1] == "1900"
+        app.selectbox(key=f"{prefix}_day").set_value(3)
+        app.selectbox(key=f"{prefix}_month").set_value(3)
+        year.set_value(1950)
         next(button for button in app.button if button.label == "Send answer").click().run()
 
         assert not app.exception
@@ -863,7 +869,9 @@ def test_registered_question_also_accepts_a_typed_answer() -> None:
         app.query_params["scheme"] = "IGNOAPS-MH"
         app.run()
         assert not app.exception
-        assert app.date_input(key=f"registered_answer_{conversation_id}_date_of_birth")
+        assert app.selectbox(
+            key=f"registered_answer_{conversation_id}_date_of_birth_year"
+        )
 
         app.chat_input[0].set_value("third of march 1950").run()
 
@@ -965,7 +973,10 @@ def test_date_example_is_shown_only_for_date_questions(value_type, fact_id, date
         assert not app.exception
 
         assert ("1958-05-05" in app.chat_input[0].placeholder) is date_hint
-        assert bool(app.date_input) is (value_type == "date")
+        year_boxes = [
+            box for box in app.selectbox if (box.key or "").endswith("_year")
+        ]
+        assert bool(year_boxes) is (value_type == "date")
         shown = " ".join(element.value for element in app.caption)
         # The "you can also type" hint only appears next to a quick control.
         assert ("in your own words" in shown) is (value_type != "boolean")

@@ -64,10 +64,72 @@ from src.workflow.discovery import discovery_message
 
 # The API rejects longer replies before the registry parser can validate them.
 MAX_JOURNEY_REPLY_LENGTH = 500
-# st.date_input allows only ten years either side of today unless told
-# otherwise, which rejected every old-age applicant's date of birth.
+# Dates are picked with day / month / year dropdowns. st.date_input's calendar
+# shows only a sliding window of years, so reaching a birth year 60-80 years
+# back jumped between decades; three dropdowns reach any year directly.
 REGISTERED_DATE_MIN = date(1900, 1, 1)
 REGISTERED_DATE_MAX = date(2100, 12, 31)
+DATE_PART_LABELS = {
+    "en": ("Day", "Month", "Year"),
+    "hi": ("दिन", "महीना", "वर्ष"),
+    "mr": ("दिवस", "महिना", "वर्ष"),
+}
+MONTH_NAMES = {
+    "en": (
+        "January", "February", "March", "April", "May", "June", "July",
+        "August", "September", "October", "November", "December",
+    ),
+    "hi": (
+        "जनवरी", "फ़रवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई",
+        "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर",
+    ),
+    "mr": (
+        "जानेवारी", "फेब्रुवारी", "मार्च", "एप्रिल", "मे", "जून", "जुलै",
+        "ऑगस्ट", "सप्टेंबर", "ऑक्टोबर", "नोव्हेंबर", "डिसेंबर",
+    ),
+}
+INVALID_DATE_TEXT = {
+    "en": "That date does not exist. Please check the day and month.",
+    "hi": "यह तारीख मौजूद नहीं है। कृपया दिन और महीना जाँचें।",
+    "mr": "ही तारीख अस्तित्वात नाही. कृपया दिवस आणि महिना तपासा.",
+}
+
+
+def date_dropdowns(
+    label: str, locale: str, key: str, disabled: bool
+) -> date | None:
+    """Pick a date with day, month and year dropdowns; None until all are valid."""
+
+    day_label, month_label, year_label = DATE_PART_LABELS[locale]
+    months = MONTH_NAMES[locale]
+    # Newest year first: most answers are dates of birth or recent dates.
+    last_year = min(date.today().year + 1, REGISTERED_DATE_MAX.year)
+    years = list(range(last_year, REGISTERED_DATE_MIN.year - 1, -1))
+    st.markdown(label)
+    day_column, month_column, year_column = st.columns(3)
+    with day_column:
+        day = st.selectbox(
+            day_label, list(range(1, 32)), index=None,
+            key=f"{key}_day", disabled=disabled,
+        )
+    with month_column:
+        month = st.selectbox(
+            month_label, list(range(1, 13)), index=None,
+            format_func=lambda number: months[number - 1],
+            key=f"{key}_month", disabled=disabled,
+        )
+    with year_column:
+        year = st.selectbox(
+            year_label, years, index=None,
+            key=f"{key}_year", disabled=disabled,
+        )
+    if day is None or month is None or year is None:
+        return None
+    try:
+        return date(year, month, day)
+    except ValueError:
+        st.caption(INVALID_DATE_TEXT[locale])
+        return None
 
 
 COPY = {
@@ -2412,13 +2474,8 @@ def registered_answer_input(
             )
         elif value_type == "date":
             is_unknown = st.checkbox(unknown_label, key=f"{key}_unknown")
-            selected = st.date_input(
-                text["quick_answer"],
-                value=None,
-                min_value=REGISTERED_DATE_MIN,
-                max_value=REGISTERED_DATE_MAX,
-                disabled=is_unknown,
-                key=key,
+            selected = date_dropdowns(
+                text["quick_answer"], locale, key, disabled=is_unknown
             )
             answer = (
                 "skip" if is_unknown
