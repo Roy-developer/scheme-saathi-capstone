@@ -16,6 +16,7 @@ from datetime import date
 from uuid import UUID, uuid4
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 from src.rules.data_provider import RulePackageProvider
 from src.ui.api_client import (
@@ -790,6 +791,42 @@ PLAN_STEP_ICONS = {
 }
 
 
+SCROLL_ANCHOR_ID = "saathi-latest"
+
+
+def mark_scroll_target() -> None:
+    """Mark the newest question or result as the place to scroll to."""
+
+    st.markdown(f'<div id="{SCROLL_ANCHOR_ID}"></div>', unsafe_allow_html=True)
+
+
+def scroll_to_latest() -> None:
+    """After a new API reply, bring the newest question or result into view.
+
+    Each reply reruns the page and the layout changes (the chat box goes,
+    results appear), so the browser jumps back to the top. This scrolls
+    once to the marked spot, then clears the request.
+    """
+
+    if not st.session_state.get("scroll_to_latest"):
+        return
+    st.session_state.scroll_to_latest = False
+    components.html(
+        f"""<script>
+        const go = (tries) => {{
+          const target = window.parent.document.getElementById("{SCROLL_ANCHOR_ID}");
+          if (target) {{
+            target.scrollIntoView({{behavior: "smooth", block: "start"}});
+          }} else if (tries > 0) {{
+            setTimeout(() => go(tries - 1), 100);
+          }}
+        }};
+        setTimeout(() => go(20), 50);
+        </script>""",
+        height=0,
+    )
+
+
 def save_journey(journey: JourneyResponse) -> None:
     """Copy one API reply into session_state.
 
@@ -797,6 +834,8 @@ def save_journey(journey: JourneyResponse) -> None:
     needs to redraw itself is stored here: the plan, the history, the open
     question and, at the end, the verdict.
     """
+
+    st.session_state.scroll_to_latest = True
 
     if (
         st.session_state.get("journey_dependency_version", 0) != journey.dependency_version
@@ -1061,11 +1100,15 @@ def render_candidate_interview(
                 f'Plan {change["to_version"]}: {change["reason"]}'
             )
     render_history(text)
-    for turn in st.session_state.journey_conversation:
+    turns = st.session_state.journey_conversation
+    awaiting = st.session_state.journey_status == "awaiting_answer"
+    for index, turn in enumerate(turns):
+        if awaiting and index == len(turns) - 1:
+            mark_scroll_target()
         with st.chat_message(turn["role"]):
             st.write(turn["content"])
 
-    if st.session_state.journey_status == "awaiting_answer":
+    if awaiting:
         reply = journey_reply(text, locale)
         if reply:
             st.session_state.interview_error = None
@@ -1081,6 +1124,7 @@ def render_candidate_interview(
         return
 
     if st.session_state.candidate_verdicts:
+        mark_scroll_target()
         st.subheader(text["multi_interview_results"])
         for scheme_id, verdict in st.session_state.candidate_verdicts.items():
             with st.expander(scheme_id, expanded=True):
@@ -2649,11 +2693,15 @@ def render_interview(
     render_agent_observability(text)
     render_discovery_notices(locale)
     render_answer_correction(text, locale)
-    for turn in st.session_state.journey_conversation:
+    turns = st.session_state.journey_conversation
+    awaiting = st.session_state.journey_status == "awaiting_answer"
+    for index, turn in enumerate(turns):
+        if awaiting and index == len(turns) - 1:
+            mark_scroll_target()
         with st.chat_message(turn["role"]):
             st.write(turn["content"])
 
-    if st.session_state.journey_status == "awaiting_answer":
+    if awaiting:
         reply = journey_reply(text, locale)
         if reply:
             st.session_state.interview_error = None
@@ -2669,6 +2717,7 @@ def render_interview(
         return
 
     result = st.session_state.interview_result
+    mark_scroll_target()
     if result:
         render_verdict(result, scheme_id, text)
         if result["result"] == "eligible":
@@ -2910,6 +2959,7 @@ if st.session_state.journey_started:
         st.rerun()
     elif st.session_state.multi_scheme_mode:
         render_candidate_interview(text, locale)
+        scroll_to_latest()
         st.stop()
     elif st.session_state.journey_scheme_id == "PM-KISAN-IN":
         st.subheader(text["pmkisan_title"])
@@ -2929,6 +2979,7 @@ if st.session_state.journey_started:
             ),
         )
         # Stop here so the widow-pension screen below is not drawn.
+        scroll_to_latest()
         st.stop()
     elif st.session_state.journey_scheme_id not in {
         fixtures.policy.scheme_id, "PM-KISAN-IN"
@@ -2947,6 +2998,7 @@ if st.session_state.journey_started:
         )
         st.divider()
         st.caption(text["footer"])
+        scroll_to_latest()
         st.stop()
 else:
     st.subheader(text["finder_title"])
@@ -3111,6 +3163,7 @@ else:
                 )
                 st.rerun()
 
+    scroll_to_latest()
     st.stop()
 
 # "chat" asks questions (Phase 2). "example" keeps the preset people, which
@@ -3137,6 +3190,7 @@ if widow_mode == "chat":
     )
     st.divider()
     st.caption(text["footer"])
+    scroll_to_latest()
     st.stop()
 
 visible_scenarios = provider.visible_scenarios()
@@ -3265,3 +3319,4 @@ if st.session_state.selected_result and st.session_state.api_result:
 
 st.divider()
 st.caption(text["footer"])
+scroll_to_latest()
