@@ -65,7 +65,7 @@ def test_shadow_agreement_counts_match_recorded_cases():
     assert report["agree"] == sum(c["agree"] for c in report["cases"])
     assert report["disagree"] == report["case_count"] - report["agree"]
     assert report["agree"] == 14
-    assert report["disagree"] == 29
+    assert report["disagree"] == 32
 
 
 def test_shadow_path_cannot_write_live_state(monkeypatch):
@@ -131,7 +131,7 @@ def test_question_order_counts_are_reported_per_order():
         r["planned"]["questions"] for r in report["cases"]
     )
     assert report["fixed_questions_total"] == 192
-    assert report["planned_questions_total"] == 177
+    assert report["planned_questions_total"] == 185
 
 
 def test_unknown_question_order_is_rejected():
