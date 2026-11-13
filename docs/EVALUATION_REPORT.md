@@ -22,13 +22,13 @@ python scripts/run_role5_dev_evals.py
 | Simulated citizen (hidden profile) | `eval/harness/simulated_citizen.py` offline stand-in |
 | Code-first eligibility scoring | `evaluate_eligibility_dev.py` / held-out script |
 | E1 cost-benefit | Config inventoried; live C0/C1/C2 still blocked on Phase freeze |
-| E2 defences off/on | Offline injection / ID / scam report plus a separate five-scenario local application-boundary comparison: off 4/5, on 0/5 attack success; no clean false blocks. Off arms remove one boundary, not all controls (see §3). |
+| E2 defences off/on | Offline injection / ID / scam report plus eight local application-boundary comparisons (incl. scam_intake). Off arms remove one boundary, not all controls; scripted models; not independent/frozen (see §3). |
 | E3 Reflexion before/after | Check-split 1.0.0 closed; playbooks 1.1.0/1.1.1/1.1.2 frozen; team-override n=13 recorded (not PDF unseen HO) |
 | E4 signature ablation | Team-override n=46 recorded (shadow + offline/journey Q-order + multilingual LLM); not PDF HO |
 | 30+ red-team | All 30 briefs approved. After fixing mixed-separator identifier and PAN masking, the separate application-path runtime run on 2026-11-12 passed **30/30** (initially 28/30). Real local API/graph/MCP/portal paths use synthetic inputs and scripted offline models, not live LLM efficacy evidence. The older 30-check helper/local-pytest gate is separate. |
 | L9 memory | Synthetic prototype controls and focused evidence: [`docs/MEMORY_POLICY.md`](MEMORY_POLICY.md), [`tests/test_household_memory.py`](../tests/test_household_memory.py), [`tests/test_journey_graph.py`](../tests/test_journey_graph.py), and [`tests/test_household_memory_api.py`](../tests/test_household_memory_api.py). The approver selected 90-day return-code memory expiry and no automatic historical-checkpoint expiry; the four-case on/off report is functional development evidence only. The red-team checks do not replace full L9 evidence or authorize real-applicant use. |
 | Monitoring / Grafana / alert | Read-only shared-dev query confirms OpenTelemetry metrics from the older `git-13dde6b37e3a` image; current-commit Managed Grafana dashboard and alert proof remain incomplete. |
-| CI evaluation gate | Frontend checks includes the core Role 5 gate plus dedicated 30-case runtime and five-scenario E2 gates. Synthetic JSON reports upload even on failure. Workflow changes are local until pushed and executed in Actions. |
+| CI evaluation gate | Frontend checks (on main) includes the core Role 5 gate plus dedicated 30-case runtime and application-boundary E2 gates. Synthetic JSON reports upload even on failure. |
 | Three held-out repeats | Pending after freeze |
 
 ## 2. Development harness results
@@ -106,47 +106,24 @@ held-out evidence, or independent technical sign-off.
 ### Application-boundary E2 comparison (2026-11-12)
 
 [`eval/reports/e2_runtime_dev_latest.json`](../eval/reports/e2_runtime_dev_latest.json)
-contains five derived attack scenarios, each with a matching clean control in
-both arms: **20 observations**, no test failures or missing observations.
-Each arm uses the real local API/graph/MCP/portal paths with synthetic stores
-and controlled offline model outputs.
+records **eight** derived attack scenarios × off/on × attack/clean (**32
+observations**). Each arm uses the real local API/graph/MCP/portal paths with
+synthetic stores and controlled offline/scripted model outputs.
 
-| Named boundary | Attack success, off | Attack success, on |
-|---|---|---|
-| Confirmed-fact proposal filter | 0/1 | 0/1 |
-| PII masking on intake/model/checkpoint paths | 1/1 | 0/1 |
-| Explicit memory-read consent | 1/1 | 0/1 |
-| Caller-scoped draft read | 1/1 | 0/1 |
-| Human approval before submit | 1/1 | 0/1 |
-| **Total** | **4/5 (80%)** | **0/5 (0%)** |
-
-Legitimate-work false blocks were **0/5 in each arm**. The clean controls
-include confirming a truthful tax answer, continuing normal intake, consented
-memory retrieval, reading one's own draft, and explicitly approving/submitting.
-Disabling the confirmed-fact filter allows a malicious re-proposal, but the
-remaining confirmation requirement prevents a silent overwrite. It is
-therefore correctly counted as an unsuccessful attack in both arms.
+Named boundaries: confirmed-fact filter, landholder-fact filter, rule-engine
+verdict authority, PII masking, memory-read consent, caller-scoped draft read,
+human approval before submit, and scam-intake screening (`scam_intake` from
+RT-SCAM-003).
 
 **Scope:** these are single-boundary ablations, not a global defences-off
-application. Off arms exist only in the isolated test process. The consent
-adapter supplies consent without the user's declaration. The draft adapter
-looks up the synthetic owner without caller scope, then calls the real portal
-as that owner; portal SQL itself is not disabled. The approval adapter
-auto-approves before submission, while portal token checks remain active.
-These deliberately unsafe reference policies are not deployment options.
-Memory consent does not establish authenticated household ownership.
+application. Off arms exist only in the isolated test process. Unsafe test
+adapters are not deployment options. Memory consent does not establish
+authenticated household ownership. Scripted models are not live LLM efficacy.
 
-This adds local evidence for truthful eligibility, own-data privacy, memory
-consent, draft-read isolation and approval policy. It is five derived scenarios,
-not all 30 approved attacks run off/on, independent sign-off, live LLM efficacy
-or final frozen E2/L9 evidence. Source hashes, exact boundaries and observations
-are recorded in the report. The runtime commands remain separate from the
-core Role 5 command, but `.github/workflows/frontend-checks.yml` now invokes
-both as dedicated blocking steps. Their modules are excluded from the broad
-pytest step to avoid duplicate execution. Both gates run after dependency
-installation even if an earlier check fails, unless the job is cancelled;
-synthetic JSON reports upload with `always()`. Remote Actions execution is
-not yet demonstrated because these workflow changes have not been pushed.
+This is not all 30 approved attacks run off/on, independent sign-off, or final
+frozen E2/L9 evidence. `.github/workflows/frontend-checks.yml` on main invokes
+red-team runtime and E2 runtime as dedicated blocking steps; synthetic JSON
+reports upload with `always()`.
 
 Offline E2 reports attack success with defences **off** vs **on** for injection,
 identifier masking, and scam screens (`src/workflow/scam_screen.py`), plus a
@@ -232,8 +209,10 @@ verdicts via interview graph + simulated citizen). Full isolated LLM arm (free
 Nemotron, en/hi/mr): boundary errors LLM 16/46 (0.3478) vs rules 0; multilingual
 agreement 32/46 (0.6957); cost/case $0. Dual-label κ (model-assisted
 `model-assisted-check` vs `model-assisted-check-2`, no smoke copy): 46 paired,
-κ=1.0, 0 disagreements — **not** independent human Role-1. Claim level: **not**
-PDF unseen held-out. Evidence:
+κ=1.0 — **not** independent human Role-1. Token metering via LangChain
+callbacks (smoke metered non-zero tokens; free route still $0). Different-model
+live citizen runnable (`--live-citizen`, Gemma free ≠ Nemotron). Claim level:
+**not** PDF unseen held-out. Evidence:
 `eval/reports/e4_team_override_signature_ablation_2026-11-13.json`,
 `eval/reports/e4_team_override_label_agreement_2026-11-13.json`,
 `docs/e4_team_override_status_2026-11-13.md`.
@@ -241,6 +220,7 @@ PDF unseen held-out. Evidence:
 ```bash
 python scripts/evaluate_e4_signature_ablation.py --team-override --dry-run
 python scripts/evaluate_e4_signature_ablation.py --team-override --llm-arm --multilingual --yes
+python scripts/evaluate_e4_signature_ablation.py --team-override --live-citizen --yes --limit 4
 python scripts/evaluate_e4_label_agreement.py
 ```
 

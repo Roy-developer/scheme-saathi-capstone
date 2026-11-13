@@ -83,6 +83,14 @@ def team_override_gate_failures() -> list[str]:
     return failures
 
 
+def _relpath(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        return str(resolved.relative_to(PROJECT_ROOT))
+    except ValueError:
+        return str(resolved)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--eval-set", type=Path, default=DEFAULT_EVAL_SET)
@@ -134,6 +142,14 @@ def main(argv: list[str] | None = None) -> int:
         "--no-journey-question-order",
         action="store_true",
         help="Skip journey-facing question-order ablation.",
+    )
+    parser.add_argument(
+        "--live-citizen",
+        action="store_true",
+        help=(
+            "With journey Q-order, use a different live OpenRouter model as the "
+            "simulated citizen (needs --yes). Card remains authoritative."
+        ),
     )
     parser.add_argument(
         "--llm-arm",
@@ -283,6 +299,57 @@ def main(argv: list[str] | None = None) -> int:
         }
 
     if run_journey_qo:
+        citizen_model = None
+        citizen_model_name = None
+        if args.live_citizen:
+            if not args.yes:
+                print(
+                    "Live citizen requested but --yes was not given; "
+                    "using offline card citizen.",
+                    file=sys.stderr,
+                )
+            else:
+                _load_dotenv()
+                from src.llm_client import openrouter_chat_model
+                from src.rule_extraction_reflexion.scheme_rules import (
+                    DEFAULT_EXTRACTION_MODEL,
+                    NEMOTRON_COMPLETION_TOKENS,
+                )
+
+                api_key = (
+                    os.getenv("OPENROUTER_API_KEY_FREE")
+                    or os.getenv("OPEN_ROUTER_FREE")
+                )
+                if not api_key:
+                    raise SystemExit(
+                        "OPENROUTER_API_KEY_FREE is not set in the project .env"
+                    )
+                eligibility_model_name = os.getenv(
+                    "OPENROUTER_RULE_EXTRACTION_MODEL", DEFAULT_EXTRACTION_MODEL,
+                )
+                # Different model from the eligibility arm (PDF: simulated citizen
+                # is a different model). Override with OPENROUTER_E4_CITIZEN_MODEL.
+                citizen_model_name = os.getenv(
+                    "OPENROUTER_E4_CITIZEN_MODEL",
+                    "google/gemma-3-4b-it:free",
+                )
+                if citizen_model_name == eligibility_model_name:
+                    print(
+                        "Refuse: citizen model must differ from eligibility model "
+                        f"({eligibility_model_name}). Set OPENROUTER_E4_CITIZEN_MODEL.",
+                        file=sys.stderr,
+                    )
+                    return 2
+                citizen_model = openrouter_chat_model(
+                    api_key,
+                    citizen_model_name,
+                    timeout=70,
+                    max_completion_tokens=NEMOTRON_COMPLETION_TOKENS,
+                    reasoning_effort="none",
+                )
+                print(
+                    f"journey question-order: live citizen model={citizen_model_name}"
+                )
         print("journey question-order: running interview graph ablation…")
         jqo = asyncio.run(
             e4_journey_question_order.run_journey_question_order_ablation(
@@ -290,6 +357,8 @@ def main(argv: list[str] | None = None) -> int:
                 allow_held_out=bool(args.held_out),
                 scheme_ids=set(args.schemes) if args.schemes else None,
                 limit=args.limit,
+                citizen_model=citizen_model,
+                citizen_model_name=citizen_model_name,
             )
         )
         detail_path = output.with_name(output.stem + "_journey_qo_cases.json")
@@ -301,12 +370,14 @@ def main(argv: list[str] | None = None) -> int:
         report["arms"]["journey_question_order"] = {
             "status": "ran",
             "path": "journey_interview_graph",
+            "citizen_mode": jqo.get("citizen_mode", "offline_card"),
+            "citizen_model": jqo.get("citizen_model"),
             "case_count": jqo["case_count"],
             "fixed_questions_total": jqo["fixed_questions_total"],
             "planned_questions_total": jqo["planned_questions_total"],
             "verdict_match_count": jqo["verdict_match_count"],
             "questions_per_conversation": jqo["questions_per_conversation"],
-            "detail": str(detail_path.relative_to(PROJECT_ROOT)),
+            "detail": _relpath(detail_path),
             "notice": jqo["notice"],
         }
 
@@ -394,7 +465,7 @@ def main(argv: list[str] | None = None) -> int:
                 "cost": llm_report["cost"],
                 "median_latency_ms": llm_report["median_latency_ms"],
                 "p95_latency_ms": llm_report["p95_latency_ms"],
-                "detail": str(detail_path.relative_to(PROJECT_ROOT)),
+                "detail": _relpath(detail_path),
                 "notice": llm_report["notice"],
             }
     else:

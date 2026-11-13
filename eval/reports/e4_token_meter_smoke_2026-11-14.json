@@ -1,0 +1,29 @@
+{
+  "experiment_id": "E4",
+  "title": "Token-meter smoke (team override)",
+  "when": "2026-11-14",
+  "claim_level": "team_override_dev_personas",
+  "arms": {
+    "llm_eligibility": {
+      "status": "ran",
+      "model": "nvidia/nemotron-3.5-lightning:free",
+      "case_count": 2,
+      "model_calls": 2,
+      "cost": {
+        "currency": "USD",
+        "route": "openrouter_free",
+        "usd_per_million_input": 0.0,
+        "usd_per_million_output": 0.0,
+        "input_tokens_total": 434,
+        "output_tokens_total": 28,
+        "token_metered_calls": 2,
+        "total_usd": 0.0,
+        "cost_per_case_usd": 0.0,
+        "note": "Token counts from LangChain on_llm_end usage callbacks. Free OpenRouter route priced at $0 unless rates are overridden."
+      },
+      "detail": "eval/reports/e4_token_meter_smoke_2026-11-14_llm_cases.json",
+      "notice": "evaluation-only, non-authoritative: LLM proposals are never written to live state and never replace the rule-engine verdict"
+    }
+  },
+  "note": "Smoke only: proves LangChain callback token metering on free route; not a full n=46 refresh."
+}

@@ -5,9 +5,9 @@ simulated citizen that answers only from the persona's known facts. Compares
 adaptive (``question_order=planned``) vs fixed questionnaire
 (``question_order=fixed``) on the same persona × scheme.
 
-No live LLM is required: intake is deterministic and answers are typed from
-the hidden profile. This is evaluation-only and does not write household
-memory or portal state.
+Default citizen mode is offline (typed card values). Optional live-model mode
+uses a *different* chat model only to phrase replies; the hidden card remains
+authoritative. Evaluation-only; does not write household memory or portal state.
 """
 
 from __future__ import annotations
@@ -18,10 +18,15 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
+from langchain_core.language_models import BaseChatModel
 from langgraph.checkpoint.memory import MemorySaver
 
 from eval.harness.runner import load_persona_evaluation_set, persona_input
-from eval.harness.simulated_citizen import HiddenProfileCard, answer_question
+from eval.harness.simulated_citizen import (
+    HiddenProfileCard,
+    answer_question,
+    answer_question_with_model,
+)
 from src.api.eligibility import evaluate_mock_eligibility
 from src.rules.data_provider import RulePackageProvider
 from src.rules.facts import FactRegistry, HouseholdProfile
@@ -36,9 +41,13 @@ from src.workflow.question_picker import fixed_questionnaire_facts
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEV_PERSONAS = PROJECT_ROOT / "eval" / "development" / "personas_v1.json"
 MAX_TURNS = 40
-NOTICE = (
+NOTICE_OFFLINE = (
     "journey-facing question-order ablation: uses the interview graph with "
-    "simulated-citizen answers; no live LLM; no household memory writes"
+    "offline simulated-citizen answers; no household memory writes"
+)
+NOTICE_LIVE = (
+    "journey-facing question-order ablation: uses the interview graph with a "
+    "different-model simulated citizen (card-grounded); no household memory writes"
 )
 
 
@@ -74,14 +83,28 @@ def _card_from_profile(
     return HiddenProfileCard(citizen_id=persona_id, facts=facts, language="en")
 
 
-def _reply_for_fact(card: HiddenProfileCard, fact_id: str) -> str:
-    reply = answer_question(card, fact_id)
-    if reply["status"] != "answered":
-        return "I don't know"
-    value = reply["value"]
-    if isinstance(value, bool):
-        return "yes" if value else "no"
-    return str(value)
+async def _reply_for_fact(
+    card: HiddenProfileCard,
+    fact_id: str,
+    *,
+    citizen_model: BaseChatModel | None,
+    question_text: str | None,
+) -> tuple[str, str]:
+    if citizen_model is None:
+        reply = answer_question(card, fact_id)
+        if reply["status"] != "answered":
+            return "I don't know", "offline_card"
+        value = reply["value"]
+        if isinstance(value, bool):
+            return ("yes" if value else "no"), "offline_card"
+        return str(value), "offline_card"
+    reply = await answer_question_with_model(
+        card,
+        fact_id,
+        model=citizen_model,
+        question_text=question_text,
+    )
+    return str(reply["utterance"]), str(reply.get("citizen_mode") or "live_model")
 
 
 def _build_graph(provider: RulePackageProvider):
@@ -107,6 +130,7 @@ async def _run_interview(
     scheme_id: str,
     full: HouseholdProfile,
     question_order: str,
+    citizen_model: BaseChatModel | None = None,
 ) -> dict[str, Any]:
     graph = _build_graph(provider)
     card = _card_from_profile(persona_id, full, provider.registry)
@@ -124,6 +148,7 @@ async def _run_interview(
     asked: list[str] = []
     confirmations = 0
     turns = 0
+    citizen_modes: list[str] = []
 
     def _is_confirming() -> bool:
         definition = response.question_definition
@@ -152,8 +177,15 @@ async def _run_interview(
                 break
             continue
         asked.append(fact)
+        typed_reply, mode = await _reply_for_fact(
+            card,
+            fact,
+            citizen_model=citizen_model,
+            question_text=response.question,
+        )
+        citizen_modes.append(mode)
         response = await resume_journey(
-            graph, response.conversation_id, _reply_for_fact(card, fact),
+            graph, response.conversation_id, typed_reply,
         )
 
     verdict = None
@@ -170,6 +202,13 @@ async def _run_interview(
         "status": response.status,
         "decided": verdict is not None and verdict != "need_more_information",
         "question_order": question_order,
+        "citizen_mode": (
+            "live_model"
+            if citizen_model is not None and any(
+                mode.startswith("live_model") for mode in citizen_modes
+            )
+            else "offline_card"
+        ),
         "fixed_questionnaire": fixed_questionnaire_facts(
             [provider.get(scheme_id)], provider.registry,
         ),
@@ -182,6 +221,8 @@ async def run_journey_question_order_ablation(
     allow_held_out: bool = False,
     scheme_ids: set[str] | None = None,
     limit: int | None = None,
+    citizen_model: BaseChatModel | None = None,
+    citizen_model_name: str | None = None,
 ) -> dict[str, Any]:
     """Compare journey planned vs fixed question order on a persona set."""
 
@@ -203,6 +244,7 @@ async def run_journey_question_order_ablation(
                 scheme_id=scheme_id,
                 full=full,
                 question_order="planned",
+                citizen_model=citizen_model,
             )
             fixed = await _run_interview(
                 provider=provider,
@@ -210,6 +252,7 @@ async def run_journey_question_order_ablation(
                 scheme_id=scheme_id,
                 full=full,
                 question_order="fixed",
+                citizen_model=citizen_model,
             )
             rows.append({
                 "persona_id": persona.persona_id,
@@ -228,8 +271,10 @@ async def run_journey_question_order_ablation(
 
     count = len(rows)
     return {
-        "notice": NOTICE,
+        "notice": NOTICE_LIVE if citizen_model is not None else NOTICE_OFFLINE,
         "arm": "journey_question_order",
+        "citizen_mode": "live_model" if citizen_model is not None else "offline_card",
+        "citizen_model": citizen_model_name,
         "eval_set": str(eval_path),
         "case_count": count,
         "fixed_questions_total": sum(r["questions_fixed"] for r in rows),

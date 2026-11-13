@@ -41,6 +41,7 @@ def test_journey_ablation_matches_verdicts_on_ignwps_sample():
     assert report["case_count"] == 4
     assert report["verdict_match_count"] == report["case_count"]
     assert report["arm"] == "journey_question_order"
+    assert report["citizen_mode"] == "offline_card"
     # At least one case should show different ask order between modes.
     orders_differ = any(
         row["planned"]["asked_facts"] != row["fixed"]["asked_facts"]
@@ -52,6 +53,70 @@ def test_journey_ablation_matches_verdicts_on_ignwps_sample():
         assert row["planned"]["verdict"] == row["expected_result"] or (
             row["planned"]["verdict"] is not None
         )
+
+
+def test_live_citizen_model_stays_card_grounded():
+    from typing import Any, Optional
+
+    from langchain_core.language_models.chat_models import BaseChatModel
+    from langchain_core.messages import AIMessage
+    from langchain_core.outputs import ChatGeneration, ChatResult
+    from langchain_core.callbacks.manager import CallbackManagerForLLMRun
+
+    from eval.harness.simulated_citizen import (
+        CitizenUtterance,
+        HiddenProfileCard,
+        answer_question_with_model,
+    )
+
+    class PhrasingCitizenModel(BaseChatModel):
+        @property
+        def _llm_type(self) -> str:
+            return "phrasing-citizen-stub"
+
+        def with_structured_output(self, schema, **kwargs):  # noqa: ANN001
+            class _Runner:
+                async def ainvoke(self, messages, config=None):  # noqa: ANN001
+                    return CitizenUtterance(utterance="Yes, I am a widow.")
+
+            return _Runner()
+
+        def _generate(
+            self,
+            messages: list,
+            stop: Optional[list[str]] = None,
+            run_manager: Optional[CallbackManagerForLLMRun] = None,
+            **kwargs: Any,
+        ) -> ChatResult:
+            return ChatResult(
+                generations=[
+                    ChatGeneration(message=AIMessage(content="Yes, I am a widow."))
+                ]
+            )
+
+    card = HiddenProfileCard(
+        citizen_id="SIM-LIVE",
+        facts={"is_widow": True, "bpl_card_shown": False},
+    )
+    model = PhrasingCitizenModel()
+    answered = asyncio.run(
+        answer_question_with_model(
+            card, "is_widow", model=model, question_text="Are you a widow?",
+        )
+    )
+    assert answered["status"] == "answered"
+    assert answered["value"] is True
+    assert answered["utterance"] == "yes"
+    assert answered["citizen_mode"] == "live_model"
+    assert "widow" in answered["model_utterance"].lower()
+
+    unknown = asyncio.run(
+        answer_question_with_model(
+            card, "date_of_birth", model=model, question_text="DOB?",
+        )
+    )
+    assert unknown["status"] == "unknown"
+    assert unknown["utterance"] == "I don't know"
 
 
 def test_journey_request_rejects_fixed_order_outside_interview():

@@ -13,7 +13,7 @@ currently **46** persona×scheme cases).
 | Bar | `team_override_dev_personas` |
 | Case file | `eval/development/personas_v1.json` |
 | Claim level | **Team override — not PDF unseen held-out** |
-| Dual labels / simulated citizen | **Model-assisted dual labels + κ recorded** (not independent human Role-1); gold for scoring remains `expected_by_scheme`. Journey Q-order uses offline simulated citizen (not a different live model). |
+| Dual labels / simulated citizen | **Model-assisted dual labels + κ recorded** (not independent human Role-1); gold for scoring remains `expected_by_scheme`. Journey Q-order supports offline card citizen (default) or `--live-citizen` with a *different* free OpenRouter model (card-grounded). |
 | Go-ahead | Team-override E4 signature ablation is **authorised** (free-model / recorded budget; still not a PDF ≥40 unseen claim) |
 
 ## Checklist
@@ -27,7 +27,10 @@ currently **46** persona×scheme cases).
 | 4 | Multilingual verdict agreement (en/hi/mr) | **Done** — 32/46 all-three agree (rate 0.6957) |
 | 5 | Cost-per-case | **Done** — free route $0.00 / case (`cost_per_case_usd`) |
 | 6 | Dual labels + Cohen's κ (no smoke copy) | **Done** — `model-assisted-check` vs `model-assisted-check-2`, 46/46 paired, κ=1.0, 0 disagreements; **not** independent human Role-1 |
+| 7 | Token metering on LLM arm | **Done** — LangChain `on_llm_end` usage callbacks; smoke `e4_token_meter_smoke_2026-11-14` metered 434/28 tokens on 2 calls; free-route cost $0 |
+| 8 | Different-model simulated citizen | **Done (smoke)** — `--live-citizen --yes` with `google/gemma-3-4b-it:free` (≠ Nemotron eligibility); card-grounded; smoke n=1 recorded |
 | — | PDF ≥40 unseen held-out | **Explicitly waived** by team override |
+| — | Human Role-1 dual labels | **Still open** for PDF claim |
 | — | Recorded report | `eval/reports/e4_team_override_signature_ablation_2026-11-13.json` |
 | — | Dual-label κ report | `eval/reports/e4_team_override_label_agreement_2026-11-13.json` |
 
@@ -37,6 +40,8 @@ currently **46** persona×scheme cases).
 python scripts/evaluate_e4_signature_ablation.py --team-override --dry-run
 python scripts/evaluate_e4_signature_ablation.py --team-override --llm-arm --multilingual --yes
 # Journey Q-order is on by default; skip with --no-journey-question-order
+# Different-model live citizen (optional; needs --yes):
+python scripts/evaluate_e4_signature_ablation.py --team-override --live-citizen --yes --limit 4
 python scripts/evaluate_e4_label_agreement.py
 ```
 

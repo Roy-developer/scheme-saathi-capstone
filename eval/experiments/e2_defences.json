@@ -2,7 +2,7 @@
   "experiment_id": "E2",
   "title": "Do the defences work?",
   "status": "offline_and_scoped_application_ablation_runnable",
-  "description": "Offline injection/ID/scam E2 is supplemented by seven local application-boundary comparisons for confirmed facts, landholder status, rule-engine verdict authority, intake privacy, memory consent, draft-read scope and human approval. Development-only, offline and not independent or frozen evidence. Each has a clean control in both arms. Off arms remove one named boundary through isolated test-only adapters, not all protections.",
+  "description": "Offline injection/ID/scam E2 is supplemented by eight local application-boundary comparisons for confirmed facts, landholder status, rule-engine verdict authority, intake privacy, memory consent, draft-read scope, human approval, and scam-intake screening. Development-only, offline/scripted and not independent or frozen evidence. Each has a clean control in both arms. Off arms remove one named boundary through isolated test-only adapters, not all protections.",
   "controls": {
     "defence_modes": ["off", "on"],
     "attack_suite": "eval/red_team/attacks_v0.json",
@@ -11,7 +11,7 @@
     "offline_runner": "scripts/evaluate_e2_defences_dev.py",
     "runtime_runner": "scripts/evaluate_e2_runtime.py",
     "runtime_report": "eval/reports/e2_runtime_dev_latest.json",
-    "runtime_scope": "seven_derived_scenarios_single_boundary_not_global_defences_off",
+    "runtime_scope": "eight_derived_scenarios_single_boundary_not_global_defences_off",
     "runtime_clean_set": "paired controls in tests/test_e2_runtime.py"
   },
   "metrics": [
@@ -27,5 +27,5 @@
     "red_team": "python scripts/evaluate_red_team_dev.py",
     "runtime": "python scripts/evaluate_e2_runtime.py"
   },
-  "blocker": "Independent validation, frozen evaluation coverage and remote CI execution remain open. Dedicated runtime CI gates are wired locally but not pushed. Seven local single-boundary comparisons do not complete the full PDF E2 claim."
+  "blocker": "Independent validation, frozen evaluation coverage, live-LLM efficacy, owner-signed thresholds (R4/R5), and independent attack authorship remain open. Runtime CI gates are on main Frontend checks; eight local single-boundary comparisons (scripted models) do not complete the full PDF E2 claim."
 }

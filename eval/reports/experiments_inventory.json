@@ -18,7 +18,7 @@
       "experiment_id": "E2",
       "title": "Do the defences work?",
       "status": "offline_and_scoped_application_ablation_runnable",
-      "blocker": "Independent validation, frozen evaluation coverage and remote CI execution remain open. Dedicated runtime CI gates are wired locally but not pushed. Seven local single-boundary comparisons do not complete the full PDF E2 claim.",
+      "blocker": "Independent validation, frozen evaluation coverage, live-LLM efficacy, owner-signed thresholds, and independent attack authorship remain open. Runtime CI gates are on main; eight scripted single-boundary comparisons do not complete the full PDF E2 claim.",
       "path": "/Users/b0k03mk/Documents/Projects/Personal/scheme-saathi-capstone/eval/experiments/e2_defences.json"
     },
     {
