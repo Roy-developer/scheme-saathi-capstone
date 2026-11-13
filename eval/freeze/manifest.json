@@ -297,5 +297,50 @@
       "version": "1.1.2"
     },
     "scope": "Accuracy follow-up playbook 1.1.2 (1.1.1 + APY multi-sentence clause text lesson). Pair with build_cases unique source_text join."
+  },
+  "e4_team_override_freeze": {
+    "paid_run_gate": {
+      "authorised": true,
+      "note": "Team-override free-model E4 evaluate authorised; not PDF unseen held-out."
+    },
+    "bar": "team_override_dev_personas",
+    "persona_set": {
+      "path": "eval/development/personas_v1.json",
+      "sha256": "af05c1cb52a547fcd7c0a56e1a76079dc38bc434438bb38b04d0c1c51c1061e8",
+      "persona_count": 46,
+      "case_count": 46,
+      "split": "development",
+      "protected": false
+    },
+    "model": {
+      "constant": "nvidia/nemotron-3.5-lightning:free",
+      "env_override": "OPENROUTER_RULE_EXTRACTION_MODEL",
+      "key": "OPENROUTER_API_KEY_FREE"
+    },
+    "artifacts": {
+      "runner": {
+        "path": "scripts/evaluate_e4_signature_ablation.py",
+        "sha256": "404dd5d19bd6cf3c7daeb8d2016cc3ebfa77dec00489ce6ae169a1a179221ac0"
+      },
+      "llm_arm": {
+        "path": "eval/harness/e4_llm_arm.py",
+        "sha256": "d1ba575eaa259d0d281b6b5803b020f895e8bd68b8c648606979bb13a9a5b87b"
+      },
+      "shadow": {
+        "path": "eval/harness/e4_shadow.py",
+        "sha256": "8f76be6bb76657f85c402c80ef14fe10be4979a82905ab48ee5bfc761efa9af5"
+      },
+      "status_doc": "docs/e4_team_override_status_2026-11-13.md"
+    },
+    "metrics": [
+      "boundary_error_count_llm",
+      "boundary_error_count_rules",
+      "questions_per_conversation",
+      "verdict_agreement_hi_mr_en",
+      "cost_per_case",
+      "median_latency",
+      "p95_latency"
+    ],
+    "scope": "E4 signature ablation on development personas under team override. Not PDF unseen held-out."
   }
 }

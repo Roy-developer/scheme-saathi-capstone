@@ -46,7 +46,8 @@ local until the workflow changes are pushed and run in GitHub Actions.
 - The current local development run scored 43/43 against the four active packages; this is not independent validation or held-out evidence.
 - The memory on/off report is one deterministic synthetic case; it is not an independent or multi-case L9 evaluation.
 - Local application-path red-team evidence passes 30/30. The separate E2 runtime report records five single-boundary comparisons (20 observations): attacks off 4/5, on 0/5; clean false blocks 0/5 in each arm. Off uses isolated unsafe adapters, not a deployable global off mode. Neither report establishes live LLM efficacy or independent validation.
-- Paid E3, live E1/E4, independent attack validation, three held-out repeats still required for the final PDF claim.
+- Paid E3 held-out, live E1, PDF held-out E4 (if claimed), independent attack validation, and three held-out repeats still required for the final PDF claim.
+- E4 team override: `python scripts/evaluate_e4_signature_ablation.py --team-override --llm-arm --multilingual --yes` (waives ≥40 HO; not a PDF HO claim).
 - Held-out files under `eval/held_out/local/` must not be committed or shipped in the app image.
 
 See [`docs/EVALUATION_REPORT.md`](../docs/EVALUATION_REPORT.md).

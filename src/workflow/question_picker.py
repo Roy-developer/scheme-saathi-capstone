@@ -34,6 +34,60 @@ def pick_next_registered_fact(
     return None
 
 
+def fixed_questionnaire_facts(
+    packages: Sequence[RulePackage],
+    registry: FactRegistry,
+) -> list[str]:
+    """Sorted leaf fact IDs across packages (the fixed questionnaire order)."""
+
+    empty = HouseholdProfile(
+        registry_version=registry.registry_version, facts={},
+    ).validate_against(registry)
+    leaves: set[str] = set()
+    for package in packages:
+        leaves.update(package.required_facts)
+        for rule in package.rules:
+            leaves.update(empty.missing_inputs(rule.field, registry))
+    return sorted(leaves)
+
+
+def pick_fixed_questionnaire_fact(
+    store: HouseholdProfile,
+    packages: Sequence[RulePackage],
+    registry: FactRegistry,
+    skipped_facts: frozenset[str] = frozenset(),
+    *,
+    fixed_order: Sequence[str] | None = None,
+) -> str | None:
+    """Next fact in fixed questionnaire order while any scheme is undecided.
+
+    Walks the fixed leaf list in sorted order. Unlike
+    ``pick_shared_registered_fact``, this does not adapt to which rule is
+    unresolved first — it always follows the questionnaire sequence.
+    """
+
+    undecided = False
+    for package in packages:
+        verdict = evaluate_mock_eligibility(store, package, registry=registry)
+        if verdict.reason == APY_HISTORICAL_DATE_REASON:
+            continue
+        if verdict.result == "need_more_information":
+            undecided = True
+            break
+    if not undecided:
+        return None
+    order = list(fixed_order) if fixed_order is not None else fixed_questionnaire_facts(
+        packages, registry,
+    )
+    for fact_id in order:
+        if fact_id in skipped_facts:
+            continue
+        state = store.facts.get(fact_id)
+        if state is None or state.status != "known":
+            return fact_id
+    return None
+
+
 def pick_shared_registered_fact(
     store: HouseholdProfile,
     packages: Sequence[RulePackage],

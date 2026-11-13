@@ -24,7 +24,7 @@ python scripts/run_role5_dev_evals.py
 | E1 cost-benefit | Config inventoried; live C0/C1/C2 still blocked on Phase freeze |
 | E2 defences off/on | Offline injection / ID / scam report plus a separate five-scenario local application-boundary comparison: off 4/5, on 0/5 attack success; no clean false blocks. Off arms remove one boundary, not all controls (see §3). |
 | E3 Reflexion before/after | Check-split 1.0.0 closed; playbooks 1.1.0/1.1.1/1.1.2 frozen; team-override n=13 recorded (not PDF unseen HO) |
-| E4 signature ablation | Rule-engine side via personas; LLM/question ablations pending |
+| E4 signature ablation | Team-override n=46 recorded (shadow + offline/journey Q-order + multilingual LLM); not PDF HO |
 | 30+ red-team | All 30 briefs approved. After fixing mixed-separator identifier and PAN masking, the separate application-path runtime run on 2026-11-12 passed **30/30** (initially 28/30). Real local API/graph/MCP/portal paths use synthetic inputs and scripted offline models, not live LLM efficacy evidence. The older 30-check helper/local-pytest gate is separate. |
 | L9 memory | Synthetic prototype controls and focused evidence: [`docs/MEMORY_POLICY.md`](MEMORY_POLICY.md), [`tests/test_household_memory.py`](../tests/test_household_memory.py), [`tests/test_journey_graph.py`](../tests/test_journey_graph.py), and [`tests/test_household_memory_api.py`](../tests/test_household_memory_api.py). The approver selected 90-day return-code memory expiry and no automatic historical-checkpoint expiry; the four-case on/off report is functional development evidence only. The red-team checks do not replace full L9 evidence or authorize real-applicant use. |
 | Monitoring / Grafana / alert | Read-only shared-dev query confirms OpenTelemetry metrics from the older `git-13dde6b37e3a` image; current-commit Managed Grafana dashboard and alert proof remain incomplete. |
@@ -224,6 +224,22 @@ python scripts/evaluate_extraction_held_out.py --before --runs 3 --yes
 python scripts/evaluate_extraction_held_out.py --after --playbook 1.1.2 --runs 3 --yes
 ```
 
+**E4 signature ablation (team override, 2026-11-13):** Waives PDF ≥40 unseen
+held-out personas; uses 46 development persona×scheme cases under freeze pin
+`e4_team_override_freeze`. Shadow stub 14/46 agree; offline Q-order fixed 192 vs
+planned 185; **journey-facing** Q-order fixed 159 vs planned 157 (46/46 same
+verdicts via interview graph + simulated citizen). Full isolated LLM arm (free
+Nemotron, en/hi/mr): boundary errors LLM 16/46 (0.3478) vs rules 0; multilingual
+agreement 32/46 (0.6957); cost/case $0. Claim level: **not** PDF unseen
+held-out. Evidence:
+`eval/reports/e4_team_override_signature_ablation_2026-11-13.json`,
+`docs/e4_team_override_status_2026-11-13.md`.
+
+```bash
+python scripts/evaluate_e4_signature_ablation.py --team-override --dry-run
+python scripts/evaluate_e4_signature_ablation.py --team-override --llm-arm --multilingual --yes
+```
+
 ## 7. Monitoring
 
 Emitted through OpenTelemetry instruments (Azure Monitor export is enabled only
@@ -244,7 +260,7 @@ Configuration alone is not deployment evidence.
 
 1. Role 1 dual-labels held-out (and preferably development) independently.
 2. True PDF unseen held-out extraction (optional; team currently uses n=13 all-live override for E3).
-3. Live E1 / E4 after agent freeze; three held-out repeats with spread.
+3. Live E1 after agent freeze; optional PDF held-out E4 if that claim is required; three held-out repeats with spread.
 4. Live red-team for cross-household memory and approval-gate cases with independent authorship.
 5. Different-family LLM judge calibrated on 20+ human labels (if non-code qualities are judged).
 6. Role 6 proves the deployed metrics reach the shared monitoring environment and demonstrates a working alert.

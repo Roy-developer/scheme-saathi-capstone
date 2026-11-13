@@ -31,8 +31,8 @@
     {
       "experiment_id": "E4",
       "title": "Scheme Saathi signature ablation",
-      "status": "config_stub_not_runnable",
-      "blocker": "Needs held-out personas, simulated citizen, and an isolated LLM-eligibility path that cannot write live verdicts.",
+      "status": "team_override_n46_recorded",
+      "blocker": null,
       "path": "/Users/b0k03mk/Documents/Projects/Personal/scheme-saathi-capstone/eval/experiments/e4_signature_ablation.json"
     }
   ]
