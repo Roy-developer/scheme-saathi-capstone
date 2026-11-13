@@ -1137,7 +1137,8 @@ def render_candidate_interview(
                     st.info(text["finder_info_only"])
                 if verdict["result"] == "eligible":
                     render_application_flow(scheme_id, text)
-        render_document_readiness(text)
+        if should_offer_document_readiness(st.session_state.candidate_verdicts):
+            render_document_readiness(text)
 
 
 def save_application_progress(result: dict) -> dict:
@@ -1745,6 +1746,21 @@ def render_document_checker(
         st.markdown(f'**{ct("missing_list")}**')
         for labels in report["missing_labels"]:
             st.write(f'- {labels.get(locale, labels.get("en", ""))}')
+
+
+def should_offer_document_readiness(
+    candidate_verdicts: dict[str, dict[str, object]],
+) -> bool:
+    """Offer readiness only when at least one scheme was actually checked.
+
+    Document checklists exist only for schemes with reviewed rules, so a
+    result list of information-only (or failed) schemes has nothing to rank.
+    """
+
+    return any(
+        verdict.get("result") not in {"information_only", "tool_error"}
+        for verdict in candidate_verdicts.values()
+    )
 
 
 def render_document_readiness(text: dict[str, str]) -> None:

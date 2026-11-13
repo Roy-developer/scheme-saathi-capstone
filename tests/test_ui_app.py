@@ -1293,3 +1293,41 @@ def test_document_dates_accept_everyday_formats_and_explain_unreadable_ones() ->
         assert not app.exception
         assert assess.call_count == calls_before
         assert any("Could not read a date of birth" in item.value for item in app.error)
+
+
+@pytest.mark.parametrize(
+    ("verdicts", "shown"),
+    [
+        (
+            {
+                "EACS-MH": {"scheme_id": "EACS-MH", "result": "information_only"},
+                "WMCL-IN": {"scheme_id": "WMCL-IN", "result": "information_only"},
+            },
+            False,
+        ),
+        (
+            {
+                "IGNWPS-MH": {"scheme_id": "IGNWPS-MH", "result": "not_eligible"},
+                "EACS-MH": {"scheme_id": "EACS-MH", "result": "information_only"},
+            },
+            True,
+        ),
+    ],
+    ids=["all_information_only", "one_scheme_checked"],
+)
+def test_document_readiness_is_offered_only_when_a_scheme_was_checked(
+    verdicts: dict[str, dict[str, str]], shown: bool
+) -> None:
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS)
+    app.session_state["journey_started"] = True
+    app.session_state["multi_scheme_mode"] = True
+    app.session_state["journey_scheme_id"] = next(iter(verdicts))
+    app.session_state["journey_status"] = "completed"
+    app.session_state["candidate_verdicts"] = verdicts
+    app.session_state["eligibility_results"] = {}
+    app.run()
+
+    assert not app.exception
+    titles = [element.value for element in app.subheader]
+    assert ("Document readiness by scheme" in titles) is shown
