@@ -24,7 +24,7 @@ python scripts/run_role5_dev_evals.py
 | E3 Reflexion before/after | Playbook inventory free; **paid** OpenRouter runs pending |
 | E4 signature ablation | Rule-engine side via personas; LLM/question ablations pending |
 | 30+ red-team | 30 attacks; 23 offline-runnable; memory/approval still stubs |
-| Monitoring / Grafana / alert | `/metrics` + `monitoring/` JSON/rules for Azure Managed Grafana or separate Container App |
+| Monitoring / Grafana / alert | OpenTelemetry instruments exported to Azure Monitor; Managed Grafana dashboards and alerts are Phase 6 work |
 | CI evaluation gate | Frontend checks runs `run_role5_dev_evals.py` |
 | Three held-out repeats | Pending after freeze |
 
@@ -87,17 +87,17 @@ python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --pl
 
 ## 7. Monitoring
 
-Emitted at `GET /metrics`:
+Emitted as OpenTelemetry instruments (`scheme_saathi.*`), exported to Azure Monitor when `APPLICATIONINSIGHTS_CONNECTION_STRING` is set:
 
-- `scheme_saathi_conversations_total`
-- `scheme_saathi_evaluations_total`
-- `scheme_saathi_verdicts_total`
-- `scheme_saathi_questions_total`
-- `scheme_saathi_masked_id_hits_total`
-- `scheme_saathi_request_latency_seconds`
+- `scheme_saathi.conversations`
+- `scheme_saathi.evaluations`
+- `scheme_saathi.verdicts`
+- `scheme_saathi.questions`
+- `scheme_saathi.masked_id_hits`
+- `scheme_saathi.request_latency`
 
-Role 6 handoff: `monitoring/prometheus.yml`, `monitoring/alerts.yml` (can't-tell
-rate alert), Grafana dashboard JSON under `monitoring/` (Azure Managed Grafana / separate Container App — no Compose).
+Role 6 handoff: verify the Azure Monitor export in Application Insights, then build
+and demonstrate the can't-tell alert and dashboard in Managed Grafana.
 
 ## 8. Still required for a full PDF claim
 
@@ -106,4 +106,4 @@ rate alert), Grafana dashboard JSON under `monitoring/` (Azure Managed Grafana /
 3. Live E1 / E4 after agent freeze; three held-out repeats with spread.
 4. Live red-team for cross-household memory and approval-gate cases with independent authorship.
 5. Different-family LLM judge calibrated on 20+ human labels (if non-code qualities are judged).
-6. Role 6 wires Compose so Prometheus/Grafana scrape the deployed API in the shared environment.
+6. Role 6 connects Managed Grafana to the deployed API's Application Insights data in the shared environment.

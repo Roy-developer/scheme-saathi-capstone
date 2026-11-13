@@ -11,7 +11,7 @@ from typing import AsyncIterator
 from uuid import UUID
 
 import aiosqlite
-from fastapi import FastAPI, HTTPException, Query, Request, Response
+from fastapi import FastAPI, HTTPException, Query, Request
 # Client connects to the MCP server; parameters explain how to launch stdio.
 from mcp import Client, StdioServerParameters
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
@@ -45,8 +45,8 @@ from src.documents.forms import build_form_fields, load_mock_form_snapshot
 from src.rules.facts import HouseholdProfile
 from src.rules.bundles import bundle_fingerprint
 # This adapter calls the MCP tool and translates failures for the API layer.
+from src.observability.telemetry import configure_telemetry
 from src.observability.metrics import (
-    metrics_response,
     observe_duration,
     record_conversation,
     record_evaluation,
@@ -480,6 +480,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.include_router(document_uploads_router)
+configure_telemetry()
 
 
 @app.get("/health")
@@ -487,14 +488,6 @@ def health() -> dict[str, str]:
     """Report API health."""
 
     return {"status": "ok"}
-
-
-@app.get("/metrics")
-def prometheus_metrics() -> Response:
-    """Expose Prometheus metrics for Role 6 dashboards to scrape later."""
-
-    payload, content_type = metrics_response()
-    return Response(content=payload, media_type=content_type)
 
 
 @app.get("/api/v1/info", tags=["service"])

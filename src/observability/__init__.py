@@ -1,7 +1,6 @@
-"""Observability helpers: Prometheus metrics emission for Role 5 / Role 6."""
+"""Observability helpers: OpenTelemetry metrics for Scheme Saathi (Role 5 / Role 6)."""
 
 from src.observability.metrics import (
-    metrics_response,
     observe_duration,
     record_conversation,
     record_evaluation,
@@ -16,7 +15,6 @@ from src.observability.metrics import (
 )
 
 __all__ = [
-    "metrics_response",
     "observe_duration",
     "record_conversation",
     "record_evaluation",
