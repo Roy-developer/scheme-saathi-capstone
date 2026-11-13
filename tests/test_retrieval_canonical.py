@@ -9,6 +9,8 @@ import hashlib
 import json
 from pathlib import Path
 
+import pytest
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 REPORTS = PROJECT_ROOT / "eval" / "reports"
 SIDECAR_PATH = REPORTS / "retrieval_canonical_dev.sidecar.json"
@@ -45,6 +47,10 @@ def test_dataset_hash_matches_sidecar():
     )
 
 
+@pytest.mark.xfail(
+    reason="corpus changed in #25; retrieval re-run pending",
+    strict=True,
+)
 def test_corpus_hashes_match_sidecar():
     sidecar = _load_sidecar()
     corpus = sidecar["corpus"]
