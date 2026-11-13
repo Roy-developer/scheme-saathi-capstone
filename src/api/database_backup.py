@@ -16,6 +16,7 @@ leaves it unset.
 """
 
 import asyncio
+import json
 import logging
 import os
 import shutil
@@ -24,12 +25,14 @@ import tempfile
 import threading
 from collections.abc import Iterable
 from pathlib import Path
+from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
 BACKUP_DIR_VARIABLE = "SCHEME_SAATHI_BACKUP_DIR"
 INTERVAL_VARIABLE = "SCHEME_SAATHI_BACKUP_INTERVAL_SECONDS"
 DEFAULT_INTERVAL_SECONDS = 300
+PENDING_DELETIONS = ".pending-deletions"
 
 
 def _is_intact(path: Path) -> bool:
@@ -150,27 +153,89 @@ class DatabaseBackups:
         os.replace(incoming, database)
         logger.info("Restored database %s", database.name)
 
-    def save(self) -> None:
-        """Copy each live database to the share; a failure keeps the last copy."""
+    def save(self, *, strict: bool = False) -> None:
+        """Copy live data; strict mode raises if any required copy cannot be saved."""
 
         with self._save_lock:
             if not self.folder.is_dir():
+                if strict:
+                    raise OSError("Database backup folder is unavailable")
                 logger.error("Database backup folder is not available; not saving")
                 return
             for database in self.databases:
                 if database in self._not_restored or not database.exists():
+                    if strict:
+                        raise OSError("A required database is unavailable for backup")
                     continue
                 try:
                     self._save_one(database)
                 except (OSError, sqlite3.Error):
+                    if strict:
+                        raise
                     logger.exception("Could not save database %s", database.name)
             for directory in self.directories:
                 if directory in self._not_restored or not directory.is_dir():
+                    if strict:
+                        raise OSError("A required directory is unavailable for backup")
                     continue
                 try:
                     self._save_directory(directory)
                 except OSError:
+                    if strict:
+                        raise
                     logger.exception("Could not save folder %s", directory.name)
+
+    def begin_deletion(self, payload: dict[str, object]) -> str:
+        """Persist a pending deletion before changing any live records."""
+
+        if not self.folder.is_dir():
+            raise OSError("Database backup folder is unavailable")
+        directory = self.folder / PENDING_DELETIONS
+        directory.mkdir(exist_ok=True)
+        marker_id = uuid4().hex
+        temporary = directory / f"{marker_id}.tmp"
+        marker = directory / f"{marker_id}.json"
+        try:
+            with temporary.open("x", encoding="utf-8") as file:
+                json.dump(payload, file, ensure_ascii=True)
+                file.flush()
+                os.fsync(file.fileno())
+            os.replace(temporary, marker)
+        finally:
+            temporary.unlink(missing_ok=True)
+        return marker_id
+
+    def pending_deletions(self) -> list[tuple[str, dict[str, object]]]:
+        """Load pending markers; unreadable or malformed markers stop recovery."""
+
+        if not self.folder.is_dir():
+            raise OSError("Database backup folder is unavailable")
+        directory = self.folder / PENDING_DELETIONS
+        try:
+            with os.scandir(directory) as entries:
+                markers = sorted(
+                    Path(entry.path) for entry in entries if entry.name.endswith(".json")
+                )
+        except FileNotFoundError:
+            return []
+        result = []
+        for marker in markers:
+            if len(marker.stem) != 32 or any(
+                c not in "0123456789abcdef" for c in marker.stem
+            ):
+                raise ValueError("Invalid pending-deletion marker ID")
+            payload = json.loads(marker.read_text(encoding="utf-8"))
+            if not isinstance(payload, dict):
+                raise ValueError("Invalid pending-deletion marker")
+            result.append((marker.stem, payload))
+        return result
+
+    def finish_deletion(self, marker_id: str) -> None:
+        """Remove a marker only after every refreshed snapshot succeeds."""
+
+        if len(marker_id) != 32 or any(c not in "0123456789abcdef" for c in marker_id):
+            raise ValueError("Invalid pending-deletion marker ID")
+        (self.folder / PENDING_DELETIONS / f"{marker_id}.json").unlink()
 
     def _save_one(self, database: Path) -> None:
         with tempfile.TemporaryDirectory(dir=database.parent) as folder:

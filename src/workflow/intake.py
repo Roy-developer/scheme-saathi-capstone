@@ -4,11 +4,14 @@ import json
 from typing import Literal
 
 from langchain_core.exceptions import OutputParserException
+from langchain_core.language_models import BaseChatModel
+from langchain_core.messages import HumanMessage, SystemMessage
 from openai import APIStatusError, OpenAIError
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr, ValidationError, model_validator
 
 from src.config import openrouter_chat_settings
 from src.llm_client import DEFAULT_CHAT_MODEL, openrouter_chat_model
+from src.workflow.agent_middleware import AgentModelError
 
 
 ANSWER_READER_PROMPT = (
@@ -57,6 +60,48 @@ class SearchQuery(BaseModel):
     """The rewritten search query."""
 
     search_query: str
+
+
+async def _ask_with_provider(
+    provider: BaseChatModel, schema: type[BaseModel], system: str, user: str,
+) -> BaseModel:
+    """Run an experiment's tool-free reader on its explicitly pinned model."""
+
+    try:
+        reply = await provider.ainvoke(
+            [SystemMessage(content=system), HumanMessage(content=user)],
+            response_format={"type": "json_object"},
+        )
+        if getattr(reply, "tool_calls", None) or not isinstance(reply.content, str):
+            raise ValueError("Reader returned a non-text response.")
+        return schema.model_validate_json(reply.content)
+    except (AgentModelError, OpenAIError, ValidationError, TypeError, ValueError) as error:
+        raise IntakeAgentError("The pinned intake reader failed.") from error
+
+
+async def rewrite_query_with_provider(provider: BaseChatModel, query: str) -> str:
+    """Rewrite a query with the comparison's pinned, tool-free model."""
+
+    result = await _ask_with_provider(provider, SearchQuery, QUERY_REWRITE_PROMPT, query)
+    search_query = result.search_query.strip()
+    if not search_query or len(search_query) > 500:
+        raise IntakeAgentError("The pinned reader returned an invalid query.")
+    return search_query
+
+
+async def interpret_answer_with_provider(
+    provider: BaseChatModel, fact: str, question: str, reply: str,
+    *, prior_exchanges: list[str] | None = None,
+) -> AnswerInterpretation:
+    """Interpret one answer with the comparison's pinned, tool-free model."""
+
+    payload: dict[str, object] = {"fact": fact, "question": question, "reply": reply}
+    if prior_exchanges:
+        payload["prior_exchanges"] = prior_exchanges
+    result = await _ask_with_provider(
+        provider, AnswerInterpretation, ANSWER_READER_PROMPT, json.dumps(payload),
+    )
+    return AnswerInterpretation.model_validate(result)
 
 
 async def _ask_structured(

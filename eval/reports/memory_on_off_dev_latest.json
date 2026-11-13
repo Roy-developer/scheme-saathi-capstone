@@ -1,0 +1,235 @@
+{
+  "schema_version": "2.0",
+  "generated_at": "2026-11-13T04:41:25.143853+00:00",
+  "label": "SYNTHETIC - DEVELOPMENT ONLY",
+  "split": "development",
+  "model_calls": 0,
+  "case_count": 7,
+  "cases": [
+    {
+      "case_id": "SYN-MEMORY-001",
+      "description": "Consented return, BPL yes, no income tax",
+      "scheme_id": "IGNWPS-MH",
+      "questions_asked_on": 2,
+      "questions_asked_off": 3,
+      "questions_avoided": 1,
+      "fact_reuse_on_return": {
+        "reused": 2,
+        "saved": 2,
+        "rate": 1.0
+      },
+      "verdict_on": "eligible",
+      "verdict_off": "eligible",
+      "verdict_match": true,
+      "correction_visible_on_return": null,
+      "policy_violations": 0,
+      "policy_probe": {
+        "attempted_disallowed": [
+          "date_of_birth",
+          "has_disability"
+        ],
+        "stored_fact_ids": [
+          "bpl_card_shown",
+          "income_tax_paid_last_assessment_year"
+        ]
+      },
+      "cross_household_leaks": 0,
+      "forget_completeness": 1.0
+    },
+    {
+      "case_id": "SYN-MEMORY-002",
+      "description": "Consented return, BPL no, no income tax",
+      "scheme_id": "IGNWPS-MH",
+      "questions_asked_on": 2,
+      "questions_asked_off": 3,
+      "questions_avoided": 1,
+      "fact_reuse_on_return": {
+        "reused": 2,
+        "saved": 2,
+        "rate": 1.0
+      },
+      "verdict_on": "need_more_information",
+      "verdict_off": "need_more_information",
+      "verdict_match": true,
+      "correction_visible_on_return": null,
+      "policy_violations": 0,
+      "policy_probe": {
+        "attempted_disallowed": [
+          "date_of_birth",
+          "has_disability"
+        ],
+        "stored_fact_ids": [
+          "bpl_card_shown",
+          "income_tax_paid_last_assessment_year"
+        ]
+      },
+      "cross_household_leaks": 0,
+      "forget_completeness": 1.0
+    },
+    {
+      "case_id": "SYN-MEMORY-003",
+      "description": "Consented return, income tax paid",
+      "scheme_id": "IGNWPS-MH",
+      "questions_asked_on": 2,
+      "questions_asked_off": 3,
+      "questions_avoided": 1,
+      "fact_reuse_on_return": {
+        "reused": 2,
+        "saved": 2,
+        "rate": 1.0
+      },
+      "verdict_on": "eligible",
+      "verdict_off": "eligible",
+      "verdict_match": true,
+      "correction_visible_on_return": null,
+      "policy_violations": 0,
+      "policy_probe": {
+        "attempted_disallowed": [
+          "date_of_birth",
+          "has_disability"
+        ],
+        "stored_fact_ids": [
+          "bpl_card_shown",
+          "income_tax_paid_last_assessment_year"
+        ]
+      },
+      "cross_household_leaks": 0,
+      "forget_completeness": 1.0
+    },
+    {
+      "case_id": "SYN-MEMORY-004",
+      "description": "Consented return, not widow, age over threshold",
+      "scheme_id": "IGNWPS-MH",
+      "questions_asked_on": 1,
+      "questions_asked_off": 1,
+      "questions_avoided": 0,
+      "fact_reuse_on_return": {
+        "reused": 2,
+        "saved": 2,
+        "rate": 1.0
+      },
+      "verdict_on": "not_eligible",
+      "verdict_off": "not_eligible",
+      "verdict_match": true,
+      "correction_visible_on_return": null,
+      "policy_violations": 0,
+      "policy_probe": {
+        "attempted_disallowed": [
+          "date_of_birth",
+          "has_disability"
+        ],
+        "stored_fact_ids": [
+          "bpl_card_shown",
+          "income_tax_paid_last_assessment_year"
+        ]
+      },
+      "cross_household_leaks": 0,
+      "forget_completeness": 1.0
+    },
+    {
+      "case_id": "SYN-MEMORY-005",
+      "description": "Income-tax answer corrected before return",
+      "scheme_id": "IGNWPS-MH",
+      "questions_asked_on": 2,
+      "questions_asked_off": 3,
+      "questions_avoided": 1,
+      "fact_reuse_on_return": {
+        "reused": 2,
+        "saved": 2,
+        "rate": 1.0
+      },
+      "verdict_on": "eligible",
+      "verdict_off": "eligible",
+      "verdict_match": true,
+      "correction_visible_on_return": true,
+      "policy_violations": 0,
+      "policy_probe": {
+        "attempted_disallowed": [
+          "date_of_birth",
+          "has_disability"
+        ],
+        "stored_fact_ids": [
+          "bpl_card_shown",
+          "income_tax_paid_last_assessment_year"
+        ]
+      },
+      "cross_household_leaks": 0,
+      "forget_completeness": 1.0
+    },
+    {
+      "case_id": "SYN-MEMORY-006",
+      "description": "BPL answer corrected before return",
+      "scheme_id": "IGNWPS-MH",
+      "questions_asked_on": 2,
+      "questions_asked_off": 3,
+      "questions_avoided": 1,
+      "fact_reuse_on_return": {
+        "reused": 2,
+        "saved": 2,
+        "rate": 1.0
+      },
+      "verdict_on": "eligible",
+      "verdict_off": "eligible",
+      "verdict_match": true,
+      "correction_visible_on_return": true,
+      "policy_violations": 0,
+      "policy_probe": {
+        "attempted_disallowed": [
+          "date_of_birth",
+          "has_disability"
+        ],
+        "stored_fact_ids": [
+          "bpl_card_shown",
+          "income_tax_paid_last_assessment_year"
+        ]
+      },
+      "cross_household_leaks": 0,
+      "forget_completeness": 1.0
+    },
+    {
+      "case_id": "SYN-MEMORY-007",
+      "description": "Second synthetic household saved with opposite answers",
+      "scheme_id": "IGNWPS-MH",
+      "questions_asked_on": 2,
+      "questions_asked_off": 3,
+      "questions_avoided": 1,
+      "fact_reuse_on_return": {
+        "reused": 2,
+        "saved": 2,
+        "rate": 1.0
+      },
+      "verdict_on": "eligible",
+      "verdict_off": "eligible",
+      "verdict_match": true,
+      "correction_visible_on_return": null,
+      "policy_violations": 0,
+      "policy_probe": {
+        "attempted_disallowed": [
+          "date_of_birth",
+          "has_disability"
+        ],
+        "stored_fact_ids": [
+          "bpl_card_shown",
+          "income_tax_paid_last_assessment_year"
+        ]
+      },
+      "cross_household_leaks": 0,
+      "forget_completeness": 1.0
+    }
+  ],
+  "summary": {
+    "case_count": 7,
+    "verdict_match_count": 7,
+    "verdict_match_rate": 1.0,
+    "questions_asked_on_total": 13,
+    "questions_asked_off_total": 19,
+    "questions_avoided_total": 6,
+    "fact_reuse_rate_mean": 1.0,
+    "correction_case_count": 2,
+    "correction_visible_count": 2,
+    "policy_violations_total": 0,
+    "cross_household_leaks_total": 0,
+    "forget_completeness_mean": 1.0
+  },
+  "claim_boundary": "Synthetic development cases run through the real journey graph and household memory store. Not independent validation, a user study, a security evaluation, or full L9 evidence."
+}

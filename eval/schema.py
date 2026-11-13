@@ -12,6 +12,7 @@ from src.rules.facts import FactRegistry, HouseholdProfile
 VerdictResult = Literal["eligible", "not_eligible", "need_more_information"]
 EvalSplit = Literal["development", "held_out"]
 LabelStatus = Literal["single", "dual_agreed", "dual_conflict", "pending"]
+AttackReviewStatus = Literal["approved_for_implementation", "changes_requested"]
 AttackCategory = Literal[
     "scam_page",
     "scheme_text_injection",
@@ -139,17 +140,20 @@ RedTeamCheckKind = Literal[
     "id_mask",
     "eligibility_truthful",
     "scam_screen",
+    "pytest_case",
 ]
 
 
 class RedTeamCheck(StrictFrozen):
-    """Offline check that Role 5 can run without a live LLM journey.
+    """Local check that Role 5 can execute for a red-team case.
 
     ``injection_screen`` — ``screen_free_text`` must flag the attack input.
     ``scam_screen`` — ``screen_scam_text`` must flag the attack input.
     ``id_mask`` — ``mask_sensitive_text`` must remove ``must_not_contain``.
     ``eligibility_truthful`` — rule engine on ``profile`` / ``typed_facts``
     must match ``expect_result`` (true facts win over a user's request to lie).
+    ``pytest_case`` — the suite runner executes the attack's allowlisted local
+    pytest case.
     """
 
     kind: RedTeamCheckKind
@@ -189,6 +193,9 @@ class RedTeamCase(StrictFrozen):
     expected_behaviour: str = Field(min_length=1)
     status: Literal["stub", "runnable"] = "stub"
     check: RedTeamCheck | None = None
+    author: str | None = Field(default=None, min_length=1)
+    reviewed_by: str | None = Field(default=None, min_length=1)
+    review_status: AttackReviewStatus | None = None
 
     @model_validator(mode="after")
     def runnable_requires_check(self) -> RedTeamCase:
@@ -200,7 +207,39 @@ class RedTeamCase(StrictFrozen):
             raise ValueError(
                 f"Attack {self.attack_id!r}: stub cases must not declare a check"
             )
+        if self.reviewed_by is not None and self.author is None:
+            raise ValueError(
+                f"Attack {self.attack_id!r}: reviewed_by requires an author"
+            )
+        if self.review_status is not None and self.reviewed_by is None:
+            raise ValueError(
+                f"Attack {self.attack_id!r}: review status requires author and reviewer metadata"
+            )
+        if (
+            self.author is not None
+            and self.reviewed_by is not None
+            and self.author.casefold() == self.reviewed_by.casefold()
+        ):
+            raise ValueError(
+                f"Attack {self.attack_id!r}: author and reviewer must be different"
+            )
         return self
+
+
+class AIAttackReviewDecision(StrictFrozen):
+    """AI scenario review decision, separate from human authorship metadata."""
+
+    decision: Literal["approved_for_suite", "changes_requested"]
+    note: str = Field(min_length=1)
+
+
+class AIAttackReview(StrictFrozen):
+    """Batch record for an AI review; not a claim of independent validation."""
+
+    reviewer: str = Field(min_length=1)
+    review_date: str = Field(min_length=1)
+    scope_note: str = Field(min_length=1)
+    decisions: dict[str, AIAttackReviewDecision] = Field(min_length=1)
 
 
 class RedTeamSuite(StrictFrozen):
@@ -209,14 +248,21 @@ class RedTeamSuite(StrictFrozen):
     suite_version: str = Field(min_length=1)
     annotation_note: str = Field(min_length=1)
     attacks: tuple[RedTeamCase, ...] = Field(min_length=1)
+    ai_review: AIAttackReview | None = None
 
     @model_validator(mode="after")
     def unique_ids(self) -> RedTeamSuite:
-        seen: set[str] = set()
+        by_id: dict[str, RedTeamCase] = {}
         for attack in self.attacks:
-            if attack.attack_id in seen:
+            if attack.attack_id in by_id:
                 raise ValueError(f"Duplicate attack_id {attack.attack_id!r}")
-            seen.add(attack.attack_id)
+            by_id[attack.attack_id] = attack
+        if self.ai_review is not None:
+            unknown_ids = set(self.ai_review.decisions) - set(by_id)
+            if unknown_ids:
+                raise ValueError(
+                    f"AI review contains unknown attack IDs: {sorted(unknown_ids)}"
+                )
         return self
 
 

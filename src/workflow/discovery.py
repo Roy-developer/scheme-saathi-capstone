@@ -10,6 +10,7 @@ MAX_CANDIDATES = 20
 DiscoveryCode = Literal[
     "candidates_added", "search_completed", "tool_error", "budget_exhausted",
     "candidate_limit", "correction_invalidated", "tool_retry", "scam_screened",
+    "scam_search_filtered",
 ]
 RELEVANT_FACT_TERMS = {
     "is_widow": "widow pension",
@@ -39,6 +40,8 @@ class DiscoveryEvent(BaseModel):
 
 DISCOVERY_MESSAGES: dict[str, dict[str, str]] = {
     "en": {
+        "apy_historical_date": "This synthetic APY check cannot assess application dates before 1 October 2022. Ask for a domain review.",
+        "scam_search_filtered": "Suspected scam passages were flagged and ignored. Only the remaining search results are shown.",
         "candidates_added": "Confirmed facts added retrieved candidates. Only reviewed rules decide eligibility.",
         "search_completed": "Bounded search finished. It may miss relevant schemes.",
         "tool_error": "A check or search could not finish. No decision was invented. Retry later or ask a CSC operator for help.",
@@ -63,6 +66,8 @@ DISCOVERY_MESSAGES: dict[str, dict[str, str]] = {
         "information_only": "No reviewed rule package is available. Information only, not an eligibility decision.",
     },
     "hi": {
+        "apy_historical_date": "यह नमूना APY जाँच 1 अक्टूबर 2022 से पहले की आवेदन तिथि का आकलन नहीं कर सकती। विषय विशेषज्ञ से समीक्षा कराएँ।",
+        "scam_search_filtered": "संदिग्ध धोखाधड़ी वाले अंश पहचानकर हटा दिए गए हैं। केवल बाकी खोज परिणाम दिखाए गए हैं।",
         "candidates_added": "पुष्टि किए तथ्यों से खोज में नई योजनाएँ मिलीं। पात्रता केवल समीक्षा किए नियम तय करते हैं।",
         "search_completed": "सीमित खोज पूरी हुई। कुछ उपयोगी योजनाएँ छूट सकती हैं।",
         "tool_error": "जाँच या खोज पूरी नहीं हुई। कोई निर्णय नहीं गढ़ा गया। बाद में प्रयास करें या CSC ऑपरेटर से सहायता लें।",
@@ -87,6 +92,8 @@ DISCOVERY_MESSAGES: dict[str, dict[str, str]] = {
         "information_only": "समीक्षा किया नियम पैकेज नहीं है। केवल जानकारी है, पात्रता निर्णय नहीं।",
     },
     "mr": {
+        "apy_historical_date": "ही नमुना APY तपासणी 1 ऑक्टोबर 2022 पूर्वीच्या अर्जाच्या तारखेचे मूल्यांकन करू शकत नाही. विषयतज्ज्ञाकडून पुनरावलोकन करून घ्या.",
+        "scam_search_filtered": "संशयित फसवणुकीचे उतारे ओळखून वगळले आहेत. फक्त उरलेले शोध परिणाम दाखवले आहेत.",
         "candidates_added": "पुष्टी केलेल्या तथ्यांमुळे शोधात नवीन योजना मिळाल्या. पात्रता फक्त पुनरावलोकित नियम ठरवतात.",
         "search_completed": "मर्यादित शोध पूर्ण झाला. काही संबंधित योजना सुटू शकतात.",
         "tool_error": "तपासणी किंवा शोध पूर्ण झाला नाही. कोणताही निकाल बनवला नाही. नंतर प्रयत्न करा किंवा CSC ऑपरेटरची मदत घ्या.",

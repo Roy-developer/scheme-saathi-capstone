@@ -32,7 +32,7 @@ from src.workflow.agent_config import (
     PROMPT_VERSION,
     TOKEN_ESTIMATE_CHARACTERS,
 )
-from src.workflow.conversation_budget import reserve_counters
+from src.workflow.conversation_budget import durable_counters, reserve_counters
 
 
 class AgentModelError(RuntimeError):
@@ -207,6 +207,7 @@ class DurableBudgetMiddleware(AgentMiddleware):
         self, request: ModelRequest, handler: Callable[[ModelRequest], Awaitable[ModelResponse]],
     ) -> ModelResponse:
         counters = self.counters
+        counters.update(durable_counters(counters))
         estimated_input = self._estimate_input(request.messages)
         if not model_call_fits(counters, estimated_input):
             raise RunStopped("budget_exhausted")
@@ -241,6 +242,7 @@ class DurableBudgetMiddleware(AgentMiddleware):
     async def awrap_tool_call(
         self, request: ToolCallRequest, handler: Callable[[ToolCallRequest], Awaitable[ToolMessage]],
     ) -> ToolMessage:
+        self.counters.update(durable_counters(self.counters))
         tool = request.tool
         if tool is None:
             return await handler(request)            # unknown tool: nothing runs, nothing counted
