@@ -9,3 +9,6 @@
 !simulated_citizen_smoke.json
 !memory_on_off_dev_latest.json
 !retrieval_canonical_dev.sidecar.json
+!retrieval_canonical_dev_bm25_only_runner.py
+!retrieval_canonical_dev_bm25_only.json
+!retrieval_canonical_dev_bm25_minilm_rrf.json
