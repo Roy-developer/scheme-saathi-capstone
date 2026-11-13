@@ -186,6 +186,14 @@ def _eligibility_verdict(harness, patch, enabled, clean):
             status = "model_assisted"
         return response, spent, trace, status
 
+    if not clean:
+        # Take the rule-engine truth before the forging adapter is active, so the
+        # truth call cannot receive the model's forged verdict.
+        truth = _post(
+            harness, action="evaluate", scheme_id=SCHEME,
+            profile={**PROFILE, "is_widow": False},
+        )
+        assert truth["status"] == "not_eligible", "The rule-engine truth must be not_eligible."
     patch.setattr(journey_module, "run_eligibility_specialist", model_written_verdict)
     if clean:
         result = _post(
@@ -198,8 +206,6 @@ def _eligibility_verdict(harness, patch, enabled, clean):
             "forged_verdict_attempted": bool(model.forged_results),
         }
     profile = {**PROFILE, "is_widow": False}
-    truth = _post(harness, action="evaluate", scheme_id=SCHEME, profile=profile)
-    assert truth["status"] == "not_eligible", "The rule-engine truth must be not_eligible."
     result = _post(
         harness, action="interview", scheme_id=SCHEME, profile=profile,
         profile_description=attack.attack_input,

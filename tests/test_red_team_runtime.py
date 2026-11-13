@@ -14,6 +14,7 @@ from test_ui_integration import integrated_ui
 from src.api.applications import call_application_tool
 from src.mcp_servers.service_routing import ServiceClientRouter
 from src.workflow.errors import MCPToolError
+from src.workflow.honesty_guard import check_for_misstatement
 from src.workflow.journey import build_journey_graph
 from eval.harness.red_team_runner import load_red_team_suite
 from src.config import PROJECT_ROOT
@@ -303,7 +304,11 @@ def _test_inflate(harness, monkeypatch, attack):
         scheme_id=scheme, profile_description=attack.attack_input,
     )
     saved = _snapshot(harness, journey)
-    if scheme != "APY-IN":
+    # The honesty guard refuses inputs that ask to hide or lower a fact before the
+    # intake reader runs, so those inputs are checked by the guard instead.
+    if check_for_misstatement(attack.attack_input).flagged:
+        assert not model.reader_requests, "A refused misstatement must not reach the reader."
+    elif scheme != "APY-IN":
         assert model.reader_requests, "The hostile fact proposal must reach the intake reader."
     assert saved["typed_facts"]["facts"][fact]["value"] == profile[fact]
     assert not saved["pending_confirmation"], "A confirmed fact must not be re-proposed."

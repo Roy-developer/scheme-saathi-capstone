@@ -13,7 +13,7 @@ from typing import AsyncIterator
 from uuid import UUID
 
 import aiosqlite
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import FastAPI, HTTPException, Query, Request, Response
 # Client connects to the MCP server; parameters explain how to launch stdio.
 from mcp import Client, StdioServerParameters
 from pydantic import BaseModel, ConfigDict, Field, model_validator
