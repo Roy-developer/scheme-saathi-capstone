@@ -14,11 +14,9 @@ def test_development_gold_cases_validate_with_only_the_temporary_overlay(
     monkeypatch,
 ) -> None:
     cases, registry = build_development_gold_cases()
-    assert len(cases) == 71
-    assert sum(len(case.expected_rules) for case in cases) == 85
-    # has_disability moved from the evaluation overlay into the app registry
-    # when IGNDPS-MH was onboarded.
-    assert len(registry.overlay_fact_ids) == 23
+    assert len(cases) == 90
+    assert sum(len(case.expected_rules) for case in cases) == 106
+    assert len(registry.overlay_fact_ids) == 36
     assert registry.active_fact_count == 19
     assert all(case.expected_rules for case in cases)
 
