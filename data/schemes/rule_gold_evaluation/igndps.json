@@ -23,8 +23,8 @@
       "operator": "lte",
       "value": 79,
       "unit": "years",
-      "source_passage_id": "IGNDPS-IN-ELIGIBILITY-01",
-      "source_quote": "The applicant must be in the age group of 18-59 years.",
+      "source_passage_id": "IGNDPS-IN-BENEFIT-01",
+      "source_quote": "between 18-79 years",
       "needs_human_review": true,
       "note": "SOURCE CONFLICT, needs human sign-off. NSAP FAQ Q20 (official) says 18-59 years; IGNDPS-IN-BENEFIT-01 and IGNDPSM-MH say 18-79. Set to 79 to match IGNWPS-IN-R02, pending the official NSAP guidelines PDF. See POLICY.md §2."
     },
