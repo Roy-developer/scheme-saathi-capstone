@@ -74,8 +74,16 @@ def _send(request: Request, *, timeout: float) -> JourneyResponse:
                 "This conversation is no longer waiting for an answer. "
                 "Start again."
             ) from error
+        # Show the API's own reason when it gives one (e.g. "Please give a
+        # date as YYYY-MM-DD…" for an invalid corrected answer), not a bare
+        # status code.
+        try:
+            detail = json.loads(error.read()).get("detail")
+        except (json.JSONDecodeError, AttributeError, OSError):
+            detail = None
         raise JourneyApiError(
-            f"The journey API returned HTTP {error.code}."
+            detail if isinstance(detail, str) and detail.strip()
+            else f"The journey API returned HTTP {error.code}."
         ) from error
     except (URLError, TimeoutError) as error:
         raise JourneyApiError(
