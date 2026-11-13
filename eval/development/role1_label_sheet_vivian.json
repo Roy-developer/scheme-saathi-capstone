@@ -1,0 +1,1147 @@
+{
+  "labeller_id": "vivian-fernandes",
+  "status": "second_labeller_independent",
+  "created": "2026-11-12",
+  "pr_reference": "Roy-developer/scheme-saathi-capstone#25 at 49c1446",
+  "rows": [
+    {
+      "persona_id": "R1-GOLD-012",
+      "scheme_id": "APY-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Aged 41: above the 40 limit.",
+      "facts": {
+        "age": 41,
+        "is_citizen_of_india": true,
+        "has_savings_bank_account": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Age 41; \"maximum age is 40 years\" (APY-IN-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "R1-GOLD-013",
+      "scheme_id": "APY-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Aged exactly 40 with a savings bank account.",
+      "facts": {
+        "age": 40,
+        "is_citizen_of_india": true,
+        "has_savings_bank_account": true,
+        "is_income_tax_payer": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Age 40 is within \"minimum age of joining APY is 18 years and maximum age is 40 years\"; citizen with savings bank account (APY-IN-ELIGIBILITY-01); not an income-tax payer, so APY-IN-EXCLUSION-01 does not apply."
+    },
+    {
+      "persona_id": "R1-GOLD-041",
+      "scheme_id": "BFFL-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "MH resident farmer with Aadhaar, 7/12 in own name, not an institutional holder.",
+      "facts": {
+        "is_resident_of_state": true,
+        "has_aadhaar": true,
+        "owns_land_in_own_name": true,
+        "is_institutional_landholder": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "JUDGEMENT CALL. Resident, Aadhaar, 7/12 in own name (BFFL-MH-ELIGIBILITY-03) and not institutional (BFFL-MH-EXCLUSION-01) all pass. But the official page also sets a landholding range (\"कमीत कमी २० गुंठे तर जास्तीच जास्त ६ हे.\", BFFL-MH-ELIGIBILITY-01) and an MGNREGS condition (BFFL-MH-ELIGIBILITY-12); neither is in the facts."
+    },
+    {
+      "persona_id": "R1-GOLD-042",
+      "scheme_id": "BFFL-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "MH resident farmer with Aadhaar but 7/12 not in own name: R03 fails.",
+      "facts": {
+        "is_resident_of_state": true,
+        "has_aadhaar": true,
+        "owns_land_in_own_name": false,
+        "is_institutional_landholder": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "7/12 not in own name; \"शेतकऱ्यास स्वतःच्या नावावर ७/१२ असणे आवश्यक आहे\" (BFFL-MH-ELIGIBILITY-03)."
+    },
+    {
+      "persona_id": "R1-GOLD-043",
+      "scheme_id": "BFFL-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "MH resident with Aadhaar and 7/12 in own name but is an institutional landholder: R04 exclusion applies.",
+      "facts": {
+        "is_resident_of_state": true,
+        "has_aadhaar": true,
+        "owns_land_in_own_name": true,
+        "is_institutional_landholder": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Institutional landholder; \"लाभ वैयक्तिक शेतकऱ्यांना देय आहे. संस्थात्मक लाभार्थांना देय नाही\" (BFFL-MH-EXCLUSION-01)."
+    },
+    {
+      "persona_id": "R1-GOLD-033",
+      "scheme_id": "EACS-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Construction worker registered with the MH BOCW Board: both conditions met.",
+      "facts": {
+        "is_construction_worker": true,
+        "is_registered_construction_worker": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Engaged in construction work (EACS-MH-ELIGIBILITY-01) and registered with the MH BOCW Board (EACS-MH-ELIGIBILITY-02). Source: myScheme text only. The child's class (1st to 10th) is not in the facts."
+    },
+    {
+      "persona_id": "R1-GOLD-034",
+      "scheme_id": "EACS-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Construction worker not registered with the Board: R02 fails.",
+      "facts": {
+        "is_construction_worker": true,
+        "is_registered_construction_worker": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Not registered; \"The worker should be registered under the Maharashtra Building & Other Construction Workers Welfare Board\" (EACS-MH-ELIGIBILITY-02, myScheme)."
+    },
+    {
+      "persona_id": "R1-GOLD-017",
+      "scheme_id": "FADSE-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Annual income exactly Rs 1,00,000: the rule is strictly below 1,00,000.",
+      "facts": {
+        "disability_percent": 60,
+        "is_resident_of_state": true,
+        "age": 30,
+        "annual_income_inr": 100000,
+        "is_citizen_of_india": true,
+        "has_disability": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Income exactly Rs 1,00,000; \"annual income should be below Rs 100000/-\" (FADSE-MH-ELIGIBILITY-04). Below is strict."
+    },
+    {
+      "persona_id": "R1-GOLD-024",
+      "scheme_id": "FADSE-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Person with 50% disability aged 17: one year below the minimum age of 18.",
+      "facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 50,
+        "is_resident_of_state": true,
+        "age": 17,
+        "annual_income_inr": 80000
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Age 17; \"aged between 18 and 50 years\" (FADSE-MH-ELIGIBILITY-03)."
+    },
+    {
+      "persona_id": "R1-GOLD-025",
+      "scheme_id": "FADSE-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Person with 50% disability aged 51: one year above the maximum age of 50.",
+      "facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 50,
+        "is_resident_of_state": true,
+        "age": 51,
+        "annual_income_inr": 80000
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Age 51; \"aged between 18 and 50 years\" (FADSE-MH-ELIGIBILITY-03)."
+    },
+    {
+      "persona_id": "R1-GOLD-027",
+      "scheme_id": "FAISHL-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "War-bereaved applicant with a home loan: both conditions met.",
+      "facts": {
+        "is_war_bereaved_or_disabled_or_casualty": true,
+        "has_home_loan": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "War bereaved/disabled/casualty (FAISHL-IN-ELIGIBILITY-01) with a home loan (FAISHL-IN-ELIGIBILITY-03, myScheme). The Rs 1,00,000 figure (ELIGIBILITY-02) caps the subsidy; it is not an eligibility condition."
+    },
+    {
+      "persona_id": "R1-GOLD-028",
+      "scheme_id": "FAISHL-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "War-bereaved applicant with no home loan: R02 fails.",
+      "facts": {
+        "is_war_bereaved_or_disabled_or_casualty": true,
+        "has_home_loan": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "No home loan; \"The applicant must have taken a home loan\" (FAISHL-IN-ELIGIBILITY-03, myScheme)."
+    },
+    {
+      "persona_id": "R1-GOLD-029",
+      "scheme_id": "FAISHL-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Civilian with a home loan but not war bereaved/disabled/casualty: R01 fails.",
+      "facts": {
+        "is_war_bereaved_or_disabled_or_casualty": false,
+        "has_home_loan": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Not war bereaved/disabled/casualty; \"applicable for War Bereaved, War Disabled and Attributable Peacetime casualties only\" (FAISHL-IN-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "R1-GOLD-022",
+      "scheme_id": "FASETDP-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Maharashtra resident, trained, 40% disability: at the threshold.",
+      "facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 40,
+        "is_resident_of_state": true,
+        "has_completed_vocational_training": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "40% meets \"minimum 40% disability\" (FASETDP-MH-ELIGIBILITY-01); Maharashtra domicile (ELIGIBILITY-02); vocational training completed, citizen, person with disability (ELIGIBILITY-03 to 05, myScheme). No age limit in the collected text."
+    },
+    {
+      "persona_id": "R1-GOLD-023",
+      "scheme_id": "FASETDP-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Maharashtra resident, trained, 39% disability: one point below the threshold.",
+      "facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 39,
+        "is_resident_of_state": true,
+        "has_completed_vocational_training": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "39% disability; \"minimum 40% disability\" (FASETDP-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "R1-GOLD-005",
+      "scheme_id": "IGNDPS-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Disability of 79%: just below the 80% threshold.",
+      "facts": {
+        "age": 40,
+        "is_resident_of_india": true,
+        "has_disability": true,
+        "disability_percent": 79,
+        "is_below_poverty_line": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "79% disability; below both \"80% or more\" (IGNDPS-IN-BENEFICIARY-01) and \"more than 80%\" (IGNDPS-IN-ELIGIBILITY-04). Source: myScheme/UMANG text."
+    },
+    {
+      "persona_id": "R1-GOLD-006",
+      "scheme_id": "IGNDPS-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Disability of exactly 80%.",
+      "facts": {
+        "age": 40,
+        "is_resident_of_india": true,
+        "has_disability": true,
+        "disability_percent": 80,
+        "is_below_poverty_line": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Exactly 80% meets the \"80% or more\" threshold (decision by Priyanka, gold-set owner, 2026-11-10; agreed by vivian-fernandes 2026-11-13). Age 40, resident of India, disabled, BPL: all pass. Note: the UMANG text says \"more than 80%\" (IGNDPS-IN-ELIGIBILITY-04) and the NSAP FAQ says \"severe or multiple disabilities\", so the 80% figure needs a cited official source."
+    },
+    {
+      "persona_id": "R1-GOLD-007",
+      "scheme_id": "IGNDPSM-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Disabled person aged 80: above the 79 limit.",
+      "facts": {
+        "age": 80,
+        "is_resident_of_state": true,
+        "has_disability": true,
+        "disability_percent": 85,
+        "is_receiving_other_pension": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Age 80; \"in the age group of 18 to 79 years\" (IGNDPSM-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "R1-GOLD-008",
+      "scheme_id": "IGNDPSM-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Aged 50 with 85% disability but already receiving another pension.",
+      "facts": {
+        "age": 50,
+        "is_resident_of_state": true,
+        "has_disability": true,
+        "disability_percent": 85,
+        "is_receiving_other_pension": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Already receiving another pension; \"should not be receiving pension benefits under any other social security scheme\" (IGNDPSM-MH-ELIGIBILITY-05, myScheme)."
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-001",
+      "scheme_id": "IGNOAPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Turns 65 the day after the application date (age 64) with name on BPL list.",
+      "facts": {
+        "date_of_birth": "1962-11-09",
+        "application_date": "2026-11-08",
+        "name_on_bpl_list": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Born 1962-11-09, applied 2026-11-08: age 63 on the application date (turns 64 the next day); \"aged 65 and above\" (IGNOAPS-MH-ELIGIBILITY-01). NOTE: the description says it \"turns 65 the day after (age 64)\", but the dates give 63/64. The persona description needs fixing; the label is not_eligible either way."
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-002",
+      "scheme_id": "IGNOAPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Exactly 65 on the application date with name on BPL list (inclusive bound).",
+      "facts": {
+        "date_of_birth": "1961-11-08",
+        "application_date": "2026-11-08",
+        "name_on_bpl_list": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Born 1961-11-08, applied 2026-11-08: exactly 65; \"aged 65 and above, whose names are on the Below Poverty Line (BPL) list\" (IGNOAPS-MH-ELIGIBILITY-01); on BPL list. Residence and no-other-pension (ELIGIBILITY-02/03, myScheme) are not in the facts."
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-003",
+      "scheme_id": "IGNOAPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Age 85 with name on BPL list (no upper age limit for eligibility).",
+      "facts": {
+        "date_of_birth": "1941-01-01",
+        "application_date": "2026-11-08",
+        "name_on_bpl_list": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Born 1941-01-01: age 85; \"aged 65 and above\" with no upper limit (IGNOAPS-MH-ELIGIBILITY-01); on BPL list. Residence and no-other-pension (myScheme) are not in the facts."
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-004",
+      "scheme_id": "IGNOAPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Age eligible but name not on the BPL list (false is not eligible).",
+      "facts": {
+        "date_of_birth": "1956-06-01",
+        "application_date": "2026-11-08",
+        "name_on_bpl_list": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Born 1956-06-01: age 70 passes, but name not on BPL list; \"whose names are on the Below Poverty Line (BPL) list\" (IGNOAPS-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-005",
+      "scheme_id": "IGNOAPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Age eligible; BPL-list status unknown (don't know ≠ no).",
+      "facts": {
+        "date_of_birth": "1956-06-01",
+        "application_date": "2026-11-08",
+        "name_on_bpl_list": null
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "Born 1956-06-01: age 70 passes. BPL list status is unknown (null), and IGNOAPS-MH-ELIGIBILITY-01 requires the name on the BPL list."
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-006",
+      "scheme_id": "IGNOAPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "On BPL list but date of birth missing so age cannot be computed.",
+      "facts": {
+        "date_of_birth": null,
+        "application_date": "2026-11-08",
+        "name_on_bpl_list": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "Date of birth missing, so age cannot be worked out; \"aged 65 and above\" (IGNOAPS-MH-ELIGIBILITY-01). On BPL list."
+    },
+    {
+      "persona_id": "R1-IGNOAPS-003",
+      "scheme_id": "IGNOAPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Aged 60 (central NSAP threshold) but under the Maharashtra threshold of 65; name on BPL list.",
+      "facts": {
+        "date_of_birth": "1966-11-11",
+        "application_date": "2026-11-11",
+        "name_on_bpl_list": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Born 1966-11-11, applied 2026-11-11: age 60; Maharashtra requires \"aged 65 and above\" (IGNOAPS-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "R1-IGNOAPS-006",
+      "scheme_id": "IGNOAPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Aged 64 and name not on the BPL list: both rules fail.",
+      "facts": {
+        "date_of_birth": "1962-11-11",
+        "application_date": "2026-11-11",
+        "name_on_bpl_list": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Born 1962-11-11, applied 2026-11-11: age 64, under 65 (IGNOAPS-MH-ELIGIBILITY-01); also not on the BPL list."
+    },
+    {
+      "persona_id": "R1-GOLD-003",
+      "scheme_id": "IGNWPS-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Widow aged 39, BPL.",
+      "facts": {
+        "age": 39,
+        "is_widow": true,
+        "is_below_poverty_line": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Age 39; \"a widow in the age group of 40-79 years\" (IGNWPS-IN-ELIGIBILITY-01). Source: myScheme/UMANG text."
+    },
+    {
+      "persona_id": "R1-GOLD-004",
+      "scheme_id": "IGNWPS-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Widow aged 80, BPL: above the 79 limit.",
+      "facts": {
+        "age": 80,
+        "is_widow": true,
+        "is_below_poverty_line": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Age 80; \"a widow in the age group of 40-79 years\" (IGNWPS-IN-ELIGIBILITY-01). Source: myScheme/UMANG text."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-001",
+      "scheme_id": "IGNWPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Widow at exact lower age boundary (40) with BPL card shown.",
+      "facts": {
+        "date_of_birth": "1986-10-30",
+        "application_date": "2026-10-30",
+        "is_widow": true,
+        "bpl_card_shown": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Born 1986-10-30, applied 2026-10-30: exactly 40; widow; BPL card shown; \"A widow in age group of 40 to 79 years whose family falls under Below Poverty Line\" (IGNWPS-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-002",
+      "scheme_id": "IGNWPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Widow at exact upper age boundary (79) with BPL card shown.",
+      "facts": {
+        "date_of_birth": "1947-10-30",
+        "application_date": "2026-10-30",
+        "is_widow": true,
+        "bpl_card_shown": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Born 1947-10-30, applied 2026-10-30: exactly 79; widow; BPL card shown; within \"40 to 79 years\" (IGNWPS-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-003",
+      "scheme_id": "IGNWPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Widow one year below minimum age (39).",
+      "facts": {
+        "date_of_birth": "1987-10-30",
+        "application_date": "2026-10-30",
+        "is_widow": true,
+        "bpl_card_shown": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Born 1987-10-30, applied 2026-10-30: age 39; \"40 to 79 years\" (IGNWPS-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-004",
+      "scheme_id": "IGNWPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Widow one year above maximum age (80).",
+      "facts": {
+        "date_of_birth": "1946-10-30",
+        "application_date": "2026-10-30",
+        "is_widow": true,
+        "bpl_card_shown": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Born 1946-10-30, applied 2026-10-30: age 80; \"40 to 79 years\" (IGNWPS-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-005",
+      "scheme_id": "IGNWPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Age and BPL ok but not a widow.",
+      "facts": {
+        "date_of_birth": "1974-10-30",
+        "application_date": "2026-10-30",
+        "is_widow": false,
+        "bpl_card_shown": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Not a widow; \"A widow in age group of 40 to 79 years\" (IGNWPS-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-006",
+      "scheme_id": "IGNWPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Widow in range who shows a government BPL card (mid-range age).",
+      "facts": {
+        "date_of_birth": "1974-10-30",
+        "application_date": "2026-10-30",
+        "is_widow": true,
+        "bpl_card_shown": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Born 1974-10-30: age 52; widow; BPL card shown; meets IGNWPS-MH-ELIGIBILITY-01."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-007",
+      "scheme_id": "IGNWPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Widow in range who has not shown a BPL card (proof rule → need more information).",
+      "facts": {
+        "date_of_birth": "1974-10-30",
+        "application_date": "2026-10-30",
+        "is_widow": true,
+        "bpl_card_shown": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "Age 52 and widow pass. bpl_card_shown is false: no card was shown, which doesn't prove the family is not BPL. BPL status is still unverified (IGNWPS-MH-ELIGIBILITY-01: \"whose family falls under Below Poverty Line\")."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-008",
+      "scheme_id": "IGNWPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Widow in range with unknown BPL card status.",
+      "facts": {
+        "date_of_birth": "1974-10-30",
+        "application_date": "2026-10-30",
+        "is_widow": true,
+        "bpl_card_shown": null
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "Age 52 and widow pass; BPL card status unknown (null). IGNWPS-MH-ELIGIBILITY-01 requires a BPL family."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-009",
+      "scheme_id": "IGNWPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Unknown widow status with otherwise complete facts.",
+      "facts": {
+        "date_of_birth": "1974-10-30",
+        "application_date": "2026-10-30",
+        "is_widow": null,
+        "bpl_card_shown": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "Widow status unknown (null); IGNWPS-MH-ELIGIBILITY-01 requires a widow. Age 52 and BPL card shown pass."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-010",
+      "scheme_id": "IGNWPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Missing date of birth so age cannot be computed.",
+      "facts": {
+        "date_of_birth": null,
+        "application_date": "2026-10-30",
+        "is_widow": true,
+        "bpl_card_shown": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "Date of birth missing, so age cannot be checked against \"40 to 79 years\" (IGNWPS-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-011",
+      "scheme_id": "IGNWPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Turns 40 on the application date (inclusive lower bound).",
+      "facts": {
+        "date_of_birth": "1986-03-15",
+        "application_date": "2026-03-15",
+        "is_widow": true,
+        "bpl_card_shown": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Born 1986-03-15, applied 2026-03-15: turns 40 that day, so age 40; widow; BPL card shown; within \"40 to 79 years\" (IGNWPS-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-012",
+      "scheme_id": "IGNWPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Turns 80 on the application date (above inclusive max 79).",
+      "facts": {
+        "date_of_birth": "1946-03-15",
+        "application_date": "2026-03-15",
+        "is_widow": true,
+        "bpl_card_shown": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Born 1946-03-15, applied 2026-03-15: age 80; \"40 to 79 years\" (IGNWPS-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "IGNWPS-DEV-013",
+      "scheme_id": "IGNWPS-MH",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Day before 40th birthday remains below minimum age.",
+      "facts": {
+        "date_of_birth": "1986-03-15",
+        "application_date": "2026-03-14",
+        "is_widow": true,
+        "bpl_card_shown": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Born 1986-03-15, applied 2026-03-14: age 39 (40th birthday is the next day); \"40 to 79 years\" (IGNWPS-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "R1-GOLD-030",
+      "scheme_id": "IPMWCD-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Woman student from a non-tier-1 area aged exactly 21: at the lower age boundary.",
+      "facts": {
+        "is_woman": true,
+        "is_student_scholar_activist_or_teacher": true,
+        "is_from_rural_or_non_tier1_area": true,
+        "age": 21
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Woman student (IPMWCD-IN-BENEFICIARY-01) from a non-tier-1 area (IPMWCD-IN-ELIGIBILITY-01, myScheme); age 21 within \"between 21 to 40 years\" (IPMWCD-IN-ELIGIBILITY-02, myScheme)."
+    },
+    {
+      "persona_id": "R1-GOLD-031",
+      "scheme_id": "IPMWCD-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Woman student from a non-tier-1 area aged exactly 40: at the upper age boundary.",
+      "facts": {
+        "is_woman": true,
+        "is_student_scholar_activist_or_teacher": true,
+        "is_from_rural_or_non_tier1_area": true,
+        "age": 40
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Woman student from a non-tier-1 area; age 40 within \"between 21 to 40 years\" (IPMWCD-IN-ELIGIBILITY-02, myScheme)."
+    },
+    {
+      "persona_id": "R1-GOLD-032",
+      "scheme_id": "IPMWCD-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Woman student from a tier-1 city (not rural/non-tier-1): R03 fails.",
+      "facts": {
+        "is_woman": true,
+        "is_student_scholar_activist_or_teacher": true,
+        "is_from_rural_or_non_tier1_area": false,
+        "age": 30
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "From a tier-1 city; \"from non-tier-I cities and rural parts of India\" (IPMWCD-IN-ELIGIBILITY-01, myScheme)."
+    },
+    {
+      "persona_id": "R1-GOLD-009",
+      "scheme_id": "NFBSM-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Breadwinner died aged 17: below the 18 limit.",
+      "facts": {
+        "is_below_poverty_line": true,
+        "deceased_breadwinner_age": 17,
+        "is_resident_of_state": true,
+        "is_family_member_of_deceased_breadwinner": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Breadwinner died aged 17; \"primary bread winner in the BPL Family in the age group of 18 to 59 years\" (NFBSM-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "R1-GOLD-010",
+      "scheme_id": "NFBSM-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Breadwinner died aged 59: inside the 59 limit.",
+      "facts": {
+        "is_below_poverty_line": true,
+        "deceased_breadwinner_age": 59,
+        "is_resident_of_state": true,
+        "is_family_member_of_deceased_breadwinner": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Breadwinner died aged 59, within \"18 to 59 years\"; BPL family (NFBSM-MH-ELIGIBILITY-01); MH resident and family member of the deceased (ELIGIBILITY-02/03, myScheme)."
+    },
+    {
+      "persona_id": "R1-GOLD-011",
+      "scheme_id": "NFBSM-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Breadwinner died aged 60: above the 59 limit.",
+      "facts": {
+        "is_below_poverty_line": true,
+        "deceased_breadwinner_age": 60,
+        "is_resident_of_state": true,
+        "is_family_member_of_deceased_breadwinner": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Breadwinner died aged 60; \"18 to 59 years\" (NFBSM-MH-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "R1-GOLD-001",
+      "scheme_id": "NSAP-IGNOAPS-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Aged 59, BPL citizen: one year below the central age threshold of 60.",
+      "facts": {
+        "is_citizen_of_india": true,
+        "is_below_poverty_line": true,
+        "age": 59
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Age 59; \"should be at least 60 years of age\" (NSAP-IGNOAPS-IN-ELIGIBILITY-03). Source: myScheme/UMANG text."
+    },
+    {
+      "persona_id": "R1-GOLD-002",
+      "scheme_id": "NSAP-IGNOAPS-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Aged exactly 60, BPL citizen.",
+      "facts": {
+        "is_citizen_of_india": true,
+        "is_below_poverty_line": true,
+        "age": 60
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Age 60 meets \"at least 60 years of age\" (ELIGIBILITY-03); citizen (ELIGIBILITY-01); BPL (ELIGIBILITY-02). Source: myScheme/UMANG text."
+    },
+    {
+      "persona_id": "R1-GOLD-035",
+      "scheme_id": "NSMNY-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Farmer with cultivable land, not an institutional holder, not an income-tax payer.",
+      "facts": {
+        "owns_cultivable_land": true,
+        "is_institutional_landholder": false,
+        "is_income_tax_payer": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "JUDGEMENT CALL. Cultivable land, not institutional, not a taxpayer all pass. But the official text makes NSMNY follow PM-KISAN: \"पी.एम.किसान पोर्टलवर नोंदणी केलेले व केंद्र शासनाच्या निकषानुसार लाभास पात्र ठरलेले सर्व लाभार्थी\" (NSMNY-MH-ELIGIBILITY-02). PM-KISAN registration and the other PM-KISAN exclusions (government employee, pensioner, professional, public office, NRI) are not in the facts."
+    },
+    {
+      "persona_id": "R1-GOLD-036",
+      "scheme_id": "NSMNY-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Farmer with cultivable land who paid income tax last year: R03 exclusion applies.",
+      "facts": {
+        "owns_cultivable_land": true,
+        "is_institutional_landholder": false,
+        "is_income_tax_payer": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Paid income tax last year: excluded under the PM-KISAN higher-economic-status exclusions that NSMNY adopts (NSMNY-MH-EXCLUSION-02, myScheme; NSMNY-MH-ELIGIBILITY-02)."
+    },
+    {
+      "persona_id": "R1-GOLD-037",
+      "scheme_id": "NSMNY-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Applicant with no cultivable land: R01 fails.",
+      "facts": {
+        "owns_cultivable_land": false,
+        "is_institutional_landholder": false,
+        "is_income_tax_payer": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "No cultivable land; \"Cultivable land holding farmers families ... are eligible\" (NSMNY-MH-ELIGIBILITY-04, myScheme)."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-001",
+      "scheme_id": "PM-KISAN-IN",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Landholding family with no reported 2020 exclusions.",
+      "facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Landholding family in state land records (PM-KISAN-IN-ELIGIBILITY-01/02); every exclusion fact is false (PM-KISAN-IN-EXCLUSION-01/02). The 01.02.2019 cut-off (ELIGIBILITY-03) is taken as covered by the state-records fact."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-002",
+      "scheme_id": "PM-KISAN-IN",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Not a landholding farmer family in state records.",
+      "facts": {
+        "landholding_family_in_state_records": false,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Not a landholding family in state records; \"paid to only those farmers' families whose names are entered into the land records\" (PM-KISAN-IN-ELIGIBILITY-02)."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-003",
+      "scheme_id": "PM-KISAN-IN",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Institutional landholder exclusion.",
+      "facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": true,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Institutional landholder; \"All Institutional Land holders\" are excluded (PM-KISAN-IN-EXCLUSION-01)."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-004",
+      "scheme_id": "PM-KISAN-IN",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Listed public office holder exclusion.",
+      "facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": true,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Family member holds a listed public office; \"Former and present Ministers ... Members of Lok Sabha ...\" excluded (PM-KISAN-IN-EXCLUSION-01)."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-005",
+      "scheme_id": "PM-KISAN-IN",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Excluded government employee member.",
+      "facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": true,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Family member is an excluded government employee; \"All serving or retired officers and employees of Central / State Government ...\" excluded (PM-KISAN-IN-EXCLUSION-01)."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-006",
+      "scheme_id": "PM-KISAN-IN",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Pension exclusion at or above Rs 10,000.",
+      "facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": true,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Family member's pension is Rs 10,000/month or more (excluding the stated grades): excluded under the higher-economic-status list (PM-KISAN-IN-EXCLUSION-01)."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-007",
+      "scheme_id": "PM-KISAN-IN",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Income-tax payer exclusion.",
+      "facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": true,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Paid income tax in the last assessment year: excluded under the higher-economic-status list (PM-KISAN-IN-EXCLUSION-01)."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-008",
+      "scheme_id": "PM-KISAN-IN",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Registered practicing professional exclusion.",
+      "facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": true,
+        "nri_new_beneficiary": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Family member is a registered practising professional: excluded under the higher-economic-status list (PM-KISAN-IN-EXCLUSION-01)."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-009",
+      "scheme_id": "PM-KISAN-IN",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "New NRI beneficiary exclusion.",
+      "facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "New beneficiary who is an NRI; \"all land holding farmers' families who are Non-resident Indians ... shall be excluded\" (PM-KISAN-IN-EXCLUSION-02)."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-010",
+      "scheme_id": "PM-KISAN-IN",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Unknown landholding status with exclusions denied.",
+      "facts": {
+        "landholding_family_in_state_records": null,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "Landholding status unknown (null); PM-KISAN-IN-ELIGIBILITY-02 requires names in the land records. Exclusions all false."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-011",
+      "scheme_id": "PM-KISAN-IN",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Unknown income-tax fact with landholding confirmed.",
+      "facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": false,
+        "pension_at_least_10000_excluding_stated_grades": false,
+        "income_tax_paid_last_assessment_year": null,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "Landholding confirmed and other exclusions false, but the income-tax fact is unknown (null), and income-tax payers are excluded (PM-KISAN-IN-EXCLUSION-01)."
+    },
+    {
+      "persona_id": "PMKISAN-DEV-012",
+      "scheme_id": "PM-KISAN-IN",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Empty profile — every PM-KISAN fact unknown.",
+      "facts": {},
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "Empty profile: no facts for landholding (PM-KISAN-IN-ELIGIBILITY-02) or any exclusion (PM-KISAN-IN-EXCLUSION-01/02)."
+    },
+    {
+      "persona_id": "R1-PMKISAN-004",
+      "scheme_id": "PM-KISAN-IN",
+      "source_file": "eval/development/personas_v1.json",
+      "description": "Landholding family with a government-employee member and a pension of Rs 10,000 or more.",
+      "facts": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": true,
+        "pension_at_least_10000_excluding_stated_grades": true,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Family has an excluded government employee and a pension of Rs 10,000 or more; both excluded under PM-KISAN-IN-EXCLUSION-01."
+    },
+    {
+      "persona_id": "R1-GOLD-015",
+      "scheme_id": "PMJJBY-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Aged exactly 50 with a savings account and auto-debit consent.",
+      "facts": {
+        "age": 50,
+        "has_savings_bank_account": true,
+        "consents_to_auto_debit": true,
+        "is_institutional_account_holder": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Age 50 within \"18 years (completed) and 50 years (age nearer birthday)\"; savings account holder who consents to auto-debit (PMJJBY-IN-ELIGIBILITY-03); not an institutional account holder (ELIGIBILITY-05)."
+    },
+    {
+      "persona_id": "R1-GOLD-014",
+      "scheme_id": "PMSBY-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Aged 71: above the 70 limit.",
+      "facts": {
+        "age": 71,
+        "has_savings_bank_account": true,
+        "consents_to_auto_debit": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Age 71; \"in the age group of 18 to 70 years\" (PMSBY-IN-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "R1-GOLD-018",
+      "scheme_id": "POST-DIS-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Student with 50% disability, family income exactly 250000: at the upper limit.",
+      "facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 50,
+        "annual_family_income_inr": 250000,
+        "is_student_in_post_matric_course": true,
+        "family_members_receiving_scholarship": 1,
+        "receives_other_scholarship_or_stipend": false,
+        "is_repeating_class": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "eligible",
+      "your_reason (rule or source quote)": "Post-matric student (POST-DIS-IN-ELIGIBILITY-01); Indian national (ELIGIBILITY-02); 50% disability, at least 40% (ELIGIBILITY-03); family income Rs 2,50,000 is \"up to Rs. 2.5 lakh per year\" (ELIGIBILITY-04); no other scholarship (ELIGIBILITY-05); 1 family member already receiving, within the limit of 2 (EXCLUSION-01); not repeating a class (EXCLUSION-04). UDID/Aadhaar are documents, not eligibility facts."
+    },
+    {
+      "persona_id": "R1-GOLD-019",
+      "scheme_id": "POST-DIS-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Student with 50% disability, family income 250001: one rupee over the limit.",
+      "facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 50,
+        "annual_family_income_inr": 250001,
+        "is_student_in_post_matric_course": true,
+        "family_members_receiving_scholarship": 1
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Family income Rs 2,50,001; \"Family income up to Rs. 2.5 lakh per year\" (POST-DIS-IN-ELIGIBILITY-04)."
+    },
+    {
+      "persona_id": "R1-GOLD-020",
+      "scheme_id": "POST-DIS-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Student with 50% disability; three family members already receive a scholarship (limit 2).",
+      "facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 50,
+        "annual_family_income_inr": 200000,
+        "is_student_in_post_matric_course": true,
+        "family_members_receiving_scholarship": 3
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Three family members already receive it; \"Maximum 2 children with disabilities from the same parents can receive it\" (POST-DIS-IN-EXCLUSION-01)."
+    },
+    {
+      "persona_id": "R1-GOLD-021",
+      "scheme_id": "POST-DIS-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Student with 39% disability: one point below the 40% threshold.",
+      "facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 39,
+        "annual_family_income_inr": 200000,
+        "is_student_in_post_matric_course": true,
+        "family_members_receiving_scholarship": 1
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "39% disability; \"benchmark disability of 40% or more\" (POST-DIS-IN-ELIGIBILITY-03)."
+    },
+    {
+      "persona_id": "R1-GOLD-016",
+      "scheme_id": "PRE-DIS-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Family income Rs 2,50,001: Re 1 over the Rs 2,50,000 limit.",
+      "facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 50,
+        "annual_family_income_inr": 250001,
+        "is_student_in_class_9_or_10": true,
+        "family_members_receiving_scholarship": 1
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Family income Rs 2,50,001; \"Family income up to Rs. 2.5 lakh per year\" (PRE-DIS-IN-ELIGIBILITY-04)."
+    },
+    {
+      "persona_id": "R1-GOLD-026",
+      "scheme_id": "PRE-DIS-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Pre-matric student with 50% disability; three family members already receive a scholarship (limit 2).",
+      "facts": {
+        "is_citizen_of_india": true,
+        "has_disability": true,
+        "disability_percent": 50,
+        "annual_family_income_inr": 200000,
+        "is_student_in_class_9_or_10": true,
+        "family_members_receiving_scholarship": 3
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Three family members already receive it; \"Maximum 2 children with disabilities from the same parents can receive it\" (PRE-DIS-IN-EXCLUSION-01)."
+    },
+    {
+      "persona_id": "R1-GOLD-044",
+      "scheme_id": "TMDVSO-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "VJNT/OBC/SBC community member: R01 passes.",
+      "facts": {
+        "belongs_to_vjnt_obc_or_sbc_category": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "JUDGEMENT CALL. Belongs to VJNT/OBC/SBC (TMDVSO-MH-ELIGIBILITY-01, myScheme). But the official text limits it to members \"who are eligble to drive as per Motor Vehicle Act\" (TMDVSO-MH-BENEFICIARY-01), and the age, education and fitness facts are not given (ELIGIBILITY-02)."
+    },
+    {
+      "persona_id": "R1-GOLD-045",
+      "scheme_id": "TMDVSO-MH",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Applicant not from VJNT/OBC/SBC category: R01 fails.",
+      "facts": {
+        "belongs_to_vjnt_obc_or_sbc_category": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Not VJNT/OBC/SBC; \"Eligible DNT/SBC/OBC community members\" (TMDVSO-MH-BENEFICIARY-01)."
+    },
+    {
+      "persona_id": "R1-GOLD-046",
+      "scheme_id": "WMCL-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Child of SC/ST coffee labourer pursuing education after Class 10, not a supervisor's child.",
+      "facts": {
+        "is_child_of_sc_st_coffee_labourer": true,
+        "is_pursuing_education_after_class_10": true,
+        "is_child_of_estate_clerk_driver_supervisor_or_manager": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "need_more_information",
+      "your_reason (rule or source quote)": "JUDGEMENT CALL. Child of an SC/ST coffee labourer pursuing education after Class 10, not a clerk/driver/supervisor/manager's child: those pass (WMCL-IN-ELIGIBILITY-01, EXCLUSION-01). But the official text also requires \"The first two surviving children\" and an institution \"recognized by the Central / State Governments\" (WMCL-IN-ELIGIBILITY-01); neither is in the facts."
+    },
+    {
+      "persona_id": "R1-GOLD-047",
+      "scheme_id": "WMCL-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Child of a general estate worker (not SC/ST coffee labourer): R01 fails.",
+      "facts": {
+        "is_child_of_sc_st_coffee_labourer": false,
+        "is_pursuing_education_after_class_10": true,
+        "is_child_of_estate_clerk_driver_supervisor_or_manager": false
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Not a child of an SC/ST coffee labourer; \"Children of SC / ST labourers working in coffee plantations ... are eligible\" (WMCL-IN-ELIGIBILITY-01)."
+    },
+    {
+      "persona_id": "R1-GOLD-048",
+      "scheme_id": "WMCL-IN",
+      "source_file": "eval/development/gold_scheme_personas_v1.json",
+      "description": "Child of SC/ST coffee labourer but also child of a supervisor: R03 exclusion fires.",
+      "facts": {
+        "is_child_of_sc_st_coffee_labourer": true,
+        "is_pursuing_education_after_class_10": true,
+        "is_child_of_estate_clerk_driver_supervisor_or_manager": true
+      },
+      "your_label (eligible / not_eligible / need_more_information)": "not_eligible",
+      "your_reason (rule or source quote)": "Also a child of an estate supervisor; \"Children of Clerks, Drivers, Supervisors and Managers of Estate / Curing works are not entitled\" (WMCL-IN-EXCLUSION-01)."
+    }
+  ]
+}
