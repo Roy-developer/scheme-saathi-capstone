@@ -1,0 +1,113 @@
+{
+  "schema": "retrieval_canonical_dev/1",
+  "split": "development",
+  "status": "dev run; label review is independent-review-pending; AI-reviewed labels are NOT validated",
+  "dataset": {
+    "path": "data/schemes/retrieval_eval_dev.json",
+    "sha256": "6643fc37238f8b32bc7f00b88031af8f5c7891fae34ee78d75d817e556151668",
+    "dataset_version": "0.3.1",
+    "query_count": 202,
+    "annotation_note": "Combined 199-query development set: the original 43 queries (33 English, 5 Hindi, 5 Marathi) plus 156 additional synthetic English queries covering schemes and cross-scheme topics in the expanded corpus. All 156 added English labels were reviewed by NVIDIA Nemotron 3.5 Lightning (146 supported, 10 partially supported); flagged cases were compared against the cited local passage text and labels in seven queries were corrected where evidence warranted. This is AI model review, not human domain or bilingual validation. Existing multilingual labels remain provisional and require domain/bilingual review. Labels identify passages supporting the query, not an eligibility outcome. Development-only; not a protected held-out set."
+  },
+  "corpus": {
+    "path": "data/schemes/passages",
+    "file_count": 43,
+    "manifest_sha256": "ab581da6f7bc5e55b8a26eefb4b2d952adafe321af8cb075b2907bcda41e9b2b",
+    "manifest_method": "sha256 of lines 'relpath<TAB>sha256<LF>' for files sorted by relpath (posix)",
+    "files": {
+      "data/schemes/passages/aabym_passages.json": "7def372fadec41b3ff6ba14a69d0f4cb297a2f265668cf13dedf7c46c8c366c2",
+      "data/schemes/passages/apy_passages.json": "eb1b3c18e3682f6571141fa4323f813b323b9b81c39144f9f029e08bd44d8fc4",
+      "data/schemes/passages/bhausaheb_fundkar_passages.json": "737e3745a3f5ce4cd5eebd3f299f425c60068370392e5390ee6b73fe43f64164",
+      "data/schemes/passages/eacs1t7a8t10_passages.json": "6019e7b4599af15ced035460e3b9ebb3b7e14f3d6a8b6c377125ba7af2e604e4",
+      "data/schemes/passages/eps_passages.json": "f0836b8b2e2426af68bdfe83df4f2d38be12f6adf5921f0b9aef37a3885be615",
+      "data/schemes/passages/fadse_passages.json": "49624aa320612865c2cc4e34eb3378dcbc94015c981869620f3611c6dff4a40d",
+      "data/schemes/passages/faishl_passages.json": "2115c3509903f8af70254e7b2c138581216a493b9430ac5a489f11e901cda5cf",
+      "data/schemes/passages/fasetdp_passages.json": "34ad1176cf37637488e1cfd3be2c845c06fe8d4415bce9ba482ff8bb2bd4e860",
+      "data/schemes/passages/igndps_mh_passages.json": "844514dc19723b520d88ad00fb8dd188c4302a05426b82f68dfe78ba910a298b",
+      "data/schemes/passages/igndps_passages.json": "e6ef29b6421a86535468ba9560be6fb1871aaceae3d88e1ef6e0b928ffc6f68e",
+      "data/schemes/passages/igndpsm_passages.json": "1fbd7609aa939a0dad9be17fea11f8151f3b16f91752f4901fae4fa57432e00d",
+      "data/schemes/passages/ignoaps_mh_passages.json": "82f23d046121e153ac0496eaaca6b76e401e842568c382f4e8935962abe15bbf",
+      "data/schemes/passages/ignwps_mh_passages.json": "7af76d5513f52e3bd68e7a3abaee775fa99b69b9a681ff222f8fd3477ea20203",
+      "data/schemes/passages/ignwps_passages.json": "5cb01f6960c076cf23f445099af0838b992b190215ccf2815cc15d2589053f44",
+      "data/schemes/passages/ignwpsm_passages.json": "fc21ee92c3e41a64c8deac906a556f1d77363a04c160cfd2aa5ccc7456db9c6c",
+      "data/schemes/passages/ipmwcd_passages.json": "32bfc23a5f70d1577da7decb8a94e8b28be9c587a733f935e4cc9b73eef24489",
+      "data/schemes/passages/mahila_samriddhi_passages.json": "4a4fb2f4ebdc7e74e132d6653ae8bfd61a4fa8c2878af5456cad4585ef46b0b7",
+      "data/schemes/passages/mjpjay_passages.json": "3693adcdb0ed7db4bafbf91ce3f1bd1133ce5ee1bebc49f2019c18d625a9d25b",
+      "data/schemes/passages/namo_shetkari_mahasanman_nidhi_yojana_passages.json": "3f4f4aafd4699ce0fb3eb6b2fc82d31174ec13d4649eea416c8e8526d0a1f6bb",
+      "data/schemes/passages/nfbsm_passages.json": "36e44b820738b2592d458ab716c6b50cd48dde08e90d612097c8685c6569fe12",
+      "data/schemes/passages/nsap_ignoaps_passages.json": "e54e32c8974d837a7a6a1a0714a6ddd49df42c8b4e59ec24eef09fb11ee69d56",
+      "data/schemes/passages/nsigse_passages.json": "d3446fcc09a2c7cc699778d6be78fcff8adda033fbccab3bdbe0bb58b57353e6",
+      "data/schemes/passages/nswf_passages.json": "e5c5219fe66700b97b071e1f853b177c5fa0cb9a0213873c45f1acf4c43268a2",
+      "data/schemes/passages/pg_igssgc_passages.json": "25fcbfe48857929c2be8c0898024a05f57f06aa268a80b0dfa491f2a5a5f709b",
+      "data/schemes/passages/pm_kisan_passages.json": "45ee5dad29e8ea6e92a541a11e80aa178600a69c20add9798032533bb2fbd144",
+      "data/schemes/passages/pmay_u_passages.json": "f40a4bc6ee8c5663bfc7ceb7ab53cf93798ab27d42a50d2614b9d42bbe1b9c9c",
+      "data/schemes/passages/pmfby_passages.json": "8b1094ead3402eb79e7cdddca0d71ac8738983a5eace89e5a01600b2a3a60031",
+      "data/schemes/passages/pmjjby_passages.json": "2afa9f52adb9f21e01395f84d438a010497f63aab6360d6355a1e3ec62095048",
+      "data/schemes/passages/pmkmdy_passages.json": "d488b46b79206f2aa2f030a30e8567247a61197156b94e94137ec9f2979a7777",
+      "data/schemes/passages/pmsby_passages.json": "de683b9a97f4bdc946ece625cef009dac2562aaf2c26b00dc787ec72e59fb68c",
+      "data/schemes/passages/pmuy2_passages.json": "e5f6bab1a38425392afa06c49dcaa7bc18966009d488b14d4c2620edda0bc0db",
+      "data/schemes/passages/pmvbry_passages.json": "aea81b3754273f7c7f398b67f1f90f63ab6b785e566b423634caf547f09bbd29",
+      "data/schemes/passages/post_dis_passages.json": "3fe57f7e3c4026aa0fd34eeffbb76d42fc1a078e23c6a2440df36b292aecb767",
+      "data/schemes/passages/pre_dis_passages.json": "827ca188e382d1f6487a32b74d6a91de7961fc7e083780f98d450d1ee28280f9",
+      "data/schemes/passages/pre_st_passages.json": "75b3304e73a4bdaca947b962eb5b41532f03d99c4f4be3837992c5e07fd2e65a",
+      "data/schemes/passages/psgs_dip_passages.json": "d5917437cb678913fa5bd212e44688122793027bcd417a705753f1b2179bc27b",
+      "data/schemes/passages/rassnb_passages.json": "8c591d3c03ea333797399d477a4f8784c85bae7b1a713d19ec48e46951bd1b68",
+      "data/schemes/passages/sbssps_passages.json": "95a4ad42eef1b5247c26e41cdd7a82bcd0777c2b1a5f9f185dad1b29dbb6e40e",
+      "data/schemes/passages/tce_sc_passages.json": "3118448dc4109e53846ee022ea82bfc0c2b3c5e40ef89f075968a668030ef4ea",
+      "data/schemes/passages/tfefvs_passages.json": "589c300660f9e2dd1d38d5a4806c062b0a6d02d856174c9bb9d6baa4efb70219",
+      "data/schemes/passages/tfefvssshs_passages.json": "51c1a4618c420a7da333ec91ba44f807fd3fb7ea7ad16a80694b823465f4887f",
+      "data/schemes/passages/tmdvso_passages.json": "ac8595a6cf3efbf962a4fc2df6a9bb83130ae88e8117055cdfc73261ba0afda2",
+      "data/schemes/passages/wmcl_passages.json": "f2e978c2e9ac9b07f5f15fa781a6ede79290e87fcc3d12443962365ab24f80a9"
+    }
+  },
+  "common_config": {
+    "k": 5,
+    "split_filter": "development, protected=false",
+    "hybrid_bm25_k1": 0.6,
+    "hybrid_bm25_b": 0.5,
+    "retrieval_depth": 20,
+    "query_decomposition": "decompose_query (scheme_search.py)",
+    "rank_fusion": "reciprocal_rank_fusion",
+    "cross_encoder": "disabled",
+    "hosted_calls": "none; OPENROUTER_API_KEY_FREE/OPEN_ROUTER_FREE unset so any hosted fallback raises"
+  },
+  "runs": [
+    {
+      "name": "A_bm25_minilm_rrf_paired",
+      "backend": "BM25 + local FastEmbed MiniLM (paraphrase-multilingual-MiniLM-L12-v2, local_files_only) + RRF; no reranker",
+      "embedding_backend": "fastembed",
+      "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "reranker_mode": "disabled; fused RRF order returned",
+      "command": "HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 SCHEME_SAATHI_EMBEDDING_BACKEND=fastembed SCHEME_SAATHI_DISABLE_CROSS_ENCODER=1 .venv/Scripts/python.exe scripts/evaluate_scheme_retrieval.py --skip-reranker --output eval/reports/retrieval_canonical_dev_bm25_minilm_rrf.json (env -u OPENROUTER_API_KEY_FREE -u OPEN_ROUTER_FREE)",
+      "report": "eval/reports/retrieval_canonical_dev_bm25_minilm_rrf.json",
+      "report_sha256": "e5c211aed827b6057c284493c1c14d3130f5eccb3a66b26fd0287b2870742ee7",
+      "query_count": 202,
+      "recall_at_5": 0.6831683168316832,
+      "scheme_hit_rate_at_5": 0.9306930693069307,
+      "recall_at_5_by_language": {
+        "en": 0.71875,
+        "hi": 0.0,
+        "mr": 0.0
+      }
+    },
+    {
+      "name": "B_bm25_only_paired",
+      "backend": "BM25 only (vectors off, no reranker); fused order = BM25 rankings only",
+      "embedding_backend": "none",
+      "embedding_model": null,
+      "reranker_mode": "disabled; BM25 only, vectors off, fused order returned",
+      "command": "HF_HUB_OFFLINE=1 SCHEME_SAATHI_DISABLE_CROSS_ENCODER=1 .venv/Scripts/python.exe <runner> (runner source embedded below; saved as eval/reports/retrieval_canonical_dev_bm25_only_runner.py)",
+      "runner_sha256": "6d15eeaffb0b67ae15b76aa286f1cf5de7f05c301a2a5c7cda1bc97ed229d907",
+      "report": "eval/reports/retrieval_canonical_dev_bm25_only.json",
+      "report_sha256": "9b12f49312bccceb61981522a1901fdfa8fb0a217d6cd5e21cce64ee640945f8",
+      "query_count": 202,
+      "recall_at_5": 0.5775577557755776,
+      "scheme_hit_rate_at_5": 0.8613861386138614,
+      "recall_at_5_by_language": {
+        "en": 0.607638888888889,
+        "hi": 0.0,
+        "mr": 0.0
+      }
+    }
+  ]
+}

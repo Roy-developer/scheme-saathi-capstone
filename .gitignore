@@ -26,3 +26,4 @@ eval/held_out/local/
 # SQLite write-ahead and shared-memory files from test runs
 *.sqlite3-wal
 *.sqlite3-shm
+!eval/reports/retrieval_canonical_dev.sidecar.json
