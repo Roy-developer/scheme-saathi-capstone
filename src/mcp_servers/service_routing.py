@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
+from src.observability.metrics import tool_span
 from src.workflow.errors import MCPToolError
 
 ToolActor = Literal[
@@ -42,6 +43,8 @@ PORTAL_ACTIONS: dict[ToolActor, frozenset[str]] = {
     }),
 }
 
+DOMAIN_COUNTED_ACTORS = frozenset({"intake", "eligibility", "documents", "application"})
+
 SERVICE_TOOLS: dict[str, frozenset[str]] = {
     "rule-engine": frozenset({"evaluate_eligibility", "required_facts"}),
     "schemes-kb": frozenset(
@@ -76,6 +79,12 @@ class ServiceClientRouter:
     clients: dict[str, ToolClient]
     actor: ToolActor = "api_read"
     journey_id: str | None = None
+    count_domain_calls: bool = False
+
+    def with_domain_budget(self) -> "ServiceClientRouter":
+        """Enable the experimental shared domain-service call ceiling."""
+
+        return ServiceClientRouter(self.clients, self.actor, self.journey_id, True)
 
     def for_actor(
         self, actor: ToolActor, journey_id: str | None = None
@@ -84,9 +93,17 @@ class ServiceClientRouter:
 
         if actor not in ACTOR_TOOLS:
             raise MCPToolError("Unknown tool caller.")
-        return ServiceClientRouter(self.clients, actor, journey_id)
+        return ServiceClientRouter(self.clients, actor, journey_id, self.count_domain_calls)
 
     async def call_tool(
+        self, name: str, arguments: dict[str, object]
+    ) -> object:
+        """Trace the call, then authorize and run it."""
+
+        with tool_span(self.actor, name, self.journey_id or ""):
+            return await self._call_tool(name, arguments)
+
+    async def _call_tool(
         self, name: str, arguments: dict[str, object]
     ) -> object:
         """Authorize caller and action before executing any service request."""
@@ -116,4 +133,19 @@ class ServiceClientRouter:
         ]
         if len(owners) != 1 or owners[0] not in self.clients:
             raise ValueError(f"No unique MCP service owns tool {name!r}.")
+        if self.count_domain_calls and self.actor in DOMAIN_COUNTED_ACTORS:
+            from src.workflow.agent_config import MAX_CONVERSATION_DOMAIN_TOOL_CALLS
+            from src.workflow.conversation_budget import COUNT_DOMAIN_CALLS, CURRENT_BUDGET
+
+            if COUNT_DOMAIN_CALLS.get():
+                ledger = CURRENT_BUDGET.get()
+                if ledger is None:
+                    raise MCPToolError("Domain calls require a conversation budget.")
+                counters = ledger.values.get("counters", {})
+                calls = counters.get("domain_tool_calls", 0)
+                if type(calls) is not int or calls < 0:
+                    raise MCPToolError("Invalid domain-call budget.")
+                if calls >= MAX_CONVERSATION_DOMAIN_TOOL_CALLS:
+                    raise MCPToolError("Conversation domain-call limit reached.")
+                await ledger.reserve({"domain_tool_calls": calls + 1})
         return await self.clients[owners[0]].call_tool(name, arguments)

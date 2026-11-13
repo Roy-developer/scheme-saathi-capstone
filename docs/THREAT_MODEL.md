@@ -162,7 +162,7 @@ also costs one extra model call from the conversation budget.
 | ASI03 Identity/privilege abuse | Confused deputy — acting beyond the caller's own rights | **Verified** (live test) | Portal calls require the bound `journey_id` to match (`service_routing.py` line 107-108), and `src/portal/repository.py` looks drafts up by `draft_id=? AND journey_id=?` together. `tests/test_cross_journey_isolation.py::test_one_conversation_cannot_access_another_conversations_draft` drives the real API: a second, legitimate conversation that knows the victim's real `draft_id` gets 404 on read, edit, approve and submit, while the victim's own access still works. |
 | ASI04 Agentic supply chain | Poisoned tool, package, or server | Low, not yet tested | Startup inventory check (`SERVICE_TOOLS` match) is fail-closed; no dependency-pinning review done yet. |
 | ASI05 Unexpected code execution | Text becomes a shell command | None found | No agent has shell or code-exec access anywhere in `src/`. |
-| ASI06 Memory/context poisoning | Bad content saved and reused later | **Yes, open** | A long-term household store now exists (#20, #28). Saved facts are re-validated against the current fact registry when loaded, but anyone who has or guesses a return code can overwrite a profile. See "Saved household profiles". |
+| ASI06 Memory/context poisoning | Bad content saved and reused later | **Yes, open** | A long-term household store exists (#20, #28, #50). Controls on `main`: saving and loading need an explicit memory-consent flag; only known facts with approved definition and privacy reviews are kept, and highly sensitive facts are excluded; records carry policy version, consent metadata and a 90-day expiry, and invalid or expired records are deleted on access; forget deletes both journey and household data. Still open: the 4-character return code is the only secret, with no authentication or rate limit, and a save can reuse a caller-supplied code, so anyone who has or guesses a code can overwrite a profile. See "Saved household profiles". Synthetic data only. |
 | ASI07 Insecure inter-agent comms | Spoofed/unchecked messages between agents | Low | Agents only talk through typed `Handoff`/observation objects validated by Pydantic, not free text. |
 | ASI08 Cascading failures | One agent's error becomes another's trusted input | **Verified** (live tests), one soft spot noted | `tests/test_cascading_failure_isolation.py` injects a wrong upstream result at each hand-off: a model that tries to hand off "eligible" after the rule engine said no is refused and fails closed (`test_model_claiming_eligible_cannot_override_the_rule_engine`, `test_model_handoff_carries_only_the_observed_rule_engine_verdict`); a rule result for a different scheme is discarded (`test_rule_tool_verdict_for_a_different_scheme_is_discarded`); a wrong intake proposal is never evaluated until the citizen confirms it (`test_wrong_intake_proposal_is_not_evaluated_until_the_citizen_confirms`); a poisoned "eligible" verdict in the checkpoint is re-derived by the application step and no draft is written (`test_poisoned_eligible_verdict_is_rederived_before_any_portal_write`); an approved draft goes stale when the profile (`test_approved_draft_cannot_be_submitted_after_the_profile_changes`) or rule package (`test_approval_under_old_rules_is_dead_once_the_rule_package_changes`) changes underneath it. Soft spot: the documents step gates only on the saved verdict, so a poisoned verdict still lets it run a read-only checklist check — harmless today because the application step re-checks the rules before any write. |
 | ASI09 Human-agent trust exploitation | Approvals rubber-stamped without reading | **Yes — same gap as above** | No measurement of Saathi's own approval read-through rate yet. |
@@ -322,9 +322,8 @@ no rate limit, and the code itself is the only secret:
   facts from their own conversation.
 - **Delete.** `DELETE /api/v1/household/{code}` removes a profile for anyone
   with the code.
-- **Logs.** `save_household` logs the full return code in plain text
-  (`household_memory.py`, "Saved household profile under …"). The code works
-  like a password, so this is personal data in logs.
+- **Logs (fixed in #50).** `save_household` now logs only the number of saved
+  facts, not the return code.
 
 Proposed fix, smallest first:
 1. Use 10+ random characters (keep the `SAATHI-` prefix for readability).
@@ -333,9 +332,10 @@ Proposed fix, smallest first:
 3. Allow an update or delete only from the conversation the code was issued
    to (store `conversation_id` with the record and check it).
 4. Rate-limit the household routes.
-5. Log only the last 2 characters of a code.
+~~5.~~ Done in #50 (code no longer logged).
 
-Mitigating today: all data is synthetic, and loaded facts are re-validated
+Mitigating today: all data is synthetic; saving needs explicit memory
+consent; records expire after 90 days; and loaded facts are re-validated
 against the current fact registry.
 
 ## Still open

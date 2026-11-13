@@ -9,6 +9,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from src.api.eligibility import EligibilityResponse, evaluate_mock_eligibility
 from src.api.scheme_search import load_passages
 from src.rules.data_provider import RulePackageProvider
+from src.rules.facts import FactState, HouseholdProfile
 from src.workflow.journey import (
     JourneyCorrection,
     JourneyNotWaitingError,
@@ -20,13 +21,127 @@ from src.workflow.journey import (
     run_journey,
 )
 from src.workflow.intake import AnswerInterpretation, IntakeAgentError
+from src.workflow.household_memory import save_household
 from src.workflow import journey as journey_module
+from src.workflow.agent_config import (
+    MAX_CONVERSATION_HISTORY,
+    MAX_HANDOFF_HISTORY,
+)
 from src.workflow.input_guardrails import is_prompt_injection
 
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGES = RulePackageProvider().packages
 PASSAGES = load_passages(ROOT / "data" / "schemes" / "passages")
+
+
+def test_active_journey_history_keeps_only_recent_entries():
+    conversations = [{"role": "user", "content": str(index)}
+                     for index in range(MAX_CONVERSATION_HISTORY)]
+    handoffs = [{"step": index} for index in range(MAX_HANDOFF_HISTORY)]
+
+    merged_conversation = journey_module._merge_conversation(
+        conversations,
+        [{"role": "assistant", "content": "latest"}],
+    )
+    merged_handoffs = journey_module._merge_handoffs(
+        handoffs,
+        [{"step": MAX_HANDOFF_HISTORY}],
+    )
+
+    assert len(merged_conversation) == MAX_CONVERSATION_HISTORY
+    assert merged_conversation[-1]["content"] == "latest"
+    assert len(merged_handoffs) == MAX_HANDOFF_HISTORY
+    assert merged_handoffs[-1]["step"] == MAX_HANDOFF_HISTORY
+
+
+def test_memory_consent_prefills_only_the_opted_in_journey():
+    graph = build_graph()
+    registry = graph.fact_registry
+    profile = HouseholdProfile(
+        registry_version=registry.registry_version,
+        facts={
+            fact_id: FactState(
+                status="known",
+                value=registry.get(fact_id).validate_value(value),
+                definition_version=registry.get(fact_id).version,
+                provenance="user_reported",
+            )
+            for fact_id, value in {
+                "bpl_card_shown": True,
+                "income_tax_paid_last_assessment_year": False,
+            }.items()
+        },
+    )
+    return_code = "SAATHI-AB12"
+
+    async def scenario():
+        await save_household(
+            graph.store,
+            return_code,
+            profile,
+            registry,
+            memory_consent=True,
+        )
+        opted_in = await run_journey(
+            graph,
+            JourneyRequest(
+                action="interview",
+                scheme_id="IGNWPS-MH",
+                return_code=return_code,
+                memory_consent=True,
+            ),
+        )
+        corrected = await journey_module.correct_journey_answer(
+            graph,
+            opted_in.conversation_id,
+            JourneyCorrection(fact_name="bpl_card_shown", answer="no"),
+        )
+        corrected_state = await graph.aget_state(
+            {"configurable": {"thread_id": str(opted_in.conversation_id)}}
+        )
+        corrected_profile = HouseholdProfile.from_wire(
+            corrected_state.values["typed_facts"], registry,
+        )
+        await save_household(
+            graph.store,
+            return_code,
+            corrected_profile,
+            registry,
+            memory_consent=True,
+        )
+        next_visit = await run_journey(
+            graph,
+            JourneyRequest(
+                action="interview",
+                scheme_id="IGNWPS-MH",
+                return_code=return_code,
+                memory_consent=True,
+            ),
+        )
+        fresh = await run_journey(
+            graph,
+            JourneyRequest(action="interview", scheme_id="IGNWPS-MH"),
+        )
+        return opted_in, corrected, next_visit, fresh
+
+    opted_in, corrected, next_visit, fresh = asyncio.run(scenario())
+
+    assert {"bpl_card_shown", "income_tax_paid_last_assessment_year"} <= set(
+        opted_in.known_fact_names
+    )
+    assert corrected.status in {"awaiting_answer", "eligible", "not_eligible"}
+    persisted = asyncio.run(
+        graph.store.aget(("household",), return_code)
+    ).value
+    persisted_profile = HouseholdProfile.from_wire(
+        persisted["typed_facts"], registry,
+    )
+    assert persisted_profile.facts["bpl_card_shown"].value is False
+    assert "bpl_card_shown" in next_visit.known_fact_names
+    assert not ({"bpl_card_shown", "income_tax_paid_last_assessment_year"} & set(
+        fresh.known_fact_names
+    ))
 
 
 def passage_for(scheme_id):

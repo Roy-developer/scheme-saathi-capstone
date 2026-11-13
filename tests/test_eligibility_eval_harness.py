@@ -29,7 +29,7 @@ def test_development_set_loads_and_is_unprotected() -> None:
         for persona in evaluation_set.personas
         for scheme_id in persona.expected_by_scheme
     }
-    assert scheme_ids == {"IGNOAPS-MH", "IGNWPS-MH", "PM-KISAN-IN"}
+    assert scheme_ids == {"APY-IN", "IGNOAPS-MH", "IGNWPS-MH", "PM-KISAN-IN"}
 
 
 def test_cant_tell_alias_normalizes_to_need_more_information() -> None:

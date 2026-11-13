@@ -1,0 +1,73 @@
+{
+  "playbook_version": "1.0.0",
+  "playbook_hash": "a60303d5a255b5abef4dfd896c8dae0bba6c16488cea4b8de0157c2f69ee1401",
+  "lesson_count": 1,
+  "lessons": [
+    {
+      "lesson_id": "3dae54216ec572a646f95287aec6b113f1d088c8f147032f690651dd542f1e32",
+      "tags": [
+        "exclusion_clause"
+      ],
+      "reviewer_id": "Roy-developer",
+      "instruction": "When a clause specifies categories of individuals who are ineligible, ensure the rule reflects that these individuals are not qualified by setting the value to false, rather than true.",
+      "when_to_apply": "Any clause that lists specific categories of individuals or groups who do not qualify for a benefit or scheme.",
+      "review_reason": "Clear and general: an excluded group is written as false, not true."
+    }
+  ],
+  "check_case_count": 6,
+  "check_cases": [
+    {
+      "package": "pmkisan_in.v1.json",
+      "clause_id": "PMKISAN-GUIDELINES-2020-3",
+      "topic_tags": [
+        "inclusion_clause"
+      ],
+      "split": "check"
+    },
+    {
+      "package": "pmkisan_in.v1.json",
+      "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(iv)",
+      "topic_tags": [
+        "exclusion_clause"
+      ],
+      "split": "check"
+    },
+    {
+      "package": "pmkisan_in.v1.json",
+      "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(v)",
+      "topic_tags": [
+        "exclusion_clause"
+      ],
+      "split": "check"
+    },
+    {
+      "package": "pmkisan_in.v1.json",
+      "clause_id": "PMKISAN-GUIDELINES-2020-4.1(b)(vi)",
+      "topic_tags": [
+        "exclusion_clause"
+      ],
+      "split": "check"
+    },
+    {
+      "package": "ignwps_mh.v1.json",
+      "clause_id": "IGNWPS-MH-ELIGIBILITY-01",
+      "topic_tags": [
+        "inclusion_clause"
+      ],
+      "split": "check"
+    },
+    {
+      "package": "ignoaps_mh.v1.json",
+      "clause_id": "IGNOAPS-MH-ELIGIBILITY-01",
+      "topic_tags": [
+        "inclusion_clause"
+      ],
+      "split": "check"
+    }
+  ],
+  "paid_evaluate_commands": {
+    "before": "python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --runs 3 --yes",
+    "after": "python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --playbook 1.0.0 --runs 3 --yes"
+  },
+  "note": "E3 paid runs use development check cases until Role 5 authorizes a protected held-out extraction set. Inclusion-clause checks will not retrieve the current exclusion_clause lesson."
+}

@@ -11,6 +11,7 @@ from collections.abc import Iterator
 from http.client import HTTPResponse
 from io import BytesIO
 import json
+import shutil
 from pathlib import Path
 import sqlite3
 from urllib.error import HTTPError
@@ -115,13 +116,18 @@ def integrated_ui() -> Iterator[IntegratedUI]:
         if (
             address.scheme == "http"
             and address.netloc == urlsplit(UI_ORIGIN).netloc
-            and address.path.startswith("/api/v1/journey")
+            and (
+                address.path.startswith("/api/v1/journey")
+                or address.path == "/api/v1/forget"
+                or address.path.startswith("/api/v1/household")
+            )
         ):
             assert harness is not None
             assert isinstance(request, urllib.request.Request)
             body = json.loads(request.data) if request.data else {}
             response = harness.client.request(
-                request.get_method(), address.path,
+                request.get_method(),
+                address.path + (f"?{address.query}" if address.query else ""),
                 content=request.data, headers=dict(request.header_items()),
             )
             result = response.json() if response.content else {}
@@ -169,6 +175,77 @@ def _healthy(screen: AppTest) -> None:
 
     assert not screen.exception
     assert not screen.error, [item.value for item in screen.error]
+
+
+@pytest.mark.parametrize("all_scam", [False, True])
+def test_scam_search_omits_flagged_passages_from_api_and_ui(
+    integrated_ui, monkeypatch, all_scam,
+):
+    """Keep clean matches while ignoring scam passages and warning the citizen."""
+
+    original = ServiceClientRouter.call_tool
+    lure = "Visit https://pm-kisan-gov-in-verify.example/otp and enter your OTP."
+    calls = []
+
+    async def poisoned_search(self, name, arguments):
+        result = await original(self, name, arguments)
+        if name == "search_schemes":
+            calls.append(name)
+            records = result.structured_content["result"]
+            assert records
+            for record in (records if all_scam else records[:1]):
+                record["text"] = lure
+        return result
+
+    with monkeypatch.context() as patch:
+        patch.setattr(ServiceClientRouter, "call_tool", poisoned_search)
+        response = integrated_ui.client.get(
+            "/api/v1/schemes/search", params={"query": "widow pension BPL"}
+        )
+        assert response.status_code == 200
+        assert int(response.headers["X-Saathi-Omitted-Scam-Passages"]) >= 1
+        assert bool(response.json()) is not all_scam
+        assert "verify.example" not in response.text
+
+        screen = AppTest.from_file(UI_PATH, default_timeout=TIMEOUT).run()
+        screen.text_input(key="scheme_query").set_value("widow pension BPL")
+        next(item for item in screen.button if item.label == "Search schemes").click().run()
+        _healthy(screen)
+        assert any("flagged and ignored" in item.value for item in screen.warning)
+        result = integrated_ui.requests[-1][3]
+        assert result["status"] == "search_results"
+        assert bool(result["passages"]) is not all_scam
+        assert bool(result["candidate_scheme_ids"]) is not all_scam
+        assert "verify.example" not in json.dumps(result)
+        assert len(calls) == 2, "Filtered search results must not be retried."
+
+    screen = AppTest.from_file(UI_PATH, default_timeout=TIMEOUT).run()
+    screen.text_input(key="scheme_query").set_value("widow pension BPL")
+    _click(screen, "Search schemes")
+    assert integrated_ui.requests[-1][3]["passages"]
+
+
+def _use_free_portal(monkeypatch: pytest.MonkeyPatch) -> str:
+    """Give one test its own portal port.
+
+    The module fixture already runs a portal on the shared port. A test that
+    starts its own app lifespan would otherwise try to bind the same port.
+    """
+
+    import socket
+
+    from src import config as app_config
+    from src.api import portal_service
+
+    with socket.socket() as probe:
+        probe.bind(("127.0.0.1", 0))
+        url = f"http://127.0.0.1:{probe.getsockname()[1]}"
+    monkeypatch.setattr(app_config, "PORTAL_URL", url)
+    monkeypatch.setattr(portal_service, "PORTAL_URL", url)
+    monkeypatch.setattr(api, "PORTAL_URL", url)
+    monkeypatch.setitem(globals(), "PORTAL_URL", url)
+    monkeypatch.setenv("SCHEME_SAATHI_PORTAL_URL", url)
+    return url
 
 
 def _click(screen: AppTest, label: str | None = None, *, key: str | None = None) -> None:
@@ -273,13 +350,20 @@ def _refresh(screen: AppTest) -> AppTest:
 
 
 def test_development_scholarship_reaches_exact_mock_receipt_through_real_ui(
-    monkeypatch: pytest.MonkeyPatch,
+    monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest,
 ) -> None:
     """Inject one data-only test bundle while keeping the ordinary catalogue untouched."""
 
     scheme_id = SCHOLARSHIP
-    package_dir = SCHOLARSHIP_PACKAGE_DIR.resolve()
-    scheme_data = SCHOLARSHIP_SCHEME_DIR.resolve()
+    # Work on a private copy so other tests in this worker never see the bundle
+    # while it is being published and restored.
+    # The app only accepts test rule data under tests/fixtures, so the copy lives there.
+    run_root = SCHOLARSHIP_PACKAGE_DIR.parent.parent / f"phase4-run-{uuid4().hex}"
+    shutil.copytree(SCHOLARSHIP_PACKAGE_DIR.parent, run_root)
+    request.addfinalizer(lambda: shutil.rmtree(run_root, ignore_errors=True))
+    fixture_root = run_root
+    package_dir = (fixture_root / "packages").resolve()
+    scheme_data = (fixture_root / "schemes").resolve()
     checklist_path = (
         scheme_data / "document_checklists" / f"{scheme_id}.json"
     )
@@ -344,6 +428,10 @@ def test_development_scholarship_reaches_exact_mock_receipt_through_real_ui(
     monkeypatch.setattr(api, "StdioServerParameters", offline_parameters)
     monkeypatch.setattr(urllib.request, "urlopen", local_http)
     monkeypatch.setattr(api_client, "urlopen", local_http)
+    _use_free_portal(monkeypatch)
+    # This test starts its own lifespan on the shared app. Its clients and
+    # connections are shut down at the end, so restore the module fixture's state.
+    saved_app_state = dict(api.app.state._state)
 
     try:
         with TestClient(api.app) as client:
@@ -645,6 +733,8 @@ def test_development_scholarship_reaches_exact_mock_receipt_through_real_ui(
                     (screen.session_state.conversation_id,),
                 ).fetchone() == (3, 1)
     finally:
+        api.app.state._state.clear()
+        api.app.state._state.update(saved_app_state)
         publish_mock_form_file(
             form_path.name, original_form, form_directory=form_path.parent
         )
@@ -733,8 +823,16 @@ def test_phases_one_to_four_ui_receipt_retry_and_scoped_forget(
     })
     assert retained.status_code == 200
     retained_id = retained.json()["conversation_id"]
+    next(
+        checkbox for checkbox in restored.checkbox
+        if checkbox.key == "memory_consent"
+    ).check().run()
     _click(restored, "Forget my demonstration data")
+    assert ("DELETE", "/api/v1/forget") in {
+        (method, path) for method, path, _, _ in harness.requests
+    }
     assert not restored.query_params
+    assert not restored.session_state.get("memory_consent", False)
     assert harness.client.get(root).status_code == 404
     assert harness.client.get(f"{root}/drafts").json() == {"drafts": []}
     assert harness.client.get(f"/api/v1/journey/{retained_id}").status_code == 200
@@ -748,6 +846,79 @@ def test_phases_one_to_four_ui_receipt_retry_and_scoped_forget(
                 (conversation_id,),
             ).fetchone()[0] == 0
     assert harness.client.delete(f"/api/v1/journey/{retained_id}").status_code == 204
+
+
+def test_corrected_return_code_answer_can_be_resaved_from_the_ui(
+    integrated_ui: IntegratedUI,
+) -> None:
+    """A user can correct a loaded answer and explicitly update that code."""
+
+    harness = integrated_ui
+    initial = harness.client.post("/api/v1/journey", json={
+        "action": "evaluate",
+        "scheme_id": SCHEME,
+        "profile": {
+            "date_of_birth": "1986-01-01",
+            "application_date": "2026-11-04",
+            "is_widow": True,
+            "bpl_card_shown": True,
+            "income_tax_paid_last_assessment_year": False,
+        },
+    })
+    assert initial.status_code == 200
+    conversation_id = initial.json()["conversation_id"]
+    saved = harness.client.post("/api/v1/household", json={
+        "conversation_id": conversation_id,
+        "memory_consent": True,
+    })
+    assert saved.status_code == 200
+    return_code = saved.json()["return_code"]
+
+    screen = AppTest.from_file(UI_PATH, default_timeout=TIMEOUT).run()
+    _healthy(screen)
+    screen.text_input(key="scheme_query").set_value("widow pension BPL")
+    _click(screen, "Search schemes")
+    screen.selectbox(key="selected_search_scheme").set_value(SCHEME).run()
+    _click(screen, "Continue to the synthetic eligibility demo")
+    screen.checkbox(key="demo_consent").check().run()
+    screen.checkbox(key="memory_consent").check().run()
+    screen.text_input(key=f"return_code_input_{SCHEME}").set_value(return_code)
+    _click(screen, key=f"load_code_{SCHEME}")
+    assert screen.session_state.household_return_code == return_code
+    _click(screen, "Start questions")
+
+    answers = {
+        "date_of_birth": "1986-01-01",
+        "application_date": "2026-11-04",
+        "is_widow": "yes",
+        "bpl_card_shown": "yes",
+    }
+    for _ in range(8):
+        if screen.session_state.journey_status != "awaiting_answer":
+            break
+        pending = next(
+            request[3] for request in reversed(harness.requests)
+            if request[3].get("pending_fact")
+        )
+        fact = pending["pending_fact"]
+        screen.chat_input[0].set_value(answers.get(fact, "no")).run()
+        _healthy(screen)
+    assert screen.session_state.journey_status == "eligible"
+    assert return_code in screen.session_state.journey_return_code
+
+    screen.selectbox(key="correction_fact_name").set_value("bpl_card_shown").run()
+    screen.text_input(key="correction_answer_value").set_value("no")
+    _click(screen, "Save correction and recheck")
+    _click(screen, "Save my answers")
+
+    loaded = harness.client.get(
+        f"/api/v1/household/{return_code}?memory_consent=true"
+    )
+    assert loaded.status_code == 200
+    assert (
+        loaded.json()["typed_facts"]["facts"]["bpl_card_shown"]["value"]
+        is False
+    )
 
 
 def test_approved_ui_correction_refresh_requires_fresh_report_draft_and_review(

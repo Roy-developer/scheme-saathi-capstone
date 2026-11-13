@@ -210,10 +210,18 @@ def _household_url(path: str = "") -> str:
     return f"{base_url.rstrip('/')}/api/v1/household{path}"
 
 
-def save_household_profile(conversation_id: str, return_code: str | None = None) -> str:
+def save_household_profile(
+    conversation_id: str,
+    return_code: str | None = None,
+    *,
+    memory_consent: bool = False,
+) -> str:
     """Save the conversation's facts and return the return code."""
 
-    body: dict[str, object] = {"conversation_id": conversation_id}
+    body: dict[str, object] = {
+        "conversation_id": conversation_id,
+        "memory_consent": memory_consent,
+    }
     if return_code:
         body["return_code"] = return_code
     request = Request(
@@ -242,11 +250,18 @@ def save_household_profile(conversation_id: str, return_code: str | None = None)
     return code
 
 
-def load_household_profile(return_code: str) -> dict | None:
+def load_household_profile(
+    return_code: str,
+    *,
+    memory_consent: bool = False,
+) -> dict | None:
     """Load a saved household profile. Returns None when the code is unknown."""
 
     request = Request(
-        _household_url(f"/{quote(return_code.strip(), safe='')}"),
+        _household_url(
+            f"/{quote(return_code.strip(), safe='')}"
+            f"?memory_consent={str(memory_consent).lower()}"
+        ),
         headers={"Accept": "application/json"},
         method="GET",
     )
@@ -284,6 +299,45 @@ def delete_household_profile(return_code: str) -> None:
     except (URLError, TimeoutError) as error:
         raise JourneyApiError(
             "Could not reach the API to delete the household profile."
+        ) from error
+
+
+def forget_personal_data(
+    conversation_id: str | None = None,
+    return_code: str | None = None,
+) -> None:
+    """Delete journey data and household memory in one retryable request."""
+
+    body = {
+        key: value
+        for key, value in {
+            "conversation_id": conversation_id,
+            "return_code": return_code,
+        }.items()
+        if value
+    }
+    if not body:
+        raise JourneyApiError("No saved data was selected for deletion.")
+    base_url = os.getenv("SCHEME_SAATHI_API_URL", "http://127.0.0.1:8000")
+    request = Request(
+        f"{base_url.rstrip('/')}/api/v1/forget",
+        data=json.dumps(body).encode("utf-8"),
+        headers={
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        method="DELETE",
+    )
+    try:
+        with urlopen(request, timeout=15):
+            pass
+    except HTTPError as error:
+        raise JourneyApiError(
+            "Could not delete all saved data. Retry the forget action."
+        ) from error
+    except (URLError, TimeoutError) as error:
+        raise JourneyApiError(
+            "Could not reach the API to delete saved data."
         ) from error
 
 

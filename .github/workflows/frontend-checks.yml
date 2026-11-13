@@ -14,11 +14,14 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      - name: Guard held-out evaluation custody
+        run: python scripts/check_held_out_custody.py
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -27,16 +30,39 @@ jobs:
           cache: pip
 
       - name: Install application
+        id: install
         run: python -m pip install ".[dev]"
 
       - name: Compile Python sources
         run: python -m compileall -q src
 
       - name: Run frontend fixture tests
-        run: python -m pytest
+        run: >-
+          python -m pytest
+          --ignore=tests/test_red_team_runtime.py
+          --ignore=tests/test_e2_runtime.py
 
       - name: Run Role 5 development evaluation gate
         run: python scripts/run_role5_dev_evals.py
+
+      - name: Run approved application-path red-team gate
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: python scripts/evaluate_red_team_runtime.py
+
+      - name: Run application-boundary E2 gate
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: python scripts/evaluate_e2_runtime.py
+
+      - name: Upload synthetic runtime evaluation reports
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-development-evaluations
+          path: |
+            eval/reports/red_team_runtime_latest.json
+            eval/reports/e2_runtime_dev_latest.json
+          if-no-files-found: warn
+          retention-days: 7
 
       # Import from outside the checkout so source files cannot mask package
       # data that is missing from the built installation.

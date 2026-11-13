@@ -32,20 +32,36 @@ def test_clean_citizen_messages_do_not_flag() -> None:
         assert screen_scam_text(text).flagged is False, text
 
 
-def test_apply_scam_screen_increments_guardrail_metric() -> None:
-    from src.observability.metrics import GUARDRAIL_BLOCKS_TOTAL
+def test_apply_scam_screen_increments_guardrail_metric(monkeypatch) -> None:
+    from opentelemetry.sdk.metrics import MeterProvider
+    from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 
-    before = GUARDRAIL_BLOCKS_TOTAL.labels(
-        guardrail="scam_screen", reason="flagged"
-    )._value.get()
+    from src.observability import metrics
+
+    reader = InMemoryMetricReader()
+    provider = MeterProvider(metric_readers=[reader])
+    monkeypatch.setattr(
+        metrics,
+        "_otel_instruments",
+        metrics.create_otel_instruments(provider.get_meter("test")),
+    )
     result = apply_scam_screen(
         "Message WhatsApp and pay ₹200 for fast pension approval."
     )
     assert result.flagged is True
-    after = GUARDRAIL_BLOCKS_TOTAL.labels(
-        guardrail="scam_screen", reason="flagged"
-    )._value.get()
-    assert after == before + 1
+
+    data = reader.get_metrics_data()
+    points = [
+        point
+        for resource_metrics in data.resource_metrics
+        for scope_metrics in resource_metrics.scope_metrics
+        for metric in scope_metrics.metrics
+        if metric.name == "scheme_saathi.guardrail_blocks"
+        for point in metric.data.data_points
+    ]
+    (block,) = points
+    assert dict(block.attributes) == {"guardrail": "scam_screen", "reason": "flagged"}
+    assert block.value == 1
 
 
 def test_scam_warning_locales() -> None:

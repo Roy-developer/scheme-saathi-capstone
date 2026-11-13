@@ -73,7 +73,19 @@ def agreement_report(
         for persona_id, scheme_id, result in by_labeller[labeller_b]
     }
     shared = sorted(set(index_a) & set(index_b))
-    if len(shared) < 20:
+    smoke_copy = any(
+        label.labeller_id in {labeller_a, labeller_b}
+        and label.note is not None
+        and label.note.startswith("COPIED for κ harness smoke")
+        for persona in evaluation_set.personas
+        for label in persona.labels
+    )
+    if smoke_copy:
+        note = (
+            "Copied-label smoke only; this does not establish independent "
+            "labels or human calibration."
+        )
+    elif len(shared) < 20:
         # PDF asks calibration on 20+ human labels; still compute if fewer.
         note = (
             f"Only {len(shared)} paired labels; PDF asks κ calibration on 20+."
@@ -106,6 +118,7 @@ def agreement_report(
         "disagreement_count": len(disagreements),
         "disagreements": disagreements,
         "note": note,
+        "smoke_copy": smoke_copy,
     }
 
 

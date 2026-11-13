@@ -7,6 +7,7 @@ import os
 import secrets
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.error
 import urllib.request
@@ -49,28 +50,35 @@ def start_portal_service(database_path: Path) -> subprocess.Popen[bytes]:
     if test_packages := test_rule_package_directory():
         environment["SCHEME_SAATHI_TEST_RULE_PACKAGE_DIR"] = str(test_packages)
         environment["PYTEST_CURRENT_TEST"] = os.environ["PYTEST_CURRENT_TEST"]
-    process = subprocess.Popen(
-        [
-            sys.executable,
-            "-m",
-            "uvicorn",
-            "src.portal.app:app",
-            "--host",
-            host,
-            "--port",
-            str(port),
-            "--log-level",
-            "warning",
-        ],
-        cwd=PROJECT_ROOT,
-        env=environment,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-    )
+    # Keep the child's output in a temp log so a startup failure shows its cause.
+    log_descriptor, log_name = tempfile.mkstemp(prefix="portal-startup-", suffix=".log")
+    with os.fdopen(log_descriptor, "w", encoding="utf-8", errors="replace") as log_file:
+        process = subprocess.Popen(
+            [
+                sys.executable,
+                "-m",
+                "uvicorn",
+                "src.portal.app:app",
+                "--host",
+                host,
+                "--port",
+                str(port),
+                "--log-level",
+                "warning",
+            ],
+            cwd=PROJECT_ROOT,
+            env=environment,
+            stdout=log_file,
+            stderr=subprocess.STDOUT,
+        )
     deadline = time.monotonic() + PORTAL_STARTUP_TIMEOUT_SECONDS
     while time.monotonic() < deadline:
         if process.poll() is not None:
-            raise RuntimeError("The mock portal service exited during startup.")
+            with open(log_name, encoding="utf-8", errors="replace") as captured:
+                tail = captured.read()[-2000:]
+            raise RuntimeError(
+                "The mock portal service exited during startup.\n" + tail
+            )
         try:
             health_request = urllib.request.Request(
                 f"{PORTAL_URL}/health",

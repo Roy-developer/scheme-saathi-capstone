@@ -1,2 +1,15 @@
 *
 !.gitignore
+!eligibility_dev_latest.json
+!reflexion_e3_inventory.json
+!red_team_dev_latest.json
+!e2_defences_dev_latest.json
+!label_agreement_dev_latest.json
+!experiments_inventory.json
+!simulated_citizen_smoke.json
+!memory_on_off_dev_latest.json
+!retrieval_canonical_dev.sidecar.json
+!retrieval_canonical_dev_bm25_only_runner.py
+!retrieval_canonical_dev_bm25_only.json
+!retrieval_canonical_dev_bm25_minilm_rrf.json
+!e3_before_after_dev_2026-11-13.json

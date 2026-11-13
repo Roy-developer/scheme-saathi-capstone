@@ -1,7 +1,6 @@
-"""Observability helpers: Prometheus metrics emission for Role 5 / Role 6."""
+"""Observability helpers: OpenTelemetry metrics for Scheme Saathi (Role 5 / Role 6)."""
 
 from src.observability.metrics import (
-    metrics_response,
     observe_duration,
     record_conversation,
     record_evaluation,
@@ -12,11 +11,13 @@ from src.observability.metrics import (
     record_pending_approval_resolved,
     record_question,
     record_tokens,
+    record_journey_verdict,
     record_verdict,
+    model_span,
+    tool_span,
 )
 
 __all__ = [
-    "metrics_response",
     "observe_duration",
     "record_conversation",
     "record_evaluation",
@@ -27,5 +28,8 @@ __all__ = [
     "record_pending_approval_resolved",
     "record_question",
     "record_tokens",
+    "record_journey_verdict",
     "record_verdict",
+    "model_span",
+    "tool_span",
 ]
