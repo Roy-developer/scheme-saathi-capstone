@@ -195,7 +195,7 @@ def test_search_for_scheme_without_rules_shows_information_only() -> None:
         )
 
     with patch("src.ui.api_client.run_journey", side_effect=fake_journey):
-        app = AppTest.from_file(app_path).run()
+        app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS).run()
         app.text_input[0].set_value("atal pension")
         next(
             button for button in app.button if button.label == "Search schemes"
@@ -318,7 +318,7 @@ def test_pmkisan_continue_opens_chat_that_asks_then_shows_verdict() -> None:
     ) as run_graph, patch(
         "src.ui.api_client.send_journey_message", side_effect=fake_message
     ) as send_reply:
-        app = AppTest.from_file(app_path).run()
+        app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS).run()
         app.text_input[0].set_value("PM-KISAN farmer support")
         app.checkbox[0].check().run()
         next(
@@ -636,7 +636,7 @@ def test_registry_decimal_question_submits_exact_text_at_precision_boundary() ->
     ) as send_reply, patch(
         "src.ui.api_client.list_application_drafts", return_value=[],
     ):
-        app = AppTest.from_file(app_path)
+        app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS)
         app.query_params["conversation"] = str(conversation_id)
         app.query_params["scheme"] = "PM-KISAN-IN"
         app.run()
