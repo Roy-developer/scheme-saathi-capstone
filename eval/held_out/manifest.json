@@ -1,0 +1,189 @@
+{
+  "file": "eval/held_out/local/personas_held_out_v2.json",
+  "sha256": "32c1f2a29063811d3665c127b7a512eda08c50ae19b670e222d22ad5881fe2a9",
+  "case_count": 45,
+  "split": "heldout",
+  "protected": true,
+  "cases": [
+    {
+      "id": "HO-001",
+      "scheme_id": "APY-IN"
+    },
+    {
+      "id": "HO-002",
+      "scheme_id": "APY-IN"
+    },
+    {
+      "id": "HO-003",
+      "scheme_id": "APY-IN"
+    },
+    {
+      "id": "HO-004",
+      "scheme_id": "APY-IN"
+    },
+    {
+      "id": "HO-005",
+      "scheme_id": "APY-IN"
+    },
+    {
+      "id": "HO-006",
+      "scheme_id": "APY-IN"
+    },
+    {
+      "id": "HO-007",
+      "scheme_id": "APY-IN"
+    },
+    {
+      "id": "HO-008",
+      "scheme_id": "APY-IN"
+    },
+    {
+      "id": "HO-009",
+      "scheme_id": "APY-IN"
+    },
+    {
+      "id": "HO-010",
+      "scheme_id": "APY-IN"
+    },
+    {
+      "id": "HO-011",
+      "scheme_id": "APY-IN"
+    },
+    {
+      "id": "HO-012",
+      "scheme_id": "IGNDPS-MH"
+    },
+    {
+      "id": "HO-013",
+      "scheme_id": "IGNDPS-MH"
+    },
+    {
+      "id": "HO-014",
+      "scheme_id": "IGNDPS-MH"
+    },
+    {
+      "id": "HO-015",
+      "scheme_id": "IGNDPS-MH"
+    },
+    {
+      "id": "HO-016",
+      "scheme_id": "IGNDPS-MH"
+    },
+    {
+      "id": "HO-017",
+      "scheme_id": "IGNDPS-MH"
+    },
+    {
+      "id": "HO-018",
+      "scheme_id": "IGNDPS-MH"
+    },
+    {
+      "id": "HO-019",
+      "scheme_id": "IGNDPS-MH"
+    },
+    {
+      "id": "HO-020",
+      "scheme_id": "IGNOAPS-MH"
+    },
+    {
+      "id": "HO-021",
+      "scheme_id": "IGNOAPS-MH"
+    },
+    {
+      "id": "HO-022",
+      "scheme_id": "IGNOAPS-MH"
+    },
+    {
+      "id": "HO-023",
+      "scheme_id": "IGNOAPS-MH"
+    },
+    {
+      "id": "HO-024",
+      "scheme_id": "IGNOAPS-MH"
+    },
+    {
+      "id": "HO-025",
+      "scheme_id": "IGNOAPS-MH"
+    },
+    {
+      "id": "HO-026",
+      "scheme_id": "IGNOAPS-MH"
+    },
+    {
+      "id": "HO-027",
+      "scheme_id": "IGNOAPS-MH"
+    },
+    {
+      "id": "HO-028",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-029",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-030",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-031",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-032",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-033",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-034",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-035",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-036",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-037",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-038",
+      "scheme_id": "PM-KISAN-IN"
+    },
+    {
+      "id": "HO-039",
+      "scheme_id": "PM-KISAN-IN"
+    },
+    {
+      "id": "HO-040",
+      "scheme_id": "PM-KISAN-IN"
+    },
+    {
+      "id": "HO-041",
+      "scheme_id": "PM-KISAN-IN"
+    },
+    {
+      "id": "HO-042",
+      "scheme_id": "PM-KISAN-IN"
+    },
+    {
+      "id": "HO-043",
+      "scheme_id": "PM-KISAN-IN"
+    },
+    {
+      "id": "HO-044",
+      "scheme_id": "PM-KISAN-IN"
+    },
+    {
+      "id": "HO-045",
+      "scheme_id": "PM-KISAN-IN"
+    }
+  ]
+}
