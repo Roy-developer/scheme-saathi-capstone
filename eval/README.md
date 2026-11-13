@@ -42,7 +42,7 @@ local until the workflow changes are pushed and run in GitHub Actions.
 
 ## Honest limits
 
-- κ smoke **copies** labels — Role 1 must dual-label for real.
+- κ smoke **copies** labels — Role 1 must dual-label for real. E4 team-override records model-assisted dual-label κ via `python scripts/evaluate_e4_label_agreement.py` (`smoke_copy: false`, still not independent human Role-1).
 - The current local development run scored 43/43 against the four active packages; this is not independent validation or held-out evidence.
 - The memory on/off report is one deterministic synthetic case; it is not an independent or multi-case L9 evaluation.
 - Local application-path red-team evidence passes 30/30. The separate E2 runtime report records five single-boundary comparisons (20 observations): attacks off 4/5, on 0/5; clean false blocks 0/5 in each arm. Off uses isolated unsafe adapters, not a deployable global off mode. Neither report establishes live LLM efficacy or independent validation.

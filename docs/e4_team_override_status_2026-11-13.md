@@ -13,7 +13,7 @@ currently **46** persona×scheme cases).
 | Bar | `team_override_dev_personas` |
 | Case file | `eval/development/personas_v1.json` |
 | Claim level | **Team override — not PDF unseen held-out** |
-| Dual labels / simulated citizen | Waived for this override; gold = persona `expected_by_scheme` |
+| Dual labels / simulated citizen | **Model-assisted dual labels + κ recorded** (not independent human Role-1); gold for scoring remains `expected_by_scheme`. Journey Q-order uses offline simulated citizen (not a different live model). |
 | Go-ahead | Team-override E4 signature ablation is **authorised** (free-model / recorded budget; still not a PDF ≥40 unseen claim) |
 
 ## Checklist
@@ -26,8 +26,10 @@ currently **46** persona×scheme cases).
 | 3 | Full LLM-arm under freeze (team override) | **Done** — 46/46 scored, 138 calls, 0 provider errors |
 | 4 | Multilingual verdict agreement (en/hi/mr) | **Done** — 32/46 all-three agree (rate 0.6957) |
 | 5 | Cost-per-case | **Done** — free route $0.00 / case (`cost_per_case_usd`) |
+| 6 | Dual labels + Cohen's κ (no smoke copy) | **Done** — `model-assisted-check` vs `model-assisted-check-2`, 46/46 paired, κ=1.0, 0 disagreements; **not** independent human Role-1 |
 | — | PDF ≥40 unseen held-out | **Explicitly waived** by team override |
 | — | Recorded report | `eval/reports/e4_team_override_signature_ablation_2026-11-13.json` |
+| — | Dual-label κ report | `eval/reports/e4_team_override_label_agreement_2026-11-13.json` |
 
 ## Commands
 
@@ -35,6 +37,7 @@ currently **46** persona×scheme cases).
 python scripts/evaluate_e4_signature_ablation.py --team-override --dry-run
 python scripts/evaluate_e4_signature_ablation.py --team-override --llm-arm --multilingual --yes
 # Journey Q-order is on by default; skip with --no-journey-question-order
+python scripts/evaluate_e4_label_agreement.py
 ```
 
 ## Go-ahead log
