@@ -37,8 +37,10 @@
     "journey_qo_detail": "eval/reports/e4_team_override_signature_ablation_2026-11-13_journey_qo_cases.json",
     "dual_label_agreement": "eval/reports/e4_team_override_label_agreement_2026-11-13.json",
     "dual_label_sheet": "eval/development/e4_team_override_dual_labels.json",
+    "token_meter_smoke": "eval/reports/e4_token_meter_smoke_2026-11-14.json",
+    "live_citizen_smoke": "eval/reports/e4_live_citizen_smoke_2026-11-14.json",
     "latest_report": "eval/reports/e4_signature_ablation_latest.json"
   },
-  "note": "Team override (2026-11-13): waives PDF ≥40 unseen held-out. Offline + journey question-order (46/46 same verdicts) and full LLM arm × en/hi/mr recorded under freeze. Model-assisted dual-label κ=1.0 on 46 (not human Role-1). LLM proposals never write live state. Not a PDF unseen held-out claim.",
-  "blocker": null
+  "note": "Team override (2026-11-13): waives PDF ≥40 unseen held-out. Offline + journey question-order and full LLM arm × en/hi/mr recorded under freeze. Model-assisted dual-label κ=1.0 on 46 (not human Role-1). Token metering via LangChain callbacks; free-route $0. Optional --live-citizen uses a different free model. LLM proposals never write live state. Not a PDF unseen held-out claim.",
+  "blocker": "Human Role-1 dual labels (and PDF ≥40 HO if that claim is wanted) remain open."
 }

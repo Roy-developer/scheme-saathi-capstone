@@ -1,0 +1,65 @@
+{
+  "notice": "journey-facing question-order ablation: uses the interview graph with a different-model simulated citizen (card-grounded); no household memory writes",
+  "arm": "journey_question_order",
+  "citizen_mode": "live_model",
+  "citizen_model": "google/gemma-3-4b-it:free",
+  "eval_set": "/Users/b0k03mk/Documents/Projects/Personal/scheme-saathi-capstone/eval/development/personas_v1.json",
+  "case_count": 1,
+  "fixed_questions_total": 3,
+  "planned_questions_total": 3,
+  "verdict_match_count": 1,
+  "questions_per_conversation": {
+    "fixed_mean": 3.0,
+    "planned_mean": 3.0
+  },
+  "cases": [
+    {
+      "persona_id": "IGNWPS-DEV-001",
+      "scheme_id": "IGNWPS-MH",
+      "expected_result": "eligible",
+      "planned": {
+        "questions": 3,
+        "asked_facts": [
+          "is_widow",
+          "date_of_birth",
+          "bpl_card_shown"
+        ],
+        "confirmations": 0,
+        "verdict": "eligible",
+        "status": "eligible",
+        "decided": true,
+        "question_order": "planned",
+        "citizen_mode": "live_model",
+        "fixed_questionnaire": [
+          "application_date",
+          "bpl_card_shown",
+          "date_of_birth",
+          "is_widow"
+        ]
+      },
+      "fixed": {
+        "questions": 3,
+        "asked_facts": [
+          "bpl_card_shown",
+          "date_of_birth",
+          "is_widow"
+        ],
+        "confirmations": 0,
+        "verdict": "eligible",
+        "status": "eligible",
+        "decided": true,
+        "question_order": "fixed",
+        "citizen_mode": "live_model",
+        "fixed_questionnaire": [
+          "application_date",
+          "bpl_card_shown",
+          "date_of_birth",
+          "is_widow"
+        ]
+      },
+      "verdict_match": true,
+      "questions_planned": 3,
+      "questions_fixed": 3
+    }
+  ]
+}

@@ -142,7 +142,7 @@
     "modules": {
       "e4_llm_arm": {
         "path": "eval/harness/e4_llm_arm.py",
-        "sha256": "d1ba575eaa259d0d281b6b5803b020f895e8bd68b8c648606979bb13a9a5b87b"
+        "sha256": "4e1f1cbc7a7c89c581a687145e0d6dff5b90e4ea9a696a8fd6b4a4d427a8d223"
       },
       "e4_shadow": {
         "path": "eval/harness/e4_shadow.py",
@@ -160,7 +160,7 @@
     },
     "runner": {
       "path": "scripts/evaluate_e4_signature_ablation.py",
-      "sha256": "ece9c94a3a552ce49e7b6bdb6d70890a47104f7f67bec5446c2a9b230a4b20b3"
+      "sha256": "270f041b65b1972b8eb6158c2b030cb6de9561f8948f1f61909497d9713fa4c3"
     },
     "scope": "E4 signature ablation team-override on development personas (n=46). Not PDF unseen held-out.",
     "status_doc": "docs/e4_team_override_status_2026-11-13.md"

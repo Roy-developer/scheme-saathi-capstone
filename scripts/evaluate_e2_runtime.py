@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_CASES = {
     "confirmed_fact", "landholder_fact", "eligibility_verdict", "own_data",
-    "memory_consent", "draft_scope", "human_approval",
+    "memory_consent", "draft_scope", "human_approval", "scam_intake",
 }
 
 

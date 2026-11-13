@@ -23,6 +23,7 @@ from collections.abc import Awaitable, Callable, Mapping, Sequence
 from pathlib import Path
 from typing import Any, Literal
 
+from langchain_core.callbacks import BaseCallbackHandler
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage, SystemMessage
 from pydantic import BaseModel, ConfigDict, Field
@@ -162,6 +163,37 @@ def _is_transient_provider_error(error: BaseException) -> bool:
     return any(marker in name or marker in text for marker in markers)
 
 
+class UsageRecorder(BaseCallbackHandler):
+    """Accumulate provider token usage without requiring include_raw structured output."""
+
+    def __init__(self) -> None:
+        self.calls = 0
+        self.input_tokens = 0
+        self.output_tokens = 0
+        self.metered_calls = 0
+
+    def on_llm_end(self, response: Any, **_: Any) -> None:
+        self.calls += 1
+        llm_output = getattr(response, "llm_output", None) or {}
+        usage = llm_output.get("token_usage") or llm_output.get("usage") or {}
+        generations = getattr(response, "generations", None) or []
+        um: dict[str, Any] = {}
+        if generations:
+            message = getattr(generations[0][0], "message", None)
+            um = getattr(message, "usage_metadata", None) or {}
+        inp = usage.get("prompt_tokens") or usage.get("input_tokens") or um.get("input_tokens")
+        out = (
+            usage.get("completion_tokens")
+            or usage.get("output_tokens")
+            or um.get("output_tokens")
+        )
+        if inp is None and out is None:
+            return
+        self.metered_calls += 1
+        self.input_tokens += int(inp or 0)
+        self.output_tokens += int(out or 0)
+
+
 def _usage_from_raw(raw: Any) -> tuple[int | None, int | None]:
     """Best-effort token counts from LangChain include_raw structured output."""
 
@@ -197,14 +229,19 @@ async def propose_with_chat_model(
     system = SYSTEM_PROMPTS.get(locale, SYSTEM_PROMPTS["en"])
     last_error: str | None = None
     for attempt in range(1, max_attempts + 1):
+        recorder = UsageRecorder()
         try:
             # Prefer plain structured output: include_raw can hang on some free routes.
+            # Token counts come from the UsageRecorder callback instead.
             runnable = model.with_structured_output(EligibilityProposal)
             proposal = await asyncio.wait_for(
-                runnable.ainvoke([
-                    SystemMessage(content=system),
-                    HumanMessage(content=payload),
-                ]),
+                runnable.ainvoke(
+                    [
+                        SystemMessage(content=system),
+                        HumanMessage(content=payload),
+                    ],
+                    config={"callbacks": [recorder]},
+                ),
                 timeout=75,
             )
             if isinstance(proposal, EligibilityProposal):
@@ -214,14 +251,17 @@ async def propose_with_chat_model(
             else:
                 result = _normalize_result(getattr(proposal, "result", None))
             latency_ms = int((time.perf_counter() - started) * 1000)
+            inp = recorder.input_tokens if recorder.metered_calls else None
+            out = recorder.output_tokens if recorder.metered_calls else None
             if result not in VALID_RESULTS:
                 return {
                     "result": None,
                     "error": f"invalid result {result!r}",
                     "latency_ms": latency_ms,
                     "provider_error": False,
-                    "input_tokens": None,
-                    "output_tokens": None,
+                    "input_tokens": inp,
+                    "output_tokens": out,
+                    "token_metered": recorder.metered_calls > 0,
                     "locale": locale,
                 }
             return {
@@ -229,8 +269,9 @@ async def propose_with_chat_model(
                 "error": None,
                 "latency_ms": latency_ms,
                 "provider_error": False,
-                "input_tokens": None,
-                "output_tokens": None,
+                "input_tokens": inp,
+                "output_tokens": out,
+                "token_metered": recorder.metered_calls > 0,
                 "locale": locale,
             }
         except Exception as error:  # noqa: BLE001 — eval arm must record failures
@@ -247,8 +288,13 @@ async def propose_with_chat_model(
                 "error": last_error,
                 "latency_ms": int((time.perf_counter() - started) * 1000),
                 "provider_error": transient,
-                "input_tokens": None,
-                "output_tokens": None,
+                "input_tokens": (
+                    recorder.input_tokens if recorder.metered_calls else None
+                ),
+                "output_tokens": (
+                    recorder.output_tokens if recorder.metered_calls else None
+                ),
+                "token_metered": recorder.metered_calls > 0,
                 "locale": locale,
             }
     return {
@@ -258,6 +304,7 @@ async def propose_with_chat_model(
         "provider_error": True,
         "input_tokens": None,
         "output_tokens": None,
+        "token_metered": False,
         "locale": locale,
     }
 
@@ -284,11 +331,13 @@ async def _call_proposer(
         provider_error = bool(raw.get("provider_error"))
         input_tokens = raw.get("input_tokens")
         output_tokens = raw.get("output_tokens")
+        token_metered = bool(raw.get("token_metered"))
     else:
         result = _normalize_result(raw)
         error = None if result in VALID_RESULTS else f"invalid result {raw!r}"
         provider_error = False
         input_tokens = output_tokens = None
+        token_metered = False
     return {
         "result": result,
         "error": error,
@@ -296,6 +345,7 @@ async def _call_proposer(
         "provider_error": provider_error,
         "input_tokens": input_tokens,
         "output_tokens": output_tokens,
+        "token_metered": token_metered,
         "locale": locale,
     }
 
@@ -380,11 +430,13 @@ async def run_llm_eligibility_ablation(
                     latencies.append(int(proposal["latency_ms"]))
                 inp = proposal.get("input_tokens")
                 out = proposal.get("output_tokens")
-                if isinstance(inp, int) and isinstance(out, int):
-                    case_input_tokens += inp
-                    case_output_tokens += out
-                    input_tokens_total += inp
-                    output_tokens_total += out
+                if proposal.get("token_metered") or (
+                    isinstance(inp, int) and isinstance(out, int)
+                ):
+                    case_input_tokens += int(inp or 0)
+                    case_output_tokens += int(out or 0)
+                    input_tokens_total += int(inp or 0)
+                    output_tokens_total += int(out or 0)
                     token_cases += 1
 
             primary = locale_results.get("en")
@@ -502,11 +554,15 @@ async def run_llm_eligibility_ablation(
             "total_usd": round(total_cost, 6),
             "cost_per_case_usd": round(cost_per_case, 6),
             "note": (
-                "Free OpenRouter route priced at $0 unless rates are overridden."
-                if cost_route == "openrouter_free"
-                else "Cost uses provided per-million rates."
+                "Token counts from LangChain on_llm_end usage callbacks. "
+                + (
+                    "Free OpenRouter route priced at $0 unless rates are overridden."
+                    if cost_route == "openrouter_free"
+                    else "Cost uses provided per-million rates."
+                )
             ),
         },
+
         "median_latency_ms": median_latency,
         "p95_latency_ms": p95_latency,
         "cases": cases,

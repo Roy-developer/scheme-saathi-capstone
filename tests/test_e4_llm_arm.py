@@ -182,3 +182,89 @@ def test_multilingual_disagreement_is_counted():
     )
     assert report["verdict_agreement_hi_mr_en"]["all_three_agree"] == 0
     assert report["verdict_agreement_hi_mr_en"]["rate"] == 0.0
+
+
+def test_usage_recorder_counts_token_usage_from_llm_end():
+    from langchain_core.messages import AIMessage
+    from langchain_core.outputs import ChatGeneration, LLMResult
+
+    recorder = e4_llm_arm.UsageRecorder()
+    response = LLMResult(
+        generations=[[ChatGeneration(message=AIMessage(content="ok"))]],
+        llm_output={"token_usage": {"prompt_tokens": 11, "completion_tokens": 3}},
+    )
+    recorder.on_llm_end(response)
+    assert recorder.metered_calls == 1
+    assert recorder.input_tokens == 11
+    assert recorder.output_tokens == 3
+
+
+def test_propose_with_chat_model_surfaces_callback_token_fields():
+    from langchain_core.language_models.chat_models import BaseChatModel
+    from langchain_core.outputs import ChatResult, ChatGeneration
+    from langchain_core.messages import AIMessage
+    from langchain_core.callbacks.manager import CallbackManagerForLLMRun
+    from typing import Any, Optional
+
+    class StructuredEligibleModel(BaseChatModel):
+        @property
+        def _llm_type(self) -> str:
+            return "structured-eligible-stub"
+
+        def with_structured_output(self, schema, **kwargs):  # noqa: ANN001
+            outer = self
+
+            class _Runner:
+                async def ainvoke(self, messages, config=None):  # noqa: ANN001
+                    callbacks = []
+                    if isinstance(config, dict):
+                        callbacks = list(config.get("callbacks") or [])
+                    for handler in callbacks:
+                        from langchain_core.outputs import LLMResult
+
+                        handler.on_llm_end(
+                            LLMResult(
+                                generations=[
+                                    [
+                                        ChatGeneration(
+                                            message=AIMessage(content="eligible")
+                                        )
+                                    ]
+                                ],
+                                llm_output={
+                                    "token_usage": {
+                                        "prompt_tokens": 21,
+                                        "completion_tokens": 5,
+                                    }
+                                },
+                            )
+                        )
+                    return e4_llm_arm.EligibilityProposal(result="eligible")
+
+            return _Runner()
+
+        def _generate(
+            self,
+            messages: list,
+            stop: Optional[list[str]] = None,
+            run_manager: Optional[CallbackManagerForLLMRun] = None,
+            **kwargs: Any,
+        ) -> ChatResult:
+            return ChatResult(
+                generations=[ChatGeneration(message=AIMessage(content="eligible"))]
+            )
+
+    proposal = asyncio.run(
+        e4_llm_arm.propose_with_chat_model(
+            StructuredEligibleModel(),
+            {
+                "scheme_id": "APY-IN",
+                "scheme_source_text": "citizens of India",
+                "known_facts": {"apy_is_citizen_of_india": True},
+            },
+        )
+    )
+    assert proposal["result"] == "eligible"
+    assert proposal["token_metered"] is True
+    assert proposal["input_tokens"] == 21
+    assert proposal["output_tokens"] == 5
