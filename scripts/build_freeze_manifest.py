@@ -35,7 +35,8 @@ SPECIALIST_TOOLS = {
 
 
 def sha256_file(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    # Hash with LF line endings, so a Windows CRLF checkout matches Linux CI.
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 
 def sha256_text(text: str) -> str:
