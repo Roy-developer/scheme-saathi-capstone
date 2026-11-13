@@ -5,6 +5,16 @@ import os
 from pathlib import Path
 from uuid import uuid4
 
+# Must run before any src module reads the portal URL. Under pytest-xdist each
+# worker (gw0, gw1, ...) gets its own portal port, so parallel runs don't collide.
+_XDIST_WORKER = os.getenv("PYTEST_XDIST_WORKER", "")
+if (
+    _XDIST_WORKER.startswith("gw")
+    and _XDIST_WORKER[2:].isdigit()
+    and "SCHEME_SAATHI_PORTAL_URL" not in os.environ
+):
+    os.environ["SCHEME_SAATHI_PORTAL_URL"] = f"http://127.0.0.1:{8900 + int(_XDIST_WORKER[2:])}"
+
 import httpx
 import pytest
 

@@ -1,14 +1,18 @@
 {
   "experiment_id": "E2",
   "title": "Do the defences work?",
-  "status": "offline_defences_off_on_runnable",
-  "description": "Offline E2 compares defences off vs on for injection, ID masking, and contextual scam screens, plus clean-case false-block rate. The same scam helper is wired on live intake/journey. Live memory/approval-gate attacks and independent attack authorship remain pending.",
+  "status": "offline_and_scoped_application_ablation_runnable",
+  "description": "Offline injection/ID/scam E2 is supplemented by seven local application-boundary comparisons for confirmed facts, landholder status, rule-engine verdict authority, intake privacy, memory consent, draft-read scope and human approval. Development-only, offline and not independent or frozen evidence. Each has a clean control in both arms. Off arms remove one named boundary through isolated test-only adapters, not all protections.",
   "controls": {
     "defence_modes": ["off", "on"],
     "attack_suite": "eval/red_team/attacks_v0.json",
     "clean_set": "eval/development/personas_v1.json",
     "isolation": "synthetic_evaluation_only_not_live_deployment",
-    "offline_runner": "scripts/evaluate_e2_defences_dev.py"
+    "offline_runner": "scripts/evaluate_e2_defences_dev.py",
+    "runtime_runner": "scripts/evaluate_e2_runtime.py",
+    "runtime_report": "eval/reports/e2_runtime_dev_latest.json",
+    "runtime_scope": "seven_derived_scenarios_single_boundary_not_global_defences_off",
+    "runtime_clean_set": "paired controls in tests/test_e2_runtime.py"
   },
   "metrics": [
     "attack_success_rate",
@@ -20,7 +24,8 @@
   ],
   "commands": {
     "offline": "python scripts/evaluate_e2_defences_dev.py",
-    "red_team": "python scripts/evaluate_red_team_dev.py"
+    "red_team": "python scripts/evaluate_red_team_dev.py",
+    "runtime": "python scripts/evaluate_e2_runtime.py"
   },
-  "blocker": "Live memory/approval-gate attacks and independent attack authorship still required before the full PDF E2 claim."
+  "blocker": "Independent validation, frozen evaluation coverage and remote CI execution remain open. Dedicated runtime CI gates are wired locally but not pushed. Seven local single-boundary comparisons do not complete the full PDF E2 claim."
 }

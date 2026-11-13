@@ -28,9 +28,8 @@ from src.ui.api_client import (
     delete_document_file,
     document_readiness,
     edit_application_draft,
-    delete_household_profile,
     extract_document_suggestion,
-    forget_journey,
+    forget_personal_data,
     get_document_suggestion,
     get_journey_state,
     list_application_drafts,
@@ -227,6 +226,9 @@ COPY = {
         "restored": "Your earlier conversation was restored.",
         "return_code_label": "Return code",
         "return_code_help": "Enter a return code from a previous visit to load your saved answers.",
+        "memory_consent_label": "Optional saved answers",
+        "memory_consent_text": "I agree to reuse approved answers that are not highly sensitive, and to save them for up to 90 days when I choose Save. I can use Forget my data at any time.",
+        "memory_consent_required": "Agree to optional saved answers before loading or saving a return-code profile.",
         "return_code_load": "Load saved answers",
         "return_code_display": "Your return code: **{code}**. Write it down to load your answers next time.",
         "return_code_save": "Save my answers",
@@ -390,6 +392,9 @@ COPY = {
         "restored": "आपकी पिछली बातचीत बहाल की गई।",
         "return_code_label": "रिटर्न कोड",
         "return_code_help": "पिछली बार का रिटर्न कोड डालें ताकि आपके सहेजे गए उत्तर लोड हो जाएं।",
+        "memory_consent_label": "वैकल्पिक सहेजे गए उत्तर",
+        "memory_consent_text": "मैं अत्यधिक संवेदनशील न माने गए स्वीकृत उत्तरों के पुनः उपयोग और Save चुनने पर उन्हें अधिकतम 90 दिनों तक सहेजने के लिए सहमत हूँ। मैं कभी भी मेरा डेटा भूलें चुन सकता/सकती हूँ।",
+        "memory_consent_required": "रिटर्न-कोड प्रोफ़ाइल लोड या सहेजने से पहले वैकल्पिक सहेजे गए उत्तरों के लिए सहमति दें।",
         "return_code_load": "सहेजे गए उत्तर लोड करें",
         "return_code_display": "आपका रिटर्न कोड: **{code}**। अगली बार उत्तर लोड करने के लिए इसे लिख लें।",
         "return_code_save": "मेरे उत्तर सहेजें",
@@ -553,6 +558,9 @@ COPY = {
         "restored": "तुमचे आधीचे संभाषण पुन्हा सुरू झाले.",
         "return_code_label": "रिटर्न कोड",
         "return_code_help": "मागील भेटीचा रिटर्न कोड टाका म्हणजे तुमची जतन केलेली उत्तरे लोड होतील.",
+        "memory_consent_label": "पर्यायी जतन केलेली उत्तरे",
+        "memory_consent_text": "अत्यंत संवेदनशील नसलेली मंजूर उत्तरे पुन्हा वापरण्यास आणि Save निवडल्यावर ती जास्तीत जास्त 90 दिवस जतन करण्यास मी सहमत आहे. मी कधीही माझा डेटा विसरा हा पर्याय वापरू शकतो/शकते.",
+        "memory_consent_required": "रिटर्न-कोड प्रोफाइल लोड किंवा जतन करण्यापूर्वी पर्यायी जतन केलेल्या उत्तरांसाठी संमती द्या.",
         "return_code_load": "जतन केलेली उत्तरे लोड करा",
         "return_code_display": "तुमचा रिटर्न कोड: **{code}**. पुढच्या वेळी उत्तरे लोड करण्यासाठी हा लिहून ठेवा.",
         "return_code_save": "माझी उत्तरे जतन करा",
@@ -643,6 +651,7 @@ WORKFLOW_STATE_KEYS = APPLICATION_STATE_KEYS | {
 }
 DEMO_INPUT_KEYS = {
     "demo_consent",
+    "memory_consent",
     "demo_scenario",
     "scheme_query",
     "widow_mode",
@@ -861,6 +870,7 @@ def interview_request(
             or st.session_state.csc_citizen_present
         ),
         return_code=st.session_state.get("household_return_code") or None,
+        memory_consent=bool(st.session_state.get("memory_consent", False)),
         **schemes,
     )
 
@@ -2523,18 +2533,26 @@ def render_interview(
                 label_visibility="collapsed",
             )
             if st.button(text["return_code_load"], key=f"load_code_{scheme_id}"):
-                if code_input and code_input.strip():
+                if not st.session_state.get("memory_consent", False):
+                    st.warning(text["memory_consent_required"])
+                elif code_input and code_input.strip():
                     try:
-                        loaded = load_household_profile(code_input.strip())
-                    except JourneyApiError:
-                        loaded = None
-                    if loaded:
-                        st.session_state.household_return_code = loaded["return_code"]
-                        st.success(text["return_code_display"].format(
-                            code=loaded["return_code"],
-                        ))
+                        loaded = load_household_profile(
+                            code_input.strip(),
+                            memory_consent=True,
+                        )
+                    except JourneyApiError as error:
+                        st.error(f'{text["return_code_error"]}: {error}')
                     else:
-                        st.warning(text["return_code_not_found"])
+                        if loaded:
+                            st.session_state.household_return_code = loaded[
+                                "return_code"
+                            ]
+                            st.success(text["return_code_display"].format(
+                                code=loaded["return_code"],
+                            ))
+                        else:
+                            st.warning(text["return_code_not_found"])
         description_key = f"household_description_{scheme_id}"
         description = st.text_area(
             text["household_description"],
@@ -2595,15 +2613,19 @@ def render_interview(
         st.info(text["return_code_display"].format(code=existing_code))
     if st.session_state.conversation_id and st.session_state.known_fact_names:
         if st.button(text["return_code_save"], key=f"save_code_{scheme_id}"):
-            try:
-                code = save_household_profile(
-                    st.session_state.conversation_id,
-                    return_code=existing_code,
-                )
-                st.session_state.journey_return_code = code
-                st.success(text["return_code_saved"].format(code=code))
-            except JourneyApiError as error:
-                st.error(str(error))
+            if not st.session_state.get("memory_consent", False):
+                st.warning(text["memory_consent_required"])
+            else:
+                try:
+                    code = save_household_profile(
+                        st.session_state.conversation_id,
+                        return_code=existing_code,
+                        memory_consent=True,
+                    )
+                    st.session_state.journey_return_code = code
+                    st.success(text["return_code_saved"].format(code=code))
+                except JourneyApiError as error:
+                    st.error(str(error))
     if st.button(text["interview_restart"]):
         start_interview(scheme_id, locale)
         st.rerun()
@@ -2754,6 +2776,8 @@ with st.sidebar:
     st.markdown(f'**{text["consent_title"]}**')
     st.caption(text["consent_text"])
     consent = st.checkbox(text["consent"], key="demo_consent")
+    st.caption(text["memory_consent_text"])
+    st.checkbox(text["memory_consent_label"], key="memory_consent")
     if st.session_state.interaction_mode == "csc":
         st.checkbox(text["csc_present"], key="csc_citizen_present")
     st.caption(
@@ -2772,12 +2796,13 @@ with st.sidebar:
         st.caption(f"Deployed branch: {deployed_ref}")
     if st.button(text["forget"], use_container_width=True):
         conversation_id = st.session_state.conversation_id
-        household_code = st.session_state.get("journey_return_code")
+        household_code = (
+            st.session_state.get("journey_return_code")
+            or st.session_state.get("household_return_code")
+        )
         try:
-            if conversation_id:
-                forget_journey(conversation_id)
-            if household_code:
-                delete_household_profile(household_code)
+            if conversation_id or household_code:
+                forget_personal_data(conversation_id, household_code)
         except JourneyApiError as error:
             st.session_state.forget_error = str(error)
         else:

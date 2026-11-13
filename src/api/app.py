@@ -1,10 +1,12 @@
 """FastAPI entry point for Scheme Saathi."""
 
 import asyncio
+from collections.abc import Awaitable, Callable
 from contextlib import AsyncExitStack, asynccontextmanager, suppress
 from datetime import date
 import logging
 import os
+import sqlite3
 import sys
 from pathlib import Path
 from typing import AsyncIterator
@@ -14,6 +16,7 @@ import aiosqlite
 from fastapi import FastAPI, HTTPException, Query, Request, Response
 # Client connects to the MCP server; parameters explain how to launch stdio.
 from mcp import Client, StdioServerParameters
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from langgraph.store.sqlite.aio import AsyncSqliteStore
 
@@ -45,8 +48,8 @@ from src.documents.forms import build_form_fields, load_mock_form_snapshot
 from src.rules.facts import HouseholdProfile
 from src.rules.bundles import bundle_fingerprint
 # This adapter calls the MCP tool and translates failures for the API layer.
+from src.observability.telemetry import configure_telemetry
 from src.observability.metrics import (
-    metrics_response,
     observe_duration,
     record_conversation,
     record_evaluation,
@@ -55,6 +58,7 @@ from src.observability.metrics import (
     record_question,
     record_verdict,
 )
+from src.observability.telemetry import configure_telemetry
 from src.workflow.eligibility import (
     evaluate_eligibility,
 )
@@ -66,7 +70,7 @@ from src.llm_client import DEFAULT_CHAT_MODEL, openrouter_chat_model
 from src.workflow.intake import IntakeAgentError
 from src.workflow.conversation_budget import BUDGET_NAMESPACE
 from src.workflow.household_memory import (
-    HOUSEHOLD_NAMESPACE,
+    delete_household,
     generate_return_code,
     load_household,
     load_household_locale,
@@ -99,6 +103,68 @@ from src.mcp_servers.rule_data import get_active_rule_data
 
 
 logger = logging.getLogger(__name__)
+
+
+class PendingForget(BaseModel):
+    """Validated recovery information stored until all backups are refreshed."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    conversation_id: UUID | None = None
+    return_code: str | None = None
+    gate_threads: list[UUID] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def validate_targets(self) -> "PendingForget":
+        """Reject markers that cannot identify a valid deletion target."""
+
+        if self.conversation_id is None and self.return_code is None:
+            raise ValueError("A pending deletion needs a target")
+        if self.return_code is not None:
+            self.return_code = normalize_return_code(self.return_code)
+        if self.gate_threads and self.conversation_id is None:
+            raise ValueError("Approval threads require a conversation")
+        return self
+
+
+class ForgetBarrier:
+    """Allow concurrent requests, but run a deletion exclusively."""
+
+    def __init__(self) -> None:
+        self.condition = asyncio.Condition()
+        self.readers = 0
+        self.waiting_writers = 0
+        self.writer = False
+
+    @asynccontextmanager
+    async def hold(self, *, exclusive: bool) -> AsyncIterator[None]:
+        """Wait for active requests to finish before beginning a forget."""
+
+        async with self.condition:
+            if exclusive:
+                self.waiting_writers += 1
+                try:
+                    await self.condition.wait_for(
+                        lambda: not self.writer and self.readers == 0
+                    )
+                    self.writer = True
+                finally:
+                    self.waiting_writers -= 1
+                    self.condition.notify_all()
+            else:
+                await self.condition.wait_for(
+                    lambda: not self.writer and self.waiting_writers == 0
+                )
+                self.readers += 1
+        try:
+            yield
+        finally:
+            async with self.condition:
+                if exclusive:
+                    self.writer = False
+                else:
+                    self.readers -= 1
+                self.condition.notify_all()
 
 
 def _tool_failure(
@@ -339,6 +405,12 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
     )
     if backups is not None:
         await asyncio.to_thread(backups.restore)
+        if backups._not_restored:
+            raise RuntimeError("Backup restore was incomplete; refusing to serve data.")
+        await asyncio.to_thread(backups.pending_deletions)
+    application.state.backups = backups
+    application.state.forget_lock = asyncio.Lock()
+    application.state.forget_barrier = ForgetBarrier()
     application.state.upload_store = await asyncio.to_thread(
         UploadStore, upload_directory(), upload_database_path()
     )
@@ -359,9 +431,7 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         "mock-portal": "src.mcp_servers.mock_portal_server",
     }
     portal_process = None
-    backup_task = (
-        asyncio.create_task(backups.save_regularly()) if backups is not None else None
-    )
+    backup_task = None
     try:
         portal_db_path = portal_database_path()
         portal_process = start_portal_service(portal_db_path)
@@ -450,6 +520,13 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
                 fact_registry=rule_data.registry,
                 rule_bundles=rule_data.bundles,
             )
+            if backups is not None:
+                recovery_request = Request({
+                    "type": "http", "app": application, "method": "DELETE",
+                    "path": "/api/v1/forget", "headers": [], "query_string": b"",
+                })
+                await _recover_pending_forgets(recovery_request, backups)
+                backup_task = asyncio.create_task(backups.save_regularly())
             logger.info(
                 "Connected to four purpose-specific MCP services and the mock portal"
             )
@@ -468,7 +545,10 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
         await store_connection.close()
         if backups is not None:
             await asyncio.to_thread(backups.save)
+        application.state.backups = None
 
+
+configure_telemetry()
 
 app = FastAPI(
     title="Scheme Saathi API",
@@ -480,6 +560,27 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.include_router(document_uploads_router)
+configure_telemetry()
+
+
+@app.middleware("http")
+async def protect_forget_from_concurrent_requests(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]],
+) -> Response:
+    """Keep in-flight API operations from racing a durable deletion."""
+
+    if (
+        not request.url.path.startswith("/api/v1/")
+        or getattr(request.app.state, "backups", None) is None
+    ):
+        return await call_next(request)
+    parts = request.url.path.strip("/").split("/")
+    exclusive = request.method == "DELETE" and (
+        parts == ["api", "v1", "forget"]
+        or (len(parts) == 4 and parts[2] in {"journey", "household"})
+    )
+    async with request.app.state.forget_barrier.hold(exclusive=exclusive):
+        return await call_next(request)
 
 
 @app.get("/health")
@@ -487,14 +588,6 @@ def health() -> dict[str, str]:
     """Report API health."""
 
     return {"status": "ok"}
-
-
-@app.get("/metrics")
-def prometheus_metrics() -> Response:
-    """Expose Prometheus metrics for Role 6 dashboards to scrape later."""
-
-    payload, content_type = metrics_response()
-    return Response(content=payload, media_type=content_type)
 
 
 @app.get("/api/v1/info", tags=["service"])
@@ -657,6 +750,7 @@ async def _mark_changed_document_reports(
 )
 async def search_schemes(
     request: Request,
+    response: Response,
     query: str,
     jurisdiction: str | None = None,
     language: str | None = None,
@@ -675,6 +769,8 @@ async def search_schemes(
             language=language,
             limit=limit,
         )
+        if omitted_count := getattr(passages, "omitted_count", 0):
+            response.headers["X-Saathi-Omitted-Scam-Passages"] = str(omitted_count)
         return [
             passage.model_copy(update={
                 "eligible_for_mock_flow": passage.scheme_id
@@ -1151,49 +1247,65 @@ async def update_application_approval(
         ) from error
 
 
+async def _forget_journey_data(
+    request: Request,
+    conversation_uuid: UUID,
+) -> None:
+    conversation_id = str(conversation_uuid)
+    drafts = await call_application_tool(
+        _portal_reader(request, conversation_id),
+        "mock_portal",
+        {"action": "list_drafts", "journey_id": conversation_id},
+    )
+    await _dispatch_application_task(
+        request, conversation_uuid, "delete_journey", {},
+    )
+    for draft in drafts.get("drafts", []):
+        for revision in range(1, draft["revision"] + 1):
+            thread_id = application_gate_thread_id(
+                conversation_id, draft["draft_id"], revision
+            )
+            await request.app.state.journey_checkpointer.adelete_thread(
+                thread_id
+            )
+    await request.app.state.journey_store.adelete(
+        BUDGET_NAMESPACE, conversation_id
+    )
+    await request.app.state.journey_checkpointer.adelete_thread(
+        conversation_id
+    )
+    if (
+        upload_store := getattr(request.app.state, "upload_store", None)
+    ) is not None:
+        await asyncio.to_thread(
+            upload_store.delete_conversation, conversation_id
+        )
+        if (upload_store.directory / conversation_id).exists():
+            raise OSError("Some uploaded files could not be deleted")
+
+
 @app.delete("/api/v1/journey/{conversation_id}", status_code=204)
 async def forget_journey(conversation_id: str, request: Request) -> None:
     """Delete the synthetic conversation's persisted graph checkpoints."""
 
     try:
-        UUID(conversation_id)
+        conversation_uuid = UUID(conversation_id)
     except ValueError as error:
         raise HTTPException(
             status_code=422,
             detail="conversation_id must be a UUID.",
         ) from error
-    try:
-        drafts = await call_application_tool(
-            _portal_reader(request, conversation_id),
-            "mock_portal",
-            {"action": "list_drafts", "journey_id": conversation_id},
-        )
-        await _dispatch_application_task(
-            request, UUID(conversation_id), "delete_journey", {},
-        )
-        for draft in drafts.get("drafts", []):
-            for revision in range(1, draft["revision"] + 1):
-                thread_id = application_gate_thread_id(
-                    conversation_id, draft["draft_id"], revision
-                )
-                await request.app.state.journey_checkpointer.adelete_thread(
-                    thread_id
-                )
-        await request.app.state.journey_store.adelete(BUDGET_NAMESPACE, conversation_id)
-    except MCPToolError as error:
-        raise _tool_failure(
-            "The mock application service could not clear this session.",
-            "Could not clear mock application data",
-        ) from error
-    await request.app.state.journey_checkpointer.adelete_thread(conversation_id)
-    if (upload_store := getattr(request.app.state, "upload_store", None)) is not None:
-        await asyncio.to_thread(upload_store.delete_conversation, conversation_id)
+    await forget_personal_data({"conversation_id": str(conversation_uuid)}, request)
 
 # -- Household memory endpoints -----------------------------------------------
 
 
 @app.get("/api/v1/household/{return_code}", tags=["household"])
-async def get_household(return_code: str, request: Request) -> dict:
+async def get_household(
+    return_code: str,
+    request: Request,
+    memory_consent: bool = False,
+) -> dict:
     """Load a saved household profile by its return code.
 
     Returns the saved typed facts as a wire dict, or 404 when the code is
@@ -1201,6 +1313,11 @@ async def get_household(return_code: str, request: Request) -> dict:
     registry.
     """
 
+    if memory_consent is not True:
+        raise HTTPException(
+            status_code=403,
+            detail="Explicit memory consent is required to load saved answers.",
+        )
     try:
         code = normalize_return_code(return_code)
     except ValueError as error:
@@ -1228,8 +1345,14 @@ async def save_household_profile(
     Body:
         return_code (optional): Reuse an existing code; generates one when absent.
         conversation_id: The conversation whose typed_facts to save.
+        memory_consent: Must be true to save household memory.
     """
 
+    if body.get("memory_consent") is not True:
+        raise HTTPException(
+            status_code=403,
+            detail="Explicit memory consent is required to save answers.",
+        )
     conversation_id = body.get("conversation_id")
     if not conversation_id:
         raise HTTPException(status_code=422, detail="conversation_id is required.")
@@ -1269,7 +1392,17 @@ async def save_household_profile(
 
     locale = values.get("locale", "en")
     store = request.app.state.journey_store
-    await save_household(store, code, profile, registry, locale)
+    try:
+        await save_household(
+            store,
+            code,
+            profile,
+            registry,
+            locale,
+            memory_consent=True,
+        )
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error)) from error
     return {"return_code": code}
 
 
@@ -1281,8 +1414,111 @@ async def forget_household(return_code: str, request: Request) -> None:
         code = normalize_return_code(return_code)
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
-    store = request.app.state.journey_store
-    existing = await store.aget(HOUSEHOLD_NAMESPACE, code)
-    if existing is None:
-        raise HTTPException(status_code=404, detail="Unknown return code.")
-    await store.adelete(HOUSEHOLD_NAMESPACE, code)
+    await forget_personal_data({"return_code": code}, request)
+
+
+async def _perform_forget(request: Request, pending: PendingForget) -> None:
+    """Apply a pending deletion; independently attempt each requested store."""
+
+    failures: list[str] = []
+    if pending.conversation_id is not None:
+        try:
+            await _forget_journey_data(request, pending.conversation_id)
+            for thread in pending.gate_threads:
+                await request.app.state.journey_checkpointer.adelete_thread(str(thread))
+        except (ApplicationTaskError, HTTPException, MCPToolError, sqlite3.Error, OSError):
+            logger.exception("Could not fully delete journey data")
+            failures.append("journey")
+    if pending.return_code is not None:
+        try:
+            await delete_household(request.app.state.journey_store, pending.return_code)
+        except (sqlite3.Error, OSError):
+            logger.exception("Could not fully delete household memory")
+            failures.append("household")
+    if failures:
+        raise HTTPException(
+            status_code=503,
+            detail=(
+                "Data deletion was incomplete; retry the forget action. "
+                "Some records may already have been deleted."
+            ),
+        )
+
+
+async def _capture_forget_gate_threads(
+    request: Request, conversation_id: UUID,
+) -> list[UUID]:
+    """Record approval checkpoint IDs before portal drafts can disappear."""
+
+    result = await call_application_tool(
+        _portal_reader(request, conversation_id), "mock_portal",
+        {"action": "list_drafts", "journey_id": str(conversation_id)},
+    )
+    return [
+        UUID(application_gate_thread_id(str(conversation_id), draft["draft_id"], revision))
+        for draft in result.get("drafts", [])
+        for revision in range(1, draft["revision"] + 1)
+    ]
+
+
+async def _recover_pending_forgets(request: Request, backups: DatabaseBackups) -> None:
+    """Replay incomplete deletions before serving or accepting another forget."""
+
+    for marker_id, payload in await asyncio.to_thread(backups.pending_deletions):
+        pending = PendingForget.model_validate(payload)
+        await _perform_forget(request, pending)
+        await asyncio.to_thread(backups.save, strict=True)
+        await asyncio.to_thread(backups.finish_deletion, marker_id)
+
+
+@app.delete("/api/v1/forget", status_code=204, tags=["household"])
+async def forget_personal_data(body: dict, request: Request) -> None:
+    """Best-effort, retryable deletion of journey and household memory."""
+
+    conversation_uuid = None
+    raw_conversation_id = body.get("conversation_id")
+    if raw_conversation_id:
+        try:
+            conversation_uuid = UUID(raw_conversation_id)
+        except (ValueError, TypeError) as error:
+            raise HTTPException(
+                status_code=422,
+                detail="conversation_id must be a UUID.",
+            ) from error
+
+    raw_return_code = body.get("return_code")
+    return_code = None
+    if raw_return_code:
+        try:
+            return_code = normalize_return_code(raw_return_code)
+        except (ValueError, AttributeError) as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+    if conversation_uuid is None and return_code is None:
+        raise HTTPException(
+            status_code=422,
+            detail="conversation_id or return_code is required.",
+        )
+
+    backups = getattr(request.app.state, "backups", None)
+    pending = PendingForget(conversation_id=conversation_uuid, return_code=return_code)
+    if backups is None:
+        await _perform_forget(request, pending)
+        return
+    try:
+        async with request.app.state.forget_lock:
+            await _recover_pending_forgets(request, backups)
+            if conversation_uuid is not None:
+                pending.gate_threads = await _capture_forget_gate_threads(
+                    request, conversation_uuid,
+                )
+            marker = await asyncio.to_thread(
+                backups.begin_deletion, pending.model_dump(mode="json"),
+            )
+            await _perform_forget(request, pending)
+            await asyncio.to_thread(backups.save, strict=True)
+            await asyncio.to_thread(backups.finish_deletion, marker)
+    except (MCPToolError, sqlite3.Error, OSError, ValueError) as error:
+        raise HTTPException(
+            status_code=503,
+            detail="Data deletion was incomplete; retry the forget action.",
+        ) from error

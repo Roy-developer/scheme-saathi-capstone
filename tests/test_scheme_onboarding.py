@@ -185,6 +185,13 @@ def _no_staged_package(paths: ProjectPaths) -> None:
     (paths.staged_packages / PACKAGE).unlink()
 
 
+def _not_approved_for_mock_portal(paths: ProjectPaths) -> None:
+    staged = paths.staged_packages / PACKAGE
+    data = json.loads(staged.read_bytes())
+    data["approval_status"] = "mock_baseline_pending_human_rule_approval"
+    staged.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+
+
 def _break_another_live_package(paths: ProjectPaths) -> None:
     other = paths.packages / "ignwps_mh.v1.json"
     other.write_bytes(other.read_bytes() + b"\n")
@@ -196,6 +203,7 @@ def _break_another_live_package(paths: ProjectPaths) -> None:
         (_different_official_text, "does not quote the source file"),
         (_no_passages, "no \"onboarding\" block"),
         (_no_staged_package, "No approved package"),
+        (_not_approved_for_mock_portal, "not approved for the mock portal"),
         (_break_another_live_package, "loader would refuse"),
     ],
 )

@@ -1,6 +1,8 @@
 import json
+import asyncio
 from io import BytesIO
 from pathlib import Path
+from types import SimpleNamespace
 
 import httpx
 import pytest
@@ -44,6 +46,51 @@ def build_retriever(passages):
             for passage in candidates
         ],
     )
+
+
+@pytest.mark.parametrize("surface", ["text", "source_url", "publisher"])
+@pytest.mark.parametrize("include_clean", [True, False])
+def test_search_adapter_omits_only_scam_results(corpus, surface, include_clean):
+    from src.workflow.scheme_search import search_scheme_passages
+
+    record = corpus[0].model_dump(mode="json")
+    lure = "Visit https://pm-kisan-gov-in-verify.example/otp and enter your OTP."
+    if surface == "text":
+        record["text"] = lure
+    elif surface == "source_url":
+        record["source"]["url"] = "https://pm-kisan-gov-in-verify.example/otp"
+    else:
+        record["source"]["publisher"] = lure
+
+    class Client:
+        async def call_tool(self, name, arguments):
+            return SimpleNamespace(
+                is_error=False,
+                structured_content={"result": (
+                    [corpus[0].model_dump(mode="json")] if include_clean else []
+                ) + [record]},
+            )
+
+    result = asyncio.run(search_scheme_passages(Client(), "pension"))
+    assert result == ([corpus[0]] if include_clean else [])
+    assert result.omitted_count == 1
+
+
+def test_search_adapter_preserves_clean_results(corpus):
+    from src.workflow.scheme_search import search_scheme_passages
+
+    record = corpus[0].model_copy(update={"text": "I get my pension by UPI."})
+
+    class Client:
+        async def call_tool(self, name, arguments):
+            return SimpleNamespace(
+                is_error=False,
+                structured_content={"result": [record.model_dump(mode="json")]},
+            )
+
+    result = asyncio.run(search_scheme_passages(Client(), "pension"))
+    assert result == [record]
+    assert result.omitted_count == 0
 
 
 def test_openrouter_embeddings_prefers_free_api_key_and_batches_requests(monkeypatch):

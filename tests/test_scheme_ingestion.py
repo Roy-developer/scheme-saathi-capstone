@@ -23,6 +23,7 @@ EXPECTED_SCHEMES = {
     "fadse_passages.json": ("FADSE-MH", "IN-MH"),
     "faishl_passages.json": ("FAISHL-IN", "IN"),
     "fasetdp_passages.json": ("FASETDP-MH", "IN-MH"),
+    "igndps_mh_passages.json": ("IGNDPS-MH", "IN-MH"),
     "igndps_passages.json": ("IGNDPS-IN", "IN"),
     "igndpsm_passages.json": ("IGNDPSM-MH", "IN-MH"),
     "ignoaps_mh_passages.json": ("IGNOAPS-MH", "IN-MH"),
