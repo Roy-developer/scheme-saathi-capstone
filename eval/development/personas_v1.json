@@ -1,8 +1,8 @@
 {
-  "dataset_version": "1.2.0",
+  "dataset_version": "1.3.0",
   "split": "development",
   "protected": false,
-  "annotation_note": "Development-only synthetic boundary personas for IGNWPS-MH, PM-KISAN-IN, IGNOAPS-MH, and APY-IN. Expected outcomes were written before harness scoring (APY expected outcomes derived from the approved mock rule package). IGNOAPS personas use typed_facts (name_on_bpl_list). Dual independent labelling with Role 1 remains pending. Not held-out; not the final 60-set. Only schemes with approved rule packages receive eligibility personas; other passage-only schemes in data/schemes/passages are not covered yet.",
+  "annotation_note": "Development-only synthetic boundary personas for IGNWPS-MH, PM-KISAN-IN, and IGNOAPS-MH. Expected outcomes were written before harness scoring. IGNOAPS personas use typed_facts (name_on_bpl_list). First labeller role5-seed. A second, model-assisted label exists for 60 personas (eval/development/role1_model_assisted_labels_2.json); it is NOT an independent human label. Human second labelling is still pending. Not held-out; not the final 60-set. | Personas R1-* (29) added by Role 1: 3 on live schemes and 26 boundary personas on gold development schemes. R1-GOLD-* verdicts are computed from the draft gold rules in data/schemes/rule_gold_drafts/; exclusion-kind rules apply when their fact is true, and each eligible verdict has its exclusion facts set to false. The 60 R1-* and Balaji personas have model-assisted checks only; no independent human labels yet. Not held-out. | R1-GOLD-027 to R1-GOLD-043 (17 personas) added 2026-11-11 for 5 new development gold schemes (FAISHL-IN, IPMWCD-IN, EACS-MH, NSMNY-MH, BFFL-MH) and IGNWPSM-MH. Note: IGNWPSM-MH was subsequently moved to alternate (duplicate URL with IGNWPS-MH); R1-GOLD-038/039/040 target IGNWPSM-MH rules and should be treated as alternate-scheme personas, not scored against the development gold set. All typed_facts; expected verdicts drafted by a model from the gold rules and not yet human-labelled. Dates: YYYY-MM-DD throughout. | R1-GOLD-044 to R1-GOLD-048 (5 personas) added 2026-11-12 for TMDVSO-MH (2 personas) and WMCL-IN (3 personas). All typed_facts; labelled by role1-nidhi. | R1-GOLD-038/039/040 (IGNWPSM-MH alternates) moved to eval/alternates/personas_alternate_v1.json. | 2026-11-12: R1-GOLD-* personas for gold-only schemes moved to eval/development/gold_scheme_personas_v1.json.",
   "personas": [
     {
       "persona_id": "IGNWPS-DEV-001",
@@ -1017,6 +1017,101 @@
           "labeller_id": "role5-seed",
           "scheme_id": "IGNOAPS-MH",
           "result": "need_more_information",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-IGNOAPS-003",
+      "boundary_family": "ignoaps-age-central-vs-state",
+      "split": "development",
+      "protected": false,
+      "description": "Aged 60 (central NSAP threshold) but under the Maharashtra threshold of 65; name on BPL list.",
+      "typed_facts": {
+        "date_of_birth": "1966-11-11",
+        "application_date": "2026-11-11",
+        "name_on_bpl_list": true
+      },
+      "expected_by_scheme": {
+        "IGNOAPS-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01"
+          ],
+          "note": "The Maharashtra page says 65; the central guideline says 60. The reviewed Maharashtra package uses 65."
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi",
+          "scheme_id": "IGNOAPS-MH",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-IGNOAPS-006",
+      "boundary_family": "ignoaps-two-failures",
+      "split": "development",
+      "protected": false,
+      "description": "Aged 64 and name not on the BPL list: both rules fail.",
+      "typed_facts": {
+        "date_of_birth": "1962-11-11",
+        "application_date": "2026-11-11",
+        "name_on_bpl_list": false
+      },
+      "expected_by_scheme": {
+        "IGNOAPS-MH": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "IGNOAPS-MH-AGE-MIN-01",
+            "IGNOAPS-MH-BPL-LIST-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi",
+          "scheme_id": "IGNOAPS-MH",
+          "result": "not_eligible",
+          "status": "single"
+        }
+      ]
+    },
+    {
+      "persona_id": "R1-PMKISAN-004",
+      "boundary_family": "pmkisan-two-exclusions",
+      "split": "development",
+      "protected": false,
+      "description": "Landholding family with a government-employee member and a pension of Rs 10,000 or more.",
+      "profile": {
+        "landholding_family_in_state_records": true,
+        "institutional_landholder": false,
+        "listed_public_office_member": false,
+        "excluded_government_employee_member": true,
+        "pension_at_least_10000_excluding_stated_grades": true,
+        "income_tax_paid_last_assessment_year": false,
+        "registered_practicing_professional_member": false,
+        "nri_new_beneficiary": false
+      },
+      "expected_by_scheme": {
+        "PM-KISAN-IN": {
+          "result": "not_eligible",
+          "missing_fields": [],
+          "deciding_rule_ids": [
+            "PMKISAN-GOV-EMPLOYEE-01",
+            "PMKISAN-PENSION-01"
+          ]
+        }
+      },
+      "labels": [
+        {
+          "labeller_id": "role1-nidhi",
+          "scheme_id": "PM-KISAN-IN",
+          "result": "not_eligible",
           "status": "single"
         }
       ]

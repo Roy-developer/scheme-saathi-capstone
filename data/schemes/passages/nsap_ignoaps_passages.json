@@ -46,12 +46,12 @@
       "section": "eligibility",
       "text": "The applicant should be a citizen of India.",
       "source": {
-        "source_id": "SRC-NSAP-IGNOAPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/nsap-indira-gandhi-national-old-age-pension-scheme_nsap-ignoaps.html",
-        "collected_at": "2026-11-05",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-FAQ",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal FAQ)",
+        "url": "https://nsap.dord.gov.in/circular.do?method=faq",
+        "collected_at": "2026-11-12",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Eligibility, point 1"
+        "locator": "NSAP portal FAQ; citizenship not explicitly stated — inferred from national scheme scope; needs official source verification"
       },
       "review_status": "reviewed"
     },
@@ -62,14 +62,14 @@
       "jurisdiction": "IN",
       "language": "en",
       "section": "eligibility",
-      "text": "The applicant should be living Below Poverty Line.",
+      "text": "The applicant should belong to a household living below the poverty line.",
       "source": {
-        "source_id": "SRC-NSAP-IGNOAPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/nsap-indira-gandhi-national-old-age-pension-scheme_nsap-ignoaps.html",
-        "collected_at": "2026-11-05",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-FAQ",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal FAQ)",
+        "url": "https://nsap.dord.gov.in/circular.do?method=faq",
+        "collected_at": "2026-11-12",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Eligibility, point 2"
+        "locator": "NSAP portal FAQ; Q13 answer, sentence 2"
       },
       "review_status": "reviewed"
     },
@@ -80,14 +80,14 @@
       "jurisdiction": "IN",
       "language": "en",
       "section": "eligibility",
-      "text": "The applicant should be at least 60 years of age.",
+      "text": "The age of the applicant (male or female) should be 60 years or above.",
       "source": {
-        "source_id": "SRC-NSAP-IGNOAPS-IN-001",
-        "publisher": "Ministry of Rural Development",
-        "url": "https://web.umang.gov.in/landing/scheme/detail/nsap-indira-gandhi-national-old-age-pension-scheme_nsap-ignoaps.html",
-        "collected_at": "2026-11-05",
+        "source_id": "SRC-NSAP-DORD-GOV-IN-FAQ",
+        "publisher": "Ministry of Rural Development, Government of India (NSAP portal FAQ)",
+        "url": "https://nsap.dord.gov.in/circular.do?method=faq",
+        "collected_at": "2026-11-12",
         "publication_date": null,
-        "locator": "department.txt / myScheme page (identical text); Eligibility, point 3"
+        "locator": "NSAP portal FAQ; Q13 answer, sentence 1"
       },
       "review_status": "reviewed"
     },

@@ -1,0 +1,805 @@
+{
+  "labeller_id": "model-assisted-check",
+  "status": "model-assisted check; NOT an independent human label; pending Nidhi review",
+  "labels": [
+    {
+      "persona_id": "IGNWPS-DEV-001",
+      "scheme_id": "IGNWPS-MH",
+      "model_assisted_label": "eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNWPS-DEV-002",
+      "scheme_id": "IGNWPS-MH",
+      "model_assisted_label": "eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNWPS-DEV-003",
+      "scheme_id": "IGNWPS-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNWPS-DEV-004",
+      "scheme_id": "IGNWPS-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNWPS-DEV-005",
+      "scheme_id": "IGNWPS-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNWPS-DEV-006",
+      "scheme_id": "IGNWPS-MH",
+      "model_assisted_label": "eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNWPS-DEV-007",
+      "scheme_id": "IGNWPS-MH",
+      "model_assisted_label": "need_more_information",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNWPS-DEV-008",
+      "scheme_id": "IGNWPS-MH",
+      "model_assisted_label": "need_more_information",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNWPS-DEV-009",
+      "scheme_id": "IGNWPS-MH",
+      "model_assisted_label": "need_more_information",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNWPS-DEV-010",
+      "scheme_id": "IGNWPS-MH",
+      "model_assisted_label": "need_more_information",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNWPS-DEV-011",
+      "scheme_id": "IGNWPS-MH",
+      "model_assisted_label": "eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNWPS-DEV-012",
+      "scheme_id": "IGNWPS-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNWPS-DEV-013",
+      "scheme_id": "IGNWPS-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "PMKISAN-DEV-001",
+      "scheme_id": "PM-KISAN-IN",
+      "model_assisted_label": "eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "PMKISAN-DEV-002",
+      "scheme_id": "PM-KISAN-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "PMKISAN-DEV-003",
+      "scheme_id": "PM-KISAN-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "PMKISAN-DEV-004",
+      "scheme_id": "PM-KISAN-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "PMKISAN-DEV-005",
+      "scheme_id": "PM-KISAN-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "PMKISAN-DEV-006",
+      "scheme_id": "PM-KISAN-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "PMKISAN-DEV-007",
+      "scheme_id": "PM-KISAN-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "PMKISAN-DEV-008",
+      "scheme_id": "PM-KISAN-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "PMKISAN-DEV-009",
+      "scheme_id": "PM-KISAN-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "PMKISAN-DEV-010",
+      "scheme_id": "PM-KISAN-IN",
+      "model_assisted_label": "need_more_information",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "PMKISAN-DEV-011",
+      "scheme_id": "PM-KISAN-IN",
+      "model_assisted_label": "need_more_information",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "PMKISAN-DEV-012",
+      "scheme_id": "PM-KISAN-IN",
+      "model_assisted_label": "need_more_information",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-001",
+      "scheme_id": "IGNOAPS-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-002",
+      "scheme_id": "IGNOAPS-MH",
+      "model_assisted_label": "eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-003",
+      "scheme_id": "IGNOAPS-MH",
+      "model_assisted_label": "eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-004",
+      "scheme_id": "IGNOAPS-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-005",
+      "scheme_id": "IGNOAPS-MH",
+      "model_assisted_label": "need_more_information",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-006",
+      "scheme_id": "IGNOAPS-MH",
+      "model_assisted_label": "need_more_information",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-IGNOAPS-003",
+      "scheme_id": "IGNOAPS-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-IGNOAPS-006",
+      "scheme_id": "IGNOAPS-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-PMKISAN-004",
+      "scheme_id": "PM-KISAN-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "live rule engine",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-001",
+      "scheme_id": "NSAP-IGNOAPS-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "NSAP-IGNOAPS-IN-R03"
+      ],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-002",
+      "scheme_id": "NSAP-IGNOAPS-IN",
+      "model_assisted_label": "eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-003",
+      "scheme_id": "IGNWPS-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "IGNWPS-IN-R01"
+      ],
+      "missing_facts": [
+        "is_remarried"
+      ],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-004",
+      "scheme_id": "IGNWPS-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "IGNWPS-IN-R02"
+      ],
+      "missing_facts": [
+        "is_remarried"
+      ],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-005",
+      "scheme_id": "IGNDPS-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "IGNDPS-IN-R04"
+      ],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-006",
+      "scheme_id": "IGNDPS-IN",
+      "model_assisted_label": "eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-007",
+      "scheme_id": "IGNDPSM-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "IGNDPSM-MH-R02"
+      ],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-008",
+      "scheme_id": "IGNDPSM-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "IGNDPSM-MH-R06"
+      ],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-009",
+      "scheme_id": "NFBSM-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "NFBSM-MH-R02"
+      ],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-010",
+      "scheme_id": "NFBSM-MH",
+      "model_assisted_label": "eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-011",
+      "scheme_id": "NFBSM-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "NFBSM-MH-R03"
+      ],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-012",
+      "scheme_id": "APY-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "APY-IN-R02"
+      ],
+      "missing_facts": [
+        "is_income_tax_payer"
+      ],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-013",
+      "scheme_id": "APY-IN",
+      "model_assisted_label": "eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-014",
+      "scheme_id": "PMSBY-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "PMSBY-IN-R02"
+      ],
+      "missing_facts": [
+        "is_institutional_account_holder"
+      ],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-015",
+      "scheme_id": "PMJJBY-IN",
+      "model_assisted_label": "eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-016",
+      "scheme_id": "PRE-DIS-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "PRE-DIS-IN-R04"
+      ],
+      "missing_facts": [
+        "receives_other_scholarship_or_stipend",
+        "is_repeating_class"
+      ],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-017",
+      "scheme_id": "FADSE-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "FADSE-MH-R05"
+      ],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-018",
+      "scheme_id": "POST-DIS-IN",
+      "model_assisted_label": "eligible",
+      "deciding_rules": [],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-019",
+      "scheme_id": "POST-DIS-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "POST-DIS-IN-R04"
+      ],
+      "missing_facts": [
+        "receives_other_scholarship_or_stipend",
+        "is_repeating_class"
+      ],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-020",
+      "scheme_id": "POST-DIS-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "POST-DIS-IN-R07"
+      ],
+      "missing_facts": [
+        "receives_other_scholarship_or_stipend",
+        "is_repeating_class"
+      ],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-021",
+      "scheme_id": "POST-DIS-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "POST-DIS-IN-R03"
+      ],
+      "missing_facts": [
+        "receives_other_scholarship_or_stipend",
+        "is_repeating_class"
+      ],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-022",
+      "scheme_id": "FASETDP-MH",
+      "model_assisted_label": "need_more_information",
+      "deciding_rules": [],
+      "missing_facts": ["age"],
+      "method": "draft gold rules; corrected 2026-11-12 at the owner's request because the official criteria also require age 14 to 80",
+      "matches_draft_expected": false
+    },
+    {
+      "persona_id": "R1-GOLD-023",
+      "scheme_id": "FASETDP-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "FASETDP-MH-R01"
+      ],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-024",
+      "scheme_id": "FADSE-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "FADSE-MH-R03"
+      ],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-025",
+      "scheme_id": "FADSE-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "FADSE-MH-R04"
+      ],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-026",
+      "scheme_id": "PRE-DIS-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": [
+        "PRE-DIS-IN-R07"
+      ],
+      "missing_facts": [
+        "receives_other_scholarship_or_stipend",
+        "is_repeating_class"
+      ],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-027",
+      "scheme_id": "FAISHL-IN",
+      "model_assisted_label": "eligible",
+      "deciding_rules": ["FAISHL-IN-R01", "FAISHL-IN-R02"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-028",
+      "scheme_id": "FAISHL-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": ["FAISHL-IN-R02"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-029",
+      "scheme_id": "FAISHL-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": ["FAISHL-IN-R01"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-030",
+      "scheme_id": "IPMWCD-IN",
+      "model_assisted_label": "eligible",
+      "deciding_rules": ["IPMWCD-IN-R01", "IPMWCD-IN-R02", "IPMWCD-IN-R03", "IPMWCD-IN-R04", "IPMWCD-IN-R05"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-031",
+      "scheme_id": "IPMWCD-IN",
+      "model_assisted_label": "eligible",
+      "deciding_rules": ["IPMWCD-IN-R01", "IPMWCD-IN-R02", "IPMWCD-IN-R03", "IPMWCD-IN-R04", "IPMWCD-IN-R05"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-032",
+      "scheme_id": "IPMWCD-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": ["IPMWCD-IN-R03"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-033",
+      "scheme_id": "EACS-MH",
+      "model_assisted_label": "eligible",
+      "deciding_rules": ["EACS-MH-R01", "EACS-MH-R02"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-034",
+      "scheme_id": "EACS-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": ["EACS-MH-R02"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-035",
+      "scheme_id": "NSMNY-MH",
+      "model_assisted_label": "eligible",
+      "deciding_rules": ["NSMNY-MH-R01"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-036",
+      "scheme_id": "NSMNY-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": ["NSMNY-MH-R03"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-037",
+      "scheme_id": "NSMNY-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": ["NSMNY-MH-R01"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-038",
+      "scheme_id": "IGNWPSM-MH",
+      "model_assisted_label": "eligible",
+      "deciding_rules": ["IGNWPSM-MH-R01", "IGNWPSM-MH-R02", "IGNWPSM-MH-R03", "IGNWPSM-MH-R04", "IGNWPSM-MH-R05", "IGNWPSM-MH-R06"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-039",
+      "scheme_id": "IGNWPSM-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": ["IGNWPSM-MH-R01"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-040",
+      "scheme_id": "IGNWPSM-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": ["IGNWPSM-MH-R06"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-041",
+      "scheme_id": "BFFL-MH",
+      "model_assisted_label": "eligible",
+      "deciding_rules": ["BFFL-MH-R01", "BFFL-MH-R02", "BFFL-MH-R03"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-042",
+      "scheme_id": "BFFL-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": ["BFFL-MH-R03"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-043",
+      "scheme_id": "BFFL-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": ["BFFL-MH-R04"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-044",
+      "scheme_id": "TMDVSO-MH",
+      "model_assisted_label": "eligible",
+      "deciding_rules": ["TMDVSO-MH-R01"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-045",
+      "scheme_id": "TMDVSO-MH",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": ["TMDVSO-MH-R01"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-046",
+      "scheme_id": "WMCL-IN",
+      "model_assisted_label": "eligible",
+      "deciding_rules": ["WMCL-IN-R01", "WMCL-IN-R02"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-047",
+      "scheme_id": "WMCL-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": ["WMCL-IN-R01"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    },
+    {
+      "persona_id": "R1-GOLD-048",
+      "scheme_id": "WMCL-IN",
+      "model_assisted_label": "not_eligible",
+      "deciding_rules": ["WMCL-IN-R03"],
+      "missing_facts": [],
+      "method": "draft gold rules",
+      "matches_draft_expected": true
+    }
+  ]
+}
