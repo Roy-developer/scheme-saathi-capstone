@@ -2000,11 +2000,23 @@ def build_journey_graph(
                 ),
             }
         # Check 2: the scheme must have a reviewed rule package. Without one
-        # we only show information and never guess eligibility.
-        if scheme_id not in rule_packages and not multi:
+        # we only show information and never guess eligibility. For several
+        # candidates this applies when none of them has a package (e.g. a
+        # search for children's schemes, none of which are live yet).
+        no_reviewed_rules = (
+            not any(candidate in rule_packages for candidate in candidates)
+            if multi
+            else scheme_id not in rule_packages
+        )
+        if no_reviewed_rules:
             await bind_rules(state, scheme_id)
+            info_only_ids = candidates if multi else [scheme_id]
             message = (
-                "This scheme is information-only in the current pilot. "
+                "These schemes are information-only in the current pilot. "
+                "Reviewed deterministic eligibility rule packages are not "
+                "available for them, so no eligibility decision can be provided."
+                if len(info_only_ids) > 1
+                else "This scheme is information-only in the current pilot. "
                 "A reviewed deterministic eligibility rule package is not "
                 "available, so no eligibility decision can be provided."
             )
@@ -2014,9 +2026,10 @@ def build_journey_graph(
                 "missing_fields": [],
                 "eligibility_result": None,
                 "candidate_verdicts": {
-                    scheme_id: CandidateVerdict(
-                        scheme_id=scheme_id, result="information_only"
+                    candidate: CandidateVerdict(
+                        scheme_id=candidate, result="information_only"
                     ).model_dump(mode="json")
+                    for candidate in info_only_ids
                 },
                 "conversation": [{"role": "assistant", "content": message}],
                 "handoffs": _report_to_supervisor(

@@ -98,6 +98,28 @@ def test_multi_candidate_evaluate_returns_distinct_verdicts(client):
     assert result["eligibility_results"]["PM-KISAN-IN"]["result"] == "not_eligible"
 
 
+def test_multi_candidate_interview_with_no_live_scheme_is_information_only(client):
+    # A search such as "schemes for small children" finds only schemes
+    # without reviewed rules. This used to crash typed intake with
+    # "A validated scheme bundle is required"; it must say information-only.
+    response = client.post("/api/v1/journey", json={
+        "action": "interview",
+        "candidate_scheme_ids": ["EACS-MH", "WMCL-IN", "NSIGSE-IN"],
+    })
+    assert response.status_code == 200
+    result = response.json()
+    assert result["status"] == "information_only"
+    assert result["eligibility_result"] is None
+    assert {
+        scheme_id: verdict["result"]
+        for scheme_id, verdict in result["candidate_verdicts"].items()
+    } == {
+        "EACS-MH": "information_only",
+        "WMCL-IN": "information_only",
+        "NSIGSE-IN": "information_only",
+    }
+
+
 def test_correction_endpoint_rechecks_and_records_the_fact_not_its_value(client):
     profile = {
         "is_widow": True,
