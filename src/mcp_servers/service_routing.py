@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
+from src.observability.metrics import tool_span
 from src.workflow.errors import MCPToolError
 
 ToolActor = Literal[
@@ -95,6 +96,14 @@ class ServiceClientRouter:
         return ServiceClientRouter(self.clients, actor, journey_id, self.count_domain_calls)
 
     async def call_tool(
+        self, name: str, arguments: dict[str, object]
+    ) -> object:
+        """Trace the call, then authorize and run it."""
+
+        with tool_span(self.actor, name, self.journey_id or ""):
+            return await self._call_tool(name, arguments)
+
+    async def _call_tool(
         self, name: str, arguments: dict[str, object]
     ) -> object:
         """Authorize caller and action before executing any service request."""

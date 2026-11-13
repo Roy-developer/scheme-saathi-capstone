@@ -32,6 +32,7 @@ from src.workflow.agent_config import (
     PROMPT_VERSION,
     TOKEN_ESTIMATE_CHARACTERS,
 )
+from src.observability.metrics import model_span
 from src.workflow.conversation_budget import durable_counters, reserve_counters
 
 
@@ -116,7 +117,8 @@ class ScrubbedTraceMiddleware(AgentMiddleware):
         self.step += 1
         started = time.monotonic()
         try:
-            response = await handler(request)
+            with model_span(self.agent, self.model_name, self.step):
+                response = await handler(request)
         except RunStopped as stop:
             self._usage = (0, 0, started)
             self._record(None, stop.status)

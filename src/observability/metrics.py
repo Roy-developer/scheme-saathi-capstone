@@ -16,6 +16,10 @@ from dataclasses import dataclass
 from typing import Iterator
 
 from opentelemetry import metrics as otel_metrics
+import hashlib
+from collections import OrderedDict
+from opentelemetry import trace as otel_trace
+from opentelemetry.trace import Span
 
 
 METER_NAME = "scheme_saathi"
@@ -180,3 +184,55 @@ def observe_duration(endpoint: str) -> Iterator[None]:
     finally:
         elapsed = time.perf_counter() - started
         _otel_instruments.request_latency.record(elapsed, {"endpoint": endpoint})
+
+
+# --- Phase 6: once-per-conversation verdicts and privacy-safe spans ----------
+
+_MAX_COUNTED_VERDICTS = 10_000
+_counted_verdicts: "OrderedDict[tuple[str, str], str]" = OrderedDict()
+_tracer = otel_trace.get_tracer(METER_NAME)
+
+
+def correlation_id(raw: str) -> str:
+    """Hash an identifier so traces can be joined without the raw value."""
+
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
+
+
+def record_journey_verdict(conversation_id: str, scheme_id: str, result: str) -> None:
+    """Count a journey verdict once per conversation, scheme and verdict value.
+
+    Journey turns re-evaluate every scheme, so counting each turn would inflate
+    the can't-tell rate. A verdict is counted again only when it changes.
+    """
+
+    normalized = "need_more_information" if result == "cant_tell" else result
+    key = (correlation_id(conversation_id), scheme_id)
+    if _counted_verdicts.get(key) == normalized:
+        return
+    _counted_verdicts[key] = normalized
+    _counted_verdicts.move_to_end(key)
+    while len(_counted_verdicts) > _MAX_COUNTED_VERDICTS:
+        _counted_verdicts.popitem(last=False)
+    record_verdict(scheme_id, normalized)
+
+
+@contextmanager
+def model_span(agent: str, model: str, step: int) -> Iterator[Span]:
+    """Trace one model call. Prompts and responses are never attached."""
+
+    with _tracer.start_as_current_span(
+        "model_call", attributes={"agent": agent, "model": model, "step": step},
+    ) as span:
+        yield span
+
+
+@contextmanager
+def tool_span(actor: str, tool: str, journey_id: str) -> Iterator[Span]:
+    """Trace one tool call. Arguments are never attached; the journey is hashed."""
+
+    with _tracer.start_as_current_span(
+        "tool_call",
+        attributes={"actor": actor, "tool": tool, "journey": correlation_id(journey_id)},
+    ) as span:
+        yield span

@@ -11,7 +11,10 @@ from src.observability.metrics import (
     record_pending_approval_resolved,
     record_question,
     record_tokens,
+    record_journey_verdict,
     record_verdict,
+    model_span,
+    tool_span,
 )
 
 __all__ = [
@@ -25,5 +28,8 @@ __all__ = [
     "record_pending_approval_resolved",
     "record_question",
     "record_tokens",
+    "record_journey_verdict",
     "record_verdict",
+    "model_span",
+    "tool_span",
 ]

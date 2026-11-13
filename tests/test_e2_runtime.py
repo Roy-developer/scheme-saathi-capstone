@@ -5,6 +5,7 @@ Consent, ownership and approval baselines use deliberately unsafe test adapters;
 the real API handlers, MCP services and portal still execute downstream.
 """
 
+from contextlib import closing
 from functools import partial
 import json
 import sqlite3
@@ -289,7 +290,7 @@ def _draft_scope(harness, patch, enabled, clean):
     lookups = []
     if not enabled:
         async def unscoped_lookup(request, _conversation_id, draft_id):
-            with sqlite3.connect(harness.database) as connection:
+            with closing(sqlite3.connect(harness.database)) as connection:
                 row = connection.execute(
                     "SELECT journey_id FROM application_drafts WHERE draft_id = ?",
                     (draft_id,),

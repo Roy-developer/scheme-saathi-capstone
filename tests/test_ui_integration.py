@@ -11,6 +11,7 @@ from collections.abc import Iterator
 from http.client import HTTPResponse
 from io import BytesIO
 import json
+import shutil
 from pathlib import Path
 import sqlite3
 from urllib.error import HTTPError
@@ -349,13 +350,20 @@ def _refresh(screen: AppTest) -> AppTest:
 
 
 def test_development_scholarship_reaches_exact_mock_receipt_through_real_ui(
-    monkeypatch: pytest.MonkeyPatch,
+    monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest,
 ) -> None:
     """Inject one data-only test bundle while keeping the ordinary catalogue untouched."""
 
     scheme_id = SCHOLARSHIP
-    package_dir = SCHOLARSHIP_PACKAGE_DIR.resolve()
-    scheme_data = SCHOLARSHIP_SCHEME_DIR.resolve()
+    # Work on a private copy so other tests in this worker never see the bundle
+    # while it is being published and restored.
+    # The app only accepts test rule data under tests/fixtures, so the copy lives there.
+    run_root = SCHOLARSHIP_PACKAGE_DIR.parent.parent / f"phase4-run-{uuid4().hex}"
+    shutil.copytree(SCHOLARSHIP_PACKAGE_DIR.parent, run_root)
+    request.addfinalizer(lambda: shutil.rmtree(run_root, ignore_errors=True))
+    fixture_root = run_root
+    package_dir = (fixture_root / "packages").resolve()
+    scheme_data = (fixture_root / "schemes").resolve()
     checklist_path = (
         scheme_data / "document_checklists" / f"{scheme_id}.json"
     )
