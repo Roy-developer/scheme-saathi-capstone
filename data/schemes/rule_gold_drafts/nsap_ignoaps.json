@@ -24,7 +24,7 @@
       "value": true,
       "unit": null,
       "source_passage_id": "NSAP-IGNOAPS-IN-ELIGIBILITY-02",
-      "source_quote": "The applicant should belong to a household living below the poverty line.",
+      "source_quote": "The applicant should be living Below Poverty Line.",
       "needs_human_review": false,
       "note": null
     },
@@ -36,7 +36,7 @@
       "value": 60,
       "unit": null,
       "source_passage_id": "NSAP-IGNOAPS-IN-ELIGIBILITY-03",
-      "source_quote": "The age of the applicant (male or female) should be 60 years or above.",
+      "source_quote": "The applicant should be at least 60 years of age.",
       "needs_human_review": false,
       "note": null
     }
