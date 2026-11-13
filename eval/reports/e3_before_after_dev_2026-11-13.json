@@ -1,0 +1,60 @@
+{
+  "scope": "Reflexion E3, development check split only (6 cases, 3 repeats). Not held-out. Directional.",
+  "rule": "A case passes only if every repeat is exact (all-runs rule, decided by the project lead).",
+  "freeze": "eval/freeze/manifest.json e3_extraction_freeze (PR #52)",
+  "before": {
+    "playbook": "none",
+    "raw_exact": 9,
+    "raw_total": 18,
+    "source_sha256": "c1970a230b94c06a46c3cd8118a490850752e915be9d6f40cc25af32db6eab38",
+    "cases_passing_all_runs": 3,
+    "cases": 6
+  },
+  "after": {
+    "playbook": "1.0.0",
+    "raw_exact": 18,
+    "raw_total": 18,
+    "source_sha256": "0d80131fb8f0cd9853456531b1e73837436a3cac2ac5a4ff5e01c80d0ab96230",
+    "cases_passing_all_runs": 6,
+    "cases": 6
+  },
+  "per_case_all_runs": {
+    "IGNOAPS-MH-ELIGIBILITY-01": {
+      "before": true,
+      "after": true
+    },
+    "IGNWPS-MH-ELIGIBILITY-01": {
+      "before": true,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-3": {
+      "before": true,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(b)(iv)": {
+      "before": false,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(b)(v)": {
+      "before": false,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(b)(vi)": {
+      "before": false,
+      "after": true
+    }
+  },
+  "improved": [
+    "PMKISAN-GUIDELINES-2020-4.1(b)(iv)",
+    "PMKISAN-GUIDELINES-2020-4.1(b)(v)",
+    "PMKISAN-GUIDELINES-2020-4.1(b)(vi)"
+  ],
+  "regressed": [],
+  "model_calls": 36,
+  "cost": {
+    "usd": 0.0,
+    "basis": "OpenRouter activity export 2026-11-13: all 36 E3 calls on nvidia/nemotron-3.5-lightning (free variant), cost_total 0 for every row",
+    "note": "Same key also shows paid charges from other models on earlier dates (about $0.70 total since 2026-10-24); none in the E3 window."
+  },
+  "source_reports": "data/runtime/reflexion_reports (not committed; hashes above)"
+}
