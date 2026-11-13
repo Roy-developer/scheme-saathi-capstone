@@ -259,3 +259,42 @@ def test_identifier_in_own_words_is_masked_for_reader_response_and_logs(journey,
     saved = client.get(f"/api/v1/journey/{started['conversation_id']}").json()
     assert FAKE_AADHAAR not in str(saved)
     assert FAKE_AADHAAR not in caplog.text
+
+
+@pytest.mark.parametrize(
+    ("locale", "yes", "no", "dont_know"),
+    [
+        ("en", "yes", "no", "I don't know"),
+        ("hi", "हाँ", "नहीं", "मुझे नहीं पता"),
+        ("mr", "होय", "नाही", "माहित नाही"),
+    ],
+)
+def test_typed_yes_no_dont_know_are_recorded_without_the_reader(
+    journey, locale, yes, no, dont_know,
+):
+    """With no buttons, the typed words alone record yes/no questions."""
+
+    client, reader, graph = journey()
+
+    def start():
+        response = client.post("/api/v1/journey", json={
+            "action": "interview", "scheme_id": WIDOW, "locale": locale,
+        })
+        assert response.status_code == 200
+        return response.json()
+
+    def facts(body):
+        return (_typed_facts(graph, body) or {}).get("facts", {})
+
+    widow = _say(client, start(), yes)
+    assert facts(widow)["is_widow"]["value"] is True
+    waiting = _say(client, widow, "1986-11-13")
+    assert waiting["pending_fact"] == "bpl_card_shown"
+    unknown = _say(client, waiting, dont_know)
+    assert unknown["status"] == "need_more_information"
+    assert facts(unknown)["bpl_card_shown"]["status"] == "declined"
+
+    not_widow = _say(client, start(), no)
+    assert not_widow["status"] == "not_eligible"
+    assert facts(not_widow)["is_widow"]["value"] is False
+    assert reader.seen == []

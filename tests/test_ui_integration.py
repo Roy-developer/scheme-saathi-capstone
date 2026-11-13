@@ -504,7 +504,10 @@ def test_development_scholarship_reaches_exact_mock_receipt_through_real_ui(
                 elif fact_id == "exam_stream":
                     screen.selectbox(key=answer_key).set_value("Science")
                 else:
-                    screen.radio(key=answer_key).set_value("I don't know")
+                    # Yes/no questions are answered by typing.
+                    screen.chat_input[0].set_value(answers[fact_id]).run()
+                    _healthy(screen)
+                    continue
                 _click(screen, "Send answer")
                 _healthy(screen)
             assert answered == set(answers), (

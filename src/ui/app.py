@@ -217,7 +217,8 @@ COPY = {
         "agent_no_calls": "No model calls have run; the deterministic flow is active.",
         "interview_start": "Start questions",
         "interview_restart": "Start again",
-        "interview_reply": "Type your answer (yes / no / don't know, a date like 1958-05-05, or your own words)",
+        "interview_reply": "Type your answer in your own words",
+        "interview_reply_date": "Type the date, e.g. 1958-05-05, or describe it in your own words",
         "quick_answer": "Quick answer",
         "free_text_hint": "You can also type your answer in your own words in the box below. Saathi will check what it understood with you before saving it.",
         "send_answer": "Send answer",
@@ -385,7 +386,8 @@ COPY = {
         "agent_no_calls": "कोई मॉडल कॉल नहीं हुई; नियतात्मक प्रवाह सक्रिय है।",
         "interview_start": "प्रश्न शुरू करें",
         "interview_restart": "फिर से शुरू करें",
-        "interview_reply": "अपना उत्तर लिखें (हाँ / नहीं / मुझे नहीं पता, 1958-05-05 जैसी तारीख, या अपने शब्दों में)",
+        "interview_reply": "अपने शब्दों में उत्तर लिखें",
+        "interview_reply_date": "तारीख लिखें, जैसे 1958-05-05, या अपने शब्दों में बताएँ",
         "quick_answer": "त्वरित उत्तर",
         "free_text_hint": "आप नीचे के बॉक्स में अपने शब्दों में भी उत्तर लिख सकते हैं। सहेजने से पहले साथी आपसे पूछेगा कि उसने सही समझा या नहीं।",
         "send_answer": "उत्तर भेजें",
@@ -553,7 +555,8 @@ COPY = {
         "agent_no_calls": "मॉडेल कॉल झालेला नाही; निर्धारक प्रवाह सक्रिय आहे.",
         "interview_start": "प्रश्न सुरू करा",
         "interview_restart": "पुन्हा सुरू करा",
-        "interview_reply": "तुमचे उत्तर लिहा (होय / नाही / माहित नाही, 1958-05-05 अशी तारीख किंवा तुमच्या शब्दांत)",
+        "interview_reply": "तुमच्या शब्दांत उत्तर लिहा",
+        "interview_reply_date": "तारीख लिहा, उदा. 1958-05-05, किंवा तुमच्या शब्दांत सांगा",
         "quick_answer": "झटपट उत्तर",
         "free_text_hint": "तुम्ही खालील बॉक्समध्ये तुमच्या शब्दांतही उत्तर लिहू शकता. जतन करण्यापूर्वी साथी त्याने काय समजले ते तुमच्याकडून तपासेल.",
         "send_answer": "उत्तर पाठवा",
@@ -2365,27 +2368,13 @@ def registered_answer_input(
     if unit or bounds:
         st.caption(" · ".join([*(str(item) for item in bounds), str(unit or "")]).strip(" ·"))
 
+    if not has_quick_control(question):
+        # Yes/no questions are answered by typing in the chat box.
+        return None
+
     with st.form(f"{key}_form"):
         answer: object = None
-        if value_type == "boolean":
-            labels = {
-                "en": ("Yes", "No", "I don't know"),
-                "hi": ("हाँ", "नहीं", "मुझे नहीं पता"),
-                "mr": ("होय", "नाही", "माहित नाही"),
-            }[locale]
-            selected = st.radio(
-                text["quick_answer"],
-                labels,
-                index=None,
-                key=key,
-            )
-            answer = (
-                "skip" if selected == labels[2]
-                else "yes" if selected == labels[0]
-                else "no" if selected == labels[1]
-                else None
-            )
-        elif value_type == "integer":
+        if value_type == "integer":
             is_unknown = st.checkbox(
                 unknown_label, key=f"{key}_unknown"
             )
@@ -2476,6 +2465,14 @@ def registered_answer_input(
     return str(answer) if submitted and answer is not None else None
 
 
+def has_quick_control(question: dict[str, object] | None) -> bool:
+    """Whether a question gets a form control besides the chat box."""
+
+    return bool(question) and question.get("value_type") in {
+        "integer", "decimal", "date", "choice", "text",
+    }
+
+
 def journey_reply(text: dict[str, str], locale: str) -> str | None:
     """Offer the question's own controls, and typing, on every interview screen."""
 
@@ -2487,10 +2484,15 @@ def journey_reply(text: dict[str, str], locale: str) -> str | None:
         if definition
         else None
     )
-    if definition and not definition.get("confirming"):
+    if has_quick_control(definition):
         # The controls are shortcuts; typed answers take the same checked path.
         st.caption(text["free_text_hint"])
-    typed = st.chat_input(text["interview_reply"], max_chars=MAX_JOURNEY_REPLY_LENGTH)
+    placeholder = (
+        text["interview_reply_date"]
+        if definition and definition.get("value_type") == "date"
+        else text["interview_reply"]
+    )
+    typed = st.chat_input(placeholder, max_chars=MAX_JOURNEY_REPLY_LENGTH)
     return selected or typed
 
 

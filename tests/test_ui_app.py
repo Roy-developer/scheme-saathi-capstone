@@ -873,30 +873,89 @@ def test_registered_question_also_accepts_a_typed_answer() -> None:
         ]
 
 
-def test_yes_no_buttons_are_shortcuts_and_own_words_are_offered() -> None:
-    """A yes/no question keeps its quick buttons and invites a typed answer."""
-
-    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
-    conversation_id = uuid4()
-    question = "Are you a widow?"
-    waiting = JourneyResponse(
+def _waiting_on(conversation_id, fact_id: str, value_type: str) -> JourneyResponse:
+    question = f"Synthetic question about {fact_id}?"
+    return JourneyResponse(
         conversation_id=conversation_id,
         plan="Learn about you -> Check the rules",
         plan_detail=_plan("in_progress", "pending"),
         status="awaiting_answer",
         message=question,
         question=question,
-        pending_fact="is_widow",
+        pending_fact=fact_id,
         question_definition=QuestionPresentation(
-            fact_id="is_widow", value_type="boolean", choices=[],
+            fact_id=fact_id, value_type=value_type, choices=[],
         ),
         conversation=[{"role": "assistant", "content": question}],
     )
+
+
+@pytest.mark.parametrize(
+    ("locale", "typed"),
+    [
+        ("en", ["yes", "no", "I don't know", "yes, my husband passed away"]),
+        ("hi", ["हाँ", "नहीं", "मुझे नहीं पता"]),
+        ("mr", ["होय", "नाही", "माहित नाही"]),
+    ],
+)
+def test_yes_no_question_has_no_buttons_and_is_answered_by_typing(locale, typed) -> None:
+    """A yes/no question shows only the chat box; typed text is sent as is."""
+
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    conversation_id = uuid4()
+    waiting = _waiting_on(conversation_id, "is_widow", "boolean")
     with patch(
         "src.ui.api_client.get_journey_state", return_value=waiting
     ), patch(
-        "src.ui.api_client.send_journey_message", side_effect=[waiting],
+        "src.ui.api_client.send_journey_message", return_value=waiting,
     ) as send_reply, patch(
+        "src.ui.api_client.list_application_drafts", return_value=[],
+    ):
+        app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS)
+        app.query_params["conversation"] = str(conversation_id)
+        app.query_params["scheme"] = "IGNWPS-MH"
+        app.run()
+        app.selectbox[0].set_value(locale).run()
+        assert not app.exception
+
+        assert not [
+            radio for radio in app.radio
+            if radio.key and radio.key.startswith("registered_answer_")
+        ]
+        assert not [button for button in app.button if button.label in {
+            "Send answer", "उत्तर भेजें", "उत्तर पाठवा",
+        }]
+        assert len(app.chat_input) == 1
+        assert app.chat_input[0].placeholder == {
+            "en": "Type your answer in your own words",
+            "hi": "अपने शब्दों में उत्तर लिखें",
+            "mr": "तुमच्या शब्दांत उत्तर लिहा",
+        }[locale]
+
+        for reply in typed:
+            app.chat_input[0].set_value(reply).run()
+            assert not app.exception
+
+        assert [call.args for call in send_reply.call_args_list] == [
+            (str(conversation_id), reply) for reply in typed
+        ]
+
+
+@pytest.mark.parametrize(
+    ("value_type", "fact_id", "date_hint"),
+    [
+        ("date", "date_of_birth", True),
+        ("boolean", "is_widow", False),
+        ("integer", "synthetic_count", False),
+    ],
+)
+def test_date_example_is_shown_only_for_date_questions(value_type, fact_id, date_hint) -> None:
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    conversation_id = uuid4()
+    waiting = _waiting_on(conversation_id, fact_id, value_type)
+    with patch(
+        "src.ui.api_client.get_journey_state", return_value=waiting
+    ), patch(
         "src.ui.api_client.list_application_drafts", return_value=[],
     ):
         app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS)
@@ -905,19 +964,11 @@ def test_yes_no_buttons_are_shortcuts_and_own_words_are_offered() -> None:
         app.run()
         assert not app.exception
 
-        buttons = app.radio(key=f"registered_answer_{conversation_id}_is_widow")
-        assert buttons.label == "Quick answer"
-        assert list(buttons.options) == ["Yes", "No", "I don't know"]
+        assert ("1958-05-05" in app.chat_input[0].placeholder) is date_hint
+        assert bool(app.date_input) is (value_type == "date")
         shown = " ".join(element.value for element in app.caption)
-        assert "in your own words" in shown
-        assert len(app.chat_input) == 1
-
-        app.chat_input[0].set_value("yes, my husband passed away").run()
-
-        assert not app.exception
-        assert [call.args for call in send_reply.call_args_list] == [
-            (str(conversation_id), "yes, my husband passed away"),
-        ]
+        # The "you can also type" hint only appears next to a quick control.
+        assert ("in your own words" in shown) is (value_type != "boolean")
 
 
 def test_refresh_with_forgotten_conversation_cleans_url() -> None:
