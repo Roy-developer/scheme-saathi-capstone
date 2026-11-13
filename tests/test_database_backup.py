@@ -163,6 +163,24 @@ def test_failed_save_keeps_the_previous_copy(share: Path, live: Path, monkeypatc
     assert _values(share / live.name) == ["first"]
 
 
+def test_strict_save_fails_if_a_required_database_is_unavailable(
+    share: Path, live: Path,
+) -> None:
+    backups = DatabaseBackups(share, [live])
+
+    with pytest.raises(OSError, match="required database"):
+        backups.save(strict=True)
+
+
+def test_invalid_deletion_marker_refuses_recovery(share: Path) -> None:
+    directory = share / ".pending-deletions"
+    directory.mkdir()
+    (directory / "not-a-marker.json").write_text("{}", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="marker ID"):
+        DatabaseBackups(share, []).pending_deletions()
+
+
 def test_database_not_created_yet_is_skipped(share: Path, live: Path) -> None:
     DatabaseBackups(share, [live]).save()
 

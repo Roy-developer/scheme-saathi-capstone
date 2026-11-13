@@ -11,7 +11,7 @@
   },
   "configurations": [
     {"id": "C0", "mode": "fixed_workflow"},
-    {"id": "C1", "mode": "single_agent", "implementation": "src/workflow/single_agent.py::run_single_agent_baseline"},
+    {"id": "C1", "mode": "single_agent", "implementation": "src/workflow/single_agent.py::run_single_agent_action (eligibility/documents-only variant kept in src/workflow/single_agent_baseline.py)"},
     {"id": "C2", "mode": "specialist_team"}
   ],
   "metrics": [
@@ -22,7 +22,7 @@
     "p95_latency",
     "errors_timeouts"
   ],
-  "harness": "eval/harness/e1_runner.py; offline wiring check: python scripts/evaluate_e1_dry_run.py (scripted model; NOT a result).",
+  "harness": "eval/harness/e1_runner.py (team harness from main); live development run: scripts/run_e1_live.py",
   "development_result": "gpt-4.1-mini, 31 dev cases x3 repeats, 0 errors: C0/C1/C2 each 31/31 every repeat; model calls/case C1 2.23 vs C2 2.45; tokens/case 670 vs 706; median latency ~2.05 s vs ~2.2 s. Development only; see docs/ROLE3_CHANGES_WALKTHROUGH.md.",
   "blocker": "Requires frozen Phase 5 agents/guardrails and a protected held-out set."
 }

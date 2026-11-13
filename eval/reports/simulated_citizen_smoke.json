@@ -1,0 +1,33 @@
+{
+  "citizen_id": "SIM-DEV-001",
+  "language": "en",
+  "question_count": 3,
+  "answered_count": 2,
+  "unknown_count": 1,
+  "turns": [
+    {
+      "prompt": "Are you a widow?",
+      "citizen_id": "SIM-DEV-001",
+      "fact_id": "is_widow",
+      "status": "answered",
+      "value": true,
+      "utterance": "True"
+    },
+    {
+      "prompt": "What is your date of birth?",
+      "citizen_id": "SIM-DEV-001",
+      "fact_id": "date_of_birth",
+      "status": "answered",
+      "value": "1986-10-30",
+      "utterance": "1986-10-30"
+    },
+    {
+      "prompt": "Did you pay income tax last year?",
+      "citizen_id": "SIM-DEV-001",
+      "fact_id": "income_tax_paid_last_assessment_year",
+      "status": "unknown",
+      "value": null,
+      "utterance": "I don't know / I wasn't asked that before."
+    }
+  ]
+}

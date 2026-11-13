@@ -114,6 +114,34 @@ def test_submit_requires_approval_and_is_idempotent(
     assert repeated["receipt_id"] == submitted["receipt_id"]
 
 
+def test_rt_memory_003_approval_token_cannot_be_replayed(
+    tmp_path, monkeypatch,
+) -> None:
+    monkeypatch.setenv(
+        "SCHEME_SAATHI_APPLICATION_DB",
+        str(tmp_path / "applications.sqlite3"),
+    )
+    victim_draft = _create_draft("victim-journey")
+    attacker_draft = _create_draft("attacker-journey")
+    approved = applications._portal_action({
+        "action": "approve",
+        "journey_id": "victim-journey",
+        "draft_id": victim_draft["draft_id"],
+        "revision": victim_draft["revision"],
+        "fingerprint": victim_draft["fingerprint"],
+    })
+
+    with pytest.raises(RuntimeError, match="submission authorization"):
+        applications._portal_action({
+            "action": "submit",
+            "journey_id": "attacker-journey",
+            "draft_id": attacker_draft["draft_id"],
+            "revision": attacker_draft["revision"],
+            "fingerprint": attacker_draft["fingerprint"],
+            "approval_token": approved["approval_token"],
+        })
+
+
 def test_checklist_mutation_and_restore_permanently_stales_unsubmitted_draft(
     tmp_path, monkeypatch
 ) -> None:

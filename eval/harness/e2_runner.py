@@ -140,7 +140,8 @@ def run_e2_defences(suite: RedTeamSuite) -> dict[str, Any]:
             "are contextual (fee/OTP/approval lures); clean UPI/WhatsApp mentions "
             "are scored under legitimate_work.false_block_rate. The same "
             "screen_scam_text helper is wired into live intake description and "
-            "journey replies. Memory/approval-gate attacks still need live "
-            "journey runs."
+            "journey replies. Reviewed memory/approval cases are executed by "
+            "the separate local red-team integration tests, not this off/on "
+            "experiment."
         ),
     }

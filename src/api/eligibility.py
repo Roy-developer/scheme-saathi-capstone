@@ -1,6 +1,7 @@
 """Deterministic eligibility engine shared by every synthetic mock scheme."""
 
 from collections.abc import Mapping
+from datetime import date
 from functools import lru_cache
 import json
 from pathlib import Path
@@ -11,6 +12,13 @@ from pydantic import Field
 from src.rules.facts import FactRegistry, FactState, HouseholdProfile
 from src.rules.models import Rule, RulePackage
 from src.ui.models import StrictModel
+
+
+APY_MOCK_START_DATE = date(2022, 10, 1)
+APY_HISTORICAL_DATE_REASON = (
+    "This synthetic APY check cannot assess application dates before "
+    "1 October 2022. Ask for a domain review."
+)
 
 
 class RuleEvidence(StrictModel):
@@ -77,6 +85,29 @@ def evaluate_mock_eligibility(
 
     active_registry = registry or _default_registry()
     store = profile.validate_against(active_registry)
+    if package.scheme_id == "APY-IN":
+        application_date = store.value("application_date", active_registry)
+        if application_date is None:
+            return EligibilityResponse(
+                scheme_id=package.scheme_id,
+                result="need_more_information",
+                reason=package.reasons.need_more_information,
+                missing_fields=["application_date"],
+                deciding_rule_ids=[],
+                evidence=[],
+                notice=package.notice,
+                unresolved_checks=list(package.unresolved_checks),
+            )
+        if application_date < APY_MOCK_START_DATE:
+            return EligibilityResponse(
+                scheme_id=package.scheme_id,
+                result="need_more_information",
+                reason=APY_HISTORICAL_DATE_REASON,
+                deciding_rule_ids=[],
+                evidence=[],
+                notice=package.notice,
+                unresolved_checks=list(package.unresolved_checks),
+            )
     # Every rule ends up in one of three groups:
     #   passed     -> not stored; nothing to report
     #   failed     -> the person clearly does not qualify

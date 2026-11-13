@@ -1624,6 +1624,27 @@
         "WMCL-IN-APPLICATION-01"
       ],
       "query_language": "en"
+    },
+    {
+      "query_id": "IGNDPS-MH-DEV-001",
+      "query": "Which monthly pension does Maharashtra give to disabled people aged 18 to 79?",
+      "relevant_passage_ids": [
+        "IGNDPS-MH-ELIGIBILITY-01"
+      ]
+    },
+    {
+      "query_id": "IGNDPS-MH-DEV-002",
+      "query": "Is there a disability pension under the Indira Gandhi scheme in Maharashtra?",
+      "relevant_passage_ids": [
+        "IGNDPS-MH-ELIGIBILITY-01"
+      ]
+    },
+    {
+      "query_id": "IGNDPS-MH-DEV-003",
+      "query": "What age range is covered by the disability pension scheme for disabled persons?",
+      "relevant_passage_ids": [
+        "IGNDPS-MH-ELIGIBILITY-01"
+      ]
     }
   ]
 }

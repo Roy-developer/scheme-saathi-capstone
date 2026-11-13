@@ -155,3 +155,15 @@ Added: `src/workflow/single_agent.py`, `eval/harness/interview_sim.py`,
 Changed: `src/workflow/agent_config.py` (new prompt only),
 `eval/experiments/e1_agent_cost.json`, `eval/experiments/e4_signature_ablation.json`,
 `docs/CONTRIBUTIONS.md`.
+
+
+## Merge note (2026-11-13)
+
+When merging with main, `eval/harness/e1_runner.py`, `scripts/run_e1_live.py` and
+`src/workflow/single_agent.py` existed on both sides. Main's versions (team E1
+harness, live development runner and the journey-integrated C1 agent) were kept.
+My earlier standalone versions of the E1 runner, dry-run model and dry-run script
+were dropped; they remain in commit a3fef77. My restricted eligibility/documents
+baseline now lives in `src/workflow/single_agent_baseline.py` with
+`tests/test_single_agent_baseline.py`. Where this document names the dropped
+files, read them as main's equivalents.

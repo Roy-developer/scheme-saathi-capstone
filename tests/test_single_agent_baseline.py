@@ -4,7 +4,7 @@ import asyncio
 
 from fake_chat_model import FakeChatModel, ModelDecision
 from src.api.eligibility import EligibilityResponse
-from src.workflow.single_agent import run_single_agent_baseline
+from src.workflow.single_agent_baseline import run_single_agent_baseline
 
 
 def _response(scheme_id: str, result: str) -> EligibilityResponse:

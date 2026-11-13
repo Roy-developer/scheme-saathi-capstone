@@ -14,4 +14,16 @@ data/heldout/
 data/schemes/.document_checklists.lock
 data/schemes/.document_checklists.revision
 eval/reports/*.json
+!eval/reports/eligibility_dev_latest.json
+!eval/reports/reflexion_e3_inventory.json
+!eval/reports/red_team_dev_latest.json
+!eval/reports/e2_defences_dev_latest.json
+!eval/reports/label_agreement_dev_latest.json
+!eval/reports/experiments_inventory.json
+!eval/reports/simulated_citizen_smoke.json
 eval/held_out/local/
+
+# SQLite write-ahead and shared-memory files from test runs
+*.sqlite3-wal
+*.sqlite3-shm
+!eval/reports/retrieval_canonical_dev.sidecar.json

@@ -17,6 +17,7 @@ from langgraph.store.sqlite.aio import AsyncSqliteStore
 
 from src.api.eligibility import evaluate_mock_eligibility
 from src.mcp_servers.tools import applications, documents
+from src.mcp_servers.rule_data import get_active_rule_data
 from src.rules.data_provider import RulePackageProvider
 from src.workflow.agent_config import MAX_CONVERSATION_MODEL_CALLS
 from src.workflow.agent_config import MAX_CONVERSATION_TOOL_CALLS
@@ -327,6 +328,15 @@ def test_application_specialist_preserves_committed_write_if_handoff_fails(
     assert calls == [True]
     assert trace[-1]["status"] == "model_unavailable"
     assert mode == "action_completed_handoff_incomplete"
+
+
+@pytest.fixture(autouse=True)
+def _fresh_rule_data_cache():
+    """Other test files can leave a fixture rule provider cached for this worker."""
+
+    get_active_rule_data.cache_clear()
+    yield
+    get_active_rule_data.cache_clear()
 
 
 @pytest.fixture
