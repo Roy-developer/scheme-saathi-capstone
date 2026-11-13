@@ -12,7 +12,7 @@
       "value": 18,
       "unit": null,
       "source_passage_id": "IGNDPS-IN-ELIGIBILITY-01",
-      "source_quote": "The applicant must be in the age group of 18-59 years.",
+      "source_quote": "The age of the applicant should be 18 years and above.",
       "needs_human_review": false,
       "note": null
     },
@@ -24,7 +24,7 @@
       "value": 79,
       "unit": null,
       "source_passage_id": "IGNDPS-IN-ELIGIBILITY-01",
-      "source_quote": "The applicant must be in the age group of 18-59 years.",
+      "source_quote": "The age of the applicant should be 18 years and above.",
       "needs_human_review": true,
       "note": "SOURCE CONFLICT, needs human sign-off. NSAP FAQ Q20 (official) says 18-59 years; IGNDPS-IN-BENEFIT-01 and IGNDPSM-MH say 18-79. Set to 79 to match IGNWPS-IN-R02, pending the official NSAP guidelines PDF. See POLICY.md §2."
     },
@@ -48,7 +48,7 @@
       "value": true,
       "unit": null,
       "source_passage_id": "IGNDPS-IN-ELIGIBILITY-03",
-      "source_quote": "The applicant should be a person with severe or multiple disabilities.",
+      "source_quote": "The applicant should be a physically or mentally disabled person.",
       "needs_human_review": false,
       "note": null
     },
@@ -60,7 +60,7 @@
       "value": 80,
       "unit": null,
       "source_passage_id": "IGNDPS-IN-BENEFICIARY-01",
-      "source_quote": "The applicant should be a person with severe or multiple disabilities.",
+      "source_quote": "Any disabled person whose age is more than 18 years, and with disability 80% or more belonging to the poverty line can apply for this scheme.",
       "needs_human_review": false,
       "note": "Resolved to 80% or more (inclusive) by Priyanka (gold-set owner) 2026-11-10; confirmed by Vivian 2026-11-12. NSAP FAQ (Q20) states 'severe or multiple disabilities'; the 80% threshold is derived from RPwD Act 2016 Section 2(r). Discovery reference: https://web.umang.gov.in/landing/scheme/detail/indira-gandhi-national-disability-pension-scheme_igndps.html (UMANG, discovery only per POLICY.md §3)."
     },
@@ -72,7 +72,7 @@
       "value": true,
       "unit": null,
       "source_passage_id": "IGNDPS-IN-ELIGIBILITY-06",
-      "source_quote": "The applicant should belong to a household living below the poverty line.",
+      "source_quote": "The applicant should belong to the Below Poverty Line.",
       "needs_human_review": false,
       "note": null
     }
