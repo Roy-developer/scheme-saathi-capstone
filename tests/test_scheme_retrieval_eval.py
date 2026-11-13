@@ -36,14 +36,14 @@ class FakeRetriever:
 def test_development_dataset_has_multilingual_and_cross_scheme_queries():
     evaluation_set = load_evaluation_set(EVAL_SET_PATH, CORPUS_PATH)
 
-    assert len(evaluation_set.queries) == 199
+    assert len(evaluation_set.queries) == 202  # 199 before IGNDPS-MH got three queries
     assert evaluation_set.split == "development"
     assert evaluation_set.protected is False
-    assert len({query.query_id for query in evaluation_set.queries}) == 199
+    assert len({query.query_id for query in evaluation_set.queries}) == 202
     assert {
         language: sum(query.query_language == language for query in evaluation_set.queries)
         for language in ("en", "hi", "mr")
-    } == {"en": 189, "hi": 5, "mr": 5}
+    } == {"en": 192, "hi": 5, "mr": 5}  # +3 English IGNDPS-MH queries
     assert sum(
         query.query_id.startswith("CROSS-")
         for query in evaluation_set.queries
@@ -97,7 +97,8 @@ def test_all_schemes_dataset_has_enough_queries_per_scheme():
         scheme = scheme_by_passage[query.relevant_passage_ids[0]]
         counts[scheme] = counts.get(scheme, 0) + 1
 
-    assert len(counts) == 40
+    # 41 schemes now: IGNDPS-MH was onboarded and has its own queries.
+    assert len(counts) == 41
     assert min(counts.values()) >= 3
 
 

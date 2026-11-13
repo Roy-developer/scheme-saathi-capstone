@@ -17,7 +17,7 @@ own branch from `main` and run the app locally.
 | `src/` | Application code (agents, MCP servers, API) |
 | `data/` | Scheme data with source URL and collection date, synthetic personas only |
 | `eval/` | Role 5 PDF eval suite: personas, held-out generator, red-team, E2 off/on, κ, simulated citizen; run `python scripts/run_role5_dev_evals.py` (CI-gated; see [`eval/README.md`](eval/README.md)) |
-| `src/observability/` | L13/L16 OpenTelemetry metrics, exported to Azure Monitor when configured; Managed Grafana dashboards are Phase 6 work; see [`docs/MONITORING.md`](docs/MONITORING.md) |
+| `src/observability/` | OpenTelemetry metrics for the API, with opt-in export to Azure Monitor / Application Insights; Managed Grafana dashboards and alerts read that data; see [`docs/MONITORING.md`](docs/MONITORING.md) |
 | `tests/` | Unit tests (at least one per tool) |
 
 ## Team roles
@@ -170,12 +170,17 @@ not constitute manual browser acceptance or a live-model smoke test.
 
 Typed graph state and conversation turns are checkpointed in the local SQLite
 file `data/runtime/journey.sqlite3`; `DELETE /api/v1/journey/{conversation_id}`
-deletes a session's checkpoint and its budget record. This is prototype short-term session memory,
-not a consent-managed household profile. Phase 3 adds bounded eligibility
-rediscovery; Phase 4 adds document/application specialists, exact-draft
-approval and a shared, demo-only document checklist loader. Source-backed
-checklists still require human evidence review and approval. Phase 5 guardrails
-and long-term memory remain incomplete.
+deletes a session's checkpoint and its budget record. The separate return-code
+household profile is a consent-gated, privacy-filtered synthetic-data
+prototype with a provisional 90-day expiry; see `docs/MEMORY_POLICY.md`.
+`DELETE /api/v1/forget` attempts to delete both stores and reports incomplete
+deletion for retry. R1/R2 policy approval and memory-on/off evaluation remain
+open, so do not use this with real applicant data or claim complete L9
+evidence. Phase 3 adds bounded eligibility rediscovery; Phase 4 adds
+document/application specialists, exact-draft approval and a shared,
+demo-only document checklist loader. Source-backed checklists still require
+human evidence review and approval. Phase 5 guardrails and evidence remain
+incomplete.
 
 A 199-query, synthetic, unprotected development set is available at
 `data/schemes/retrieval_eval_dev.json`. Run its Recall@5 baseline with:

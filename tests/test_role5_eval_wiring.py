@@ -20,7 +20,7 @@ def test_experiment_configs_are_inventoried() -> None:
     ids = sorted(item["experiment_id"] for item in inventory["experiments"])
     assert ids == ["E1", "E2", "E3", "E4"]
     e2 = next(item for item in inventory["experiments"] if item["experiment_id"] == "E2")
-    assert e2["status"] == "offline_defences_off_on_runnable"
+    assert e2["status"] == "offline_and_scoped_application_ablation_runnable"
 
 
 def test_role5_umbrella_runner_writes_reports(tmp_path: Path) -> None:

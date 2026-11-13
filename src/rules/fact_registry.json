@@ -9,7 +9,8 @@
       "source_refs": [
         "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
         "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
-        "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf"
+        "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf",
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-disability-pension-scheme/"
       ],
       "definition_review_status": "approved",
       "definition_reviewer": "Roy-developer",
@@ -59,7 +60,8 @@
       "source_refs": [
         "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
         "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
-        "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf"
+        "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf",
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-disability-pension-scheme/"
       ],
       "definition_review_status": "approved",
       "definition_reviewer": "Roy-developer",
@@ -151,7 +153,8 @@
       "source_refs": [
         "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-widow-pension-scheme/",
         "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/",
-        "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf"
+        "https://jansuraksha.gov.in/Files/APY/ENGLISH/APY.pdf",
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-disability-pension-scheme/"
       ],
       "definition_review_status": "approved",
       "definition_reviewer": "Roy-developer",
@@ -819,6 +822,51 @@
         "version": "1.0.0",
         "purpose": "Use only for synthetic APY mock eligibility; do not enter real personal data.",
         "sensitivity": "sensitive",
+        "review_status": "pending",
+        "reviewer": null,
+        "reviewed_at": null
+      }
+    },
+    {
+      "fact_id": "has_disability",
+      "version": "1.0.0",
+      "meaning": "Are you a person with a disability?",
+      "source_refs": [
+        "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-disability-pension-scheme/"
+      ],
+      "definition_review_status": "pending",
+      "definition_reviewer": null,
+      "definition_reviewed_at": null,
+      "scope": "person",
+      "value_type": "boolean",
+      "unit": null,
+      "period": null,
+      "minimum": null,
+      "maximum": null,
+      "choices": [],
+      "max_length": null,
+      "display_only": false,
+      "derived_from": [],
+      "derivation": null,
+      "questions": {
+        "en": {
+          "text": "Are you a person with a disability?"
+        },
+        "hi": {
+          "text": "क्या आप दिव्यांग व्यक्ति हैं?"
+        },
+        "mr": {
+          "text": "तुम्ही दिव्यांग व्यक्ती आहात का?"
+        }
+      },
+      "question_review_status": "pending",
+      "question_reviewer": null,
+      "questions_reviewed_at": null,
+      "privacy": {
+        "policy_id": "synthetic-mock-minimum-data",
+        "version": "1.0.0",
+        "purpose": "Use only to evaluate the synthetic mock scheme rules.",
+        "sensitivity": "highly_sensitive",
         "review_status": "pending",
         "reviewer": null,
         "reviewed_at": null
