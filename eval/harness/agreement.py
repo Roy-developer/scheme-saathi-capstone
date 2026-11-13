@@ -153,3 +153,71 @@ def attach_second_labeller_copy(
             persona.model_copy(update={"labels": tuple(existing + extras)})
         )
     return evaluation_set.model_copy(update={"personas": tuple(personas)})
+
+
+def normalize_sheet_result(record: dict[str, object]) -> VerdictResult:
+    """Accept ``result`` or legacy ``model_assisted_label`` sheet fields."""
+
+    raw = record.get("result")
+    if raw is None:
+        raw = record.get("model_assisted_label")
+    if raw == "cant_tell":
+        return "need_more_information"
+    if raw not in VERDICTS:
+        raise ValueError(f"Unsupported label result: {raw!r}")
+    return raw  # type: ignore[return-value]
+
+
+def attach_external_labels(
+    evaluation_set: PersonaEvaluationSet,
+    records: Sequence[dict[str, object]],
+    *,
+    labeller_id: str,
+    note: str | None = None,
+    replace_existing: bool = False,
+) -> PersonaEvaluationSet:
+    """Attach persona×scheme labels from an external sheet (no smoke copy).
+
+    Records need ``persona_id``, ``scheme_id``, and ``result`` (or
+    ``model_assisted_label``). Existing labels for the same labeller_id are kept
+    unless ``replace_existing`` is true.
+    """
+
+    by_persona: dict[str, list[tuple[str, VerdictResult]]] = {}
+    for record in records:
+        persona_id = str(record["persona_id"])
+        scheme_id = str(record["scheme_id"])
+        by_persona.setdefault(persona_id, []).append(
+            (scheme_id, normalize_sheet_result(record))
+        )
+
+    personas: list[EvalPersona] = []
+    for persona in evaluation_set.personas:
+        existing = list(persona.labels)
+        if replace_existing:
+            existing = [label for label in existing if label.labeller_id != labeller_id]
+        seen = {
+            (label.labeller_id, label.scheme_id)
+            for label in existing
+        }
+        extras: list[PersonaLabel] = []
+        for scheme_id, result in by_persona.get(persona.persona_id, []):
+            key = (labeller_id, scheme_id)
+            if key in seen:
+                continue
+            if scheme_id not in persona.expected_by_scheme:
+                continue
+            extras.append(
+                PersonaLabel(
+                    labeller_id=labeller_id,
+                    scheme_id=scheme_id,
+                    result=result,
+                    status="single",
+                    note=note,
+                )
+            )
+            seen.add(key)
+        personas.append(
+            persona.model_copy(update={"labels": tuple(existing + extras)})
+        )
+    return evaluation_set.model_copy(update={"personas": tuple(personas)})

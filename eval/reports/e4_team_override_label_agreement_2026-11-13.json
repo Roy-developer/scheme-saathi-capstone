@@ -1,0 +1,21 @@
+{
+  "dataset_version": "1.3.0",
+  "labeller_a": "model-assisted-check",
+  "labeller_b": "model-assisted-check-2",
+  "paired_label_count": 46,
+  "agreement_rate": 1.0,
+  "cohens_kappa": 1.0,
+  "disagreement_count": 0,
+  "disagreements": [],
+  "note": "46 paired labels meet the 20+ calibration floor.",
+  "smoke_copy": false,
+  "claim_level": "team_override_dev_personas",
+  "independence": "model_assisted_dual_not_human_role1; APY 12 same-session extension; live 34 from prior dual AI sessions",
+  "bar": "team_override_dev_personas",
+  "eval_set": "/Users/b0k03mk/Documents/Projects/Personal/scheme-saathi-capstone/eval/development/personas_v1.json",
+  "sources": {
+    "sheet_a": "eval/development/role1_model_assisted_labels.json",
+    "sheet_b": "eval/development/role1_model_assisted_labels_2.json",
+    "apy_extension": "eval/development/role1_model_assisted_labels_apy.json"
+  }
+}

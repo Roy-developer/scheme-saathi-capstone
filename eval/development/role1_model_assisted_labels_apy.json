@@ -1,0 +1,154 @@
+{
+  "note": "APY-IN extension for E4 team-override dual-label κ. Model-assisted from persona profiles against APY joining rules (age 18–40 inclusive, citizen, savings bank, not income-tax payer; null required facts → need_more_information). NOT independent human Role-1 labels. Both labeller passes authored in the same Role-5 session for the 12 APY rows; the historical 34 live-scheme rows in role1_model_assisted_labels*.json remain the stronger dual-session pair.",
+  "scheme_id": "APY-IN",
+  "labels_by_labeller": {
+    "model-assisted-check": [
+      {
+        "persona_id": "APY-DEV-001",
+        "scheme_id": "APY-IN",
+        "result": "eligible",
+        "reason": "Age 25; citizen; savings bank; never tax payer."
+      },
+      {
+        "persona_id": "APY-DEV-002",
+        "scheme_id": "APY-IN",
+        "result": "eligible",
+        "reason": "Exact age 18 lower bound; other APY facts pass."
+      },
+      {
+        "persona_id": "APY-DEV-003",
+        "scheme_id": "APY-IN",
+        "result": "eligible",
+        "reason": "Exact age 40 upper bound; other APY facts pass."
+      },
+      {
+        "persona_id": "APY-DEV-004",
+        "scheme_id": "APY-IN",
+        "result": "not_eligible",
+        "reason": "Age 17 fails minimum joining age 18."
+      },
+      {
+        "persona_id": "APY-DEV-005",
+        "scheme_id": "APY-IN",
+        "result": "not_eligible",
+        "reason": "Age 41 fails maximum joining age 40."
+      },
+      {
+        "persona_id": "APY-DEV-006",
+        "scheme_id": "APY-IN",
+        "result": "not_eligible",
+        "reason": "apy_is_citizen_of_india=false."
+      },
+      {
+        "persona_id": "APY-DEV-007",
+        "scheme_id": "APY-IN",
+        "result": "not_eligible",
+        "reason": "apy_has_savings_bank_account=false."
+      },
+      {
+        "persona_id": "APY-DEV-008",
+        "scheme_id": "APY-IN",
+        "result": "not_eligible",
+        "reason": "apy_is_or_has_been_income_tax_payer=true (exclusion)."
+      },
+      {
+        "persona_id": "APY-DEV-009",
+        "scheme_id": "APY-IN",
+        "result": "need_more_information",
+        "reason": "Tax-payer status null; other facts known."
+      },
+      {
+        "persona_id": "APY-DEV-010",
+        "scheme_id": "APY-IN",
+        "result": "need_more_information",
+        "reason": "Citizenship null; other facts known."
+      },
+      {
+        "persona_id": "APY-DEV-011",
+        "scheme_id": "APY-IN",
+        "result": "need_more_information",
+        "reason": "Savings-bank status null; other facts known."
+      },
+      {
+        "persona_id": "APY-DEV-012",
+        "scheme_id": "APY-IN",
+        "result": "need_more_information",
+        "reason": "Empty/unknown profile; required APY facts missing."
+      }
+    ],
+    "model-assisted-check-2": [
+      {
+        "persona_id": "APY-DEV-001",
+        "scheme_id": "APY-IN",
+        "result": "eligible",
+        "reason": "DOB 2001-10-30 / app 2026-10-30 → age 25; citizen+savings+not tax payer."
+      },
+      {
+        "persona_id": "APY-DEV-002",
+        "scheme_id": "APY-IN",
+        "result": "eligible",
+        "reason": "DOB 2008-10-30 / app 2026-10-30 → age 18 inclusive; other facts pass."
+      },
+      {
+        "persona_id": "APY-DEV-003",
+        "scheme_id": "APY-IN",
+        "result": "eligible",
+        "reason": "DOB 1986-10-30 / app 2026-10-30 → age 40 inclusive; other facts pass."
+      },
+      {
+        "persona_id": "APY-DEV-004",
+        "scheme_id": "APY-IN",
+        "result": "not_eligible",
+        "reason": "DOB 2009-10-30 / app 2026-10-30 → age 17 below 18."
+      },
+      {
+        "persona_id": "APY-DEV-005",
+        "scheme_id": "APY-IN",
+        "result": "not_eligible",
+        "reason": "DOB 1985-10-30 / app 2026-10-30 → age 41 above 40."
+      },
+      {
+        "persona_id": "APY-DEV-006",
+        "scheme_id": "APY-IN",
+        "result": "not_eligible",
+        "reason": "Not a citizen of India."
+      },
+      {
+        "persona_id": "APY-DEV-007",
+        "scheme_id": "APY-IN",
+        "result": "not_eligible",
+        "reason": "No savings bank account."
+      },
+      {
+        "persona_id": "APY-DEV-008",
+        "scheme_id": "APY-IN",
+        "result": "not_eligible",
+        "reason": "Is or has been an income-tax payer."
+      },
+      {
+        "persona_id": "APY-DEV-009",
+        "scheme_id": "APY-IN",
+        "result": "need_more_information",
+        "reason": "Income-tax payer fact unknown."
+      },
+      {
+        "persona_id": "APY-DEV-010",
+        "scheme_id": "APY-IN",
+        "result": "need_more_information",
+        "reason": "Citizenship fact unknown."
+      },
+      {
+        "persona_id": "APY-DEV-011",
+        "scheme_id": "APY-IN",
+        "result": "need_more_information",
+        "reason": "Savings-bank fact unknown."
+      },
+      {
+        "persona_id": "APY-DEV-012",
+        "scheme_id": "APY-IN",
+        "result": "need_more_information",
+        "reason": "No typed APY facts present."
+      }
+    ]
+  }
+}

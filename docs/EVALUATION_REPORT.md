@@ -230,14 +230,18 @@ held-out personas; uses 46 development persona×scheme cases under freeze pin
 planned 185; **journey-facing** Q-order fixed 159 vs planned 157 (46/46 same
 verdicts via interview graph + simulated citizen). Full isolated LLM arm (free
 Nemotron, en/hi/mr): boundary errors LLM 16/46 (0.3478) vs rules 0; multilingual
-agreement 32/46 (0.6957); cost/case $0. Claim level: **not** PDF unseen
-held-out. Evidence:
+agreement 32/46 (0.6957); cost/case $0. Dual-label κ (model-assisted
+`model-assisted-check` vs `model-assisted-check-2`, no smoke copy): 46 paired,
+κ=1.0, 0 disagreements — **not** independent human Role-1. Claim level: **not**
+PDF unseen held-out. Evidence:
 `eval/reports/e4_team_override_signature_ablation_2026-11-13.json`,
+`eval/reports/e4_team_override_label_agreement_2026-11-13.json`,
 `docs/e4_team_override_status_2026-11-13.md`.
 
 ```bash
 python scripts/evaluate_e4_signature_ablation.py --team-override --dry-run
 python scripts/evaluate_e4_signature_ablation.py --team-override --llm-arm --multilingual --yes
+python scripts/evaluate_e4_label_agreement.py
 ```
 
 ## 7. Monitoring

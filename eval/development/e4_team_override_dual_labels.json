@@ -1,0 +1,653 @@
+{
+  "dataset_version": "1.3.0",
+  "labeller_a": "model-assisted-check",
+  "labeller_b": "model-assisted-check-2",
+  "claim": "Model-assisted dual labels for E4 team-override (n=46). Not independent human Role-1 labels; not PDF held-out.",
+  "label_count": 92,
+  "labels": [
+    {
+      "persona_id": "APY-DEV-001",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-001",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-002",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-002",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-003",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-003",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-004",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-004",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-005",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-005",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-006",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-006",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-007",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-007",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-008",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-008",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-009",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-009",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-010",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-010",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-011",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-011",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-012",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "APY-DEV-012",
+      "scheme_id": "APY-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-001",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-001",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-002",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-002",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-003",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-003",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-004",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-004",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-005",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-005",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-006",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNOAPS-DEV-006",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-001",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-001",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-002",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-002",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-003",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-003",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-004",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-004",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-005",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-005",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-006",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-006",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-007",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-007",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-008",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-008",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-009",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-009",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-010",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-010",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-011",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-011",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-012",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-012",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-013",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "IGNWPS-DEV-013",
+      "scheme_id": "IGNWPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-001",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-001",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-002",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-002",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-003",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-003",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-004",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-004",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-005",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-005",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-006",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-006",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-007",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-007",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-008",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-008",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-009",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-009",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-010",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-010",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-011",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-011",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-012",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "PMKISAN-DEV-012",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "need_more_information",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "R1-IGNOAPS-003",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "R1-IGNOAPS-003",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "R1-IGNOAPS-006",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "R1-IGNOAPS-006",
+      "scheme_id": "IGNOAPS-MH",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "R1-PMKISAN-004",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    },
+    {
+      "persona_id": "R1-PMKISAN-004",
+      "scheme_id": "PM-KISAN-IN",
+      "labeller_id": "model-assisted-check-2",
+      "result": "not_eligible",
+      "note": "Model-assisted dual label for E4 team-override \u03ba; NOT an independent human Role-1 label"
+    }
+  ]
+}
