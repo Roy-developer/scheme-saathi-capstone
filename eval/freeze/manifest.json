@@ -42,9 +42,10 @@
     },
     "case_file": {
       "path": "data/schemes/rule_extraction_cases_dev.json",
-      "sha256": "9ac740ac873cdd50126bf5cb901fb254fc9591c4c896acfed7263d6867965532"
+      "sha256": "431765d7c2c8b8547458be2cddecaf8bed739424515b5dfd6a8577ea0fb5f53f"
     },
     "case_ids": [
+      "APY-IN-EXCLUSION-01",
       "IGNOAPS-MH-ELIGIBILITY-01",
       "IGNWPS-MH-ELIGIBILITY-01",
       "PMKISAN-GUIDELINES-2020-3",
@@ -69,6 +70,100 @@
     },
     "scope": "Reflexion E3 before/after on the development check split. Development only; not held-out.",
     "split": "check"
+  },
+  "e3_playbook_1_1_0_freeze": {
+    "approval": {
+      "approved_on": "2026-11-13",
+      "note": "1.1.0 playbook file frozen from approved drafts. Paid/held-out evaluate remains blocked until custody + go-ahead.",
+      "status": "playbook_frozen_paid_held_out_not_authorised"
+    },
+    "extraction_model": {
+      "constant": "nvidia/nemotron-3.5-lightning:free",
+      "env_override": "OPENROUTER_RULE_EXTRACTION_MODEL"
+    },
+    "extraction_prompt": {
+      "hash_method": "sha256 of the UTF-8 bytes of the string value, imported not read from source",
+      "name": "EXTRACTION_SYSTEM_PROMPT",
+      "sha256": "b52aaca54e871c605d4e7c66a1f457f382963040e8747f9b6025aa3fce5061d5"
+    },
+    "held_out_extraction": {
+      "blocker": null,
+      "case_count": 13,
+      "manifest": "eval/held_out/extraction/manifest.json",
+      "status": "ready_for_evaluate"
+    },
+    "paid_run_gate": {
+      "authorised": false,
+      "budget_cap_usd": 20,
+      "requires": "explicit go-ahead after held-out extraction cases exist with dual independent labels; see docs/e3_pdf_path_status_2026-11-13.md"
+    },
+    "playbook": {
+      "content_hash": "f9aefa6ef75d119ecf30ed593276963c3d4d080be9217991ccbf43eade6a7048",
+      "file_sha256": "9c7a85868eecd5acf6b4ecef5d37e9d0aa5aeafa43dd04ef2fdb3d3873b073d5",
+      "lesson_count": 3,
+      "lesson_tags": [
+        "exclusion_clause",
+        "inclusion_clause"
+      ],
+      "path": "data/schemes/playbooks/1.1.0.json",
+      "version": "1.1.0"
+    },
+    "scope": "Reflexion E3 playbook 1.1.0 pins (exclusion + approved inclusion lessons). Not a held-out or paid-run authorization."
+  },
+  "e3_playbook_1_1_1_freeze": {
+    "paid_run_gate": {
+      "authorised": true,
+      "note": "Team-override free-model evaluate authorised; not PDF unseen held-out."
+    },
+    "playbook": {
+      "content_hash": "3875375cfbd297c20490bf5063ca638e9d5822de2f23b6b8de48abda70263677",
+      "file_sha256": "e52659202bc6c2e434da5151cee047b9b7e133f48761895bf5c2666c8a0dfa32",
+      "lesson_count": 5,
+      "path": "data/schemes/playbooks/1.1.1.json",
+      "version": "1.1.1"
+    },
+    "scope": "Accuracy follow-up playbook 1.1.1 (1.1.0 + APY multi-condition and PM-KISAN pension boolean lessons). Team-override evaluate."
+  },
+  "e3_playbook_1_1_2_freeze": {
+    "paid_run_gate": {
+      "authorised": true,
+      "note": "Team-override free-model evaluate authorised; not PDF unseen held-out."
+    },
+    "playbook": {
+      "content_hash": "ccc0bda165b3a62dc31e2051669c6b4abe96f0a09ab8a105cb5c29d8c2cfb7c4",
+      "file_sha256": "3b47b7e6c67f6d895cbee3860e314fd3f21713e8349b82532f3433ce9d3eebf6",
+      "lesson_count": 6,
+      "path": "data/schemes/playbooks/1.1.2.json",
+      "version": "1.1.2"
+    },
+    "scope": "Accuracy follow-up playbook 1.1.2 (1.1.1 + APY multi-sentence clause text lesson). Pair with build_cases unique source_text join."
+  },
+  "e4_team_override_freeze": {
+    "modules": {
+      "e4_llm_arm": {
+        "path": "eval/harness/e4_llm_arm.py",
+        "sha256": "d1ba575eaa259d0d281b6b5803b020f895e8bd68b8c648606979bb13a9a5b87b"
+      },
+      "e4_shadow": {
+        "path": "eval/harness/e4_shadow.py",
+        "sha256": "8f76be6bb76657f85c402c80ef14fe10be4979a82905ab48ee5bfc761efa9af5"
+      }
+    },
+    "paid_run_gate": {
+      "authorised": true,
+      "note": "Team-override free-model evaluate authorised; not PDF unseen held-out."
+    },
+    "persona_set": {
+      "case_count": 46,
+      "path": "eval/development/personas_v1.json",
+      "sha256": "af05c1cb52a547fcd7c0a56e1a76079dc38bc434438bb38b04d0c1c51c1061e8"
+    },
+    "runner": {
+      "path": "scripts/evaluate_e4_signature_ablation.py",
+      "sha256": "ece9c94a3a552ce49e7b6bdb6d70890a47104f7f67bec5446c2a9b230a4b20b3"
+    },
+    "scope": "E4 signature ablation team-override on development personas (n=46). Not PDF unseen held-out.",
+    "status_doc": "docs/e4_team_override_status_2026-11-13.md"
   },
   "memory_policy_version": "1.0.0",
   "model": {
@@ -149,7 +244,7 @@
   "rule_packages": {
     "sha256": {
       "apy_in.v1.json": "620fa5e02729664af7cd7d6ebc5aea6a498d99e7cb643d99a866094f0c8ff027",
-      "igndps_mh.v1.json": "dade0231fd9097f778a8d40b2119e1d902db14c7cdc5520f8f2fc4a0b16504e4",
+      "igndps_mh.v1.json": "b479a572fa05af8509943bc884ba48410f8bf12f9b264d6a216810de7424efb0",
       "ignoaps_mh.v1.json": "cd4652b8a7da119561eee6ee8a532b4059cca8b750c9d323d93c6a05c00a6549",
       "ignwps_mh.v1.json": "8db9a7379944f72a79168df1f9986cb2f316d47f50bc3951c280d3a91590c3bd",
       "pmkisan_in.v1.json": "d4b05cc2d15bb5e0873d4611b8be9c39237617f34993f012811edd2f6381edce"

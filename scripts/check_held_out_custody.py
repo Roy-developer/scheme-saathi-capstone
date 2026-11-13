@@ -7,7 +7,10 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-PROTECTED_PATH = "eval/held_out/local"
+PROTECTED_PATHS = (
+    "eval/held_out/local",
+    "eval/held_out/extraction/local",
+)
 DOCKER_PROTECTED_PATHS = ("eval", "data/heldout")
 
 
@@ -42,21 +45,23 @@ def main() -> int:
             print(f"- {error}")
         return 1
 
-    result = subprocess.run(
-        ["git", "ls-files", "--", PROTECTED_PATH],
-        cwd=PROJECT_ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    tracked = [path for path in result.stdout.splitlines() if path]
+    tracked: list[str] = []
+    for protected in PROTECTED_PATHS:
+        result = subprocess.run(
+            ["git", "ls-files", "--", protected],
+            cwd=PROJECT_ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        tracked.extend(path for path in result.stdout.splitlines() if path)
     if tracked:
         print(
             "Protected held-out files must not be tracked: "
             + ", ".join(tracked)
         )
         return 1
-    print("No protected held-out persona files are tracked.")
+    print("No protected held-out persona or extraction files are tracked.")
     return 0
 
 

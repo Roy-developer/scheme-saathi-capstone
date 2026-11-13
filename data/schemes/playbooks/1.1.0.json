@@ -1,0 +1,37 @@
+{
+  "version": "1.1.0",
+  "lessons": [
+    {
+      "lesson_id": "2a20009afe8e72fcea2d5945e5f7f7f9faabac06d77209abf64a007b6de998af",
+      "instruction": "When a clause says \"aged N and above\", write one inclusive lower-bound rule (gte N) and no upper bound. When a clause says a person's \"names are on the ... list\", map the condition to the list-membership fact (`name_on_bpl_list`, eq true), not to a card-shown fact. The two BPL facts are different and must not be used interchangeably.",
+      "when_to_apply": "Any inclusion clause that states an \"and above\" age threshold together with a condition that the person's name appears on a list.",
+      "tags": [
+        "inclusion_clause"
+      ],
+      "reviewer_id": "Roy-developer",
+      "review_reason": "Approved unchanged per docs/e3_lesson_decision_2026-11-13.md (Roy-developer)."
+    },
+    {
+      "lesson_id": "3dae54216ec572a646f95287aec6b113f1d088c8f147032f690651dd542f1e32",
+      "instruction": "When a clause specifies categories of individuals who are ineligible, ensure the rule reflects that these individuals are not qualified by setting the value to false, rather than true.",
+      "when_to_apply": "Any clause that lists specific categories of individuals or groups who do not qualify for a benefit or scheme.",
+      "tags": [
+        "exclusion_clause"
+      ],
+      "reviewer_id": "Roy-developer",
+      "review_reason": "Clear and general: an excluded group is written as false, not true."
+    },
+    {
+      "lesson_id": "f4f121e659c767b145b73ceb18072fa6c321abd92c314dd232621aa3c6da0178",
+      "instruction": "When a clause gives an age range written as \"X to Y years\", write two separate rules: an inclusive lower bound (gte X) and an inclusive upper bound (lte Y). Do not write the range as one rule. Map a \"family falls under Below Poverty Line\" condition to the BPL card fact (`bpl_card_shown`), not to a list-membership fact.",
+      "when_to_apply": "Any inclusion clause that combines a category (for example, a widow), an age range, and a BPL condition on the family.",
+      "tags": [
+        "inclusion_clause"
+      ],
+      "reviewer_id": "Roy-developer",
+      "review_reason": "Approved unchanged per docs/e3_lesson_decision_2026-11-13.md (Roy-developer)."
+    }
+  ],
+  "content_hash": "f9aefa6ef75d119ecf30ed593276963c3d4d080be9217991ccbf43eade6a7048",
+  "created_at": "2026-11-13T16:28:53.935463Z"
+}

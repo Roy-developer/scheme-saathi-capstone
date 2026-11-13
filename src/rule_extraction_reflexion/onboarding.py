@@ -235,37 +235,40 @@ def _passages(package: RulePackage, details: dict) -> list[dict]:
 def _with_case_entries(
     raw: bytes, cases: list[dict], package_file: str, package_sha: str,
 ) -> tuple[bytes, list[str]]:
-    """Point Reflexion cases at the live package, keeping one case per line."""
+    """Point Reflexion cases at the live package (pretty-printed JSON)."""
 
-    lines = raw.decode("utf-8").replace("\r\n", "\n").split("\n")
-    without_split = []
+    document = json.loads(raw.decode("utf-8"))
+    if not isinstance(document, dict) or not isinstance(document.get("cases"), list):
+        raise OnboardingRefused("Cases file must be an object with a cases list")
+    existing = document["cases"]
+    by_clause = {entry.get("clause_id"): index for index, entry in enumerate(existing)}
+    if len(by_clause) != len(existing):
+        raise OnboardingRefused("Cases file lists a clause_id more than once")
+    without_split: list[str] = []
     for case in cases:
-        marker = f'"clause_id": {json.dumps(case["clause_id"], ensure_ascii=False)}'
-        found = [index for index, line in enumerate(lines) if marker in line]
-        if len(found) > 1:
-            raise OnboardingRefused(f"Clause listed twice in the cases file: {case['clause_id']}")
-        if found:
-            line = lines[found[0]]
-            comma = "," if line.rstrip().endswith(",") else ""
-            entry = json.loads(line.strip().rstrip(","))
+        clause_id = case["clause_id"]
+        index = by_clause.get(clause_id)
+        if index is not None:
+            entry = dict(existing[index])
             entry.pop("package_dir", None)
+            entry["package"] = package_file
             entry["package_sha256"] = package_sha
-            lines[found[0]] = "    " + json.dumps(entry, ensure_ascii=False) + comma
+            existing[index] = entry
         else:
             entry = {
                 "package": package_file,
                 "package_sha256": package_sha,
-                "clause_id": case["clause_id"],
+                "clause_id": clause_id,
                 "context": [],
                 "topic_tags": case["topic_tags"],
                 "split": case.get("split"),
             }
-            last = max(i for i, line in enumerate(lines) if '"clause_id"' in line)
-            lines[last] = lines[last].rstrip().rstrip(",") + ","
-            lines.insert(last + 1, "    " + json.dumps(entry, ensure_ascii=False))
+            existing.append(entry)
+            by_clause[clause_id] = len(existing) - 1
         if entry.get("split") is None:
-            without_split.append(case["clause_id"])
-    return _like(raw, "\n".join(lines)), without_split
+            without_split.append(clause_id)
+    document["cases"] = existing
+    return _json_like(raw, document), without_split
 
 
 def _check_in_a_copy(paths: ProjectPaths, scheme_id: str, changes: dict[Path, bytes]) -> None:

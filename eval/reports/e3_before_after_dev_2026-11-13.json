@@ -56,5 +56,7 @@
     "basis": "OpenRouter activity export 2026-11-13: all 36 E3 calls on nvidia/nemotron-3.5-lightning (free variant), cost_total 0 for every row",
     "note": "Same key also shows paid charges from other models on earlier dates (about $0.70 total since 2026-10-24); none in the E3 window."
   },
+  "lesson_generation_cost": "eval/reports/e3_lesson_generation_cost.json",
+  "rejected_lesson_example": "eval/reports/e3_rejected_lesson_example.json",
   "source_reports": "data/runtime/reflexion_reports (not committed; hashes above)"
 }
