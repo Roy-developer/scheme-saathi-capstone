@@ -3,9 +3,11 @@
 Files are saved on the backend's disk under
 ``<upload dir>/<conversation id>/<document id>/<random name>.<ext>``. One
 conversation holds at most one file per checklist ``document_id``, and every
-scheme that asks for that document shares it. File contents are never read
-by a model. Here they are only size-checked, type-checked by their first
-bytes, hashed and stored; text suggestions come from ``extraction.py``.
+scheme that asks for that document shares it. Here files are only
+size-checked, type-checked by their first bytes, hashed and stored; the
+checker never reads them. Only an explicit "read name and date" request sends
+a file to a reader (``extraction.py``), and an outside vision model is used
+for that only when switched on.
 """
 
 import hashlib

@@ -183,15 +183,28 @@ def _image_mime(content: bytes) -> str | None:
     return None
 
 
-def get_extractor() -> Extractor | None:
-    """Return the configured engine, or None when extraction is switched off."""
+VISION_READER_OPT_IN = "SCHEME_SAATHI_VISION_READER"
 
-    api_key = os.getenv("OPENROUTER_API_KEY_FREE") or os.getenv("OPENROUTER_API_KEY")
-    if api_key:
-        model = os.getenv("OPENROUTER_VISION_MODEL") or DEFAULT_VISION_MODEL
-        return OpenRouterVisionExtractor(api_key, model)
+
+def get_extractor() -> Extractor | None:
+    """Return the configured engine, or None when extraction is switched off.
+
+    Azure Document Intelligence in our own tenant is preferred. The OpenRouter
+    vision reader sends the whole, unmasked image to an outside provider (an ID
+    number in an image is pixels, so text masking cannot remove it first), so
+    it is used only when explicitly switched on with
+    ``SCHEME_SAATHI_VISION_READER=openrouter``. An OpenRouter key alone, which
+    other features need, no longer turns it on.
+    """
+
     endpoint = os.getenv("SCHEME_SAATHI_DOCINTEL_ENDPOINT")
     key = os.getenv("SCHEME_SAATHI_DOCINTEL_KEY")
     if endpoint and key:
         return AzureDocumentIntelligence(endpoint, key)
+    if os.getenv(VISION_READER_OPT_IN, "").strip().casefold() != "openrouter":
+        return None
+    api_key = os.getenv("OPENROUTER_API_KEY_FREE") or os.getenv("OPENROUTER_API_KEY")
+    if api_key:
+        model = os.getenv("OPENROUTER_VISION_MODEL") or DEFAULT_VISION_MODEL
+        return OpenRouterVisionExtractor(api_key, model)
     return None
