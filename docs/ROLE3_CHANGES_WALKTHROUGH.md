@@ -173,19 +173,13 @@ case; indicative only):
 |---|---|
 | Same persona, English vs Hindi vs Marathi | 0 verdict differences; all match the labels |
 | Questions per interview | 4.19 planned vs 5.35 fixed |
-| E1 live run, `openai/gpt-4.1-mini`, 3 repeats, 435 calls, 0 errors | C0, C1, C2 each 31/31 every repeat |
-| Model calls per case, C1 vs C2 | 2.23 vs 2.45 |
-| Tokens per case, C1 vs C2 | 670 vs 706 |
-| Median / 95th-percentile latency, C1 vs C2 | about 2.05 s / 3.1–3.7 s vs 2.1–2.3 s / 4.6–4.7 s |
 
-How to read it: accuracy is identical because the rule engine decides every
-verdict in all three arms, so the comparison is about cost and latency. The
-team used roughly 10% more calls and 5% more tokens than the single agent and
-bought no accuracy on these simple, single-scheme cases. A fixed workflow is
-free and equally correct here. A claim that agents are worth their cost has to
-rest on harder tasks and the held-out set. The live figures above come from an
-earlier run with the author's own runner (commit `a3fef77`); the team harness's
-own development reports are in `eval/reports/e1_live_dev*.json`.
+How to read it: the interview-order figures are code-only (no model calls).
+E1 cost and latency come only from the team harness's recorded development
+reports in `eval/reports/e1_live_dev*.json`, which carry their own cost fields.
+A paid author-side run on another model is not reported here because it has no
+recorded budget approval, spend figure or provider/key record. A claim that
+agents are worth their cost has to rest on harder tasks and the held-out set.
 
 ## 7. Stop mid-run and resume (L8 evidence)
 

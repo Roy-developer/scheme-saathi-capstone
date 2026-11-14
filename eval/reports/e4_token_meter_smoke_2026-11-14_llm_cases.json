@@ -1,0 +1,93 @@
+{
+  "notice": "evaluation-only, non-authoritative: LLM proposals are never written to live state and never replace the rule-engine verdict",
+  "arm": "llm_eligibility_from_text",
+  "eval_set": "/Users/b0k03mk/Documents/Projects/Personal/scheme-saathi-capstone/eval/development/personas_v1.json",
+  "model": "nvidia/nemotron-3.5-lightning:free",
+  "locales": [
+    "en"
+  ],
+  "case_count": 2,
+  "scored_case_count": 2,
+  "provider_error_count": 0,
+  "model_calls": 2,
+  "agree_llm_rules": 0,
+  "disagree_llm_rules": 2,
+  "agree_llm_expected": 0,
+  "boundary_error_count_llm": 2,
+  "boundary_error_count_rules": 0,
+  "boundary_error_rate_llm": 1.0,
+  "boundary_error_rate_rules": 0.0,
+  "verdict_agreement_hi_mr_en": {
+    "locales": [
+      "en"
+    ],
+    "cases_scored": 0,
+    "all_three_agree": 0,
+    "rate": 0.0,
+    "note": "Single-locale run; multilingual agreement not measured."
+  },
+  "cost": {
+    "currency": "USD",
+    "route": "openrouter_free",
+    "usd_per_million_input": 0.0,
+    "usd_per_million_output": 0.0,
+    "input_tokens_total": 434,
+    "output_tokens_total": 28,
+    "token_metered_calls": 2,
+    "total_usd": 0.0,
+    "cost_per_case_usd": 0.0,
+    "note": "Token counts from LangChain on_llm_end usage callbacks. Free OpenRouter route priced at $0 unless rates are overridden."
+  },
+  "median_latency_ms": 3518,
+  "p95_latency_ms": 1278,
+  "cases": [
+    {
+      "persona_id": "IGNWPS-DEV-001",
+      "scheme_id": "IGNWPS-MH",
+      "expected_result": "eligible",
+      "rule_result": "eligible",
+      "llm_result": "need_more_information",
+      "locale_results": {
+        "en": "need_more_information"
+      },
+      "locale_errors": null,
+      "llm_error": null,
+      "llm_latency_ms": 1278,
+      "input_tokens": 217,
+      "output_tokens": 14,
+      "provider_error": false,
+      "agree_llm_rules": false,
+      "agree_llm_expected": false,
+      "agree_rules_expected": true,
+      "boundary_error_llm": true,
+      "boundary_error_rules": false,
+      "verdict_agreement_hi_mr_en": null,
+      "authoritative": false,
+      "written_to_live_state": false
+    },
+    {
+      "persona_id": "IGNWPS-DEV-002",
+      "scheme_id": "IGNWPS-MH",
+      "expected_result": "eligible",
+      "rule_result": "eligible",
+      "llm_result": "need_more_information",
+      "locale_results": {
+        "en": "need_more_information"
+      },
+      "locale_errors": null,
+      "llm_error": null,
+      "llm_latency_ms": 3518,
+      "input_tokens": 217,
+      "output_tokens": 14,
+      "provider_error": false,
+      "agree_llm_rules": false,
+      "agree_llm_expected": false,
+      "agree_rules_expected": true,
+      "boundary_error_llm": true,
+      "boundary_error_rules": false,
+      "verdict_agreement_hi_mr_en": null,
+      "authoritative": false,
+      "written_to_live_state": false
+    }
+  ]
+}

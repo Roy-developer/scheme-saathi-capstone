@@ -22,15 +22,15 @@
   "age_boundaries_inclusive": true,
   "documents_status": "not_verified",
   "reasons": {
-    "eligible": "All reviewed mock conditions are met: aged 65 or above on the application date, and the applicant's name is on the BPL list.",
+    "eligible": "All reviewed mock conditions are met: the applicant has a disability and is aged 18 to 79 years on the application date.",
     "not_eligible": "One or more required mock scheme conditions are not met.",
     "need_more_information": "Some details are still needed before this mock check can be completed."
   },
-  "notice": "This mock result uses the eligibility criteria published by the Maharashtra Social Justice department (page last updated 29.04.2025). It is not a government decision; BPL-list status and other records are not verified.",
+  "notice": "This mock result uses the eligibility criteria published by the Maharashtra Social Justice department (page last updated 29.04.2025). It is not a government decision; disability status and other records are not verified.",
   "unresolved_checks": [
-    "Central NSAP guideline age threshold (60) versus the Maharashtra page (65)",
     "Whether Indian citizenship is a condition",
-    "Whether non-receipt of any other pension is a condition"
+    "Whether non-receipt of any other pension is a condition",
+    "Whether a minimum disability percentage is required beyond has_disability"
   ],
   "rules": [
     {

@@ -5,6 +5,23 @@ as author. All 30 record Vivian's approval of scenario briefs for implementation
 23 also have a historical separate-context AI review. Neither human brief
 approval nor the AI review establishes complete implementation or validation.
 
+## Independent subset track (2026-11-14)
+
+v0.7.0 remains the CI / development baseline (**not** independent authorship).
+
+To upgrade the claim without rewriting history:
+
+| Artifact | Purpose |
+|---|---|
+| [`INDEPENDENT_VALIDATION.md`](INDEPENDENT_VALIDATION.md) | Process, roles, sign-off rules |
+| [`independent_subset_v1_blank.json`](independent_subset_v1_blank.json) | 12-priority blank sheet for an independent author |
+| `python scripts/check_independent_red_team.py` | Honesty gate (blank → claimable) |
+
+Do **not** mark CLAIM_MATRIX as independent until that script reports
+`independent_subset_claimable` after human author + brief review + execution
+validation. AI sessions must not fill `author` / `reviewed_by` /
+`execution_validation.accepted` as if they were independent humans.
+
 ## Review record
 
 On 2026-11-12, the project approver confirmed authorship of

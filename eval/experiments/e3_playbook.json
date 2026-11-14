@@ -1,20 +1,30 @@
 {
   "experiment_id": "E3",
   "title": "Did the Reflexion lessons help?",
-  "status": "development_before_after_recorded_held_out_pending",
-  "description": "Compare extraction exact-match rates on development check-split cases before and after frozen playbook 1.0.0. Include lesson-generation cost and any regressing case. Held-out extraction cases remain Role-5-only and are not in this repo.",
+  "status": "team_override_n13_playbook_1_1_2_closed",
+  "description": "Compare extraction exact-match rates before and after a frozen Reflexion playbook. Directional 1.0.0 check-split is recorded. Playbooks 1.1.0/1.1.1/1.1.2 frozen. Team override: before/after on all 13 live package clauses (not PDF unseen held-out).",
   "controls": {
     "playbook_path": "data/schemes/playbooks/1.0.0.json",
     "playbook_version": "1.0.0",
     "playbook_hash": "a60303d5a255b5abef4dfd896c8dae0bba6c16488cea4b8de0157c2f69ee1401",
-    "lesson_source": "development learn-split clauses only",
+    "playbook_1_1_0_path": "data/schemes/playbooks/1.1.0.json",
+    "playbook_1_1_0_hash": "f9aefa6ef75d119ecf30ed593276963c3d4d080be9217991ccbf43eade6a7048",
+    "lesson_source": "development learn-split clauses only; inclusion drafts approved then frozen into 1.1.0; accuracy lessons seeded for 1.1.1/1.1.2",
     "measurement_set": "data/schemes/rule_extraction_cases_dev.json split=check",
-    "eval_set": "development_check_until_held_out_authorized"
+    "eval_set": "team_override_all_live_clauses_n13",
+    "held_out_extraction_manifest": "eval/held_out/extraction/manifest.json",
+    "playbook_1_1_1_path": "data/schemes/playbooks/1.1.1.json",
+    "playbook_1_1_1_hash": "3875375cfbd297c20490bf5063ca638e9d5822de2f23b6b8de48abda70263677",
+    "playbook_1_1_2_path": "data/schemes/playbooks/1.1.2.json",
+    "playbook_1_1_2_hash": "ccc0bda165b3a62dc31e2051669c6b4abe96f0a09ab8a105cb5c29d8c2cfb7c4",
+    "case_text_fix": "build_cases joins all unique source_text values per clause_id"
   },
   "approved_lessons": [
     {
       "lesson_id": "3dae54216ec572a646f95287aec6b113f1d088c8f147032f690651dd542f1e32",
-      "tags": ["exclusion_clause"],
+      "tags": [
+        "exclusion_clause"
+      ],
       "reviewer_id": "Roy-developer",
       "summary": "Excluded groups must be written as fact eq false, not true."
     }
@@ -33,6 +43,17 @@
     "after": "python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --playbook 1.0.0 --runs 3 --yes",
     "compare": "python scripts/evaluate_reflexion_playbook_dev.py --before <before.json> --after <after.json>"
   },
-  "development_result": "eval/reports/e3_before_after_dev_2026-11-13.json: development check split, 6 cases x3 repeats. Raw exact 9/18 without a playbook, 18/18 with playbook 1.0.0; cases passing all runs 3/6 to 6/6; 0 regressions; 36 model calls, 0 USD (free model). Directional, not held-out.",
-  "blocker": "A protected held-out extraction set (Role 5) is still required for the final E3 claim."
+  "evidence": {
+    "before_after": "eval/reports/e3_before_after_dev_2026-11-13.json",
+    "team_override_before_after": "eval/reports/e3_team_override_before_after_2026-11-13.json",
+    "lesson_generation_cost": "eval/reports/e3_lesson_generation_cost.json",
+    "rejected_lesson_example": "eval/reports/e3_rejected_lesson_example.json",
+    "status_doc": "docs/E3_END_TO_END_2026-11-13.md",
+    "pdf_path_status": "docs/e3_pdf_path_status_2026-11-13.md",
+    "playbook_1_1_0": "data/schemes/playbooks/1.1.0.json",
+    "playbook_1_1_1": "data/schemes/playbooks/1.1.1.json",
+    "playbook_1_1_2": "data/schemes/playbooks/1.1.2.json"
+  },
+  "note": "Team-override n=13 with playbook 1.1.2: 6/13 → 13/13 all-runs, 0 regressions. APY multi-sentence case text + lesson. Not PDF unseen held-out.",
+  "blocker": null
 }

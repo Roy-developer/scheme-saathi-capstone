@@ -23,7 +23,8 @@ REAL_ROOT = Path(__file__).parents[1]
 SCHEME = "IGNOAPS-MH"
 PACKAGE = "ignoaps_mh.v1.json"
 SOURCE_URL = "https://sjsa.maharashtra.gov.in/en/scheme/indira-gandhi-national-old-age-pension-scheme/"
-CASE_MARKER = '"package": "ignoaps_mh.v1.json", '
+# Pretty-printed JSON puts the next key on a new line after the package field.
+CASE_MARKER = '"package": "ignoaps_mh.v1.json",\n'
 
 
 @pytest.fixture
@@ -74,7 +75,8 @@ def before(live_copy: ProjectPaths) -> ProjectPaths:
     cases = paths.cases.read_bytes().decode("utf-8")
     assert cases.count(CASE_MARKER) == 1
     paths.cases.write_bytes(cases.replace(
-        CASE_MARKER, CASE_MARKER + '"package_dir": "data/schemes/reflexion_packages", ',
+        CASE_MARKER,
+        CASE_MARKER + '      "package_dir": "data/schemes/reflexion_packages",\n',
     ).encode("utf-8"))
     return paths
 
@@ -217,18 +219,16 @@ def test_onboard_refuses_and_writes_nothing(before: ProjectPaths, spoil, message
     assert _files(before) == unchanged
 
 
-def _drop_comma(line: str) -> str:
-    """Drop the trailing comma, keeping any carriage return the file's line endings add."""
-
-    body = line.rstrip("\r")
-    return body.rstrip(",") + line[len(body):]
-
-
 def test_new_clause_is_added_to_the_cases_file_and_flagged_for_a_split(before: ProjectPaths) -> None:
-    text = before.cases.read_bytes().decode("utf-8")
-    lines = [line for line in text.split("\n") if CASE_MARKER not in line]
-    lines[-4] = _drop_comma(lines[-4])  # the last case line, before "  ]", "}" and the final newline
-    before.cases.write_bytes("\n".join(lines).encode("utf-8"))
+    # Drop the IGNOAPS case so onboard must add it as a new entry (split unset).
+    document = json.loads(before.cases.read_bytes())
+    document["cases"] = [
+        case for case in document["cases"]
+        if case.get("clause_id") != "IGNOAPS-MH-ELIGIBILITY-01"
+    ]
+    before.cases.write_bytes(
+        (json.dumps(document, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+    )
 
     plan = plan_onboarding(SCHEME, before)
     apply_onboarding(plan)

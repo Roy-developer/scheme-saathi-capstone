@@ -1,0 +1,67 @@
+{
+  "version": "1.1.2",
+  "lessons": [
+    {
+      "lesson_id": "0ef6fb7b9f697e8f76443e1f1d6e386e3d9ffdf4d975fe98f0096590b71b6f30",
+      "instruction": "When an exclusion clause mentions a money threshold (for example monthly pension Rs.10,000 or more) but the allowed fact is a boolean whose name already encodes that threshold, write that fact as eq false for the excluded group. Do not invent gte/lte numeric operators on that boolean field.",
+      "when_to_apply": "Exclusion clauses about pension or similar thresholds mapped to boolean facts such as pension_at_least_10000_excluding_stated_grades.",
+      "tags": [
+        "exclusion_clause"
+      ],
+      "reviewer_id": "Roy-developer",
+      "review_reason": "Accuracy fix for PMKISAN-GUIDELINES-2020-4.1(b)(iv): model often wrote gte 10000 on a boolean exclusion fact."
+    },
+    {
+      "lesson_id": "2a20009afe8e72fcea2d5945e5f7f7f9faabac06d77209abf64a007b6de998af",
+      "instruction": "When a clause says \"aged N and above\", write one inclusive lower-bound rule (gte N) and no upper bound. When a clause says a person's \"names are on the ... list\", map the condition to the list-membership fact (`name_on_bpl_list`, eq true), not to a card-shown fact. The two BPL facts are different and must not be used interchangeably.",
+      "when_to_apply": "Any inclusion clause that states an \"and above\" age threshold together with a condition that the person's name appears on a list.",
+      "tags": [
+        "inclusion_clause"
+      ],
+      "reviewer_id": "Roy-developer",
+      "review_reason": "Approved unchanged per docs/e3_lesson_decision_2026-11-13.md (Roy-developer)."
+    },
+    {
+      "lesson_id": "3dae54216ec572a646f95287aec6b113f1d088c8f147032f690651dd542f1e32",
+      "instruction": "When a clause specifies categories of individuals who are ineligible, ensure the rule reflects that these individuals are not qualified by setting the value to false, rather than true.",
+      "when_to_apply": "Any clause that lists specific categories of individuals or groups who do not qualify for a benefit or scheme.",
+      "tags": [
+        "exclusion_clause"
+      ],
+      "reviewer_id": "Roy-developer",
+      "review_reason": "Clear and general: an excluded group is written as false, not true."
+    },
+    {
+      "lesson_id": "cedc6cbd3d6c9b4623ff2e0370423ef73c37c06957fb1b643d181a2e78ce27e3",
+      "instruction": "When the clause text contains more than one sentence under a single clause_id, read every sentence and write a rule for each condition named in any of them. Do not stop after the first sentence (for example age bounds) when a later sentence adds citizenship or a savings-bank requirement.",
+      "when_to_apply": "Inclusion clauses whose supplied text spans multiple sentences or lists several independent eligibility conditions.",
+      "tags": [
+        "inclusion_clause"
+      ],
+      "reviewer_id": "Roy-developer",
+      "review_reason": "Accuracy fix for APY-IN-ELIGIBILITY-01 after case-text assembly joined all unique source_text lines: model must use the full multi-sentence clause block, not only the age sentence."
+    },
+    {
+      "lesson_id": "e21549a295df24da98b23c381b3d5c61bed56651fd6615c48905cd598572cdd8",
+      "instruction": "When an inclusion clause states several conditions across one or more sentences (for example an age range, citizenship, and having a savings bank account), write a separate rule for each condition. Do not stop after the age bounds.",
+      "when_to_apply": "Any inclusion clause that combines age limits with other eligibility conditions such as citizenship or account ownership.",
+      "tags": [
+        "inclusion_clause"
+      ],
+      "reviewer_id": "Roy-developer",
+      "review_reason": "Accuracy fix for APY-IN-ELIGIBILITY-01: model often omitted citizen and savings-bank rules after extracting age."
+    },
+    {
+      "lesson_id": "f4f121e659c767b145b73ceb18072fa6c321abd92c314dd232621aa3c6da0178",
+      "instruction": "When a clause gives an age range written as \"X to Y years\", write two separate rules: an inclusive lower bound (gte X) and an inclusive upper bound (lte Y). Do not write the range as one rule. Map a \"family falls under Below Poverty Line\" condition to the BPL card fact (`bpl_card_shown`), not to a list-membership fact.",
+      "when_to_apply": "Any inclusion clause that combines a category (for example, a widow), an age range, and a BPL condition on the family.",
+      "tags": [
+        "inclusion_clause"
+      ],
+      "reviewer_id": "Roy-developer",
+      "review_reason": "Approved unchanged per docs/e3_lesson_decision_2026-11-13.md (Roy-developer)."
+    }
+  ],
+  "content_hash": "ccc0bda165b3a62dc31e2051669c6b4abe96f0a09ab8a105cb5c29d8c2cfb7c4",
+  "created_at": "2026-11-13T17:46:41.921054Z"
+}

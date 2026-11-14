@@ -1,0 +1,32 @@
+{
+  "experiment_id": "E4",
+  "title": "Scheme Saathi signature ablation",
+  "when": "2026-11-13T19:37:03.934007+00:00",
+  "eval_set": "/Users/b0k03mk/Documents/Projects/Personal/scheme-saathi-capstone/eval/development/personas_v1.json",
+  "claim_level": "team_override_dev_personas",
+  "bar": "team_override_dev_personas",
+  "notice": "evaluation-only, non-authoritative: LLM proposals are never written to live state and never replace the rule-engine verdict",
+  "arms": {
+    "journey_question_order": {
+      "status": "ran",
+      "path": "journey_interview_graph",
+      "citizen_mode": "live_model",
+      "citizen_model": "google/gemma-3-4b-it:free",
+      "case_count": 1,
+      "fixed_questions_total": 3,
+      "planned_questions_total": 3,
+      "verdict_match_count": 1,
+      "questions_per_conversation": {
+        "fixed_mean": 3.0,
+        "planned_mean": 3.0
+      },
+      "detail": "eval/reports/e4_live_citizen_smoke_2026-11-14_journey_qo_cases.json",
+      "notice": "journey-facing question-order ablation: uses the interview graph with a different-model simulated citizen (card-grounded); no household memory writes"
+    },
+    "llm_eligibility": {
+      "status": "skipped",
+      "note": "Pass --llm-arm --yes to run the isolated live LLM arm."
+    }
+  },
+  "blocker": null
+}

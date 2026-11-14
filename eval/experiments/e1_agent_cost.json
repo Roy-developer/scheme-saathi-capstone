@@ -1,18 +1,29 @@
 {
   "experiment_id": "E1",
   "title": "Does the agent team justify its cost?",
-  "status": "development_live_run_done_held_out_pending",
+  "status": "team_override_and_held_out_path_recorded",
   "description": "Compare C0 fixed workflow, C1 single agent with all tools, and C2 specialist team under the same model, tools, and budget. Preserve safety and approval controls in every configuration.",
   "controls": {
-    "model_id": "TBD_FIXED_BEFORE_RUN",
+    "model_id": "openai/gpt-4o-mini",
+    "live_model_free": "nvidia/nemotron-3.5-lightning:free",
     "tools": "same_across_C0_C1_C2",
-    "budget": "TBD_TOKEN_AND_CALL_CAPS",
-    "eval_set": "held_out_role5_only"
+    "budget": {
+      "source": "src/workflow/agent_config.py",
+      "model_calls": 8,
+      "agent_tool_calls": 24,
+      "domain_calls": 24,
+      "agent_steps": 12,
+      "total_tokens": 12000,
+      "max_completion_tokens": 512
+    },
+    "eval_set_pdf": "held_out_role5_only",
+    "eval_set_team_override": "eval/development/personas_v1.json + personas_generated_v2.json",
+    "eval_set_held_out_local": "eval/held_out/local/personas_held_out_v1.json"
   },
   "configurations": [
-    {"id": "C0", "mode": "fixed_workflow"},
-    {"id": "C1", "mode": "single_agent", "implementation": "src/workflow/single_agent.py::run_single_agent_action (eligibility/documents-only variant kept in src/workflow/single_agent_baseline.py)"},
-    {"id": "C2", "mode": "specialist_team"}
+    {"id": "C0", "mode": "fixed_workflow", "implementation": "journey graph with model_provider=None"},
+    {"id": "C1", "mode": "single_agent", "implementation": "src/workflow/single_agent.py via journey.single_agent_provider"},
+    {"id": "C2", "mode": "specialist_team", "implementation": "journey specialist agents"}
   ],
   "metrics": [
     "task_success",
@@ -22,7 +33,18 @@
     "p95_latency",
     "errors_timeouts"
   ],
-  "harness": "eval/harness/e1_runner.py (team harness from main); live development run: scripts/run_e1_live.py",
-  "development_result": "gpt-4.1-mini, 31 dev cases x3 repeats, 0 errors: C0/C1/C2 each 31/31 every repeat; model calls/case C1 2.23 vs C2 2.45; tokens/case 670 vs 706; median latency ~2.05 s vs ~2.2 s. Development only; see docs/ROLE3_CHANGES_WALKTHROUGH.md.",
-  "blocker": "Requires frozen Phase 5 agents/guardrails and a protected held-out set."
+  "harness": "eval/harness/e1_runner.py",
+  "live_runner": "scripts/run_e1_live.py",
+  "freeze_pin": "eval/freeze/manifest.json#e1_team_override_freeze",
+  "status_doc": "docs/e1_team_override_status_2026-11-14.md",
+  "evidence": {
+    "team_override_comparison": "eval/reports/e1_team_override_comparison_2026-11-14.json",
+    "journey_live": "eval/reports/e1_team_override_journey_live_2026-11-14.json",
+    "held_out_live": "eval/reports/e1_held_out_journey_live_2026-11-14.json",
+    "source_live_observations": "eval/reports/e1_live_dev.json",
+    "excl_igndps_recount": "eval/reports/e1_live_dev_excl_igndps.json",
+    "held_out_custody": "eval/held_out/local/personas_held_out_v1.json (gitignored, n=40)"
+  },
+  "development_result": "Journey-wired free-Nemotron team-override live: 79/79 task_success all arms; C1/C2 median latency ~0.85s vs C0 ~0.02s (models engaged; OpenRouter usage callbacks undercount tokens on this path). Prior gpt-4o-mini ad-hoc C1 set still shows C2 costing more ($0.0115 vs $0.0033). Held-out local custody n=40 scored via --held-out. Not a specialist-team quality win.",
+  "blocker": "Final PDF still needs independent dual labels on held-out, R1/R3 threshold sign-off, and three frozen held-out repeats. Lead+R5 report-only thresholds and journey-wired live/HO-path evidence are recorded."
 }
