@@ -436,11 +436,18 @@ class HybridSchemeRetriever:
                         LOCAL_EMBEDDING_MODEL
                     )
                 except ValueError as error:
+                    # FastEmbed logs "local_files_only=True" / "could not find
+                    # model in cache_dir" but raises only "Could not load model
+                    # ... from any source", so match that text too. Without
+                    # it a container with no cached model never fell back.
                     error_message = str(error).casefold()
-                    if (
-                        "local_files_only=true" not in error_message
-                        and "could not find model in cache_dir"
-                        not in error_message
+                    if not any(
+                        marker in error_message
+                        for marker in (
+                            "local_files_only=true",
+                            "could not find model in cache_dir",
+                            "could not load model",
+                        )
                     ):
                         raise
                     logger.warning(

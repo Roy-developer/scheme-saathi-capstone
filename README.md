@@ -226,6 +226,20 @@ python -m uvicorn src.api.app:app --reload --port 8000
 python -m streamlit run src/ui/app.py
 ```
 
+### Crash-resume demo
+
+Journeys are checkpointed to SQLite after every step. To see a hard process
+crash mid-interview followed by a resume from a fresh process, run (no network
+or LLM needed):
+
+```powershell
+python scripts/demo_crash_resume.py
+```
+
+It prints `PASS` when the restarted process recovers the same pending question
+and earlier answers, then continues the interview. `tests/test_crash_resume_demo.py`
+runs the same script under pytest.
+
 The same deployment image runs in two existing Azure Container Apps with
 startup command overrides: `python src/run_services.py api` for FastAPI and
 `python src/run_services.py ui` for Streamlit. The frontend receives
