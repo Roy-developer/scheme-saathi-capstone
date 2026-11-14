@@ -49,17 +49,20 @@ A read-only check of the shared development environment found:
 
 - The API health endpoint returned HTTP 200 and the container app references an
   Application Insights connection-string setting.
-- The running image is `git-13dde6b37e3a`, not the current
-  `supervisor-redesign-3` commit. A sanitized `AppMetrics` query over the last
-  24 hours returned `scheme_saathi.conversations`,
+- At the time of this check the running image was `git-13dde6b37e3a`. The
+  current shared-dev revision runs `git-12a69fd`, and metric rows from it are
+  tagged with `service.version` `git-12a69fd`. A sanitized `AppMetrics` query
+  over the last 24 hours returned `scheme_saathi.conversations`,
   `scheme_saathi.request_latency`, `scheme_saathi.questions`,
   `scheme_saathi.evaluations`, and `scheme_saathi.verdicts`. The query grouped
   only by metric name and did not read dimensions or applicant data.
-- No Azure metric alert rules were configured. A Grafana resource exists, but
-  its dashboard contents and alert behavior were not verified.
+- Three Azure metric alert rules now exist: 15-minute evaluation, with email to
+  a five-person action group. Alert email delivery is not yet proven. A Grafana
+  resource exists, but its dashboard contents were not verified.
 
-This confirms some telemetry from the older shared-dev image only. It does not
-complete the current-commit, dashboard, or alert proof.
+This confirms some telemetry from the earlier shared-dev image only. It does not
+complete the dashboard proof or the alert-delivery proof, and monitoring is not
+complete.
 
 ## Cost estimate
 
@@ -78,7 +81,7 @@ USD histogram uses environment defaults (override as needed):
 |---|---|
 | Journey verdict rate | Journey can re-count accumulated `eligibility_results` on each turn |
 | Pending approvals | Up/down counter is tracked per process and not backed by portal truth across replicas/restarts |
-| Cost / tokens / LLM latency | Estimates; helper LLM paths are not fully counted, and agent `PIIMiddleware` redactions do not increment masked-ID hits |
+| Cost / tokens / LLM latency | Estimates; the five helper LLM calls outside the agent middleware now record token usage (commit `971706c`), not yet proven in shared dev; agent `PIIMiddleware` redactions do not increment masked-ID hits |
 | Guardrail blocks | Injection and scam screens are instrumented; attack coverage and UX remain evaluation work |
 | Azure Monitor | Configure the secret in the shared environment and prove data arrives |
 | Managed Grafana | Build and prove dashboards and alerts against Azure Monitor data; configuration files alone are not proof |
