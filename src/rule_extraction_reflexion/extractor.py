@@ -4,10 +4,12 @@ import json
 from collections.abc import Mapping, Sequence
 from typing import Protocol, TypeVar
 
+from langchain_core.callbacks import UsageMetadataCallbackHandler
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import HumanMessage, SystemMessage
 from pydantic import BaseModel
 
+from src.observability.metrics import record_usage_metadata
 from src.rules.models import Rule
 from src.rule_extraction_reflexion.extraction_checker import meaning_rule_id
 from src.rule_extraction_reflexion.models import (
@@ -67,12 +69,15 @@ async def invoke_structured_output(
 ) -> _OutputModel:
     """Make one structured model call; tests replace this boundary."""
     runnable = model.with_structured_output(output_schema)
+    usage = UsageMetadataCallbackHandler()
     result = await runnable.ainvoke(
         [
             SystemMessage(content=system_text),
             HumanMessage(content=user_text),
-        ]
+        ],
+        config={"callbacks": [usage]},
     )
+    record_usage_metadata(usage.usage_metadata)
     if isinstance(result, output_schema):
         return result
     return output_schema.model_validate(result)
