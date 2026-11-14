@@ -8,7 +8,7 @@ import time
 from typing import TypeVar
 
 from langchain.agents import create_agent
-from langchain.agents.middleware import ModelCallLimitMiddleware, PIIMiddleware, RedactionRule
+from langchain.agents.middleware import AgentMiddleware, ModelCallLimitMiddleware, PIIMiddleware, RedactionRule
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
 from langchain_core.tools import BaseTool
@@ -91,6 +91,35 @@ PII_RULES = (
     )),
 )
 _RESOLVED_PII_RULES = tuple(rule.resolve() for rule in PII_RULES)
+
+
+class IdentifierHitCounter(AgentMiddleware):
+    """Count identifier hits in agent messages without changing them.
+
+    Runs before PIIMiddleware, so it sees the original text. Each message is
+    counted once (by message id) even though the agent loop revisits it on
+    later model calls. Redaction still happens in PIIMiddleware.
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._counted: set[object] = set()
+
+    def before_model(self, state, runtime):  # noqa: ANN001 - LangChain hook signature
+        from src.observability.metrics import record_masked_id_hits
+
+        for message in state.get("messages", []):
+            key = getattr(message, "id", None) or id(message)
+            if key in self._counted:
+                continue
+            self._counted.add(key)
+            content = message.content
+            text = content if isinstance(content, str) else json.dumps(content, ensure_ascii=False, default=str)
+            for rule in _RESOLVED_PII_RULES:
+                _, matches = rule.apply(text)
+                if matches:
+                    record_masked_id_hits(len(matches), field_type=str(rule.pii_type))
+        return None
 
 
 class AgentSchema(BaseModel):
@@ -224,6 +253,8 @@ async def run_agent(
         tools=tools,
         system_prompt=system_prompt,
         middleware=[
+            # Count identifier hits first, on the original text (counting only).
+            IdentifierHitCounter(),
             *(
                 # Mask the task message and every tool result before the model.
                 PIIMiddleware(

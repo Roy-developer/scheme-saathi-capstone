@@ -160,6 +160,9 @@ class OpenRouterVisionExtractor:
             raise ExtractionError(
                 "The file could not be read. Please type the values."
             ) from error
+        from src.observability.metrics import record_usage_metadata
+
+        record_usage_metadata({self.model: getattr(reply, "usage_metadata", None)})
         text = reply.content
         if isinstance(text, list):
             text = " ".join(
