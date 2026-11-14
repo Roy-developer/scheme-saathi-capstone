@@ -470,6 +470,11 @@ async def lifespan(application: FastAPI) -> AsyncIterator[None]:
                         service_environment["OPENROUTER_EMBEDDING_MODEL"] = (
                             openrouter_embedding_model
                         )
+                    # The MCP client passes a child only a short list of
+                    # variables, so the image's baked-in model cache must be
+                    # forwarded or the child looks in an empty temp folder.
+                    if embedding_cache := os.getenv("FASTEMBED_CACHE_PATH"):
+                        service_environment["FASTEMBED_CACHE_PATH"] = embedding_cache
                 elif service_name == "mock-portal":
                     service_environment["SCHEME_SAATHI_PORTAL_URL"] = PORTAL_URL
                 if test_packages := test_rule_package_directory():
