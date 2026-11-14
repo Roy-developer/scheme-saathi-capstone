@@ -32,6 +32,42 @@
     "model_timeout_seconds": 20,
     "token_estimate_characters": 3
   },
+  "e1_journey_freeze": {
+    "paid_run_gate": {
+      "authorised": true,
+      "note": "Team-override free-model runs; spend record still required by PR #31 steps."
+    },
+    "reports": {
+      "e1_e4_scorecard": {
+        "path": "eval/reports/e1_e4_scorecard_latest.json",
+        "sha256": "ba40e1471eed1f5134a0d24856cea78db34dadd03f0278a69eeaea8dd0bd0f33"
+      },
+      "held_out_journey_live": {
+        "path": "eval/reports/e1_held_out_journey_live_2026-11-14.json",
+        "sha256": "38d8b8313cd1d9f881eb771a043bc8ab9a9ffd1049b2a695bc5eca533103592a"
+      },
+      "team_override_comparison": {
+        "path": "eval/reports/e1_team_override_comparison_2026-11-14.json",
+        "sha256": "7fe891d6e6e775b06362de8089e2ca15484141a34f0371788df206cafb9eaadd"
+      },
+      "team_override_journey_live": {
+        "path": "eval/reports/e1_team_override_journey_live_2026-11-14.json",
+        "sha256": "1f48701d994c0e753e4b2be2a454d08d86dbf13f0bad79a758fe0bc7250d2485"
+      }
+    },
+    "runners": {
+      "run_e1_live": {
+        "path": "scripts/run_e1_live.py",
+        "sha256": "7909d59cda59ae297996303d3d75fa691e7d465098989245c656afed7978281e"
+      },
+      "summarize_e1_live_report": {
+        "path": "scripts/summarize_e1_live_report.py",
+        "sha256": "21e84bd74de556ee90901046757c41520ff2da6639e61f8921da02d34dc0a34a"
+      }
+    },
+    "scope": "E1 journey-wired C0/C1/C2 team-override runs on development personas, plus a held-out journey live report (team override, not PDF unseen held-out).",
+    "status_doc": "docs/e1_team_override_status_2026-11-14.md"
+  },
   "e1_team_override_freeze": {
     "budget": {
       "agent_steps": 12,
