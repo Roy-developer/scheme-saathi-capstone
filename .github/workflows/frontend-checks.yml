@@ -14,7 +14,7 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Check out repository
@@ -45,6 +45,52 @@ jobs:
       - name: Run Role 5 development evaluation gate
         run: python scripts/run_role5_dev_evals.py
 
+      # E3's hosted-CI scope is deliberately the reproducible, offline
+      # playbook/freeze inventory. The n=13 all-live-clause evaluation consumes
+      # a protected local case file and MUST NOT be copied into CI/artifacts.
+      - name: Run E3 offline playbook and check-split inventory
+        run: >-
+          python scripts/evaluate_reflexion_playbook_dev.py
+          --output eval/reports/reflexion_e3_ci_latest.json
+
+      - name: Run E4 frozen team-override offline ablation
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: python scripts/evaluate_e4_signature_ablation.py --team-override
+
+      - name: Enforce E4 offline acceptance contract
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("eval/reports/e4_team_override_signature_ablation_2026-11-13.json")
+          if not path.is_file():
+              raise SystemExit(f"Missing E4 report: {path}")
+          report = json.loads(path.read_text(encoding="utf-8"))
+          if report.get("experiment_id") != "E4":
+              raise SystemExit("E4 report has the wrong experiment_id")
+          if report.get("claim_level") != "team_override_dev_personas":
+              raise SystemExit("E4 report is not labelled team_override_dev_personas")
+          arms = report.get("arms") or {}
+          required = ("shadow_stub", "question_order", "journey_question_order")
+          for name in required:
+              arm = arms.get(name) or {}
+              if arm.get("status") != "ran":
+                  raise SystemExit(f"E4 arm did not run: {name}")
+              if arm.get("case_count") != 46:
+                  raise SystemExit(
+                      f"E4 {name} expected 46 frozen development cases; "
+                      f"got {arm.get('case_count')!r}"
+                  )
+          journey = arms["journey_question_order"]
+          if journey.get("citizen_mode") != "offline_card":
+              raise SystemExit("E4 CI must use the offline card citizen")
+          if arms.get("llm_eligibility", {}).get("status") == "ran":
+              raise SystemExit("Live LLM arm is not permitted in automatic CI")
+          print("E4 acceptance contract passed: 3 offline arms × 46 cases.")
+          PY
+
       - name: Run approved application-path red-team gate
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: python scripts/evaluate_red_team_runtime.py
@@ -53,7 +99,7 @@ jobs:
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: python scripts/evaluate_e2_runtime.py
 
-      - name: Upload synthetic runtime evaluation reports
+      - name: Upload synthetic runtime and E3/E4 evaluation reports
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
@@ -61,6 +107,9 @@ jobs:
           path: |
             eval/reports/red_team_runtime_latest.json
             eval/reports/e2_runtime_dev_latest.json
+            eval/reports/reflexion_e3_ci_latest.json
+            eval/reports/e4_team_override_signature_ablation_2026-11-13.json
+            eval/reports/e4_team_override_signature_ablation_2026-11-13_journey_qo_cases.json
           if-no-files-found: warn
           retention-days: 7
 
