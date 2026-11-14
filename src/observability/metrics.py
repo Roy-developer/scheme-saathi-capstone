@@ -13,6 +13,7 @@ import json
 import os
 import time
 from pathlib import Path
+from collections.abc import Mapping
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Iterator
@@ -187,6 +188,23 @@ def record_tokens(model: str, *, input_tokens: int = 0, output_tokens: int = 0) 
         ) * _OUTPUT_USD_PER_1K
     if cost > 0:
         _otel_instruments.cost_usd.record(cost)
+
+
+def record_usage_metadata(usage_by_model: Mapping[str, Mapping[str, object] | None]) -> None:
+    """Record token usage per model for LLM calls that bypass the metered middleware.
+
+    Never raises: metrics must not break the calling agent or extraction.
+    """
+    try:
+        for model, usage in usage_by_model.items():
+            usage = usage or {}
+            record_tokens(
+                model,
+                input_tokens=int(usage.get("input_tokens", 0) or 0),
+                output_tokens=int(usage.get("output_tokens", 0) or 0),
+            )
+    except Exception:  # noqa: BLE001 - metrics must not break the caller
+        pass
 
 
 def record_llm_call(model: str, duration_seconds: float) -> None:
