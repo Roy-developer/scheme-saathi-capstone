@@ -32,6 +32,12 @@ METER_NAME = "scheme_saathi"
 # (for example after a restart, when the count starts again at 0).
 _pending_approvals_open = 0
 
+# ASI09: an approval given within this many seconds of the draft being shown
+# is counted as "quick" (likely not read). In-process tallies let tests and the
+# read-through summary read the rate back; OTel carries it to Azure Monitor.
+QUICK_APPROVAL_SECONDS = 10.0
+_approval_tally = {"approvals": 0, "timed": 0, "quick": 0}
+
 
 @dataclass(frozen=True)
 class OTelInstruments:
@@ -46,6 +52,8 @@ class OTelInstruments:
     llm_call_seconds: otel_metrics.Histogram
     request_latency: otel_metrics.Histogram
     guardrail_blocks: otel_metrics.Counter
+    approvals: otel_metrics.Counter
+    approval_review_seconds: otel_metrics.Histogram
 
 
 def create_otel_instruments(meter: otel_metrics.Meter) -> OTelInstruments:
@@ -97,6 +105,15 @@ def create_otel_instruments(meter: otel_metrics.Meter) -> OTelInstruments:
             "scheme_saathi.guardrail_blocks",
             description="Inputs flagged or blocked by an input guardrail",
         ),
+        approvals=meter.create_counter(
+            "scheme_saathi.approvals",
+            description="Draft approvals, by whether they came quickly after display",
+        ),
+        approval_review_seconds=meter.create_histogram(
+            "scheme_saathi.approval_review_seconds",
+            unit="s",
+            description="Seconds a draft was on screen before it was approved",
+        ),
     )
 
 
@@ -141,6 +158,43 @@ def record_pending_approval_created() -> None:
     global _pending_approvals_open
     _pending_approvals_open += 1
     _otel_instruments.pending_approvals.add(1)
+
+
+def record_approval_review(review_seconds: float | None) -> None:
+    """Record one approval and, when known, how long the draft was on screen.
+
+    No personal data: only a duration and a quick / not-quick flag.
+    """
+
+    _approval_tally["approvals"] += 1
+    if review_seconds is None:
+        _otel_instruments.approvals.add(1, {"review": "unknown"})
+        return
+    quick = review_seconds < QUICK_APPROVAL_SECONDS
+    _approval_tally["timed"] += 1
+    _approval_tally["quick"] += int(quick)
+    _otel_instruments.approvals.add(1, {"review": "quick" if quick else "read"})
+    _otel_instruments.approval_review_seconds.record(review_seconds)
+
+
+def approval_read_through_summary() -> dict[str, float | int | None]:
+    """Share of timed approvals that were not quick (in this API process)."""
+
+    timed = _approval_tally["timed"]
+    return {
+        "approvals": _approval_tally["approvals"],
+        "timed_approvals": timed,
+        "quick_approvals": _approval_tally["quick"],
+        "quick_threshold_seconds": QUICK_APPROVAL_SECONDS,
+        "read_through_rate": (
+            round((timed - _approval_tally["quick"]) / timed, 3) if timed else None
+        ),
+    }
+
+
+def reset_approval_tally() -> None:
+    for key in _approval_tally:
+        _approval_tally[key] = 0
 
 
 def record_pending_approval_resolved() -> None:

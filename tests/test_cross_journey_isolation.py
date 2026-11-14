@@ -104,6 +104,7 @@ def test_one_conversation_cannot_access_another_conversations_draft(
             f"/api/v1/journey/{attacker}/drafts/{draft_id}/approval",
             json={
                 "action": "approve",
+                "read_confirmed": True,
                 "revision": victim_draft["revision"],
                 "fingerprint": victim_draft["fingerprint"],
             },

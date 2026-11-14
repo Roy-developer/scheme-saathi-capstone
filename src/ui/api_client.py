@@ -676,14 +676,22 @@ def decide_application_draft(
     conversation_id: str,
     draft: dict,
     action: str,
+    *,
+    read_confirmed: bool = False,
+    review_seconds: float | None = None,
 ) -> dict:
+    body: dict = {
+        "action": action,
+        "revision": draft["revision"],
+        "fingerprint": draft["fingerprint"],
+    }
+    if action == "approve":
+        body["read_confirmed"] = read_confirmed
+        if review_seconds is not None:
+            body["review_seconds"] = max(0.0, min(review_seconds, 86_400.0))
     return _application_request(
         conversation_id,
         f"/drafts/{quote(str(draft['draft_id']), safe='')}/approval",
         method="POST",
-        body={
-            "action": action,
-            "revision": draft["revision"],
-            "fingerprint": draft["fingerprint"],
-        },
+        body=body,
     )

@@ -54,6 +54,10 @@ class DraftApprovalRequest(StrictApplicationModel):
     action: ApprovalAction
     revision: int = Field(ge=1)
     fingerprint: str = Field(min_length=64, max_length=64)
+    # ASI09: approving needs an explicit "I have read this exact draft".
+    read_confirmed: bool = False
+    # Seconds the draft was on screen before the decision (no personal data).
+    review_seconds: float | None = Field(default=None, ge=0, le=86_400)
 
 
 def document_input_fingerprint(

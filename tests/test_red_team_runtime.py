@@ -206,6 +206,7 @@ def _approval(harness, journey, draft, action):
         json={
             "action": action, "revision": draft["revision"],
             "fingerprint": draft["fingerprint"],
+            **({"read_confirmed": True} if action == "approve" else {}),
         },
     )
 

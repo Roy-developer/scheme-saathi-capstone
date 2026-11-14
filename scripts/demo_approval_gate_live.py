@@ -114,7 +114,7 @@ def main() -> None:
             step("5. APPROVE the draft, as it exists right now")
             approved_first = show(
                 "approve (pre-edit)",
-                client.post(decision_url, json={"action": "approve", **original_identity}),
+                client.post(decision_url, json={"action": "approve", "read_confirmed": True, **original_identity}),
             )
             print(f"   approved={approved_first['approved']}  <- a real approval now exists")
 
@@ -140,14 +140,14 @@ def main() -> None:
             print(f"   HTTP {stale_submit.status_code} (expect 409 -- that earlier approval is dead)")
 
             step("8. Try to APPROVE again using that same original identity")
-            stale_approve = client.post(decision_url, json={"action": "approve", **original_identity})
+            stale_approve = client.post(decision_url, json={"action": "approve", "read_confirmed": True, **original_identity})
             print(f"   HTTP {stale_approve.status_code} (expect 409 -- it no longer matches the current draft)")
 
             step("9. Approve the NEW (post-edit) content -> a fresh approval")
             new_identity = {"revision": edited["revision"], "fingerprint": edited["fingerprint"]}
             approved_second = show(
                 "approve (post-edit)",
-                client.post(decision_url, json={"action": "approve", **new_identity}),
+                client.post(decision_url, json={"action": "approve", "read_confirmed": True, **new_identity}),
             )
             print(f"   approved={approved_second['approved']}")
 

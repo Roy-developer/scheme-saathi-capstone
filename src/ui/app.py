@@ -13,6 +13,7 @@ the LangGraph supervisor and the deterministic rule engine.
 
 import html
 import os
+import time
 from collections.abc import Iterator
 from contextlib import contextmanager
 from datetime import date
@@ -230,6 +231,7 @@ COPY = {
         "edit": "Edit draft",
         "save": "Save changes",
         "approve": "Approve this exact draft",
+        "read_confirm": "I have read this exact draft and checked that it is correct.",
         "reject": "Reject draft",
         "submit": "Submit approved draft to mock portal",
         "approved": "This exact draft is approved.",
@@ -402,6 +404,7 @@ COPY = {
         "edit": "मसौदा संपादित करें",
         "save": "बदलाव सहेजें",
         "approve": "इसी मसौदे को मंज़ूर करें",
+        "read_confirm": "मैंने यह पूरा मसौदा पढ़ लिया है और जाँच लिया है कि यह सही है।",
         "reject": "मसौदा अस्वीकार करें",
         "submit": "मॉक पोर्टल पर जमा करें",
         "approved": "इसी मसौदे को मंज़ूरी दी गई है।",
@@ -574,6 +577,7 @@ COPY = {
         "edit": "मसुदा संपादित करा",
         "save": "बदल जतन करा",
         "approve": "हाच मसुदा मंजूर करा",
+        "read_confirm": "मी हा संपूर्ण मसुदा वाचला आहे आणि तो बरोबर असल्याची खात्री केली आहे.",
         "reject": "मसुदा नाकारा",
         "submit": "मॉक पोर्टलवर सादर करा",
         "approved": "हाच मसुदा मंजूर केला आहे.",
@@ -2405,14 +2409,26 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                     if st.button(text["edit"], key=f"draft-edit-{scheme_id}"):
                         flow_state["edit_mode"] = True
                         st.rerun()
+                    # ASI09: note when this exact draft was first shown, and
+                    # ask the person to confirm they read it before approving.
+                    shown_key = f"draft-shown-{draft['fingerprint']}"
+                    shown_at = st.session_state.setdefault(shown_key, time.monotonic())
+                    read_confirmed = draft["approved"] or st.checkbox(
+                        text["read_confirm"],
+                        key=f"draft-read-{scheme_id}-{draft['fingerprint']}",
+                    )
                     if st.button(
                         text["approve"],
-                        disabled=draft["approved"],
+                        disabled=draft["approved"] or not read_confirmed,
                         key=f"draft-approve-{scheme_id}",
                     ):
                         try:
                             drafts[scheme_id] = save_application_progress(
-                                decide_application_draft(conversation_id, draft, "approve")
+                                decide_application_draft(
+                                    conversation_id, draft, "approve",
+                                    read_confirmed=True,
+                                    review_seconds=round(time.monotonic() - shown_at, 1),
+                                )
                             )
                             flow_state["error"] = None
                         except ApplicationApiError:

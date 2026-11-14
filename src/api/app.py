@@ -51,10 +51,12 @@ from src.rules.bundles import bundle_fingerprint
 # This adapter calls the MCP tool and translates failures for the API layer.
 from src.observability.telemetry import configure_telemetry
 from src.observability.metrics import (
+    approval_read_through_summary,
     observe_duration,
     record_conversation,
     record_evaluation,
     record_pending_approval_created,
+    record_approval_review,
     record_pending_approval_resolved,
     record_question,
     record_journey_verdict,
@@ -1195,6 +1197,11 @@ async def update_application_approval(
                 status_code=409,
                 detail="Approve this exact draft before submitting it.",
             )
+        if decision.action == "approve" and decision.read_confirmed is not True:
+            raise HTTPException(
+                status_code=422,
+                detail="Confirm that you have read this exact draft before approving it.",
+            )
         if decision.action == "approve" and (
             record["rejected"] or record["receipt_id"]
         ):
@@ -1244,6 +1251,8 @@ async def update_application_approval(
         # Capstone monitoring: draft left the waiting-approval queue.
         if decision.action in {"approve", "reject", "submit"}:
             record_pending_approval_resolved()
+        if decision.action == "approve":
+            record_approval_review(decision.review_seconds)
         return _public_application_record(result)
     except HTTPException:
         raise
@@ -1252,6 +1261,16 @@ async def update_application_approval(
             "The mock application service is unavailable.",
             "Mock application approval MCP tool failed",
         ) from error
+
+
+@app.get("/api/v1/monitoring/approval-read-through", tags=["monitoring"])
+async def approval_read_through() -> dict:
+    """ASI09: how many approvals came quickly after the draft was shown.
+
+    Counts and a rate only, for this API process; no personal data.
+    """
+
+    return approval_read_through_summary()
 
 
 async def _forget_journey_data(
