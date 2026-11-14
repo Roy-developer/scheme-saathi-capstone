@@ -18,6 +18,12 @@ COPY data/schemes/mock_forms ./data/schemes/mock_forms
 
 RUN pip install --no-cache-dir .
 
+# Bake the local embedding model into the image. Search loads it with
+# local_files_only=True, and a container has no cache of its own, so without
+# this step every search fails on Azure. ACR builds have internet access.
+ENV FASTEMBED_CACHE_PATH=/opt/fastembed_cache
+RUN python -c "from fastembed import TextEmbedding; TextEmbedding('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2', cache_dir='/opt/fastembed_cache')"
+
 EXPOSE 8000 8501
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
