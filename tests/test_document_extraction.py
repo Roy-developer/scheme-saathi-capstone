@@ -85,24 +85,14 @@ def test_vision_extractor_rejects_pdf_and_failures(monkeypatch) -> None:
         reader.read_text(PNG)
 
 
-def test_get_extractor_prefers_openrouter_then_azure(monkeypatch) -> None:
-    for name in (
-        "OPENROUTER_API_KEY", "OPENROUTER_API_KEY_FREE", "OPENROUTER_VISION_MODEL",
-        "SCHEME_SAATHI_DOCINTEL_ENDPOINT", "SCHEME_SAATHI_DOCINTEL_KEY",
-    ):
-        monkeypatch.delenv(name, raising=False)
+def test_get_extractor_uses_only_the_free_nemotron_route(monkeypatch) -> None:
+    monkeypatch.delenv("OPENROUTER_API_KEY_FREE", raising=False)
     assert extraction.get_extractor() is None
 
-    monkeypatch.setenv("SCHEME_SAATHI_DOCINTEL_ENDPOINT", "https://x")
-    monkeypatch.setenv("SCHEME_SAATHI_DOCINTEL_KEY", "k")
-    assert extraction.get_extractor().engine == "azure-document-intelligence"
-
-    monkeypatch.setenv("OPENROUTER_API_KEY", "chat")
     monkeypatch.setenv("OPENROUTER_API_KEY_FREE", "free")
-    monkeypatch.setenv("OPENROUTER_VISION_MODEL", "other/vl:free")
     chosen = extraction.get_extractor()
     assert (chosen.engine, chosen.api_key, chosen.model) == (
-        "openrouter-vision", "free", "other/vl:free",
+        "openrouter-vision", "free", extraction.DEFAULT_VISION_MODEL,
     )
 
 

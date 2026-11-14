@@ -23,6 +23,17 @@ ACKNOWLEDGEABLE_CODES = frozenset(
         "same_file_reused", "file_name_mismatch", "file_date_of_birth_mismatch",
     }
 )
+SUBMISSION_BLOCKING_CODES = frozenset(
+    {
+        "file_problem",
+        "no_file",
+        "name_mismatch",
+        "date_of_birth_mismatch",
+        "same_file_reused",
+        "file_name_mismatch",
+        "file_date_of_birth_mismatch",
+    }
+)
 NOT_VERIFIED_NOTICE = (
     "Document checker: it confirms that files are stored and that typed names "
     "and dates agree. Values read from a file are only suggestions and are "
@@ -85,6 +96,24 @@ def issue_fingerprint(
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
+def is_submission_ready(report: dict[str, Any]) -> bool:
+    """Return whether a document report permits mock-portal submission.
+
+    Only a complete report, or a complete report with acknowledged advisory
+    findings, can proceed. Integrity, availability, reuse, and profile-value
+    mismatches remain blocking even if someone has acknowledged them.
+    """
+
+    if report["overall"] not in {"complete", "complete_with_acknowledged_warnings"}:
+        return False
+    return not any(
+        issue["code"] in SUBMISSION_BLOCKING_CODES
+        for group in report["groups"]
+        for document in group["documents"]
+        for issue in document["issues"]
+    )
+
+
 def _document_issues(
     document_id: str,
     *,
@@ -139,7 +168,7 @@ def check_scheme_documents(
     }
     base = assess(base_request)
     if base["status"] == "requirements_unverified":
-        return {
+        report = {
             "scheme_id": scheme_id,
             "overall": "requirements_unverified",
             "message": base["message"],
@@ -152,6 +181,8 @@ def check_scheme_documents(
             "counts": {"required": 0, "in_place": 0, "missing": 0, "attention": 0},
             "missing_labels": [],
         }
+        report["submission_ready"] = False
+        return report
 
     document_ids = {item["document_id"] for item in base["requirements"]}
     statuses = {
@@ -285,7 +316,7 @@ def check_scheme_documents(
         overall = "complete_with_acknowledged_warnings"
     else:
         overall = "complete"
-    return {
+    report = {
         "scheme_id": scheme_id,
         "overall": overall,
         "message": assessment["message"],
@@ -305,6 +336,8 @@ def check_scheme_documents(
             group["labels"] for group in applicable if group["state"] == "missing"
         ],
     }
+    report["submission_ready"] = is_submission_ready(report)
+    return report
 
 
 def readiness_from_report(report: dict[str, Any]) -> dict[str, Any]:

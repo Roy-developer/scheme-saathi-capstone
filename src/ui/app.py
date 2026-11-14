@@ -1945,6 +1945,7 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                                     metadata,
                                 )
                             )
+                            _run_checker(scheme_id, visible_items, flow_state)
                             flow_state["error"] = None
                         except DocumentDateError:
                             flow_state["error"] = text["document_date_invalid"]
@@ -1957,6 +1958,7 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                     assessment["status"] == "checklist_complete"
                     and not assessment.get("report_stale")
                     and not form_missing
+                    and flow_state.get("checker", {}).get("submission_ready")
                     and st.button(
                     text["prepare_draft"],
                     type="primary",
@@ -2117,9 +2119,11 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                                 metadata,
                             ))
                             flow_state["assessment"] = checked
+                            _run_checker(scheme_id, visible_items, flow_state)
                             if (
                                 checked["status"] == "checklist_complete"
                                 and not form_missing
+                                and flow_state.get("checker", {}).get("submission_ready")
                             ):
                                 drafts[scheme_id] = save_application_progress(
                                     create_application_draft(

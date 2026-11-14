@@ -118,7 +118,7 @@ async def _read_limited_body(request: Request) -> bytes:
     return bytes(body)
 
 
-def _scheme_report(
+def scheme_document_report(
     request: Request,
     conversation_id: UUID,
     values: dict[str, Any],
@@ -407,7 +407,8 @@ async def check_documents_report(
 
     values = await _journey_values(request, conversation_id)
     return await asyncio.to_thread(
-        _scheme_report, request, conversation_id, values, check.scheme_id, check
+        scheme_document_report, request, conversation_id, values,
+        check.scheme_id, check,
     )
 
 
@@ -427,7 +428,7 @@ async def document_readiness(
         if scheme_id not in request.app.state.rule_packages:
             continue
         report = await asyncio.to_thread(
-            _scheme_report, request, conversation_id, values, scheme_id, inputs
+            scheme_document_report, request, conversation_id, values, scheme_id, inputs
         )
         schemes.append({
             **readiness_from_report(report),
@@ -464,7 +465,7 @@ async def resolve_issue(
             detail="This issue is fixed by uploading or correcting the document.",
         )
     report = await asyncio.to_thread(
-        _scheme_report, request, conversation_id, values,
+        scheme_document_report, request, conversation_id, values,
         resolution.scheme_id, resolution,
     )
     issue = next(
@@ -495,7 +496,7 @@ async def resolve_issue(
     except UploadError as error:
         raise _upload_error(error) from error
     return await asyncio.to_thread(
-        _scheme_report, request, conversation_id, values,
+        scheme_document_report, request, conversation_id, values,
         resolution.scheme_id, resolution,
     )
 
@@ -515,6 +516,6 @@ async def reopen_issue(
     except UploadError as error:
         raise _upload_error(error) from error
     return await asyncio.to_thread(
-        _scheme_report, request, conversation_id, values,
+        scheme_document_report, request, conversation_id, values,
         resolution.scheme_id, resolution,
     )

@@ -1,7 +1,7 @@
 """Suggest a name and date of birth from an uploaded synthetic document.
 
 The suggestion is only a convenience for the person. A human must accept or
-edit a value before the checker uses it as typed input. An OCR service or a
+edit a value before the checker uses it as typed input. The free Nemotron
 vision model only transcribes text; plain code picks values that sit next to a
 label such as "Name" or "DOB". A suggestion never says a document is genuine.
 """
@@ -10,20 +10,15 @@ import base64
 import json
 import os
 import re
-import time
 from dataclasses import dataclass
 from datetime import date
 from typing import Protocol
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
 
 MAX_TEXT_CHARS = 20_000
 MAX_VALUE_CHARS = 120
-ANALYZE_TIMEOUT_SECONDS = 40
 VISION_TIMEOUT_SECONDS = 90
 # The free Nemotron model reasons before answering; 512 tokens is all thinking.
 VISION_MAX_TOKENS = 6000
-API_VERSION = "2024-11-30"
 DEFAULT_VISION_MODEL = "nvidia/nemotron-3.5-super-vl:free"
 VISION_PROMPT = (
     "Transcribe all text visible in this image exactly as written, one "
@@ -79,47 +74,6 @@ def parse_suggestion(text: str, engine: str) -> Suggestion:
         except ValueError:
             dob = None
     return Suggestion(name=name, date_of_birth=dob, engine=engine)
-
-
-class AzureDocumentIntelligence:
-    """Read text with Azure Document Intelligence's prebuilt-read model."""
-
-    engine = "azure-document-intelligence"
-
-    def __init__(self, endpoint: str, key: str) -> None:
-        self.endpoint = endpoint.rstrip("/")
-        self.key = key
-
-    def read_text(self, content: bytes) -> str:
-        url = (
-            f"{self.endpoint}/documentintelligence/documentModels/"
-            f"prebuilt-read:analyze?api-version={API_VERSION}"
-        )
-        request = Request(
-            url,
-            data=content,
-            headers={
-                "Ocp-Apim-Subscription-Key": self.key,
-                "Content-Type": "application/octet-stream",
-            },
-            method="POST",
-        )
-        try:
-            with urlopen(request, timeout=30) as response:
-                poll_url = response.headers["Operation-Location"]
-            deadline = time.monotonic() + ANALYZE_TIMEOUT_SECONDS
-            while time.monotonic() < deadline:
-                poll = Request(poll_url, headers={"Ocp-Apim-Subscription-Key": self.key})
-                with urlopen(poll, timeout=30) as response:
-                    result = json.loads(response.read())
-                if result.get("status") == "succeeded":
-                    return str(result["analyzeResult"].get("content", ""))[:MAX_TEXT_CHARS]
-                if result.get("status") == "failed":
-                    break
-                time.sleep(1)
-        except (HTTPError, URLError, TimeoutError, KeyError, TypeError, json.JSONDecodeError):
-            pass
-        raise ExtractionError("The file could not be read. Please type the values.")
 
 
 class OpenRouterVisionExtractor:
@@ -184,14 +138,9 @@ def _image_mime(content: bytes) -> str | None:
 
 
 def get_extractor() -> Extractor | None:
-    """Return the configured engine, or None when extraction is switched off."""
+    """Return the free Nemotron extractor, or None when it is not configured."""
 
-    api_key = os.getenv("OPENROUTER_API_KEY_FREE") or os.getenv("OPENROUTER_API_KEY")
+    api_key = os.getenv("OPENROUTER_API_KEY_FREE")
     if api_key:
-        model = os.getenv("OPENROUTER_VISION_MODEL") or DEFAULT_VISION_MODEL
-        return OpenRouterVisionExtractor(api_key, model)
-    endpoint = os.getenv("SCHEME_SAATHI_DOCINTEL_ENDPOINT")
-    key = os.getenv("SCHEME_SAATHI_DOCINTEL_KEY")
-    if endpoint and key:
-        return AzureDocumentIntelligence(endpoint, key)
+        return OpenRouterVisionExtractor(api_key)
     return None

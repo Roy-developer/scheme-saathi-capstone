@@ -7,6 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from src.api.app import app
+from src.documents.checker import is_submission_ready
 from src.documents.uploads import MAX_UPLOAD_BYTES, UploadError, UploadStore
 
 PNG = b"\x89PNG\r\n\x1a\n" + b"0" * 64
@@ -239,7 +240,6 @@ def test_extract_route_is_off_by_default_and_needs_a_stored_file(
     conversation = uuid4()
     base = f"/api/v1/journey/{conversation}/documents/files/identity_proof"
     with _patched(_values()):
-        monkeypatch.delenv("SCHEME_SAATHI_DOCINTEL_ENDPOINT", raising=False)
         for variable in ("OPENROUTER_API_KEY", "OPENROUTER_API_KEY_FREE"):
             monkeypatch.delenv(variable, raising=False)
         assert client.get(f"{base}/suggestion").json()["enabled"] is False
@@ -365,6 +365,36 @@ def test_same_file_on_two_documents_is_flagged_and_acknowledgeable(
         client.put(f"{docs}/files/age_proof", content=PNG + b"1",
                    headers={"X-File-Name": "b.png"})
         assert reused_issues() == []
+
+
+def test_submission_readiness_keeps_duplicate_files_blocking_after_acknowledgment() -> None:
+    report = {
+        "overall": "complete_with_acknowledged_warnings",
+        "groups": [{
+            "documents": [{
+                "issues": [{
+                    "code": "same_file_reused",
+                    "acknowledged": True,
+                }],
+            }],
+        }],
+    }
+    assert is_submission_ready(report) is False
+
+
+def test_submission_readiness_allows_acknowledged_advisory_finding() -> None:
+    report = {
+        "overall": "complete_with_acknowledged_warnings",
+        "groups": [{
+            "documents": [{
+                "issues": [{
+                    "code": "cannot_compare",
+                    "acknowledged": True,
+                }],
+            }],
+        }],
+    }
+    assert is_submission_ready(report) is True
 
 
 def test_check_after_submission_reuses_the_saved_inputs(client: TestClient) -> None:

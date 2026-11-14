@@ -24,6 +24,8 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 import src.api.app as api
+from src.api import document_uploads
+from src.documents import checklists
 from src.config import PORTAL_URL, PROJECT_ROOT
 from src.mcp_servers.service_routing import ServiceClientRouter
 from src.ui import api_client
@@ -47,6 +49,23 @@ SCHOLARSHIP_PACKAGE_DIR = (
     Path(__file__).parent / "fixtures" / "phase4" / "packages"
 )
 SCHOLARSHIP_SCHEME_DIR = SCHOLARSHIP_PACKAGE_DIR.parent / "schemes"
+
+
+def _upload_documents(
+    harness: IntegratedUI,
+    conversation_id: str,
+    document_ids: tuple[str, ...] = DOCUMENT_IDS,
+) -> None:
+    """Store distinct synthetic files required by the full document checker."""
+
+    for document_id in document_ids:
+        uploaded = harness.client.put(
+            f"/api/v1/journey/{conversation_id}/documents/files/{document_id}",
+            content=b"\x89PNG\r\n\x1a\n" + document_id.encode("ascii"),
+            headers={"X-File-Name": f"{document_id}.png"},
+        )
+        assert uploaded.status_code == 200, uploaded.text
+
 
 # Run the ordinary server entry point after disabling only paid retrieval.
 # Parent monkeypatches cannot change a spawned child's retriever.
@@ -465,6 +484,19 @@ def test_development_scholarship_reaches_exact_mock_receipt_through_real_ui(
                 fact_registry=rules.registry,
                 rule_bundles=rules.bundles,
             )
+            # The upload route reads checklists from the real catalogue, which
+            # does not contain this injected test bundle.
+            monkeypatch.setattr(
+                checklists, "CHECKLIST_DIRECTORY", checklist_path.parent
+            )
+            monkeypatch.setattr(
+                document_uploads,
+                "_known_document_ids",
+                lambda _request: {
+                    "student_card", "school_letter", "exam_record",
+                    "guardian_confirmation",
+                },
+            )
             harness = IntegratedUI(client, databases[1])
 
             screen = AppTest.from_file(UI_PATH, default_timeout=TIMEOUT).run()
@@ -568,6 +600,10 @@ def test_development_scholarship_reaches_exact_mock_receipt_through_real_ui(
             screen.text_input(
                 key=f"form-{scheme_id}-student_identifier"
             ).set_value("SYNTH-STUDENT-01")
+            _upload_documents(
+                harness, screen.session_state.conversation_id,
+                ("student_card", "exam_record", "guardian_confirmation"),
+            )
             _click(screen, key=f"docs-update-{scheme_id}")
             assessment = screen.session_state.application_flow[scheme_id]["assessment"]
             assert assessment["status"] == "checklist_complete"
@@ -765,6 +801,7 @@ def test_phases_one_to_four_ui_receipt_retry_and_scoped_forget(
     _correct_birth_date(screen, "1985-01-01")
     assert screen.session_state.application_flow[SCHEME]["assessment"] is None
     _click(screen, key=f"docs-load-{SCHEME}")
+    _upload_documents(harness, conversation_id)
     mismatch = _documents(screen, mismatch=True)
     assert mismatch["status"] == "mismatch"
     assert mismatch["discrepancies"] == [{
@@ -930,6 +967,7 @@ def test_approved_ui_correction_refresh_requires_fresh_report_draft_and_review(
     screen = _interview(harness, csc=True)
     conversation_id = screen.session_state.conversation_id
     _click(screen, key=f"docs-load-{SCHEME}")
+    _upload_documents(harness, conversation_id)
     assert _documents(screen)["status"] == "checklist_complete"
     _click(screen, key=f"draft-create-{SCHEME}")
     _click(screen, key=f"draft-approve-{SCHEME}")

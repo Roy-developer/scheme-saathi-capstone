@@ -30,7 +30,12 @@ from src.config import (
     upload_directory,
 )
 from src.api.database_backup import DatabaseBackups
-from src.api.document_uploads import router as document_uploads_router
+from src.api.document_uploads import (
+    CheckInputs,
+    router as document_uploads_router,
+    scheme_document_report,
+)
+from src.documents.checker import is_submission_ready
 from src.documents.uploads import UploadStore
 from src.api.portal_service import start_portal_service, stop_portal_service
 from src.api.eligibility import EligibilityResponse
@@ -326,6 +331,28 @@ async def _application_state(
         logger.exception("Saved journey profile could not be validated")
         raise HTTPException(status_code=409, detail="The saved profile is invalid.") from error
     return values, profile
+
+
+async def _require_submission_ready(
+    request: Request,
+    conversation_id: UUID,
+    values: dict,
+    scheme_id: str,
+    inputs: CheckInputs,
+) -> None:
+    """Reject draft actions until the current full document report is ready."""
+
+    report = await asyncio.to_thread(
+        scheme_document_report, request, conversation_id, values, scheme_id, inputs
+    )
+    if not is_submission_ready(report):
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Correct the document checker findings, then recheck before "
+                "approving or submitting this mock application."
+            ),
+        )
 
 
 async def _get_mock_draft(
@@ -1000,6 +1027,17 @@ async def create_application_draft(
         document_id: metadata.model_dump(mode="json", exclude_none=True)
         for document_id, metadata in draft_request.document_metadata.items()
     }
+    await _require_submission_ready(
+        request,
+        conversation_id,
+        values,
+        draft_request.scheme_id,
+        CheckInputs(
+            documents=draft_request.documents,
+            profile_name=draft_request.profile_name,
+            document_metadata=draft_request.document_metadata,
+        ),
+    )
     expected_report = document_input_fingerprint(
         draft_request.scheme_id,
         draft_request.documents,
@@ -1131,7 +1169,7 @@ async def edit_application_draft(
         record = await _get_mock_draft(request, conversation_id, draft_id)
         if edit.revision != record["revision"]:
             raise HTTPException(status_code=409, detail="The draft revision is stale.")
-        _, profile = await _application_state(
+        values, profile = await _application_state(
             request, conversation_id, record["scheme_id"]
         )
         package = request.app.state.rule_packages.get(record["scheme_id"])
@@ -1199,7 +1237,7 @@ async def update_application_approval(
                 detail="This draft cannot be approved in its current state.",
             )
         if decision.action != "reject" and not record.get("receipt_id"):
-            _, profile = await _application_state(
+            values, profile = await _application_state(
                 request, conversation_id, record["scheme_id"]
             )
             draft = record["draft"]
@@ -1224,6 +1262,13 @@ async def update_application_approval(
                     status_code=409,
                     detail="Your answers changed. Recheck eligibility and create a new draft.",
                 )
+            await _require_submission_ready(
+                request,
+                conversation_id,
+                values,
+                record["scheme_id"],
+                CheckInputs(),
+            )
         result = await _dispatch_application_task(
             request, conversation_id, decision.action,
             {

@@ -53,12 +53,10 @@ each document with the profile.
   ready or what is still missing, including with partial documents.
 
 ### Optional: suggested values from the file (LLM reading)
-- Turns on when `OPENROUTER_API_KEY_FREE` (or `OPENROUTER_API_KEY`) is set. A vision model
-  on OpenRouter (default `nvidia/nemotron-3.5-super-vl:free`, change with
-  `OPENROUTER_VISION_MODEL`) only transcribes the text of a **JPG or PNG**; plain code then
-  picks the values that sit next to a "Name" or "DOB" label. PDFs must be typed.
-  Azure Document Intelligence (`SCHEME_SAATHI_DOCINTEL_ENDPOINT` and `..._KEY`) is used only
-  when no OpenRouter key is set.
+- Turns on when the project's `OPENROUTER_API_KEY_FREE` is set. The free
+  `nvidia/nemotron-3.5-super-vl:free` vision model only transcribes the text of
+  a **JPG or PNG**; plain code then picks the values that sit next to a "Name"
+  or "DOB" label. PDFs must be typed.
 - Free models may log prompts: synthetic documents only.
 - "Read name and date from file" shows a suggestion. The user must press Accept
   to copy it into the fields. It never fills them silently.

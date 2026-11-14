@@ -13,6 +13,22 @@ from src.workflow.application_gate import application_gate_thread_id
 from src.workflow.conversation_budget import BUDGET_NAMESPACE, ConversationBudget
 
 
+PNG = b"\x89PNG\r\n\x1a\n" + b"0" * 64
+
+
+def _upload_documents(
+    client: TestClient, conversation_id: UUID, document_ids: dict[str, str],
+) -> None:
+    for document_id, status in document_ids.items():
+        assert status == "available"
+        uploaded = client.put(
+            f"/api/v1/journey/{conversation_id}/documents/files/{document_id}",
+            content=PNG + document_id.encode("ascii"),
+            headers={"X-File-Name": f"{document_id}.png"},
+        )
+        assert uploaded.status_code == 200, uploaded.text
+
+
 def test_saved_document_report_is_marked_stale_against_current_snapshot() -> None:
     class FakeMcpClient:
         def for_actor(self, _actor: str, _journey_id: str | None = None):
@@ -177,6 +193,7 @@ def test_synthetic_application_requires_exact_approval(tmp_path, monkeypatch) ->
             "bank_account_proof": "available",
             "widow_status_proof": "available",
         }
+        _upload_documents(client, conversation_id, documents)
         mismatch = client.post(
             f"/api/v1/journey/{conversation_id}/documents",
             json={
@@ -327,6 +344,24 @@ def test_synthetic_application_requires_exact_approval(tmp_path, monkeypatch) ->
         assert [
             step["specialist"] for step in approved.json()["plan_detail"]["steps"]
         ] == ["documents", "application"]
+        duplicate = client.put(
+            f"/api/v1/journey/{conversation_id}/documents/files/bank_account_proof",
+            content=PNG + b"identity_proof",
+            headers={"X-File-Name": "duplicate.png"},
+        )
+        assert duplicate.status_code == 200
+        blocked_documents = client.post(
+            decision_url,
+            json={"action": "submit", **identity},
+        )
+        assert blocked_documents.status_code == 409
+        assert "document checker findings" in blocked_documents.json()["detail"]
+        restored_file = client.put(
+            f"/api/v1/journey/{conversation_id}/documents/files/bank_account_proof",
+            content=PNG + b"bank_account_proof",
+            headers={"X-File-Name": "bank_account_proof.png"},
+        )
+        assert restored_file.status_code == 200
         submitted = client.post(
             decision_url,
             json={"action": "submit", **identity},
@@ -353,6 +388,7 @@ def test_synthetic_application_requires_exact_approval(tmp_path, monkeypatch) ->
             },
         )
         assert retained.status_code == 200
+        _upload_documents(client, retained_id, documents)
         retained_checklist = client.post(
             f"/api/v1/journey/{retained_id}/documents",
             json={"scheme_id": "IGNWPS-MH", "documents": documents},
