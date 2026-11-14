@@ -139,3 +139,39 @@ def test_restart_replays_pending_deletion_before_serving(
         assert not _has_row(share / "journey.sqlite3", "store", "key", code)
         assert not _has_row(share / "journey.sqlite3", "checkpoints", "thread_id", gate)
         assert client.app.state.backups.pending_deletions() == []
+
+
+def test_schemes_kb_child_receives_the_baked_embedding_cache(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The search child must see the image's model cache, or it falls back to paid embeddings."""
+
+    for name, value in {
+        "SCHEME_SAATHI_CHECKPOINT_DB": tmp_path / "journey.sqlite3",
+        "SCHEME_SAATHI_APPLICATION_DB": tmp_path / "portal.sqlite3",
+        "SCHEME_SAATHI_UPLOAD_DB": tmp_path / "uploads.sqlite3",
+        "SCHEME_SAATHI_UPLOAD_DIR": tmp_path / "uploads",
+    }.items():
+        monkeypatch.setenv(name, str(value))
+    monkeypatch.delenv("SCHEME_SAATHI_PORTAL_DB", raising=False)
+    monkeypatch.delenv("SCHEME_SAATHI_BACKUP_DIR", raising=False)
+    monkeypatch.setenv("FASTEMBED_CACHE_PATH", "/opt/fastembed_cache")
+    original_parameters = api.StdioServerParameters
+    environments: dict[str, dict[str, str]] = {}
+
+    def offline_parameters(*args: object, **kwargs: object) -> object:
+        module = str(kwargs["args"][-1])
+        environments[module] = dict(kwargs["env"])
+        if kwargs.get("args") == ["-m", "src.mcp_servers.schemes_kb_server"]:
+            kwargs["args"] = ["-c", OFFLINE_SEARCH_BOOTSTRAP]
+        return original_parameters(*args, **kwargs)
+
+    monkeypatch.setattr(api, "StdioServerParameters", offline_parameters)
+    with TestClient(api.app):
+        pass
+
+    search = environments["src.mcp_servers.schemes_kb_server"]
+    assert search["FASTEMBED_CACHE_PATH"] == "/opt/fastembed_cache"
+    for module, environment in environments.items():
+        if module != "src.mcp_servers.schemes_kb_server":
+            assert "FASTEMBED_CACHE_PATH" not in environment
