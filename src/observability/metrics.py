@@ -9,8 +9,11 @@ are visualised in Managed Grafana from there.
 
 from __future__ import annotations
 
+import json
 import os
 import time
+from pathlib import Path
+from collections.abc import Mapping
 from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Iterator
@@ -147,6 +150,24 @@ def record_pending_approval_resolved() -> None:
         _otel_instruments.pending_approvals.add(-1)
 
 
+PRICES_PATH = Path(__file__).resolve().parents[2] / "config" / "model_prices.json"
+
+
+def _price_table() -> dict[str, tuple[float | None, float | None]]:
+    """Return (input, output) USD per 1M tokens for each configured model id."""
+
+    try:
+        data = json.loads(PRICES_PATH.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    models = data.get("models", {}) if isinstance(data, dict) else {}
+    return {
+        model: (entry.get("input_per_million"), entry.get("output_per_million"))
+        for model, entry in models.items()
+        if isinstance(entry, dict)
+    }
+
+
 def record_tokens(model: str, *, input_tokens: int = 0, output_tokens: int = 0) -> None:
     if input_tokens > 0:
         _otel_instruments.tokens.add(
@@ -156,11 +177,34 @@ def record_tokens(model: str, *, input_tokens: int = 0, output_tokens: int = 0) 
         _otel_instruments.tokens.add(
             output_tokens, {"model": model or "unknown", "direction": "output"}
         )
-    cost = (input_tokens / 1000.0) * _INPUT_USD_PER_1K + (
-        output_tokens / 1000.0
-    ) * _OUTPUT_USD_PER_1K
+    prices = _price_table().get(model)
+    if prices and prices[0] is not None and prices[1] is not None:
+        # Per-model prices (USD per 1M tokens) from config/model_prices.json.
+        cost = (input_tokens * prices[0] + output_tokens * prices[1]) / 1_000_000
+    else:
+        # Unpriced models keep the environment-based estimate.
+        cost = (input_tokens / 1000.0) * _INPUT_USD_PER_1K + (
+            output_tokens / 1000.0
+        ) * _OUTPUT_USD_PER_1K
     if cost > 0:
         _otel_instruments.cost_usd.record(cost)
+
+
+def record_usage_metadata(usage_by_model: Mapping[str, Mapping[str, object] | None]) -> None:
+    """Record token usage per model for LLM calls that bypass the metered middleware.
+
+    Never raises: metrics must not break the calling agent or extraction.
+    """
+    try:
+        for model, usage in usage_by_model.items():
+            usage = usage or {}
+            record_tokens(
+                model,
+                input_tokens=int(usage.get("input_tokens", 0) or 0),
+                output_tokens=int(usage.get("output_tokens", 0) or 0),
+            )
+    except Exception:  # noqa: BLE001 - metrics must not break the caller
+        pass
 
 
 def record_llm_call(model: str, duration_seconds: float) -> None:

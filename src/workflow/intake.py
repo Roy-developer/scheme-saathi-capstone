@@ -3,6 +3,7 @@
 import json
 from typing import Literal
 
+from langchain_core.callbacks import UsageMetadataCallbackHandler
 from langchain_core.exceptions import OutputParserException
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -11,6 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, Strict
 
 from src.config import openrouter_chat_settings
 from src.llm_client import DEFAULT_CHAT_MODEL, openrouter_chat_model
+from src.observability.metrics import record_usage_metadata
 from src.workflow.agent_middleware import AgentModelError
 
 
@@ -74,6 +76,9 @@ async def _ask_with_provider(
             [SystemMessage(content=system), HumanMessage(content=user)],
             response_format={"type": "json_object"},
         )
+        record_usage_metadata({
+            getattr(provider, "model_name", "unknown"): getattr(reply, "usage_metadata", None),
+        })
         if getattr(reply, "tool_calls", None) or not isinstance(reply.content, str):
             raise ValueError("Reader returned a non-text response.")
         return schema.model_validate_json(reply.content)
@@ -120,11 +125,17 @@ async def _ask_structured(
     reader = openrouter_chat_model(api_key, model).with_structured_output(
         schema, method="json_mode",
     )
+    usage = UsageMetadataCallbackHandler()
     try:
-        return await reader.ainvoke([
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ])
+        reply = await reader.ainvoke(
+            [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+            config={"callbacks": [usage]},
+        )
+        record_usage_metadata(usage.usage_metadata)
+        return reply
     except APIStatusError as error:
         raise IntakeAgentError(
             f"OpenRouter {purpose} request failed with HTTP {error.status_code}."

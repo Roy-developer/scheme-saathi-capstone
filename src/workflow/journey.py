@@ -102,6 +102,7 @@ from src.workflow.intake import (
 from src.workflow.input_guardrails import is_prompt_injection
 from src.workflow.injection_guard import screen_free_text
 from src.workflow.question_picker import (
+    pick_fixed_questionnaire_fact,
     pick_shared_registered_fact,
 )
 from src.workflow.intake_agent import (
@@ -217,11 +218,17 @@ class JourneyRequest(BaseModel):
         default_factory=list,
         max_length=MAX_CANDIDATE_SCHEMES,
     )
+    # Eval / ablation only: "planned" uses the adaptive shared picker;
+    # "fixed" walks the sorted leaf questionnaire. Default keeps production
+    # behaviour unchanged.
+    question_order: Literal["planned", "fixed"] = "planned"
 
     @model_validator(mode="after")
     def validate_candidates(self) -> "JourneyRequest":
         """Keep the old single-scheme API unambiguous and reject blank IDs."""
 
+        if self.question_order == "fixed" and self.action != "interview":
+            raise ValueError("question_order applies only to interview actions")
         if self.candidate_scheme_ids:
             if self.action == "search" or self.scheme_id is not None:
                 raise ValueError(
@@ -378,6 +385,7 @@ class JourneyState(TypedDict, total=False):
     discovery_notices: list[str]
     discovery_events: Annotated[list[dict[str, Any]], add]
     unprocessed_candidate_ids: list[str]
+    question_order: Literal["planned", "fixed"]
 
 
 class JourneyResponse(BaseModel):
@@ -1347,9 +1355,15 @@ def build_journey_graph(
                 for candidate in discovery_updates["candidate_scheme_ids"]
                 if candidate in rule_packages
             ]
-        next_fact = pick_shared_registered_fact(
-            store, packages, fact_registry, frozenset(skipped)
-        )
+        order_mode = state.get("question_order") or "planned"
+        if order_mode == "fixed":
+            next_fact = pick_fixed_questionnaire_fact(
+                store, packages, fact_registry, frozenset(skipped),
+            )
+        else:
+            next_fact = pick_shared_registered_fact(
+                store, packages, fact_registry, frozenset(skipped),
+            )
         common = {
             **discovery_updates,
             **progress(),
@@ -3072,6 +3086,7 @@ async def run_journey(
         "dependency_blocked": profile_changed,
         "return_code": return_code,
         "skipped_facts": list(saved_values.get("skipped_facts", [])),
+        "question_order": request.question_order,
         "conversation": [],
     }
     if request.query is not None:

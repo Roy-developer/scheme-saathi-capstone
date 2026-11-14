@@ -1,0 +1,91 @@
+{
+  "scope": "E3 team-override all-live-clauses (n=13) with playbook 1.1.2. NOT PDF unseen held-out.",
+  "bar": "team_override_all_live_clauses",
+  "model": "nvidia/nemotron-3.5-lightning:free",
+  "key": "OPENROUTER_API_KEY_FREE from .env",
+  "rule": "A case passes only if every repeat is exact (all-runs rule).",
+  "case_text_fix": "build_cases joins all unique source_text values per clause_id (APY multi-sentence).",
+  "playbook_after": "1.1.2",
+  "playbook_after_hash": "ccc0bda165b3a62dc31e2051669c6b4abe96f0a09ab8a105cb5c29d8c2cfb7c4",
+  "before": {
+    "playbook": null,
+    "raw_exact": 18,
+    "raw_total": 39,
+    "cases_passing_all_runs": 6,
+    "cases": 13,
+    "source": "data/runtime/reflexion_reports/evaluate_2026-11-13T175547.json",
+    "source_sha256": "1d304422d6dfae2185f312f69884ca2221e766cdd7d8b8b88d401df6ac70b205"
+  },
+  "after": {
+    "playbook": "1.1.2",
+    "raw_exact": 39,
+    "raw_total": 39,
+    "cases_passing_all_runs": 13,
+    "cases": 13,
+    "source": "data/runtime/reflexion_reports/evaluate_2026-11-13T175212.json",
+    "source_sha256": "d03b563a0bca7205754ac88401abd8502d12868ad20d0d1bc3b02a1856b657bd"
+  },
+  "per_case_all_runs": {
+    "APY-IN-ELIGIBILITY-01": {
+      "before": true,
+      "after": true
+    },
+    "APY-IN-EXCLUSION-01": {
+      "before": false,
+      "after": true
+    },
+    "IGNDPS-MH-ELIGIBILITY-01": {
+      "before": true,
+      "after": true
+    },
+    "IGNOAPS-MH-ELIGIBILITY-01": {
+      "before": true,
+      "after": true
+    },
+    "IGNWPS-MH-ELIGIBILITY-01": {
+      "before": true,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-3": {
+      "before": true,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(a)": {
+      "before": false,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(b)(i)-(ii)": {
+      "before": false,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(b)(iii)": {
+      "before": false,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(b)(iv)": {
+      "before": false,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(b)(v)": {
+      "before": false,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(b)(vi)": {
+      "before": false,
+      "after": true
+    },
+    "PMKISAN-GUIDELINES-2020-4.1(c)": {
+      "before": true,
+      "after": true
+    }
+  },
+  "lift": {
+    "cases_passing_all_runs": "6/13 -> 13/13",
+    "raw_exact": "18/39 -> 39/39",
+    "regressions": []
+  },
+  "notes": [
+    "APY-IN-ELIGIBILITY-01 now passes 3/3 after fixing multi-sentence case text + playbook 1.1.2 lesson.",
+    "Claim level remains team_override_all_live_clauses; not PDF unseen held-out."
+  ]
+}

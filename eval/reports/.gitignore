@@ -4,6 +4,11 @@
 !reflexion_e3_inventory.json
 !red_team_dev_latest.json
 !e2_defences_dev_latest.json
+!e2_runtime_dev_latest.json
+!e4_token_meter_smoke_2026-11-14.json
+!e4_token_meter_smoke_2026-11-14_llm_cases.json
+!e4_live_citizen_smoke_2026-11-14.json
+!e4_live_citizen_smoke_2026-11-14_journey_qo_cases.json
 !label_agreement_dev_latest.json
 !experiments_inventory.json
 !simulated_citizen_smoke.json
@@ -13,3 +18,6 @@
 !retrieval_canonical_dev_bm25_only.json
 !retrieval_canonical_dev_bm25_minilm_rrf.json
 !e3_before_after_dev_2026-11-13.json
+!e3_lesson_generation_cost.json
+!e3_rejected_lesson_example.json
+!e3_team_override_before_after_2026-11-13.json

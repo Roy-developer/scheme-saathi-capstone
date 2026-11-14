@@ -21,6 +21,7 @@ from openai import OpenAIError
 from pydantic import Field, StrictBool, StrictStr, ValidationError
 
 from src.mcp_servers.service_routing import ToolActor
+from src.observability.metrics import record_usage_metadata
 from src.rules.facts import FactRegistry, HouseholdProfile
 from src.workflow.agent_runtime import (
     AgentActionError,
@@ -131,6 +132,9 @@ async def read_description_facts(
             ],
             response_format={"type": "json_object"},
         )
+        record_usage_metadata({
+            getattr(provider, "model_name", "unknown"): getattr(reply, "usage_metadata", None),
+        })
     except (AgentModelError, OpenAIError) as error:
         raise DescriptionReaderError("Description reader is unavailable.") from error
     if getattr(reply, "tool_calls", None) or not isinstance(reply.content, str):

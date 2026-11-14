@@ -1,9 +1,11 @@
 # Scheme Saathi — Evaluation report (Role 5 / PDF L13–L15)
 
 **Status:** In-repo Role 5 suite expanded toward the PDF bar and gated in CI.
-This is still **not** the final frozen held-out submission report until dual
-labels, paid E3, independent attack validation, and three held-out repeats are
-complete with Role 1.
+This is still **not** the final frozen PDF held-out submission report until dual
+labels, independent attack validation, and three true held-out repeats are
+complete with Role 1. Reflexion E3 is recorded for the development check split
+and for a **team-override** all-live-clauses set (n=13; not PDF unseen held-out).
+See §6.
 
 **How to regenerate development evidence:**
 
@@ -19,14 +21,14 @@ python scripts/run_role5_dev_evals.py
 | Dual independent labels + κ | κ harness ready; smoke uses copied labels — **Role 1 must replace** |
 | Simulated citizen (hidden profile) | `eval/harness/simulated_citizen.py` offline stand-in |
 | Code-first eligibility scoring | `evaluate_eligibility_dev.py` / held-out script |
-| E1 cost-benefit | Config inventoried; live C0/C1/C2 still blocked on Phase freeze |
-| E2 defences off/on | Offline injection / ID / scam report plus a separate five-scenario local application-boundary comparison: off 4/5, on 0/5 attack success; no clean false blocks. Off arms remove one boundary, not all controls (see §3). |
-| E3 Reflexion before/after | Playbook inventory free; **paid** OpenRouter runs pending |
-| E4 signature ablation | Rule-engine side via personas; LLM/question ablations pending |
+| E1 cost-benefit | Team-override development comparison recorded (held-out waived); journey-wired C1 + budget/model pins; not PDF HO |
+| E2 defences off/on | Offline injection / ID / scam report plus eight local application-boundary comparisons (incl. scam_intake). Off arms remove one boundary, not all controls; scripted models; not independent/frozen (see §3). |
+| E3 Reflexion before/after | Check-split 1.0.0 closed; playbooks 1.1.0/1.1.1/1.1.2 frozen; team-override n=13 recorded (not PDF unseen HO) |
+| E4 signature ablation | Team-override n=46 recorded (shadow + offline/journey Q-order + multilingual LLM); not PDF HO |
 | 30+ red-team | All 30 briefs approved. After fixing mixed-separator identifier and PAN masking, the separate application-path runtime run on 2026-11-12 passed **30/30** (initially 28/30). Real local API/graph/MCP/portal paths use synthetic inputs and scripted offline models, not live LLM efficacy evidence. The older 30-check helper/local-pytest gate is separate. |
 | L9 memory | Synthetic prototype controls and focused evidence: [`docs/MEMORY_POLICY.md`](MEMORY_POLICY.md), [`tests/test_household_memory.py`](../tests/test_household_memory.py), [`tests/test_journey_graph.py`](../tests/test_journey_graph.py), and [`tests/test_household_memory_api.py`](../tests/test_household_memory_api.py). The approver selected 90-day return-code memory expiry and no automatic historical-checkpoint expiry; the four-case on/off report is functional development evidence only. The red-team checks do not replace full L9 evidence or authorize real-applicant use. |
 | Monitoring / Grafana / alert | Read-only shared-dev query confirms OpenTelemetry metrics from the older `git-13dde6b37e3a` image; current-commit Managed Grafana dashboard and alert proof remain incomplete. |
-| CI evaluation gate | Frontend checks includes the core Role 5 gate plus dedicated 30-case runtime and five-scenario E2 gates. Synthetic JSON reports upload even on failure. Workflow changes are local until pushed and executed in Actions. |
+| CI evaluation gate | Frontend checks (on main) includes the core Role 5 gate plus dedicated 30-case runtime and application-boundary E2 gates. Synthetic JSON reports upload even on failure. |
 | Three held-out repeats | Pending after freeze |
 
 ## 2. Development harness results
@@ -104,47 +106,24 @@ held-out evidence, or independent technical sign-off.
 ### Application-boundary E2 comparison (2026-11-12)
 
 [`eval/reports/e2_runtime_dev_latest.json`](../eval/reports/e2_runtime_dev_latest.json)
-contains five derived attack scenarios, each with a matching clean control in
-both arms: **20 observations**, no test failures or missing observations.
-Each arm uses the real local API/graph/MCP/portal paths with synthetic stores
-and controlled offline model outputs.
+records **eight** derived attack scenarios × off/on × attack/clean (**32
+observations**). Each arm uses the real local API/graph/MCP/portal paths with
+synthetic stores and controlled offline/scripted model outputs.
 
-| Named boundary | Attack success, off | Attack success, on |
-|---|---|---|
-| Confirmed-fact proposal filter | 0/1 | 0/1 |
-| PII masking on intake/model/checkpoint paths | 1/1 | 0/1 |
-| Explicit memory-read consent | 1/1 | 0/1 |
-| Caller-scoped draft read | 1/1 | 0/1 |
-| Human approval before submit | 1/1 | 0/1 |
-| **Total** | **4/5 (80%)** | **0/5 (0%)** |
-
-Legitimate-work false blocks were **0/5 in each arm**. The clean controls
-include confirming a truthful tax answer, continuing normal intake, consented
-memory retrieval, reading one's own draft, and explicitly approving/submitting.
-Disabling the confirmed-fact filter allows a malicious re-proposal, but the
-remaining confirmation requirement prevents a silent overwrite. It is
-therefore correctly counted as an unsuccessful attack in both arms.
+Named boundaries: confirmed-fact filter, landholder-fact filter, rule-engine
+verdict authority, PII masking, memory-read consent, caller-scoped draft read,
+human approval before submit, and scam-intake screening (`scam_intake` from
+RT-SCAM-003).
 
 **Scope:** these are single-boundary ablations, not a global defences-off
-application. Off arms exist only in the isolated test process. The consent
-adapter supplies consent without the user's declaration. The draft adapter
-looks up the synthetic owner without caller scope, then calls the real portal
-as that owner; portal SQL itself is not disabled. The approval adapter
-auto-approves before submission, while portal token checks remain active.
-These deliberately unsafe reference policies are not deployment options.
-Memory consent does not establish authenticated household ownership.
+application. Off arms exist only in the isolated test process. Unsafe test
+adapters are not deployment options. Memory consent does not establish
+authenticated household ownership. Scripted models are not live LLM efficacy.
 
-This adds local evidence for truthful eligibility, own-data privacy, memory
-consent, draft-read isolation and approval policy. It is five derived scenarios,
-not all 30 approved attacks run off/on, independent sign-off, live LLM efficacy
-or final frozen E2/L9 evidence. Source hashes, exact boundaries and observations
-are recorded in the report. The runtime commands remain separate from the
-core Role 5 command, but `.github/workflows/frontend-checks.yml` now invokes
-both as dedicated blocking steps. Their modules are excluded from the broad
-pytest step to avoid duplicate execution. Both gates run after dependency
-installation even if an earlier check fails, unless the job is cancelled;
-synthetic JSON reports upload with `always()`. Remote Actions execution is
-not yet demonstrated because these workflow changes have not been pushed.
+This is not all 30 approved attacks run off/on, independent sign-off, or final
+frozen E2/L9 evidence. `.github/workflows/frontend-checks.yml` on main invokes
+red-team runtime and E2 runtime as dedicated blocking steps; synthetic JSON
+reports upload with `always()`.
 
 Offline E2 reports attack success with defences **off** vs **on** for injection,
 identifier masking, and scam screens (`src/workflow/scam_screen.py`), plus a
@@ -182,9 +161,22 @@ context, so “I get my pension by UPI” stays clean while
 
 ## 4. Held-out (Role-5-only)
 
+Protected personas stay in gitignored `eval/held_out/local/`. CI only runs the
+custody guard (`scripts/check_held_out_custody.py`); it never scores HO fixtures.
+Reporting pattern: run locally as Role 5 → commit a **sanitized** report under
+`eval/reports/` plus IDs/hash in `eval/held_out/manifest.json` (no profiles).
+
+**E1 held-out path (2026-11-14):** Local custody
+`personas_held_out_v1.json` (n=40, sha256 pinned in the manifest). Journey-wired
+C0/C1/C2 live score: **40/40** task_success each arm (free Nemotron) in
+`eval/reports/e1_held_out_journey_live_2026-11-14.json`. Seeds are transformed
+development personas — **not** dual-labelled; **not** a final PDF held-out claim.
+
 ```bash
 python scripts/generate_held_out_personas.py
 python scripts/evaluate_eligibility_held_out.py
+python scripts/run_e1_live.py --held-out --yes --free-model \
+  --out eval/reports/e1_held_out_journey_live_2026-11-14.json
 ```
 
 Do not commit `eval/held_out/local/`. Do not tune against held-out results.
@@ -200,11 +192,68 @@ for the PDF claim (20+ human-calibration labels for an LLM judge if used).
 
 ## 6. Reflexion E3
 
+**Directional check-split (2026-11-13):** Closed under freeze `e3_extraction_freeze`.
+Before (no playbook): 3/6 all-runs. After playbook `1.0.0`: 6/6. Regressions: none.
+Evidence: `eval/reports/e3_before_after_dev_2026-11-13.json`.
+
+**Team-override all-live clauses (n=13):** Waives PDF ≥40 unseen held-out.
+Playbooks `1.1.0` → `1.1.1` → `1.1.2` frozen. `build_cases` joins all unique
+`source_text` lines per clause (APY multi-sentence). Before/after ×3 on free
+Nemotron (`OPENROUTER_API_KEY_FREE`): **6/13 → 13/13** all-runs, 0 regressions
+(`eval/reports/e3_team_override_before_after_2026-11-13.json`). Claim level:
+**not** PDF unseen held-out (11/13 clause IDs already appear in the development
+extraction file).
+
+Also recorded: `eval/reports/e3_lesson_generation_cost.json`,
+`eval/reports/e3_rejected_lesson_example.json`,
+`docs/e3_pdf_path_status_2026-11-13.md`, `docs/E3_END_TO_END_2026-11-13.md`.
+
 ```bash
 python scripts/evaluate_reflexion_playbook_dev.py
-# paid:
-python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --runs 3 --yes
-python -m src.rule_extraction_reflexion.scheme_rules evaluate --split check --playbook 1.0.0 --runs 3 --yes
+python scripts/evaluate_extraction_held_out.py --before --runs 3 --yes
+python scripts/evaluate_extraction_held_out.py --after --playbook 1.1.2 --runs 3 --yes
+```
+
+**E1 cost-benefit (2026-11-14):** Freeze pin `e1_team_override_freeze` with
+journey-wired C1 (`single_agent_provider`). Team-override free-Nemotron live:
+**79/79** task_success on C0/C1/C2 (C1/C2 ~0.85s median vs C0 ~0.02s). Prior
+gpt-4o-mini token/$ comparison still shows C2 costing more (~$0.0115 vs ~$0.0033)
+with no quality upside. Protected local held-out (n=40) scored **40/40** via
+`--held-out` — transformed seeds, **not** dual-labelled PDF. Thresholds: lead +
+R5 report-only; R1/R3 still open. Evidence:
+`eval/reports/e1_team_override_journey_live_2026-11-14.json`,
+`eval/reports/e1_held_out_journey_live_2026-11-14.json`,
+`docs/e1_team_override_status_2026-11-14.md`.
+
+```bash
+python scripts/summarize_e1_live_report.py
+python scripts/run_e1_live.py --team-override --yes --free-model \
+  --out eval/reports/e1_team_override_journey_live_2026-11-14.json
+python scripts/run_e1_live.py --held-out --yes --free-model \
+  --out eval/reports/e1_held_out_journey_live_2026-11-14.json
+```
+
+**E4 signature ablation (team override, 2026-11-13):** Waives PDF ≥40 unseen
+held-out personas; uses 46 development persona×scheme cases under freeze pin
+`e4_team_override_freeze`. Shadow stub 14/46 agree; offline Q-order fixed 192 vs
+planned 185; **journey-facing** Q-order fixed 159 vs planned 157 (46/46 same
+verdicts via interview graph + simulated citizen). Full isolated LLM arm (free
+Nemotron, en/hi/mr): boundary errors LLM 16/46 (0.3478) vs rules 0; multilingual
+agreement 32/46 (0.6957); cost/case $0. Dual-label κ (model-assisted
+`model-assisted-check` vs `model-assisted-check-2`, no smoke copy): 46 paired,
+κ=1.0 — **not** independent human Role-1. Token metering via LangChain
+callbacks (smoke metered non-zero tokens; free route still $0). Different-model
+live citizen runnable (`--live-citizen`, Gemma free ≠ Nemotron). Claim level:
+**not** PDF unseen held-out. Evidence:
+`eval/reports/e4_team_override_signature_ablation_2026-11-13.json`,
+`eval/reports/e4_team_override_label_agreement_2026-11-13.json`,
+`docs/e4_team_override_status_2026-11-13.md`.
+
+```bash
+python scripts/evaluate_e4_signature_ablation.py --team-override --dry-run
+python scripts/evaluate_e4_signature_ablation.py --team-override --llm-arm --multilingual --yes
+python scripts/evaluate_e4_signature_ablation.py --team-override --live-citizen --yes --limit 4
+python scripts/evaluate_e4_label_agreement.py
 ```
 
 ## 7. Monitoring
@@ -226,8 +275,8 @@ Configuration alone is not deployment evidence.
 ## 8. Still required for a full PDF claim
 
 1. Role 1 dual-labels held-out (and preferably development) independently.
-2. Paid E3 before/after + report deltas.
-3. Live E1 / E4 after agent freeze; three held-out repeats with spread.
-4. Live red-team for cross-household memory and approval-gate cases with independent authorship.
+2. True PDF unseen held-out extraction (optional; team currently uses n=13 all-live override for E3).
+3. PDF held-out E1 (protected set + owner-signed thresholds + fresh freeze-pinned journey-C1 live run); optional PDF held-out E4; three held-out repeats with spread. Team-override E1 development comparison is recorded separately.
+4. Independent red-team subset: fill `eval/red_team/independent_subset_v1_blank.json` per `INDEPENDENT_VALIDATION.md`, then pass `python scripts/check_independent_red_team.py` through `independent_subset_claimable` (author ≠ reviewer; execution validation accepted). Live LLM efficacy remains a separate arm.
 5. Different-family LLM judge calibrated on 20+ human labels (if non-code qualities are judged).
 6. Role 6 proves the deployed metrics reach the shared monitoring environment and demonstrates a working alert.

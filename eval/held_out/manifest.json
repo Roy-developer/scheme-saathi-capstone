@@ -1,189 +1,171 @@
 {
-  "file": "eval/held_out/local/personas_held_out_v2.json",
-  "sha256": "32c1f2a29063811d3665c127b7a512eda08c50ae19b670e222d22ad5881fe2a9",
-  "case_count": 45,
-  "split": "heldout",
+  "file": "eval/held_out/local/personas_held_out_v1.json",
+  "sha256": "62bcec25d0c805fe732e8fe0d42d9aa705f612843ba74c44543954dcb174fd49",
+  "case_count": 40,
+  "split": "held_out",
   "protected": true,
+  "note": "IDs and content hash only. Persona payloads stay in Role-5 local custody (gitignored). E1 journey-wired score recorded in eval/reports/e1_held_out_journey_live_2026-11-14.json. Transformed development seeds \u2014 not dual-labelled; not a final PDF claim.",
+  "e1_report": "eval/reports/e1_held_out_journey_live_2026-11-14.json",
   "cases": [
     {
-      "id": "HO-001",
-      "scheme_id": "APY-IN"
-    },
-    {
-      "id": "HO-002",
-      "scheme_id": "APY-IN"
-    },
-    {
-      "id": "HO-003",
-      "scheme_id": "APY-IN"
-    },
-    {
-      "id": "HO-004",
-      "scheme_id": "APY-IN"
-    },
-    {
-      "id": "HO-005",
-      "scheme_id": "APY-IN"
-    },
-    {
-      "id": "HO-006",
-      "scheme_id": "APY-IN"
-    },
-    {
-      "id": "HO-007",
-      "scheme_id": "APY-IN"
-    },
-    {
-      "id": "HO-008",
-      "scheme_id": "APY-IN"
-    },
-    {
-      "id": "HO-009",
-      "scheme_id": "APY-IN"
-    },
-    {
-      "id": "HO-010",
-      "scheme_id": "APY-IN"
-    },
-    {
-      "id": "HO-011",
-      "scheme_id": "APY-IN"
-    },
-    {
-      "id": "HO-012",
-      "scheme_id": "IGNDPS-MH"
-    },
-    {
-      "id": "HO-013",
-      "scheme_id": "IGNDPS-MH"
-    },
-    {
-      "id": "HO-014",
-      "scheme_id": "IGNDPS-MH"
-    },
-    {
-      "id": "HO-015",
-      "scheme_id": "IGNDPS-MH"
-    },
-    {
-      "id": "HO-016",
-      "scheme_id": "IGNDPS-MH"
-    },
-    {
-      "id": "HO-017",
-      "scheme_id": "IGNDPS-MH"
-    },
-    {
-      "id": "HO-018",
-      "scheme_id": "IGNDPS-MH"
-    },
-    {
-      "id": "HO-019",
-      "scheme_id": "IGNDPS-MH"
-    },
-    {
-      "id": "HO-020",
-      "scheme_id": "IGNOAPS-MH"
-    },
-    {
-      "id": "HO-021",
-      "scheme_id": "IGNOAPS-MH"
-    },
-    {
-      "id": "HO-022",
-      "scheme_id": "IGNOAPS-MH"
-    },
-    {
-      "id": "HO-023",
-      "scheme_id": "IGNOAPS-MH"
-    },
-    {
-      "id": "HO-024",
-      "scheme_id": "IGNOAPS-MH"
-    },
-    {
-      "id": "HO-025",
-      "scheme_id": "IGNOAPS-MH"
-    },
-    {
-      "id": "HO-026",
-      "scheme_id": "IGNOAPS-MH"
-    },
-    {
-      "id": "HO-027",
-      "scheme_id": "IGNOAPS-MH"
-    },
-    {
-      "id": "HO-028",
+      "id": "HO-IGNWPS-DEV-001-W1-01",
       "scheme_id": "IGNWPS-MH"
     },
     {
-      "id": "HO-029",
+      "id": "HO-IGNWPS-DEV-002-W1-02",
       "scheme_id": "IGNWPS-MH"
     },
     {
-      "id": "HO-030",
+      "id": "HO-IGNWPS-DEV-003-W1-03",
       "scheme_id": "IGNWPS-MH"
     },
     {
-      "id": "HO-031",
+      "id": "HO-IGNWPS-DEV-004-W1-04",
       "scheme_id": "IGNWPS-MH"
     },
     {
-      "id": "HO-032",
+      "id": "HO-IGNWPS-DEV-005-W1-05",
       "scheme_id": "IGNWPS-MH"
     },
     {
-      "id": "HO-033",
+      "id": "HO-IGNWPS-DEV-006-W1-06",
       "scheme_id": "IGNWPS-MH"
     },
     {
-      "id": "HO-034",
+      "id": "HO-IGNWPS-DEV-007-W1-07",
       "scheme_id": "IGNWPS-MH"
     },
     {
-      "id": "HO-035",
+      "id": "HO-IGNWPS-DEV-008-W1-08",
       "scheme_id": "IGNWPS-MH"
     },
     {
-      "id": "HO-036",
+      "id": "HO-IGNWPS-DEV-009-W1-09",
       "scheme_id": "IGNWPS-MH"
     },
     {
-      "id": "HO-037",
+      "id": "HO-IGNWPS-DEV-010-W1-10",
       "scheme_id": "IGNWPS-MH"
     },
     {
-      "id": "HO-038",
+      "id": "HO-IGNWPS-DEV-011-W1-11",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-IGNWPS-DEV-012-W1-12",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-IGNWPS-DEV-013-W1-13",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-PMKISAN-DEV-001-W1-14",
       "scheme_id": "PM-KISAN-IN"
     },
     {
-      "id": "HO-039",
+      "id": "HO-PMKISAN-DEV-002-W1-15",
       "scheme_id": "PM-KISAN-IN"
     },
     {
-      "id": "HO-040",
+      "id": "HO-PMKISAN-DEV-003-W1-16",
       "scheme_id": "PM-KISAN-IN"
     },
     {
-      "id": "HO-041",
+      "id": "HO-PMKISAN-DEV-004-W1-17",
       "scheme_id": "PM-KISAN-IN"
     },
     {
-      "id": "HO-042",
+      "id": "HO-PMKISAN-DEV-005-W1-18",
       "scheme_id": "PM-KISAN-IN"
     },
     {
-      "id": "HO-043",
+      "id": "HO-PMKISAN-DEV-006-W1-19",
       "scheme_id": "PM-KISAN-IN"
     },
     {
-      "id": "HO-044",
+      "id": "HO-PMKISAN-DEV-007-W1-20",
       "scheme_id": "PM-KISAN-IN"
     },
     {
-      "id": "HO-045",
+      "id": "HO-PMKISAN-DEV-008-W1-21",
       "scheme_id": "PM-KISAN-IN"
+    },
+    {
+      "id": "HO-PMKISAN-DEV-009-W1-22",
+      "scheme_id": "PM-KISAN-IN"
+    },
+    {
+      "id": "HO-PMKISAN-DEV-010-W1-23",
+      "scheme_id": "PM-KISAN-IN"
+    },
+    {
+      "id": "HO-PMKISAN-DEV-011-W1-24",
+      "scheme_id": "PM-KISAN-IN"
+    },
+    {
+      "id": "HO-PMKISAN-DEV-012-W1-25",
+      "scheme_id": "PM-KISAN-IN"
+    },
+    {
+      "id": "HO-IGNOAPS-DEV-001-W1-26",
+      "scheme_id": "IGNOAPS-MH"
+    },
+    {
+      "id": "HO-IGNOAPS-DEV-002-W1-27",
+      "scheme_id": "IGNOAPS-MH"
+    },
+    {
+      "id": "HO-IGNOAPS-DEV-003-W1-28",
+      "scheme_id": "IGNOAPS-MH"
+    },
+    {
+      "id": "HO-IGNOAPS-DEV-004-W1-29",
+      "scheme_id": "IGNOAPS-MH"
+    },
+    {
+      "id": "HO-IGNOAPS-DEV-005-W1-30",
+      "scheme_id": "IGNOAPS-MH"
+    },
+    {
+      "id": "HO-IGNOAPS-DEV-006-W1-31",
+      "scheme_id": "IGNOAPS-MH"
+    },
+    {
+      "id": "HO-IGNWPS-DEV-001-W2-01",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-IGNWPS-DEV-002-W2-02",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-IGNWPS-DEV-003-W2-03",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-IGNWPS-DEV-004-W2-04",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-IGNWPS-DEV-005-W2-05",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-IGNWPS-DEV-006-W2-06",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-IGNWPS-DEV-007-W2-07",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-IGNWPS-DEV-008-W2-08",
+      "scheme_id": "IGNWPS-MH"
+    },
+    {
+      "id": "HO-IGNWPS-DEV-009-W2-09",
+      "scheme_id": "IGNWPS-MH"
     }
   ]
 }

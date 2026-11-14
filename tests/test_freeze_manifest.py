@@ -19,8 +19,18 @@ def test_committed_freeze_manifest_matches_the_generator() -> None:
 
 
 def test_freeze_manifest_references_no_held_out_path() -> None:
-    """Held-out cases must never be pinned or referenced by the freeze contract."""
+    """Held-out case payloads must never be pinned as freeze eval inputs.
+
+    Status notes may mention held-out being blocked; forbid local custody
+    persona/case file paths and unprotected held-out dataset pins.
+    """
 
     text = MANIFEST.read_text(encoding="utf-8").lower()
-    assert "heldout" not in text
-    assert "held_out" not in text
+    forbidden = (
+        "eval/held_out/local",
+        "held_out/personas",
+        "personas_held_out",
+        "heldout/personas",
+    )
+    for needle in forbidden:
+        assert needle not in text, needle

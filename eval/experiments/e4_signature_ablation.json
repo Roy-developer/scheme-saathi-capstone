@@ -1,13 +1,21 @@
 {
   "experiment_id": "E4",
   "title": "Scheme Saathi signature ablation",
-  "status": "config_stub_not_runnable",
+  "status": "team_override_n46_recorded",
   "description": "Compare direct LLM eligibility from retrieved text versus the rule engine (count boundary errors). Also compare planned question order versus a fixed questionnaire for the same persona.",
   "controls": {
     "llm_eligibility_path": "evaluation_only_never_live_authority",
     "rule_engine_path": "evaluate_mock_eligibility",
     "question_orders": ["planned", "fixed"],
-    "eval_set": "held_out_role5_only"
+    "eval_set_dev": "eval/development/personas_v1.json",
+    "eval_set_pdf": "held_out_role5_only",
+    "bar": "team_override_dev_personas",
+    "runner": "scripts/evaluate_e4_signature_ablation.py",
+    "llm_arm_module": "eval/harness/e4_llm_arm.py",
+    "shadow_module": "eval/harness/e4_shadow.py",
+    "journey_question_order_module": "eval/harness/e4_journey_question_order.py",
+    "freeze_pin": "eval/freeze/manifest.json#e4_team_override_freeze",
+    "status_doc": "docs/e4_team_override_status_2026-11-13.md"
   },
   "metrics": [
     "boundary_error_count_llm",
@@ -18,6 +26,21 @@
     "median_latency",
     "p95_latency"
   ],
-  "note": "Development rule-engine scoring for boundary personas is available now via scripts/evaluate_eligibility_dev.py. The LLM-side and questioning ablations remain blocked.",
-  "blocker": "Needs held-out personas, simulated citizen, and an isolated LLM-eligibility path that cannot write live verdicts."
+  "commands": {
+    "offline": "python scripts/evaluate_e4_signature_ablation.py",
+    "team_override_dry_run": "python scripts/evaluate_e4_signature_ablation.py --team-override --dry-run",
+    "team_override_full": "python scripts/evaluate_e4_signature_ablation.py --team-override --llm-arm --multilingual --yes"
+  },
+  "evidence": {
+    "team_override_report": "eval/reports/e4_team_override_signature_ablation_2026-11-13.json",
+    "llm_case_detail": "eval/reports/e4_team_override_signature_ablation_2026-11-13_llm_cases.json",
+    "journey_qo_detail": "eval/reports/e4_team_override_signature_ablation_2026-11-13_journey_qo_cases.json",
+    "dual_label_agreement": "eval/reports/e4_team_override_label_agreement_2026-11-13.json",
+    "dual_label_sheet": "eval/development/e4_team_override_dual_labels.json",
+    "token_meter_smoke": "eval/reports/e4_token_meter_smoke_2026-11-14.json",
+    "live_citizen_smoke": "eval/reports/e4_live_citizen_smoke_2026-11-14.json",
+    "latest_report": "eval/reports/e4_signature_ablation_latest.json"
+  },
+  "note": "Team override (2026-11-13): waives PDF ≥40 unseen held-out. Offline + journey question-order and full LLM arm × en/hi/mr recorded under freeze. Model-assisted dual-label κ=1.0 on 46 (not human Role-1). Token metering via LangChain callbacks; free-route $0. Optional --live-citizen uses a different free model. LLM proposals never write live state. Not a PDF unseen held-out claim.",
+  "blocker": "Human Role-1 dual labels (and PDF ≥40 HO if that claim is wanted) remain open."
 }

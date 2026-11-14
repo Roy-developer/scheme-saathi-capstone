@@ -1,0 +1,116 @@
+{
+  "generated_at": "2026-11-11T17:44:17.876483+00:00",
+  "suite": "Role 5 development (offline + paid E3)",
+  "note": "E2 offline scored. E3 team-override n=13 with playbook 1.1.2 recorded (not PDF HO). E1 team-override development comparison recorded (held-out waived). E4 team-override n=46 full multilingual LLM arm recorded (not PDF HO).",
+  "experiments": {
+    "E1": {
+      "title": "Does the agent team justify its cost?",
+      "status": "team_override_dev_recorded",
+      "config_status": "team_override_dev_recorded_held_out_pending",
+      "score": {
+        "journey_live": "eval/reports/e1_team_override_journey_live_2026-11-14.json",
+        "held_out_live": "eval/reports/e1_held_out_journey_live_2026-11-14.json",
+        "cases_dev": 79,
+        "task_success_dev": {"C0": 79, "C1": 79, "C2": 79},
+        "cases_held_out": 40,
+        "task_success_held_out": {"C0": 40, "C1": 40, "C2": 40},
+        "model_live": "nvidia/nemotron-3.5-lightning:free",
+        "overall_grade": "JOURNEY_LIVE_AND_HO_PATH_RECORDED_NO_TEAM_QUALITY_BENEFIT"
+      },
+      "blocker": "Final PDF still needs dual labels on held-out, R1/R3 threshold sign-off, three HO repeats.",
+      "partial_signals": "Journey-wired live + local HO path recorded; Lead+R5 report-only thresholds."
+    },
+    "E2": {
+      "title": "Do the defences work?",
+      "status": "scored_offline",
+      "config_status": "offline_defences_off_on_runnable",
+      "score": {
+        "defences_off_attack_success_rate": 1.0,
+        "defences_on_attack_success_rate": 0.0,
+        "defences_on_defence_hold_rate": 1.0,
+        "legitimate_work_false_block_rate": 0.0,
+        "offline_attack_case_count": 19,
+        "clean_case_count": 6,
+        "red_team_pass_rate": 1.0,
+        "red_team_passed": 23,
+        "red_team_runnable": 23,
+        "red_team_total": 30,
+        "overall_grade": "PASS"
+      },
+      "interpretation": "With defences off, offline attacks succeed at 100%. With defences on, attack success is 0% and defence hold is 100%. Clean UPI/WhatsApp-style messages false-block at 0%. Red-team offline suite 23/23 passed.",
+      "remaining": "Live memory/approval-gate attacks and independent attack authorship still required before the full PDF E2 claim."
+    },
+    "E3": {
+      "title": "Did the Reflexion lessons help?",
+      "status": "directional_closed_dev_check",
+      "config_status": "directional_closed_dev_check_held_out_open",
+      "score": {
+        "playbook_version": "1.0.0",
+        "cases_passing_all_runs_before": 3,
+        "cases_passing_all_runs_after": 6,
+        "cases": 6,
+        "raw_exact_before": 9,
+        "raw_exact_after": 18,
+        "raw_total": 18,
+        "improved": [
+          "PMKISAN-GUIDELINES-2020-4.1(b)(iv)",
+          "PMKISAN-GUIDELINES-2020-4.1(b)(v)",
+          "PMKISAN-GUIDELINES-2020-4.1(b)(vi)"
+        ],
+        "regressed": [],
+        "evaluate_cost_usd": 0.0,
+        "overall_grade": "DIRECTIONAL_PASS_DEV_CHECK"
+      },
+      "interpretation": "Playbook 1.0.0 lifted exact matches from 14/18 to 18/18 on development check-split (3 runs \u00d7 6 cases). Improved cases: ['PMKISAN-GUIDELINES-2020-4.1(b)(iv)', 'PMKISAN-GUIDELINES-2020-4.1(b)(v)']. Regressions: none.",
+      "remaining": "Playbook 1.1.0 and held-out extraction before/after remain open for a PDF claim. Rejected lesson and metered lesson-generation cost are recorded.",
+      "evidence": {
+        "before_after": "eval/reports/e3_before_after_dev_2026-11-13.json",
+        "lesson_generation_cost": "eval/reports/e3_lesson_generation_cost.json",
+        "rejected_lesson_example": "eval/reports/e3_rejected_lesson_example.json"
+      }
+    },
+    "E4": {
+      "title": "Scheme Saathi signature ablation",
+      "status": "team_override_n46_recorded",
+      "config_status": "team_override_n46_recorded",
+      "score": {
+        "rule_engine_persona_accuracy": 1.0,
+        "rule_engine_case_count": 31,
+        "rule_engine_incorrect": 0,
+        "shadow_stub_agree": 14,
+        "shadow_stub_cases": 46,
+        "question_order_ablation": {
+          "case_count": 46,
+          "fixed_questions_total": 192,
+          "planned_questions_total": 185,
+          "verdict_match_count": 46
+        },
+        "llm_eligibility_ablation": {
+          "status": "team_override_full_recorded",
+          "report": "eval/reports/e4_team_override_signature_ablation_2026-11-13.json",
+          "case_count": 46,
+          "model_calls": 138,
+          "boundary_error_count_llm": 16,
+          "boundary_error_count_rules": 0,
+          "boundary_error_rate_llm": 0.3478,
+          "verdict_agreement_hi_mr_en_rate": 0.6957,
+          "cost_per_case_usd": 0.0,
+          "median_latency_ms": 710,
+          "p95_latency_ms": 1674
+        },
+        "overall_grade": "TEAM_OVERRIDE_RECORDED"
+      },
+      "interpretation": "Team override on 46 development persona×scheme cases: shadow + question-order + full multilingual LLM arm under freeze. LLM proposals non-authoritative. Not PDF unseen held-out.",
+      "remaining": "PDF ≥40 unseen held-out + simulated citizen remain optional future work if that claim is required."
+    }
+  },
+  "supporting_reports": {
+    "eligibility": "eval/reports/eligibility_dev_latest.json",
+    "e2": "eval/reports/e2_defences_dev_latest.json",
+    "red_team": "eval/reports/red_team_dev_latest.json",
+    "reflexion_inventory": "eval/reports/reflexion_e3_inventory.json",
+    "experiments": "eval/reports/experiments_inventory.json",
+    "e3_before": "data/runtime/reflexion_reports/evaluate_2026-11-11T174253.json",
+    "e3_after": "data/runtime/reflexion_reports/evaluate_2026-11-11T174350.json"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "currency": "USD",
+  "unit": "USD per 1M tokens",
+  "needs_confirmation": true,
+  "note": "Prices are not verified. Fill in from the provider's current price list and set needs_confirmation to false. A null price means cost is not recorded for that model, while token counts still are.",
+  "models": {
+    "openai/gpt-4o-mini": {
+      "input_per_million": null,
+      "output_per_million": null,
+      "needs_confirmation": true
+    }
+  }
+}

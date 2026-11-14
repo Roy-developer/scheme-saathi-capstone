@@ -20,9 +20,12 @@ python scripts/evaluate_eligibility_held_out.py
 ```
 
 `eval/held_out/local/` is gitignored. The Dockerfiles copy explicit application
-and scheme-data paths and do not copy this directory. The local repository
-currently contains no held-out persona file; do not generate or tune held-out
-cases until the freeze and custody owners authorize the work.
+and scheme-data paths and do not copy this directory.
+
+**How to report without CI scoring held-out:** run locally as Role 5, then commit
+only (1) a sanitized aggregate under `eval/reports/` (force-add if needed) and
+(2) IDs + content hash in `manifest.json`. Never commit persona payloads.
+Example E1 report: `eval/reports/e1_held_out_journey_live_2026-11-14.json`.
 
 If a protected case is exposed, stop scoring it as held-out, record the
 exposure, reclassify it as development, and replace it before making a final

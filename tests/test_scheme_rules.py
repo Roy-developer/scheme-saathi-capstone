@@ -38,14 +38,22 @@ def _cases_file(tmp_path: Path, learn_clause: str | None) -> Path:
 def test_every_listed_clause_builds_a_case_from_its_approved_package() -> None:
     cases = scheme_rules.build_cases()
 
-    # 10 clauses before IGNDPS-MH was onboarded; one more per onboarded scheme.
-    assert len(cases) == 11
+    # Live package clauses listed in rule_extraction_cases_dev.json (includes APY).
+    assert len(cases) == 13
     for case in cases:
         assert case.expected_rules and case.topic_tags
-        # The approved line comes last; any headings it sits under come first.
-        assert case.clauses[0].text.endswith(case.expected_rules[0].source_text)
+        # Headings first (if any), then every distinct source_text for the clause.
+        unique_sources = []
+        for rule in case.expected_rules:
+            if rule.source_text and rule.source_text not in unique_sources:
+                unique_sources.append(rule.source_text)
+        assert case.clauses[0].text.endswith(unique_sources[-1])
     ignwps = next(case for case in cases if case.case_id == "IGNWPS-MH-ELIGIBILITY-01")
     assert len(ignwps.expected_rules) == 4
+    apy = next(case for case in cases if case.case_id == "APY-IN-ELIGIBILITY-01")
+    assert "citizens of India" in apy.clauses[0].text
+    assert "savings bank" in apy.clauses[0].text
+    assert len(apy.expected_rules) == 4
 
 
 def test_list_item_is_shown_under_the_headings_it_sits_under() -> None:
