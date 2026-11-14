@@ -333,6 +333,29 @@ def build_manifest() -> dict:
             if E4_PERSONA_SET.exists() and E4_RUNNER.exists() and E4_LLM_ARM.exists()
             else {"status": "e4_team_override_artifacts_missing"}
         ),
+        "e2_defences_freeze": (
+            {
+                "scope": (
+                    "E2 defences off/on, development only: 8 scripted application-boundary "
+                    "scenarios plus offline injection/ID/scam checks. Not independent, not frozen-independent."
+                ),
+                "paid_run_gate": {"authorised": False, "note": "E2 uses scripted models; no paid calls."},
+                "runners": {
+                    "runtime": {"path": "scripts/evaluate_e2_runtime.py", "sha256": sha256_file(ROOT / "scripts" / "evaluate_e2_runtime.py")},
+                    "defences_dev": {"path": "scripts/evaluate_e2_defences_dev.py", "sha256": sha256_file(ROOT / "scripts" / "evaluate_e2_defences_dev.py")},
+                },
+                "modules": {
+                    "e2_runner": {"path": "eval/harness/e2_runner.py", "sha256": sha256_file(ROOT / "eval" / "harness" / "e2_runner.py")},
+                },
+                "tests": {
+                    "test_e2_runtime": {"path": "tests/test_e2_runtime.py", "sha256": sha256_file(ROOT / "tests" / "test_e2_runtime.py")},
+                },
+                "record": {"path": "docs/E2_RUNTIME_RECORD_2026-11-14.md", "sha256": sha256_file(ROOT / "docs" / "E2_RUNTIME_RECORD_2026-11-14.md")},
+            }
+            if (ROOT / "scripts" / "evaluate_e2_runtime.py").exists()
+            and (ROOT / "docs" / "E2_RUNTIME_RECORD_2026-11-14.md").exists()
+            else {"status": "e2_artifacts_missing"}
+        ),
         "e1_team_override_freeze": (
             {
                 "scope": (
