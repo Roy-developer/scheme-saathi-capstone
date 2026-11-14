@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+
 import pytest
 from fastapi.testclient import TestClient
 from opentelemetry.sdk.metrics import MeterProvider
@@ -162,6 +164,55 @@ def test_azure_exporter_is_configured_only_with_connection_string(monkeypatch) -
     telemetry.configure_telemetry()
     telemetry.configure_telemetry()
     assert calls == [True]
+
+
+def _attributes_seen_by_exporter(monkeypatch, start: str) -> str:
+    """Run configure_telemetry with a stub exporter and return the resource attributes."""
+
+    from azure.monitor import opentelemetry as azure_monitor_opentelemetry
+
+    seen: list[str] = []
+    monkeypatch.setattr(telemetry, "_configured", False)
+    monkeypatch.setenv(telemetry.CONNECTION_STRING_ENV, "test-connection")
+    # Set first so the test restores the variable afterwards.
+    monkeypatch.setenv(telemetry.RESOURCE_ATTRIBUTES_ENV, start)
+    monkeypatch.setattr(
+        azure_monitor_opentelemetry,
+        "configure_azure_monitor",
+        lambda: seen.append(os.environ[telemetry.RESOURCE_ATTRIBUTES_ENV]),
+    )
+    telemetry.configure_telemetry()
+    return seen[0]
+
+
+def test_telemetry_version_follows_app_version(monkeypatch) -> None:
+    monkeypatch.setenv(telemetry.APP_VERSION_ENV, "git-0123456789ab")
+
+    attributes = _attributes_seen_by_exporter(monkeypatch, "")
+
+    assert "service.version=git-0123456789ab" in attributes.split(",")
+    assert f"service.name={telemetry.DEFAULT_SERVICE_NAME}" in attributes.split(",")
+
+
+def test_explicit_resource_attributes_are_never_overridden(monkeypatch) -> None:
+    monkeypatch.setenv(telemetry.APP_VERSION_ENV, "git-from-deploy")
+
+    attributes = _attributes_seen_by_exporter(
+        monkeypatch, "service.version=manual,deployment.environment=dev"
+    ).split(",")
+
+    assert "service.version=manual" in attributes
+    assert "deployment.environment=dev" in attributes
+    assert "service.version=git-from-deploy" not in attributes
+
+
+def test_no_version_label_without_app_version(monkeypatch) -> None:
+    monkeypatch.delenv(telemetry.APP_VERSION_ENV, raising=False)
+
+    attributes = _attributes_seen_by_exporter(monkeypatch, "").split(",")
+
+    assert not any(item.startswith("service.version=") for item in attributes)
+    assert f"service.name={telemetry.DEFAULT_SERVICE_NAME}" in attributes
 
 
 def test_journey_verdict_counts_once_per_conversation(otel_reader) -> None:
