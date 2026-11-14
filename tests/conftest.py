@@ -157,3 +157,14 @@ def _isolated_document_data(monkeypatch: pytest.MonkeyPatch, _worker_scheme_data
     monkeypatch.setattr(
         forms, "test_scheme_data_directory", lambda: configured_scheme_data() or destination,
     )
+
+
+@pytest.fixture(autouse=True)
+def _fresh_household_rate_limits():
+    """Household route limits are per process; start every test with a clean budget."""
+
+    from src.api.rate_limit import reset_household_limits
+
+    reset_household_limits()
+    yield
+    reset_household_limits()

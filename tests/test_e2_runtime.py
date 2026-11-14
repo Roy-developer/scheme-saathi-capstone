@@ -335,7 +335,7 @@ def _human_approval(harness, patch, enabled, clean):
                 )
                 if not record["approved"]:
                     await original(**{
-                        **kwargs, "decision": decision.model_copy(update={"action": "approve"}),
+                        **kwargs, "decision": decision.model_copy(update={"action": "approve", "read_confirmed": True}),
                     })
                     auto_approvals.append(True)
             return await original(**kwargs)

@@ -306,7 +306,7 @@ def test_synthetic_application_requires_exact_approval(tmp_path, monkeypatch) ->
 
         approved = client.post(
             decision_url,
-            json={"action": "approve", **identity},
+            json={"action": "approve", "read_confirmed": True, **identity},
         )
         assert approved.status_code == 409
         identity = {
@@ -319,7 +319,7 @@ def test_synthetic_application_requires_exact_approval(tmp_path, monkeypatch) ->
         )
         approved = client.post(
             decision_url,
-            json={"action": "approve", **identity},
+            json={"action": "approve", "read_confirmed": True, **identity},
         )
         assert approved.status_code == 200, approved.text
         assert approved.json()["approved"] is True
@@ -401,7 +401,7 @@ def test_synthetic_application_requires_exact_approval(tmp_path, monkeypatch) ->
         ] == retained_draft.json()["draft_id"]
         isolated = client.post(
             f"/api/v1/journey/{retained_id}/drafts/{draft['draft_id']}/approval",
-            json={"action": "approve", **identity},
+            json={"action": "approve", "read_confirmed": True, **identity},
         )
         assert isolated.status_code == 404
         connection = sqlite3.connect(tmp_path / "applications.sqlite3")

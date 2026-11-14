@@ -364,7 +364,7 @@ def test_pmkisan_continue_opens_chat_that_asks_then_shows_verdict() -> None:
         assert interview_request.citizen_present is True
         # The plan checklist and the first question are on screen.
         markdown = [element.value for element in app.markdown]
-        assert "? Learn about you" in markdown
+        assert "⏳ Learn about you" in markdown
         assert question in markdown
         assert app.query_params["scheme"] == "PM-KISAN-IN"
         assert app.query_params["conversation"] == str(conversation_id)
@@ -654,7 +654,7 @@ def test_registry_decimal_question_submits_exact_text_at_precision_boundary() ->
         course_widget = next(
             widget
             for widget in app.selectbox
-            if widget.label == "Type your answer (yes / no / don't know, a date like 1958-05-05, or your own words)"
+            if widget.label == "Quick answer"
         )
         course_widget.set_value("Science")
         next(button for button in app.button if button.label == "Send answer").click().run()
@@ -786,9 +786,15 @@ def test_registered_date_question_accepts_an_old_date_of_birth() -> None:
         app.run()
         assert not app.exception
 
-        picker = app.date_input(key=f"registered_answer_{conversation_id}_date_of_birth")
-        assert picker.min == date(1900, 1, 1)
-        picker.set_value(date(1950, 3, 3))
+        prefix = f"registered_answer_{conversation_id}_date_of_birth"
+        year = app.selectbox(key=f"{prefix}_year")
+        # Years run newest first and reach back to 1900, so an old-age
+        # applicant's birth year is one pick away (no calendar decade jumps).
+        assert year.options[0] == str(date.today().year + 1)
+        assert year.options[-1] == "1900"
+        app.selectbox(key=f"{prefix}_day").set_value(3)
+        app.selectbox(key=f"{prefix}_month").set_value(3)
+        year.set_value(1950)
         next(button for button in app.button if button.label == "Send answer").click().run()
 
         assert not app.exception
@@ -863,7 +869,9 @@ def test_registered_question_also_accepts_a_typed_answer() -> None:
         app.query_params["scheme"] = "IGNOAPS-MH"
         app.run()
         assert not app.exception
-        assert app.date_input(key=f"registered_answer_{conversation_id}_date_of_birth")
+        assert app.selectbox(
+            key=f"registered_answer_{conversation_id}_date_of_birth_year"
+        )
 
         app.chat_input[0].set_value("third of march 1950").run()
 
@@ -871,6 +879,107 @@ def test_registered_question_also_accepts_a_typed_answer() -> None:
         assert [call.args for call in send_reply.call_args_list] == [
             (str(conversation_id), "third of march 1950"),
         ]
+
+
+def _waiting_on(conversation_id, fact_id: str, value_type: str) -> JourneyResponse:
+    question = f"Synthetic question about {fact_id}?"
+    return JourneyResponse(
+        conversation_id=conversation_id,
+        plan="Learn about you -> Check the rules",
+        plan_detail=_plan("in_progress", "pending"),
+        status="awaiting_answer",
+        message=question,
+        question=question,
+        pending_fact=fact_id,
+        question_definition=QuestionPresentation(
+            fact_id=fact_id, value_type=value_type, choices=[],
+        ),
+        conversation=[{"role": "assistant", "content": question}],
+    )
+
+
+@pytest.mark.parametrize(
+    ("locale", "typed"),
+    [
+        ("en", ["yes", "no", "I don't know", "yes, my husband passed away"]),
+        ("hi", ["हाँ", "नहीं", "मुझे नहीं पता"]),
+        ("mr", ["होय", "नाही", "माहित नाही"]),
+    ],
+)
+def test_yes_no_question_has_no_buttons_and_is_answered_by_typing(locale, typed) -> None:
+    """A yes/no question shows only the chat box; typed text is sent as is."""
+
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    conversation_id = uuid4()
+    waiting = _waiting_on(conversation_id, "is_widow", "boolean")
+    with patch(
+        "src.ui.api_client.get_journey_state", return_value=waiting
+    ), patch(
+        "src.ui.api_client.send_journey_message", return_value=waiting,
+    ) as send_reply, patch(
+        "src.ui.api_client.list_application_drafts", return_value=[],
+    ):
+        app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS)
+        app.query_params["conversation"] = str(conversation_id)
+        app.query_params["scheme"] = "IGNWPS-MH"
+        app.run()
+        app.selectbox[0].set_value(locale).run()
+        assert not app.exception
+
+        assert not [
+            radio for radio in app.radio
+            if radio.key and radio.key.startswith("registered_answer_")
+        ]
+        assert not [button for button in app.button if button.label in {
+            "Send answer", "उत्तर भेजें", "उत्तर पाठवा",
+        }]
+        assert len(app.chat_input) == 1
+        assert app.chat_input[0].placeholder == {
+            "en": "Type your answer in your own words",
+            "hi": "अपने शब्दों में उत्तर लिखें",
+            "mr": "तुमच्या शब्दांत उत्तर लिहा",
+        }[locale]
+
+        for reply in typed:
+            app.chat_input[0].set_value(reply).run()
+            assert not app.exception
+
+        assert [call.args for call in send_reply.call_args_list] == [
+            (str(conversation_id), reply) for reply in typed
+        ]
+
+
+@pytest.mark.parametrize(
+    ("value_type", "fact_id", "date_hint"),
+    [
+        ("date", "date_of_birth", True),
+        ("boolean", "is_widow", False),
+        ("integer", "synthetic_count", False),
+    ],
+)
+def test_date_example_is_shown_only_for_date_questions(value_type, fact_id, date_hint) -> None:
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    conversation_id = uuid4()
+    waiting = _waiting_on(conversation_id, fact_id, value_type)
+    with patch(
+        "src.ui.api_client.get_journey_state", return_value=waiting
+    ), patch(
+        "src.ui.api_client.list_application_drafts", return_value=[],
+    ):
+        app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS)
+        app.query_params["conversation"] = str(conversation_id)
+        app.query_params["scheme"] = "IGNWPS-MH"
+        app.run()
+        assert not app.exception
+
+        assert ("1958-05-05" in app.chat_input[0].placeholder) is date_hint
+        year_boxes = [
+            box for box in app.selectbox if (box.key or "").endswith("_year")
+        ]
+        assert bool(year_boxes) is (value_type == "date")
+        shown = " ".join(element.value for element in app.caption)
+        # The "you can also type" hint only appears next to a quick control.
+        assert ("in your own words" in shown) is (value_type != "boolean")
 
 
 def test_refresh_with_forgotten_conversation_cleans_url() -> None:
@@ -1184,3 +1293,41 @@ def test_document_dates_accept_everyday_formats_and_explain_unreadable_ones() ->
         assert not app.exception
         assert assess.call_count == calls_before
         assert any("Could not read a date of birth" in item.value for item in app.error)
+
+
+@pytest.mark.parametrize(
+    ("verdicts", "shown"),
+    [
+        (
+            {
+                "EACS-MH": {"scheme_id": "EACS-MH", "result": "information_only"},
+                "WMCL-IN": {"scheme_id": "WMCL-IN", "result": "information_only"},
+            },
+            False,
+        ),
+        (
+            {
+                "IGNWPS-MH": {"scheme_id": "IGNWPS-MH", "result": "not_eligible"},
+                "EACS-MH": {"scheme_id": "EACS-MH", "result": "information_only"},
+            },
+            True,
+        ),
+    ],
+    ids=["all_information_only", "one_scheme_checked"],
+)
+def test_document_readiness_is_offered_only_when_a_scheme_was_checked(
+    verdicts: dict[str, dict[str, str]], shown: bool
+) -> None:
+    app_path = Path(__file__).parents[1] / "src" / "ui" / "app.py"
+    app = AppTest.from_file(app_path, default_timeout=UI_STARTUP_TIMEOUT_SECONDS)
+    app.session_state["journey_started"] = True
+    app.session_state["multi_scheme_mode"] = True
+    app.session_state["journey_scheme_id"] = next(iter(verdicts))
+    app.session_state["journey_status"] = "completed"
+    app.session_state["candidate_verdicts"] = verdicts
+    app.session_state["eligibility_results"] = {}
+    app.run()
+
+    assert not app.exception
+    titles = [element.value for element in app.subheader]
+    assert ("Document readiness by scheme" in titles) is shown

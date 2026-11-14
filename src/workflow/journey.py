@@ -100,6 +100,7 @@ from src.workflow.intake import (
     rewrite_query_with_provider,
 )
 from src.workflow.input_guardrails import is_prompt_injection
+from src.workflow.injection_guard import screen_free_text
 from src.workflow.question_picker import (
     pick_fixed_questionnaire_fact,
     pick_shared_registered_fact,
@@ -1232,8 +1233,10 @@ def build_journey_graph(
                     )
                     return response
                 if (
-                    definition.value_type in {"boolean", "date"}
-                        and not deterministic_fact_intake
+                    # Free text already is the answer for a text fact; every
+                    # other type may be read, then confirmed by the person.
+                    definition.value_type != "text"
+                    and not deterministic_fact_intake
                     and isinstance(reply, str)
                     and pending_fact not in attempted
                 ):
@@ -1299,7 +1302,9 @@ def build_journey_graph(
                             else:
                                 return ask_to_confirm(
                                     pending_fact,
-                                    value.isoformat() if hasattr(value, "isoformat") else value,
+                                    value if isinstance(value, bool)
+                                    else value.isoformat() if hasattr(value, "isoformat")
+                                    else str(value),
                                     "answer_interpretation",
                                 )
                 if pending_fact not in skipped:
@@ -2009,11 +2014,23 @@ def build_journey_graph(
                 ),
             }
         # Check 2: the scheme must have a reviewed rule package. Without one
-        # we only show information and never guess eligibility.
-        if scheme_id not in rule_packages and not multi:
+        # we only show information and never guess eligibility. For several
+        # candidates this applies when none of them has a package (e.g. a
+        # search for children's schemes, none of which are live yet).
+        no_reviewed_rules = (
+            not any(candidate in rule_packages for candidate in candidates)
+            if multi
+            else scheme_id not in rule_packages
+        )
+        if no_reviewed_rules:
             await bind_rules(state, scheme_id)
+            info_only_ids = candidates if multi else [scheme_id]
             message = (
-                "This scheme is information-only in the current pilot. "
+                "These schemes are information-only in the current pilot. "
+                "Reviewed deterministic eligibility rule packages are not "
+                "available for them, so no eligibility decision can be provided."
+                if len(info_only_ids) > 1
+                else "This scheme is information-only in the current pilot. "
                 "A reviewed deterministic eligibility rule package is not "
                 "available, so no eligibility decision can be provided."
             )
@@ -2023,9 +2040,10 @@ def build_journey_graph(
                 "missing_fields": [],
                 "eligibility_result": None,
                 "candidate_verdicts": {
-                    scheme_id: CandidateVerdict(
-                        scheme_id=scheme_id, result="information_only"
+                    candidate: CandidateVerdict(
+                        scheme_id=candidate, result="information_only"
                     ).model_dump(mode="json")
+                    for candidate in info_only_ids
                 },
                 "conversation": [{"role": "assistant", "content": message}],
                 "handoffs": _report_to_supervisor(
@@ -3105,7 +3123,10 @@ async def resume_journey(
     config = _thread_config(conversation_id)
     snapshot = await graph.aget_state(config)
     saved = snapshot.values or {}
-    if is_prompt_injection(message):
+    # A typed answer is screened like any other free text: an embedded
+    # instruction, fake tool call or field assignment ("is_widow=true") is
+    # refused and never reaches the parser or the answer reader.
+    if is_prompt_injection(message) or screen_free_text(message).flagged:
         if not snapshot.interrupts:
             raise JourneyNotWaitingError(str(conversation_id))
         response = _to_response(conversation_id, saved)

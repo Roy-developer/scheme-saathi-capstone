@@ -49,10 +49,10 @@ from src.workflow.journey import JourneyRequest, run_journey
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 REPORT_PATH = PROJECT_ROOT / "eval" / "reports" / "memory_on_off_dev_latest.json"
 
-CODE_A = "SAATHI-AB12"
-CODE_B = "SAATHI-CD34"
-CODE_UNSAVED = "SAATHI-ZZ99"
-CODE_POLICY = "SAATHI-PQ56"
+CODE_A = "SAATHI-AB12CD34EF"
+CODE_B = "SAATHI-CD34GH56JK"
+CODE_UNSAVED = "SAATHI-ZZ99ZZ99ZZ"
+CODE_POLICY = "SAATHI-PQ56RS78TU"
 REUSABLE_FACTS = ("bpl_card_shown", "income_tax_paid_last_assessment_year")
 POLICY_PROBE_FACTS = ("has_disability", "date_of_birth")
 FORGET_CHECKS = 4

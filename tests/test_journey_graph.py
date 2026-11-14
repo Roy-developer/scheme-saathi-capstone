@@ -73,7 +73,7 @@ def test_memory_consent_prefills_only_the_opted_in_journey():
             }.items()
         },
     )
-    return_code = "SAATHI-AB12"
+    return_code = "SAATHI-AB12CD34EF"
 
     async def scenario():
         await save_household(

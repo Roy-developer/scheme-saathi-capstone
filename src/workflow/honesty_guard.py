@@ -44,6 +44,26 @@ _MISSTATEMENT_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"\b(fake|false|forged)\b[^.?!]{0,20}\b(income|certificate|age|document|details|answer)", re.IGNORECASE),
     re.compile(r"\bmake (me|us|it) (look |seem |appear )?eligible\b", re.IGNORECASE),
     re.compile(r"\beven though (i|we) (am|are|'m|'re)? ?not\b", re.IGNORECASE),
+    # "Just say I'm 60 so I qualify": asking for an answer chosen to qualify.
+    re.compile(
+        r"\b(say|put|write|enter|mark|tick|record|show|make it)\b[^.?!]{0,40}"
+        r"\bso (that )?(i|we|she|he) (can )?(qualify|am eligible|are eligible|"
+        r"is eligible|become eligible|look eligible)\b",
+        re.IGNORECASE,
+    ),
+    # "I'm not a widow but tick yes" (not "I'm not sure but I'd say yes").
+    re.compile(
+        r"\b(i'?m|i am|we'?re|we are|she'?s|she is|he'?s|he is) not\b"
+        r"(?! (sure|certain))[^.?!]{0,40}\bbut\b[^.?!]{0,20}"
+        r"\b(tick|mark|put|write|enter|record|select|choose|say)\b[^.?!]{0,10}\b(yes|it|that)\b",
+        re.IGNORECASE,
+    ),
+    # "I am 58 but put 60".
+    re.compile(
+        r"\b(i'?m|i am|she'?s|she is|he'?s|he is) [0-9]{1,3}\b[^.?!]{0,30}\bbut\b"
+        r"[^.?!]{0,15}\b(put|write|enter|mark|say|record|make it)\b[^.?!]{0,10}\b[0-9]{1,3}\b",
+        re.IGNORECASE,
+    ),
     # Hindi (Devanagari and common romanised forms).
     re.compile(r"(आय|आमदनी|इनकम|कमाई)\s*कम\s*(बता|दिखा|लिख)"),
     re.compile(r"कम\s*(आय|आमदनी|इनकम|कमाई)\s*(बता|दिखा|लिख)"),

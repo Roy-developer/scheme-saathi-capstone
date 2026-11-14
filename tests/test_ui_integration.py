@@ -259,6 +259,20 @@ def _click(screen: AppTest, label: str | None = None, *, key: str | None = None)
     _healthy(screen)
 
 
+def _approve(screen: AppTest, scheme_id: str) -> None:
+    """Tick "I have read this exact draft" (ASI09), then approve."""
+
+    approve = screen.button(key=f"draft-approve-{scheme_id}")
+    assert approve.disabled, "Approve must wait for the read confirmation"
+    read = next(
+        item for item in screen.checkbox
+        if (item.key or "").startswith(f"draft-read-{scheme_id}-")
+    )
+    read.check().run()
+    _healthy(screen)
+    _click(screen, key=f"draft-approve-{scheme_id}")
+
+
 def _interview(harness: IntegratedUI, *, csc: bool = False) -> AppTest:
     """Search, select the pilot, consent and answer actual graph questions."""
 
@@ -504,7 +518,10 @@ def test_development_scholarship_reaches_exact_mock_receipt_through_real_ui(
                 elif fact_id == "exam_stream":
                     screen.selectbox(key=answer_key).set_value("Science")
                 else:
-                    screen.radio(key=answer_key).set_value("I don't know")
+                    # Yes/no questions are answered by typing.
+                    screen.chat_input[0].set_value(answers[fact_id]).run()
+                    _healthy(screen)
+                    continue
                 _click(screen, "Send answer")
                 _healthy(screen)
             assert answered == set(answers), (
@@ -591,7 +608,7 @@ def test_development_scholarship_reaches_exact_mock_receipt_through_real_ui(
             assert first_draft["draft"]["form_version"] == "1.0.0"
             assert first_draft["draft"]["form_status"] == "demo_only"
             assert not first_draft["approved"]
-            _click(screen, key=f"draft-approve-{scheme_id}")
+            _approve(screen, scheme_id)
             approved = screen.session_state.application_drafts[scheme_id]
             assert approved["approved"]
             assert approved["fingerprint"] == first_draft["fingerprint"]
@@ -634,7 +651,7 @@ def test_development_scholarship_reaches_exact_mock_receipt_through_real_ui(
             assert corrected["fingerprint"] != approved["fingerprint"]
             assert corrected["draft"]["form_fields"]["exam_ratio"] == corrected_ratio
             assert not corrected["approved"] and not corrected["stale"]
-            _click(screen, key=f"draft-approve-{scheme_id}")
+            _approve(screen, scheme_id)
             approved = screen.session_state.application_drafts[scheme_id]
             assert approved["approved"]
 
@@ -715,7 +732,7 @@ def test_development_scholarship_reaches_exact_mock_receipt_through_real_ui(
             assert not fresh["approved"] and not fresh["stale"]
             assert fresh["draft"]["form_fields"]["exam_ratio"] == answers["exam_ratio"]
             assert fresh["fingerprint"] == _canonical_fingerprint(fresh["draft"])
-            _click(refreshed, key=f"draft-approve-{scheme_id}")
+            _approve(refreshed, scheme_id)
             _click(refreshed, key=f"draft-submit-{scheme_id}")
             submitted = refreshed.session_state.application_drafts[scheme_id]
             assert submitted["receipt_id"]
@@ -778,7 +795,7 @@ def test_phases_one_to_four_ui_receipt_retry_and_scoped_forget(
     draft = screen.session_state.application_drafts[SCHEME]
     assert not draft["approved"]
     assert not any(item.key == f"draft-submit-{SCHEME}" for item in screen.button)
-    _click(screen, key=f"draft-approve-{SCHEME}")
+    _approve(screen, SCHEME)
     approved = screen.session_state.application_drafts[SCHEME]
     assert approved["approved"]
     assert approved["fingerprint"] == draft["fingerprint"]
@@ -932,7 +949,7 @@ def test_approved_ui_correction_refresh_requires_fresh_report_draft_and_review(
     _click(screen, key=f"docs-load-{SCHEME}")
     assert _documents(screen)["status"] == "checklist_complete"
     _click(screen, key=f"draft-create-{SCHEME}")
-    _click(screen, key=f"draft-approve-{SCHEME}")
+    _approve(screen, SCHEME)
     old = screen.session_state.application_drafts[SCHEME]
     assert old["approved"]
     _correct_birth_date(screen, "1984-01-01")
@@ -966,7 +983,7 @@ def test_approved_ui_correction_refresh_requires_fresh_report_draft_and_review(
     assert fresh["draft"]["profile"]["date_of_birth"] == "1984-01-01"
     assert not fresh["stale"] and not fresh["approved"]
     assert not any(item.key == f"draft-submit-{SCHEME}" for item in restored.button)
-    _click(restored, key=f"draft-approve-{SCHEME}")
+    _approve(restored, SCHEME)
     _click(restored, key=f"draft-submit-{SCHEME}")
     assert restored.session_state.application_drafts[SCHEME]["receipt_id"]
     with closing(sqlite3.connect(harness.database)) as connection:

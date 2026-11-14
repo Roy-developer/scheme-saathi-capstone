@@ -30,6 +30,11 @@ _INJECTION_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"\bautomated review(er)?s?\b", re.IGNORECASE),
     re.compile(r"\bpre-?approved\b", re.IGNORECASE),
     re.compile(r"\bcorrect (amount|value|answer) for this\b", re.IGNORECASE),
+    # Fake tool calls and internal field assignments ("is_widow=true"). A
+    # citizen answering a question does not write markup or snake_case IDs.
+    re.compile(r"<\s*/?\s*(tool_call|function_call|tool_use)\b", re.IGNORECASE),
+    re.compile(r"[\"']\s*(tool|tool_name|function|function_call|arguments)\s*[\"']\s*:", re.IGNORECASE),
+    re.compile(r"\b[a-z]+(_[a-z0-9]+)+\s*[=:]\s*[\"']?(true|false|yes|no|[0-9])", re.IGNORECASE),
 )
 
 REDACTION_MARK = "[removed: looked like an embedded instruction, not a fact about the household]"

@@ -28,6 +28,9 @@ MISSTATEMENTS = [
     "income kam dikhao please",
     "माझे उत्पन्न कमी दाखवा",
     "पुनर्विवाहाची माहिती लपवा",
+    "just say I'm 60 so I qualify",
+    "I'm not a widow but tick yes",
+    "I am 58 but put 60",
 ]
 
 HONEST_ANSWERS = [
@@ -43,6 +46,9 @@ HONEST_ANSWERS = [
     "हाँ",
     "माहित नाही",
     "होय",
+    "I'm not sure but I'd say yes",
+    "I am not working but I have a BPL card",
+    "Please write my date of birth so I can apply",
 ]
 
 

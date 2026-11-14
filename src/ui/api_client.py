@@ -74,8 +74,16 @@ def _send(request: Request, *, timeout: float) -> JourneyResponse:
                 "This conversation is no longer waiting for an answer. "
                 "Start again."
             ) from error
+        # Show the API's own reason when it gives one (e.g. "Please give a
+        # date as YYYY-MM-DD…" for an invalid corrected answer), not a bare
+        # status code.
+        try:
+            detail = json.loads(error.read()).get("detail")
+        except (json.JSONDecodeError, AttributeError, OSError):
+            detail = None
         raise JourneyApiError(
-            f"The journey API returned HTTP {error.code}."
+            detail if isinstance(detail, str) and detail.strip()
+            else f"The journey API returned HTTP {error.code}."
         ) from error
     except (URLError, TimeoutError) as error:
         raise JourneyApiError(
@@ -668,14 +676,22 @@ def decide_application_draft(
     conversation_id: str,
     draft: dict,
     action: str,
+    *,
+    read_confirmed: bool = False,
+    review_seconds: float | None = None,
 ) -> dict:
+    body: dict = {
+        "action": action,
+        "revision": draft["revision"],
+        "fingerprint": draft["fingerprint"],
+    }
+    if action == "approve":
+        body["read_confirmed"] = read_confirmed
+        if review_seconds is not None:
+            body["review_seconds"] = max(0.0, min(review_seconds, 86_400.0))
     return _application_request(
         conversation_id,
         f"/drafts/{quote(str(draft['draft_id']), safe='')}/approval",
         method="POST",
-        body={
-            "action": action,
-            "revision": draft["revision"],
-            "fingerprint": draft["fingerprint"],
-        },
+        body=body,
     )

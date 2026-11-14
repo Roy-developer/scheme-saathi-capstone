@@ -450,10 +450,17 @@ def parse_interpreted_registered_answer(
 ) -> ParsedAnswer:
     """Validate a model's proposal against a registered fact's type."""
 
-    if definition.value_type == "boolean" and isinstance(value, bool):
-        return ParsedAnswer(kind="value", value=definition.validate_value(value))
-    if definition.value_type == "date" and isinstance(value, str):
-        return parse_registered_answer(definition, value, locale)
+    if definition.value_type == "boolean":
+        if isinstance(value, bool):
+            return ParsedAnswer(kind="value", value=definition.validate_value(value))
+    elif isinstance(value, str) or (
+        isinstance(value, int) and definition.value_type in {"integer", "decimal"}
+    ):
+        # Numbers, dates and choices go through the same strict parser as a
+        # typed answer, so a proposal can never bypass type, bounds or choices.
+        parsed = parse_registered_answer(definition, str(value), locale)
+        if parsed.kind == "value":
+            return parsed
     return ParsedAnswer(kind="invalid", error=_registered_answer_hint(definition, locale))
 
 

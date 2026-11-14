@@ -33,6 +33,7 @@ from src.api.database_backup import DatabaseBackups
 from src.api.document_uploads import router as document_uploads_router
 from src.documents.uploads import UploadStore
 from src.api.portal_service import start_portal_service, stop_portal_service
+from src.api.rate_limit import household_failures, household_requests
 from src.api.eligibility import EligibilityResponse
 from src.api.applications import (
     DocumentAssessmentRequest,
@@ -50,10 +51,12 @@ from src.rules.bundles import bundle_fingerprint
 # This adapter calls the MCP tool and translates failures for the API layer.
 from src.observability.telemetry import configure_telemetry
 from src.observability.metrics import (
+    approval_read_through_summary,
     observe_duration,
     record_conversation,
     record_evaluation,
     record_pending_approval_created,
+    record_approval_review,
     record_pending_approval_resolved,
     record_question,
     record_journey_verdict,
@@ -71,8 +74,11 @@ from src.llm_client import DEFAULT_CHAT_MODEL, openrouter_chat_model
 from src.workflow.intake import IntakeAgentError
 from src.workflow.conversation_budget import BUDGET_NAMESPACE
 from src.workflow.household_memory import (
+    HOUSEHOLD_NAMESPACE,
     delete_household,
     generate_return_code,
+    household_exists,
+    is_linked_conversation,
     load_household,
     load_household_locale,
     normalize_return_code,
@@ -1191,6 +1197,11 @@ async def update_application_approval(
                 status_code=409,
                 detail="Approve this exact draft before submitting it.",
             )
+        if decision.action == "approve" and decision.read_confirmed is not True:
+            raise HTTPException(
+                status_code=422,
+                detail="Confirm that you have read this exact draft before approving it.",
+            )
         if decision.action == "approve" and (
             record["rejected"] or record["receipt_id"]
         ):
@@ -1240,6 +1251,8 @@ async def update_application_approval(
         # Capstone monitoring: draft left the waiting-approval queue.
         if decision.action in {"approve", "reject", "submit"}:
             record_pending_approval_resolved()
+        if decision.action == "approve":
+            record_approval_review(decision.review_seconds)
         return _public_application_record(result)
     except HTTPException:
         raise
@@ -1248,6 +1261,16 @@ async def update_application_approval(
             "The mock application service is unavailable.",
             "Mock application approval MCP tool failed",
         ) from error
+
+
+@app.get("/api/v1/monitoring/approval-read-through", tags=["monitoring"])
+async def approval_read_through() -> dict:
+    """ASI09: how many approvals came quickly after the draft was shown.
+
+    Counts and a rate only, for this API process; no personal data.
+    """
+
+    return approval_read_through_summary()
 
 
 async def _forget_journey_data(
@@ -1303,6 +1326,35 @@ async def forget_journey(conversation_id: str, request: Request) -> None:
 # -- Household memory endpoints -----------------------------------------------
 
 
+def _client_key(request: Request) -> str:
+    client = getattr(request, "client", None)
+    return getattr(client, "host", None) or "unknown"
+
+
+def _check_household_rate(request: Request) -> str:
+    """Refuse with 429 when this client is over a household-route limit."""
+
+    key = _client_key(request)
+    for limiter in (household_failures, household_requests):
+        if limiter.blocked(key) or (
+            limiter is household_requests and not limiter.hit(key)
+        ):
+            raise HTTPException(
+                status_code=429,
+                detail="Too many return-code attempts. Please wait and try again.",
+                headers={"Retry-After": str(limiter.retry_after(key))},
+            )
+    return key
+
+
+def _household_refusal(key: str, status_code: int, detail: str) -> HTTPException:
+    """Count an unknown or refused code toward the stricter failure limit."""
+
+    household_failures.hit(key)
+    return HTTPException(status_code=status_code, detail=detail)
+
+
+
 @app.get("/api/v1/household/{return_code}", tags=["household"])
 async def get_household(
     return_code: str,
@@ -1321,15 +1373,16 @@ async def get_household(
             status_code=403,
             detail="Explicit memory consent is required to load saved answers.",
         )
+    client = _check_household_rate(request)
     try:
         code = normalize_return_code(return_code)
     except ValueError as error:
-        raise HTTPException(status_code=422, detail=str(error)) from error
+        raise _household_refusal(client, 422, str(error)) from error
     registry = request.app.state.fact_registry
     store = request.app.state.journey_store
     profile = await load_household(store, code, registry)
     if profile is None:
-        raise HTTPException(status_code=404, detail="Unknown return code.")
+        raise _household_refusal(client, 404, "Unknown return code.")
     locale = await load_household_locale(store, code)
     return {
         "return_code": code,
@@ -1346,7 +1399,10 @@ async def save_household_profile(
     """Save or update a household profile under a return code.
 
     Body:
-        return_code (optional): Reuse an existing code; generates one when absent.
+        return_code (optional): Update an existing code. Only a conversation
+            that created the code, saved under it, or was started with it may
+            do so. A new save always gets a code generated by the server; a
+            caller-chosen code that does not exist is refused.
         conversation_id: The conversation whose typed_facts to save.
         memory_consent: Must be true to save household memory.
     """
@@ -1356,6 +1412,7 @@ async def save_household_profile(
             status_code=403,
             detail="Explicit memory consent is required to save answers.",
         )
+    client = _check_household_rate(request)
     conversation_id = body.get("conversation_id")
     if not conversation_id:
         raise HTTPException(status_code=422, detail="conversation_id is required.")
@@ -1384,17 +1441,34 @@ async def save_household_profile(
             status_code=422, detail="Saved facts could not be validated.",
         ) from error
 
+    store = request.app.state.journey_store
     raw_code = body.get("return_code")
     if raw_code:
         try:
             code = normalize_return_code(raw_code)
-        except ValueError as error:
-            raise HTTPException(status_code=422, detail=str(error)) from error
+        except (ValueError, AttributeError) as error:
+            raise _household_refusal(client, 422, str(error)) from error
+        if not await household_exists(store, code):
+            raise _household_refusal(
+                client, 404,
+                "Unknown return code. A new save gets a code from the server.",
+            )
+        started_with_code = values.get("return_code")
+        linked = await is_linked_conversation(store, code, conversation_id) or (
+            isinstance(started_with_code, str)
+            and started_with_code.strip().upper() == code
+        )
+        if not linked:
+            raise _household_refusal(
+                client, 403,
+                "This conversation did not create or load this return code.",
+            )
     else:
         code = generate_return_code()
+        while await store.aget(HOUSEHOLD_NAMESPACE, code) is not None:
+            code = generate_return_code()
 
     locale = values.get("locale", "en")
-    store = request.app.state.journey_store
     try:
         await save_household(
             store,
@@ -1403,6 +1477,7 @@ async def save_household_profile(
             registry,
             locale,
             memory_consent=True,
+            conversation_id=conversation_id,
         )
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
@@ -1411,10 +1486,13 @@ async def save_household_profile(
 
 @app.delete("/api/v1/household/{return_code}", status_code=204, tags=["household"])
 async def forget_household(return_code: str, request: Request) -> None:
-    """Delete a household's saved profile."""
+    """Delete a household's saved profile.
+
+    Old 4-character codes are still accepted so their data can be forgotten.
+    """
 
     try:
-        code = normalize_return_code(return_code)
+        code = normalize_return_code(return_code, allow_legacy=True)
     except ValueError as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
     await forget_personal_data({"return_code": code}, request)
@@ -1492,8 +1570,9 @@ async def forget_personal_data(body: dict, request: Request) -> None:
     raw_return_code = body.get("return_code")
     return_code = None
     if raw_return_code:
+        _check_household_rate(request)
         try:
-            return_code = normalize_return_code(raw_return_code)
+            return_code = normalize_return_code(raw_return_code, allow_legacy=True)
         except (ValueError, AttributeError) as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
     if conversation_uuid is None and return_code is None:

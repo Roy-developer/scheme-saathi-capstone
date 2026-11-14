@@ -27,6 +27,14 @@ facts are retained only after the separate memory-consent action.
   approver on 2026-11-12.
 - A user may update an existing profile by explicitly saving again. The current
   save replaces the known eligible facts; it does not merge unreviewed facts.
+- Return codes are generated only by the server: `SAATHI-` plus 10 random
+  letters or digits (about 3.7 x 10^15 combinations). A save under a code that
+  does not exist is refused, and only a conversation that created the code,
+  saved under it, or was started with it may save over it.
+- The household routes are rate-limited per client: 30 requests a minute, and
+  10 unknown or refused codes per 15 minutes (`src/api/rate_limit.py`).
+- Codes issued before 14 Nov 2026 had 4 characters. They are no longer loaded
+  or saved over, but can still be deleted with **Forget my data**.
 - The UI's **Forget my data** action sends one request to delete both journey
   data and household memory. If one store fails, the API reports an incomplete
   deletion and the action can be retried; a retry is safe if some records were

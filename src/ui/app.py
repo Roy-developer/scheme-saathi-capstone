@@ -11,12 +11,18 @@ The screen never decides eligibility. It calls the journey API, which runs
 the LangGraph supervisor and the deterministic rule engine.
 """
 
+import html
 import os
+import time
+from collections.abc import Iterator
+from contextlib import contextmanager
 from datetime import date
 from uuid import UUID, uuid4
 
 import streamlit as st
+import streamlit.components.v1 as components
 
+from src.documents.checklists import CHECKLIST_DIRECTORY
 from src.rules.data_provider import RulePackageProvider
 from src.ui.api_client import (
     ApplicationApiError,
@@ -64,10 +70,72 @@ from src.workflow.discovery import discovery_message
 
 # The API rejects longer replies before the registry parser can validate them.
 MAX_JOURNEY_REPLY_LENGTH = 500
-# st.date_input allows only ten years either side of today unless told
-# otherwise, which rejected every old-age applicant's date of birth.
+# Dates are picked with day / month / year dropdowns. st.date_input's calendar
+# shows only a sliding window of years, so reaching a birth year 60-80 years
+# back jumped between decades; three dropdowns reach any year directly.
 REGISTERED_DATE_MIN = date(1900, 1, 1)
 REGISTERED_DATE_MAX = date(2100, 12, 31)
+DATE_PART_LABELS = {
+    "en": ("Day", "Month", "Year"),
+    "hi": ("दिन", "महीना", "वर्ष"),
+    "mr": ("दिवस", "महिना", "वर्ष"),
+}
+MONTH_NAMES = {
+    "en": (
+        "January", "February", "March", "April", "May", "June", "July",
+        "August", "September", "October", "November", "December",
+    ),
+    "hi": (
+        "जनवरी", "फ़रवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई",
+        "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर",
+    ),
+    "mr": (
+        "जानेवारी", "फेब्रुवारी", "मार्च", "एप्रिल", "मे", "जून", "जुलै",
+        "ऑगस्ट", "सप्टेंबर", "ऑक्टोबर", "नोव्हेंबर", "डिसेंबर",
+    ),
+}
+INVALID_DATE_TEXT = {
+    "en": "That date does not exist. Please check the day and month.",
+    "hi": "यह तारीख मौजूद नहीं है। कृपया दिन और महीना जाँचें।",
+    "mr": "ही तारीख अस्तित्वात नाही. कृपया दिवस आणि महिना तपासा.",
+}
+
+
+def date_dropdowns(
+    label: str, locale: str, key: str, disabled: bool
+) -> date | None:
+    """Pick a date with day, month and year dropdowns; None until all are valid."""
+
+    day_label, month_label, year_label = DATE_PART_LABELS[locale]
+    months = MONTH_NAMES[locale]
+    # Newest year first: most answers are dates of birth or recent dates.
+    last_year = min(date.today().year + 1, REGISTERED_DATE_MAX.year)
+    years = list(range(last_year, REGISTERED_DATE_MIN.year - 1, -1))
+    st.markdown(label)
+    day_column, month_column, year_column = st.columns(3)
+    with day_column:
+        day = st.selectbox(
+            day_label, list(range(1, 32)), index=None,
+            key=f"{key}_day", disabled=disabled,
+        )
+    with month_column:
+        month = st.selectbox(
+            month_label, list(range(1, 13)), index=None,
+            format_func=lambda number: months[number - 1],
+            key=f"{key}_month", disabled=disabled,
+        )
+    with year_column:
+        year = st.selectbox(
+            year_label, years, index=None,
+            key=f"{key}_year", disabled=disabled,
+        )
+    if day is None or month is None or year is None:
+        return None
+    try:
+        return date(year, month, day)
+    except ValueError:
+        st.caption(INVALID_DATE_TEXT[locale])
+        return None
 
 
 COPY = {
@@ -144,6 +212,7 @@ COPY = {
         "prepare_draft": "Prepare synthetic draft",
         "demo_warning": "Demo checklist only. These are not verified official document requirements. Uploaded files are stored but not read or authenticated.",
         "synthetic_application": "Synthetic application",
+        "application_not_available": "This scheme has no document checklist or application form in this demo yet. Please ask a human caseworker which documents to bring and how to apply.",
         "resolve_mismatch": "Mismatch found. Correct the entered fields and recheck, or ask a human caseworker.",
         "new_draft": "Start a new draft using current answers",
         "scheme_label": "Scheme",
@@ -162,6 +231,7 @@ COPY = {
         "edit": "Edit draft",
         "save": "Save changes",
         "approve": "Approve this exact draft",
+        "read_confirm": "I have read this exact draft and checked that it is correct.",
         "reject": "Reject draft",
         "submit": "Submit approved draft to mock portal",
         "approved": "This exact draft is approved.",
@@ -178,6 +248,8 @@ COPY = {
         "finder_help": "Ask in English, Hindi, or Marathi. Your query is sent to OpenRouter for search phrasing and embeddings; do not enter personal or financial identifiers. Search returns citations and does not decide eligibility.",
         "finder_query": "What support or scheme are you looking for?",
         "finder_submit": "Search schemes",
+        "loading_search": "Searching for schemes",
+        "loading_reply": "Saathi is thinking",
         "finder_error": "Scheme search is unavailable",
         "finder_empty": "No matching passages were found. Try different wording.",
         "finder_choose": "Choose a scheme to explore",
@@ -217,7 +289,10 @@ COPY = {
         "agent_no_calls": "No model calls have run; the deterministic flow is active.",
         "interview_start": "Start questions",
         "interview_restart": "Start again",
-        "interview_reply": "Type your answer (yes / no / don't know, a date like 1958-05-05, or your own words)",
+        "interview_reply": "Type your answer in your own words",
+        "interview_reply_date": "Type the date, e.g. 1958-05-05, or describe it in your own words",
+        "quick_answer": "Quick answer",
+        "free_text_hint": "You can also type your answer in your own words in the box below. Saathi will check what it understood with you before saving it.",
         "send_answer": "Send answer",
         "interview_error": "Could not continue the conversation",
         "widow_mode": "How do you want to check?",
@@ -310,6 +385,7 @@ COPY = {
         "prepare_draft": "कृत्रिम मसौदा तैयार करें",
         "demo_warning": "केवल प्रदर्शन सूची। ये आधिकारिक रूप से सत्यापित आवश्यकताएँ नहीं हैं; अपलोड की गई फ़ाइलें सहेजी जाती हैं, पर पढ़ी या प्रमाणित नहीं की जातीं।",
         "synthetic_application": "कृत्रिम आवेदन",
+        "application_not_available": "इस डेमो में इस योजना के लिए अभी कोई दस्तावेज़ सूची या आवेदन फ़ॉर्म नहीं है। कौन-से दस्तावेज़ लाने हैं और आवेदन कैसे करना है, यह किसी कर्मचारी से पूछें।",
         "resolve_mismatch": "अंतर मिला। दर्ज जानकारी सुधारकर फिर जाँचें या मानव केसवर्कर से पूछें।",
         "new_draft": "वर्तमान उत्तरों से नया मसौदा शुरू करें",
         "scheme_label": "योजना",
@@ -328,6 +404,7 @@ COPY = {
         "edit": "मसौदा संपादित करें",
         "save": "बदलाव सहेजें",
         "approve": "इसी मसौदे को मंज़ूर करें",
+        "read_confirm": "मैंने यह पूरा मसौदा पढ़ लिया है और जाँच लिया है कि यह सही है।",
         "reject": "मसौदा अस्वीकार करें",
         "submit": "मॉक पोर्टल पर जमा करें",
         "approved": "इसी मसौदे को मंज़ूरी दी गई है।",
@@ -344,6 +421,8 @@ COPY = {
         "finder_help": "अंग्रेज़ी, हिन्दी या मराठी में पूछें। खोज के लिए आपका प्रश्न OpenRouter को भेजा जाता है; व्यक्तिगत या वित्तीय पहचान संख्या न लिखें। खोज स्रोत सहित अंश दिखाती है, पात्रता तय नहीं करती।",
         "finder_query": "आप किस सहायता या योजना की तलाश में हैं?",
         "finder_submit": "योजनाएँ खोजें",
+        "loading_search": "योजनाएँ खोजी जा रही हैं",
+        "loading_reply": "साथी सोच रहा है",
         "finder_error": "योजना खोज उपलब्ध नहीं है",
         "finder_empty": "मिलते-जुलते अंश नहीं मिले। प्रश्न को दूसरे शब्दों में लिखें।",
         "finder_choose": "देखने के लिए योजना चुनें",
@@ -383,7 +462,10 @@ COPY = {
         "agent_no_calls": "कोई मॉडल कॉल नहीं हुई; नियतात्मक प्रवाह सक्रिय है।",
         "interview_start": "प्रश्न शुरू करें",
         "interview_restart": "फिर से शुरू करें",
-        "interview_reply": "अपना उत्तर लिखें (हाँ / नहीं / मुझे नहीं पता, या 1958-05-05 जैसी तारीख)",
+        "interview_reply": "अपने शब्दों में उत्तर लिखें",
+        "interview_reply_date": "तारीख लिखें, जैसे 1958-05-05, या अपने शब्दों में बताएँ",
+        "quick_answer": "त्वरित उत्तर",
+        "free_text_hint": "आप नीचे के बॉक्स में अपने शब्दों में भी उत्तर लिख सकते हैं। सहेजने से पहले साथी आपसे पूछेगा कि उसने सही समझा या नहीं।",
         "send_answer": "उत्तर भेजें",
         "interview_error": "बातचीत जारी नहीं रह सकी",
         "widow_mode": "आप कैसे जाँच करना चाहते हैं?",
@@ -476,6 +558,7 @@ COPY = {
         "prepare_draft": "कृत्रिम मसुदा तयार करा",
         "demo_warning": "फक्त प्रात्यक्षिक यादी. या अधिकृतरीत्या पडताळलेल्या आवश्यकता नाहीत; अपलोड केलेल्या फाइल्स जतन होतात, पण वाचल्या किंवा प्रमाणित केल्या जात नाहीत.",
         "synthetic_application": "कृत्रिम अर्ज",
+        "application_not_available": "या डेमोमध्ये या योजनेसाठी अद्याप कागदपत्रांची यादी किंवा अर्जाचा फॉर्म नाही. कोणती कागदपत्रे आणायची आणि अर्ज कसा करायचा, हे संबंधित कर्मचाऱ्याला विचारा.",
         "resolve_mismatch": "तफावत आढळली. नोंद दुरुस्त करून पुन्हा तपासा किंवा मानवी केसवर्करला विचारा.",
         "new_draft": "सध्याच्या उत्तरांवरून नवीन मसुदा सुरू करा",
         "scheme_label": "योजना",
@@ -494,6 +577,7 @@ COPY = {
         "edit": "मसुदा संपादित करा",
         "save": "बदल जतन करा",
         "approve": "हाच मसुदा मंजूर करा",
+        "read_confirm": "मी हा संपूर्ण मसुदा वाचला आहे आणि तो बरोबर असल्याची खात्री केली आहे.",
         "reject": "मसुदा नाकारा",
         "submit": "मॉक पोर्टलवर सादर करा",
         "approved": "हाच मसुदा मंजूर केला आहे.",
@@ -510,6 +594,8 @@ COPY = {
         "finder_help": "इंग्रजी, हिंदी किंवा मराठीत विचारा. शोधासाठी तुमचा प्रश्न OpenRouter कडे पाठवला जातो; वैयक्तिक किंवा आर्थिक ओळख क्रमांक देऊ नका. शोधात स्रोतासह उतारे दिसतात; पात्रता ठरत नाही.",
         "finder_query": "तुम्ही कोणत्या मदतीचा किंवा योजनेचा शोध घेत आहात?",
         "finder_submit": "योजना शोधा",
+        "loading_search": "योजना शोधत आहे",
+        "loading_reply": "साथी विचार करत आहे",
         "finder_error": "योजना शोध उपलब्ध नाही",
         "finder_empty": "जुळणारे उतारे सापडले नाहीत. प्रश्न वेगळ्या शब्दांत विचारा.",
         "finder_choose": "पाहण्यासाठी योजना निवडा",
@@ -549,7 +635,10 @@ COPY = {
         "agent_no_calls": "मॉडेल कॉल झालेला नाही; निर्धारक प्रवाह सक्रिय आहे.",
         "interview_start": "प्रश्न सुरू करा",
         "interview_restart": "पुन्हा सुरू करा",
-        "interview_reply": "तुमचे उत्तर लिहा (होय / नाही / माहित नाही किंवा 1958-05-05 अशी तारीख)",
+        "interview_reply": "तुमच्या शब्दांत उत्तर लिहा",
+        "interview_reply_date": "तारीख लिहा, उदा. 1958-05-05, किंवा तुमच्या शब्दांत सांगा",
+        "quick_answer": "झटपट उत्तर",
+        "free_text_hint": "तुम्ही खालील बॉक्समध्ये तुमच्या शब्दांतही उत्तर लिहू शकता. जतन करण्यापूर्वी साथी त्याने काय समजले ते तुमच्याकडून तपासेल.",
         "send_answer": "उत्तर पाठवा",
         "interview_error": "संभाषण पुढे नेता आले नाही",
         "widow_mode": "तुम्हाला कशी तपासणी करायची आहे?",
@@ -711,12 +800,107 @@ def clear_interview_state() -> None:
 
 # One icon per PlanStep.status, so the plan reads like a checklist.
 PLAN_STEP_ICONS = {
-    "pending": "?",
-    "in_progress": "?",
-    "done": "?",
-    "skipped": "?",
-    "failed": "?",
+    "pending": "⬜",
+    "in_progress": "⏳",
+    "done": "✅",
+    "skipped": "⏭️",
+    "failed": "❌",
 }
+
+
+LOADING_CSS = """
+<style>
+.saathi-loading {
+    align-items: center;
+    background: rgba(42, 127, 143, 0.12);
+    border-radius: 12px;
+    display: flex;
+    font-weight: 600;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+    padding: 0.75rem 1rem;
+}
+.saathi-loading .dot {
+    animation: saathi-pulse 0.9s infinite ease-in-out;
+    background: #2a7f8f;
+    border-radius: 50%;
+    display: inline-block;
+    height: 0.6rem;
+    width: 0.6rem;
+}
+.saathi-loading .dot:nth-child(2) { animation-delay: 0.15s; }
+.saathi-loading .dot:nth-child(3) { animation-delay: 0.3s; }
+@keyframes saathi-pulse {
+    0%, 80%, 100% { opacity: 0.2; transform: scale(0.7); }
+    40% { opacity: 1; transform: scale(1.2); }
+}
+</style>
+"""
+
+
+def show_loading(message: str):
+    """Show three pulsing dots and a message; returns the slot to clear.
+
+    Streamlit sends this to the browser before the blocking call starts, so
+    the person sees that something is happening.
+    """
+
+    placeholder = st.empty()
+    placeholder.markdown(
+        LOADING_CSS
+        + '<div class="saathi-loading" role="status">'
+        + '<span class="dot"></span><span class="dot"></span><span class="dot"></span>'
+        + f"<span>{html.escape(message)}…</span></div>",
+        unsafe_allow_html=True,
+    )
+    return placeholder
+
+
+@contextmanager
+def fetching(message: str) -> Iterator[None]:
+    """Show the loading dots while the API is working, then remove them."""
+
+    placeholder = show_loading(message)
+    try:
+        yield
+    finally:
+        placeholder.empty()
+
+
+SCROLL_ANCHOR_ID = "saathi-latest"
+
+
+def mark_scroll_target() -> None:
+    """Mark the newest question or result as the place to scroll to."""
+
+    st.markdown(f'<div id="{SCROLL_ANCHOR_ID}"></div>', unsafe_allow_html=True)
+
+
+def scroll_to_latest() -> None:
+    """After a new API reply, bring the newest question or result into view.
+
+    Each reply reruns the page and the layout changes (the chat box goes,
+    results appear), so the browser jumps back to the top. This scrolls
+    once to the marked spot, then clears the request.
+    """
+
+    if not st.session_state.get("scroll_to_latest"):
+        return
+    st.session_state.scroll_to_latest = False
+    components.html(
+        f"""<script>
+        const go = (tries) => {{
+          const target = window.parent.document.getElementById("{SCROLL_ANCHOR_ID}");
+          if (target) {{
+            target.scrollIntoView({{behavior: "smooth", block: "start"}});
+          }} else if (tries > 0) {{
+            setTimeout(() => go(tries - 1), 100);
+          }}
+        }};
+        setTimeout(() => go(20), 50);
+        </script>""",
+        height=0,
+    )
 
 
 def save_journey(journey: JourneyResponse) -> None:
@@ -726,6 +910,8 @@ def save_journey(journey: JourneyResponse) -> None:
     needs to redraw itself is stored here: the plan, the history, the open
     question and, at the end, the verdict.
     """
+
+    st.session_state.scroll_to_latest = True
 
     if (
         st.session_state.get("journey_dependency_version", 0) != journey.dependency_version
@@ -896,11 +1082,12 @@ def start_candidate_interview(
 
     st.session_state.interview_error = None
     try:
-        journey = run_journey(
-            interview_request(
-                locale, profile_description, candidate_scheme_ids=candidate_ids
+        with fetching(COPY[locale]["loading_reply"]):
+            journey = run_journey(
+                interview_request(
+                    locale, profile_description, candidate_scheme_ids=candidate_ids
+                )
             )
-        )
     except JourneyApiError as error:
         st.session_state.interview_error = str(error)
         return
@@ -990,18 +1177,23 @@ def render_candidate_interview(
                 f'Plan {change["to_version"]}: {change["reason"]}'
             )
     render_history(text)
-    for turn in st.session_state.journey_conversation:
+    turns = st.session_state.journey_conversation
+    awaiting = st.session_state.journey_status == "awaiting_answer"
+    for index, turn in enumerate(turns):
+        if awaiting and index == len(turns) - 1:
+            mark_scroll_target()
         with st.chat_message(turn["role"]):
             st.write(turn["content"])
 
-    if st.session_state.journey_status == "awaiting_answer":
+    if awaiting:
         reply = journey_reply(text, locale)
         if reply:
             st.session_state.interview_error = None
             try:
-                journey = send_journey_message(
-                    st.session_state.conversation_id, reply
-                )
+                with fetching(text["loading_reply"]):
+                    journey = send_journey_message(
+                        st.session_state.conversation_id, reply
+                    )
             except JourneyApiError as error:
                 st.session_state.interview_error = str(error)
             else:
@@ -1010,6 +1202,7 @@ def render_candidate_interview(
         return
 
     if st.session_state.candidate_verdicts:
+        mark_scroll_target()
         st.subheader(text["multi_interview_results"])
         for scheme_id, verdict in st.session_state.candidate_verdicts.items():
             with st.expander(scheme_id, expanded=True):
@@ -1022,7 +1215,8 @@ def render_candidate_interview(
                     st.info(text["finder_info_only"])
                 if verdict["result"] == "eligible":
                     render_application_flow(scheme_id, text)
-        render_document_readiness(text)
+        if should_offer_document_readiness(st.session_state.candidate_verdicts):
+            render_document_readiness(text)
 
 
 def save_application_progress(result: dict) -> dict:
@@ -1632,6 +1826,28 @@ def render_document_checker(
             st.write(f'- {labels.get(locale, labels.get("en", ""))}')
 
 
+def scheme_has_document_checklist(scheme_id: str) -> bool:
+    """True when the demo has a document checklist for this scheme."""
+
+    return (CHECKLIST_DIRECTORY / f"{scheme_id}.json").is_file()
+
+
+def should_offer_document_readiness(
+    candidate_verdicts: dict[str, dict[str, object]],
+) -> bool:
+    """Offer readiness only when a checked scheme has documents to upload.
+
+    Information-only or failed schemes have nothing to rank, and neither does
+    a checked scheme without a checklist (e.g. IGNDPS-MH), even if eligible.
+    """
+
+    return any(
+        verdict.get("result") not in {"information_only", "tool_error"}
+        and scheme_has_document_checklist(scheme_id)
+        for scheme_id, verdict in candidate_verdicts.items()
+    )
+
+
 def render_document_readiness(text: dict[str, str]) -> None:
     """Rank schemes by documents already on file; this is not an eligibility result."""
 
@@ -1868,6 +2084,13 @@ def _form_values_from_session(
     return values
 
 
+def application_is_available(assessment: dict[str, object]) -> bool:
+    """True when the scheme has a document checklist or a form to fill in."""
+
+    form_preview = assessment.get("form_preview") or {}
+    return bool(assessment.get("groups")) or form_preview.get("status") != "unavailable"
+
+
 def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
     """Render the API-backed synthetic checklist and exact-draft approval flow."""
 
@@ -1903,7 +2126,11 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
 
             assessment = flow_state.get("assessment")
             form_missing: set[str] = set()
-            if assessment:
+            if assessment and not application_is_available(assessment):
+                # e.g. IGNDPS-MH: nothing to upload or fill in, so say so
+                # instead of showing empty tabs and an unusable draft step.
+                st.info(text["application_not_available"])
+            elif assessment:
                 form_preview = assessment.get("form_preview", {})
                 if form_preview.get("status") != "unavailable":
                     form_missing = _render_form_preview(
@@ -2182,14 +2409,26 @@ def render_application_flow(scheme_id: str, text: dict[str, str]) -> None:
                     if st.button(text["edit"], key=f"draft-edit-{scheme_id}"):
                         flow_state["edit_mode"] = True
                         st.rerun()
+                    # ASI09: note when this exact draft was first shown, and
+                    # ask the person to confirm they read it before approving.
+                    shown_key = f"draft-shown-{draft['fingerprint']}"
+                    shown_at = st.session_state.setdefault(shown_key, time.monotonic())
+                    read_confirmed = draft["approved"] or st.checkbox(
+                        text["read_confirm"],
+                        key=f"draft-read-{scheme_id}-{draft['fingerprint']}",
+                    )
                     if st.button(
                         text["approve"],
-                        disabled=draft["approved"],
+                        disabled=draft["approved"] or not read_confirmed,
                         key=f"draft-approve-{scheme_id}",
                     ):
                         try:
                             drafts[scheme_id] = save_application_progress(
-                                decide_application_draft(conversation_id, draft, "approve")
+                                decide_application_draft(
+                                    conversation_id, draft, "approve",
+                                    read_confirmed=True,
+                                    review_seconds=round(time.monotonic() - shown_at, 1),
+                                )
                             )
                             flow_state["error"] = None
                         except ApplicationApiError:
@@ -2235,7 +2474,7 @@ def render_plan(plan_detail: dict | None, text: dict[str, str]) -> None:
     with st.container(border=True):
         st.markdown(f'**{text["plan_title"]}**')
         for step in plan_detail["steps"]:
-            icon = PLAN_STEP_ICONS.get(step["status"], "?")
+            icon = PLAN_STEP_ICONS.get(step["status"], "•")
             st.markdown(f'{icon} {step["goal"]}')
         if plan_detail.get("replan_reason"):
             st.caption(plan_detail["replan_reason"])
@@ -2267,11 +2506,11 @@ def render_verdict(
 
     # Green for eligible, red for not eligible, yellow for "need more".
     if result["result"] == "eligible":
-        st.success(f'? {text["eligible"]}')
+        st.success(f'✅ {text["eligible"]}')
     elif result["result"] == "not_eligible":
         # PM-KISAN wording reminds the user this is the 2020 mock check.
         st.error(
-            "? "
+            "⛔ "
             + text[
                 "pmkisan_potential"
                 if scheme_id == "PM-KISAN-IN"
@@ -2279,7 +2518,7 @@ def render_verdict(
             ]
         )
     else:
-        st.warning(f'?? {text["cant_tell"]}')
+        st.warning(f'⚠️ {text["cant_tell"]}')
     st.write(result["reason"])
     # Optional parts only show when the package provides them.
     if result.get("notice"):
@@ -2318,9 +2557,10 @@ def start_interview(
 
     st.session_state.interview_error = None
     try:
-        journey = run_journey(
-            interview_request(locale, profile_description, scheme_id=scheme_id)
-        )
+        with fetching(COPY[locale]["loading_reply"]):
+            journey = run_journey(
+                interview_request(locale, profile_description, scheme_id=scheme_id)
+            )
     except JourneyApiError as error:
         st.session_state.interview_error = str(error)
     else:
@@ -2359,34 +2599,20 @@ def registered_answer_input(
     if unit or bounds:
         st.caption(" · ".join([*(str(item) for item in bounds), str(unit or "")]).strip(" ·"))
 
+    if not has_quick_control(question):
+        # Yes/no questions are answered by typing in the chat box.
+        return None
+
     with st.form(f"{key}_form"):
         answer: object = None
-        if value_type == "boolean":
-            labels = {
-                "en": ("Yes", "No", "I don't know"),
-                "hi": ("हाँ", "नहीं", "मुझे नहीं पता"),
-                "mr": ("होय", "नाही", "माहित नाही"),
-            }[locale]
-            selected = st.radio(
-                text["interview_reply"],
-                labels,
-                index=None,
-                key=key,
-            )
-            answer = (
-                "skip" if selected == labels[2]
-                else "yes" if selected == labels[0]
-                else "no" if selected == labels[1]
-                else None
-            )
-        elif value_type == "integer":
+        if value_type == "integer":
             is_unknown = st.checkbox(
                 unknown_label, key=f"{key}_unknown"
             )
             minimum = question.get("minimum")
             maximum = question.get("maximum")
             selected = st.number_input(
-                text["interview_reply"],
+                text["quick_answer"],
                 min_value=minimum,
                 max_value=maximum,
                 value=None,
@@ -2405,7 +2631,7 @@ def registered_answer_input(
                 unknown_label, key=f"{key}_unknown"
             )
             selected = st.text_input(
-                text["interview_reply"],
+                text["quick_answer"],
                 max_chars=MAX_JOURNEY_REPLY_LENGTH,
                 disabled=is_unknown,
                 key=key,
@@ -2417,13 +2643,8 @@ def registered_answer_input(
             )
         elif value_type == "date":
             is_unknown = st.checkbox(unknown_label, key=f"{key}_unknown")
-            selected = st.date_input(
-                text["interview_reply"],
-                value=None,
-                min_value=REGISTERED_DATE_MIN,
-                max_value=REGISTERED_DATE_MAX,
-                disabled=is_unknown,
-                key=key,
+            selected = date_dropdowns(
+                text["quick_answer"], locale, key, disabled=is_unknown
             )
             answer = (
                 "skip" if is_unknown
@@ -2437,7 +2658,7 @@ def registered_answer_input(
             }
             options = [unknown_label, *labels]
             selected = st.selectbox(
-                text["interview_reply"],
+                text["quick_answer"],
                 options,
                 index=None,
                 key=key,
@@ -2452,7 +2673,7 @@ def registered_answer_input(
                 unknown_label, key=f"{key}_unknown"
             )
             selected = st.text_input(
-                text["interview_reply"],
+                text["quick_answer"],
                 max_chars=min(
                     int(question["max_length"]), MAX_JOURNEY_REPLY_LENGTH
                 ),
@@ -2470,6 +2691,14 @@ def registered_answer_input(
     return str(answer) if submitted and answer is not None else None
 
 
+def has_quick_control(question: dict[str, object] | None) -> bool:
+    """Whether a question gets a form control besides the chat box."""
+
+    return bool(question) and question.get("value_type") in {
+        "integer", "decimal", "date", "choice", "text",
+    }
+
+
 def journey_reply(text: dict[str, str], locale: str) -> str | None:
     """Offer the question's own controls, and typing, on every interview screen."""
 
@@ -2481,7 +2710,15 @@ def journey_reply(text: dict[str, str], locale: str) -> str | None:
         if definition
         else None
     )
-    typed = st.chat_input(text["interview_reply"], max_chars=MAX_JOURNEY_REPLY_LENGTH)
+    if has_quick_control(definition):
+        # The controls are shortcuts; typed answers take the same checked path.
+        st.caption(text["free_text_hint"])
+    placeholder = (
+        text["interview_reply_date"]
+        if definition and definition.get("value_type") == "date"
+        else text["interview_reply"]
+    )
+    typed = st.chat_input(placeholder, max_chars=MAX_JOURNEY_REPLY_LENGTH)
     return selected or typed
 
 
@@ -2529,7 +2766,7 @@ def render_interview(
                 text["return_code_label"],
                 key=f"return_code_input_{scheme_id}",
                 help=text["return_code_help"],
-                max_chars=12,
+                max_chars=20,
                 label_visibility="collapsed",
             )
             if st.button(text["return_code_load"], key=f"load_code_{scheme_id}"):
@@ -2581,18 +2818,23 @@ def render_interview(
     render_agent_observability(text)
     render_discovery_notices(locale)
     render_answer_correction(text, locale)
-    for turn in st.session_state.journey_conversation:
+    turns = st.session_state.journey_conversation
+    awaiting = st.session_state.journey_status == "awaiting_answer"
+    for index, turn in enumerate(turns):
+        if awaiting and index == len(turns) - 1:
+            mark_scroll_target()
         with st.chat_message(turn["role"]):
             st.write(turn["content"])
 
-    if st.session_state.journey_status == "awaiting_answer":
+    if awaiting:
         reply = journey_reply(text, locale)
         if reply:
             st.session_state.interview_error = None
             try:
-                journey = send_journey_message(
-                    st.session_state.conversation_id, reply
-                )
+                with fetching(text["loading_reply"]):
+                    journey = send_journey_message(
+                        st.session_state.conversation_id, reply
+                    )
             except JourneyApiError as error:
                 st.session_state.interview_error = str(error)
             else:
@@ -2601,6 +2843,7 @@ def render_interview(
         return
 
     result = st.session_state.interview_result
+    mark_scroll_target()
     if result:
         render_verdict(result, scheme_id, text)
         if result["result"] == "eligible":
@@ -2842,6 +3085,7 @@ if st.session_state.journey_started:
         st.rerun()
     elif st.session_state.multi_scheme_mode:
         render_candidate_interview(text, locale)
+        scroll_to_latest()
         st.stop()
     elif st.session_state.journey_scheme_id == "PM-KISAN-IN":
         st.subheader(text["pmkisan_title"])
@@ -2861,6 +3105,7 @@ if st.session_state.journey_started:
             ),
         )
         # Stop here so the widow-pension screen below is not drawn.
+        scroll_to_latest()
         st.stop()
     elif st.session_state.journey_scheme_id not in {
         fixtures.policy.scheme_id, "PM-KISAN-IN"
@@ -2879,6 +3124,7 @@ if st.session_state.journey_started:
         )
         st.divider()
         st.caption(text["footer"])
+        scroll_to_latest()
         st.stop()
 else:
     st.subheader(text["finder_title"])
@@ -2893,6 +3139,9 @@ else:
         if not query.strip():
             st.session_state.scheme_search_error = text["finder_empty"]
         else:
+            # Bring the results into view once they arrive.
+            st.session_state.scroll_to_latest = True
+            search_loading = show_loading(text["loading_search"])
             try:
                 journey = run_journey(
                     JourneyRequest(
@@ -2941,6 +3190,8 @@ else:
                 st.session_state.journey_react_status = journey.react_status
             except JourneyApiError as error:
                 st.session_state.scheme_search_error = str(error)
+            finally:
+                search_loading.empty()
 
     if st.session_state.scheme_search_error:
         st.error(
@@ -2950,6 +3201,7 @@ else:
 
     search_results = st.session_state.scheme_search_results
     if search_results is not None:
+        mark_scroll_target()
         render_agent_observability(text)
         render_discovery_notices(locale)
         if st.session_state.scheme_search_message:
@@ -3043,6 +3295,7 @@ else:
                 )
                 st.rerun()
 
+    scroll_to_latest()
     st.stop()
 
 # "chat" asks questions (Phase 2). "example" keeps the preset people, which
@@ -3069,6 +3322,7 @@ if widow_mode == "chat":
     )
     st.divider()
     st.caption(text["footer"])
+    scroll_to_latest()
     st.stop()
 
 visible_scenarios = provider.visible_scenarios()
@@ -3197,3 +3451,4 @@ if st.session_state.selected_result and st.session_state.api_result:
 
 st.divider()
 st.caption(text["footer"])
+scroll_to_latest()
