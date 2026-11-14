@@ -2750,7 +2750,7 @@ def render_interview(
                 text["return_code_label"],
                 key=f"return_code_input_{scheme_id}",
                 help=text["return_code_help"],
-                max_chars=12,
+                max_chars=20,
                 label_visibility="collapsed",
             )
             if st.button(text["return_code_load"], key=f"load_code_{scheme_id}"):

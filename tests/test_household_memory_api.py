@@ -18,7 +18,7 @@ client = TestClient(api.app)
 
 
 def test_load_household_requires_memory_consent() -> None:
-    response = client.get("/api/v1/household/SAATHI-AB12")
+    response = client.get("/api/v1/household/SAATHI-AB12CD34EF")
 
     assert response.status_code == 403
     assert "Explicit memory consent" in response.json()["detail"]
@@ -55,14 +55,14 @@ def test_combined_forget_attempts_both_stores_when_journey_delete_fails(
             api.forget_personal_data(
                 {
                     "conversation_id": "00000000-0000-0000-0000-000000000001",
-                    "return_code": "SAATHI-AB12",
+                    "return_code": "SAATHI-AB12CD34EF",
                 },
                 request,
             )
         )
 
     assert error.value.status_code == 503
-    assert attempted == ["journey", "household:SAATHI-AB12"]
+    assert attempted == ["journey", "household:SAATHI-AB12CD34EF"]
 
 
 def test_combined_forget_deletes_household_after_journey_succeeds(
@@ -77,7 +77,7 @@ def test_combined_forget_deletes_household_after_journey_succeeds(
     async def run() -> None:
         await store.aput(
             HOUSEHOLD_NAMESPACE,
-            "SAATHI-AB12",
+            "SAATHI-AB12CD34EF",
             {"synthetic": True},
         )
         monkeypatch.setattr(api, "_forget_journey_data", forget_journey)
@@ -87,11 +87,11 @@ def test_combined_forget_deletes_household_after_journey_succeeds(
         await api.forget_personal_data(
             {
                 "conversation_id": "00000000-0000-0000-0000-000000000001",
-                "return_code": "SAATHI-AB12",
+                "return_code": "SAATHI-AB12CD34EF",
             },
             request,
         )
-        assert await store.aget(HOUSEHOLD_NAMESPACE, "SAATHI-AB12") is None
+        assert await store.aget(HOUSEHOLD_NAMESPACE, "SAATHI-AB12CD34EF") is None
 
     asyncio.run(run())
     assert attempted == ["journey"]

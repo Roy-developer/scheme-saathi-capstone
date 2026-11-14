@@ -27,7 +27,7 @@ from src.workflow.journey import (
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SCHEME_ID = "IGNWPS-MH"
-RETURN_CODE = "SAATHI-AB12"
+RETURN_CODE = "SAATHI-AB12CD34EF"
 
 
 @dataclass(frozen=True)

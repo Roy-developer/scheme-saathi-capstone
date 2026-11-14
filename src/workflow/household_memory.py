@@ -1,6 +1,6 @@
 """Cross-session household memory backed by the LangGraph Store.
 
-A returning person enters a short return code (e.g. ``SAATHI-7K3M``) to reload
+A returning person enters a return code (e.g. ``SAATHI-7K3M9QX2PA``) to reload
 the profile facts they gave in an earlier conversation.  The code is generated
 once, after the first interview collects enough facts, and the person writes it
 down.  On their next visit they enter it, the API loads the saved facts, and
@@ -9,13 +9,18 @@ the interview skips every question that is already answered.
 Storage layout (LangGraph ``BaseStore``)::
 
     namespace = ("household",)
-    key       = return code  (e.g. "SAATHI-7K3M")
+    key       = return code  (e.g. "SAATHI-7K3M9QX2PA")
     value     = {
         "typed_facts": <HouseholdProfile.to_wire() dict>,
         "created_at": "2026-11-09T...",
         "updated_at": "2026-11-09T...",
         "locale":     "en",
+        "conversation_ids": [<conversations allowed to update it>],
     }
+
+The code is the only secret, so it is long (10 random characters, about
+3.7 x 10^15 combinations), only the server creates one, and only a
+conversation that created or loaded a code may save over it.
 
 The same SQLite file that holds checkpoints and budgets is reused, so backups
 already cover it.
@@ -40,7 +45,11 @@ logger = logging.getLogger(__name__)
 HOUSEHOLD_NAMESPACE = ("household",)
 
 CODE_PREFIX = "SAATHI"
-CODE_RANDOM_LENGTH = 4
+CODE_RANDOM_LENGTH = 10
+# Codes issued before 14 Nov 2026 had 4 random characters. They can still be
+# deleted (the right to forget), but are never loaded or saved over again.
+LEGACY_CODE_RANDOM_LENGTH = 4
+MAX_LINKED_CONVERSATIONS = 20
 CODE_ALPHABET = string.ascii_uppercase + string.digits
 MIN_FACTS_TO_SAVE = 2
 MEMORY_POLICY_VERSION = "1.0.0"
@@ -48,10 +57,10 @@ HOUSEHOLD_TTL_DAYS = 90
 
 
 def generate_return_code() -> str:
-    """Create a short, human-friendly return code.
+    """Create a human-friendly return code that cannot practically be guessed.
 
-    Format: ``SAATHI-XXXX`` where X is uppercase alphanumeric.
-    Collision probability is negligible at the expected scale.
+    Format: ``SAATHI-XXXXXXXXXX`` where X is uppercase alphanumeric, drawn with
+    ``secrets`` (36^10 combinations).
     """
 
     random_part = "".join(
@@ -60,16 +69,28 @@ def generate_return_code() -> str:
     return f"{CODE_PREFIX}-{random_part}"
 
 
-def normalize_return_code(raw: str) -> str:
+def normalize_return_code(raw: str, *, allow_legacy: bool = False) -> str:
     """Strip whitespace and normalize case so entry is forgiving.
+
+    ``allow_legacy`` also accepts an old 4-character code; only deletion
+    passes it.
 
     Raises:
         ValueError: The input does not look like a return code.
     """
 
     cleaned = raw.strip().upper().replace("—", "-").replace("–", "-")
-    if not cleaned.startswith(f"{CODE_PREFIX}-") or len(cleaned) != len(CODE_PREFIX) + 1 + CODE_RANDOM_LENGTH:
-        raise ValueError("Return code must be in the format SAATHI-XXXX")
+    lengths = {CODE_RANDOM_LENGTH}
+    if allow_legacy:
+        lengths.add(LEGACY_CODE_RANDOM_LENGTH)
+    if (
+        not cleaned.startswith(f"{CODE_PREFIX}-")
+        or len(cleaned) - len(CODE_PREFIX) - 1 not in lengths
+    ):
+        raise ValueError(
+            "Return code must be in the format SAATHI- followed by "
+            f"{CODE_RANDOM_LENGTH} letters or digits"
+        )
     suffix = cleaned[len(CODE_PREFIX) + 1:]
     if not all(character in CODE_ALPHABET for character in suffix):
         raise ValueError("Return code contains invalid characters")
@@ -85,11 +106,13 @@ async def save_household(
     *,
     memory_consent: bool,
     now: datetime | None = None,
+    conversation_id: str | None = None,
 ) -> None:
     """Persist consented, reviewed, non-highly-sensitive facts.
 
-    Legacy or unreviewed facts are excluded. ``now`` is injectable for expiry
-    tests and must be timezone-aware.
+    Legacy or unreviewed facts are excluded. ``conversation_id`` is linked to
+    the record so that conversation may save over it later. ``now`` is
+    injectable for expiry tests and must be timezone-aware.
     """
 
     if memory_consent is not True:
@@ -104,10 +127,14 @@ async def save_household(
 
     existing = await store.aget(HOUSEHOLD_NAMESPACE, code)
     created_at = current_time.isoformat()
+    linked: list[str] = []
     if existing is not None and isinstance(existing.value, dict):
         stored_created_at = existing.value.get("created_at")
         if isinstance(stored_created_at, str):
             created_at = stored_created_at
+        linked = _linked_conversations(existing.value)
+    if conversation_id and conversation_id not in linked:
+        linked = (linked + [conversation_id])[-MAX_LINKED_CONVERSATIONS:]
     record: dict[str, object] = {
         "typed_facts": profile.to_wire(registry),
         "fact_ids": sorted(profile.facts),
@@ -118,6 +145,7 @@ async def save_household(
         ).isoformat(),
         "locale": locale if locale in SUPPORTED_LOCALES else "en",
         "policy_version": MEMORY_POLICY_VERSION,
+        "conversation_ids": linked,
         "consent": {
             "granted": True,
             "granted_at": current_time.isoformat(),
@@ -126,6 +154,39 @@ async def save_household(
     }
     await store.aput(HOUSEHOLD_NAMESPACE, code, record)
     logger.info("Saved household memory (%d approved facts)", len(profile.facts))
+
+
+def _linked_conversations(record: dict) -> list[str]:
+    linked = record.get("conversation_ids")
+    if not isinstance(linked, list):
+        return []
+    return [item for item in linked if isinstance(item, str)]
+
+
+async def household_exists(
+    store: BaseStore,
+    return_code: str,
+    *,
+    now: datetime | None = None,
+) -> bool:
+    """Whether an active (consented, unexpired) record has this code."""
+
+    code = normalize_return_code(return_code)
+    return await _active_record(store, code, _utc_now(now)) is not None
+
+
+async def is_linked_conversation(
+    store: BaseStore,
+    return_code: str,
+    conversation_id: str,
+    *,
+    now: datetime | None = None,
+) -> bool:
+    """Whether ``conversation_id`` created or previously saved this record."""
+
+    code = normalize_return_code(return_code)
+    item = await _active_record(store, code, _utc_now(now))
+    return item is not None and conversation_id in _linked_conversations(item.value)
 
 
 def _utc_now(now: datetime | None) -> datetime:
@@ -248,9 +309,13 @@ async def load_household_locale(
 
 
 async def delete_household(store: BaseStore, return_code: str) -> bool:
-    """Remove a household record.  Returns whether one existed."""
+    """Remove a household record.  Returns whether one existed.
 
-    code = normalize_return_code(return_code)
+    Old 4-character codes are accepted here so their data can still be
+    forgotten.
+    """
+
+    code = normalize_return_code(return_code, allow_legacy=True)
     existing = await store.aget(HOUSEHOLD_NAMESPACE, code)
     if existing is None:
         return False

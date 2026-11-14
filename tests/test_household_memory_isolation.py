@@ -15,8 +15,8 @@ from src.workflow.household_memory import (
 )
 
 REGISTRY = RulePackageProvider().registry
-CODE_A = "SAATHI-AB12"
-CODE_B = "SAATHI-CD34"
+CODE_A = "SAATHI-AB12CD34EF"
+CODE_B = "SAATHI-CD34GH56JK"
 NOW = datetime(2026, 11, 12, tzinfo=timezone.utc)
 
 

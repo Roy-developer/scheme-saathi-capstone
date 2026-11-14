@@ -60,8 +60,8 @@ class TestReturnCodeGeneration:
         assert len(codes) == 100
 
     def test_normalize_valid(self):
-        assert normalize_return_code("saathi-ab12") == "SAATHI-AB12"
-        assert normalize_return_code("  SAATHI-XY9Z  ") == "SAATHI-XY9Z"
+        assert normalize_return_code("saathi-ab12cd34ef") == "SAATHI-AB12CD34EF"
+        assert normalize_return_code("  SAATHI-XY9ZXY9ZXY  ") == "SAATHI-XY9ZXY9ZXY"
 
     def test_normalize_rejects_bad_format(self):
         with pytest.raises(ValueError, match="format"):
@@ -69,7 +69,7 @@ class TestReturnCodeGeneration:
 
     def test_normalize_rejects_bad_characters(self):
         with pytest.raises(ValueError, match="invalid characters"):
-            normalize_return_code("SAATHI-AB!@")
+            normalize_return_code("SAATHI-AB!@CD34EF")
 
     def test_normalize_rejects_wrong_length(self):
         with pytest.raises(ValueError, match="format"):
@@ -114,8 +114,8 @@ class TestSaveAndLoad:
         assert locale == "mr"
 
     def test_return_codes_are_isolated(self, store):
-        first_code = "SAATHI-AB12"
-        second_code = "SAATHI-CD34"
+        first_code = "SAATHI-AB12CD34EF"
+        second_code = "SAATHI-CD34GH56JK"
         asyncio.run(save_household(
             store,
             first_code,
@@ -148,7 +148,7 @@ class TestSaveAndLoad:
 
 
     def test_load_unknown_code_returns_none(self, store):
-        loaded = asyncio.run(load_household(store, "SAATHI-ZZZZ", REGISTRY))
+        loaded = asyncio.run(load_household(store, "SAATHI-ZZZZZZZZZZ", REGISTRY))
         assert loaded is None
 
     def test_skip_save_when_too_few_facts(self, store):
@@ -197,7 +197,7 @@ class TestSaveAndLoad:
         assert loaded is None
 
     def test_delete_unknown_returns_false(self, store):
-        deleted = asyncio.run(delete_household(store, "SAATHI-ZZZZ"))
+        deleted = asyncio.run(delete_household(store, "SAATHI-ZZZZZZZZZZ"))
         assert deleted is False
 
     def test_save_requires_explicit_consent(self, store, profile):
@@ -305,10 +305,10 @@ class TestReturnCodeInJourneyRequest:
         request = JourneyRequest(
             action="interview",
             scheme_id="IGNWPS-MH",
-            return_code="SAATHI-AB12",
+            return_code="SAATHI-AB12CD34EF",
             memory_consent=True,
         )
-        assert request.return_code == "SAATHI-AB12"
+        assert request.return_code == "SAATHI-AB12CD34EF"
 
     def test_request_rejects_return_code_without_memory_consent(self):
         from src.workflow.journey import JourneyRequest
@@ -317,7 +317,7 @@ class TestReturnCodeInJourneyRequest:
             JourneyRequest(
                 action="interview",
                 scheme_id="IGNWPS-MH",
-                return_code="SAATHI-AB12",
+                return_code="SAATHI-AB12CD34EF",
             )
 
     def test_request_default_none(self):
@@ -339,9 +339,9 @@ class TestReturnCodeInJourneyResponse:
             plan="",
             status="awaiting_answer",
             message="",
-            return_code="SAATHI-XY9Z",
+            return_code="SAATHI-XY9ZXY9ZXY",
         )
-        assert response.return_code == "SAATHI-XY9Z"
+        assert response.return_code == "SAATHI-XY9ZXY9ZXY"
 
     def test_response_default_none(self):
         from src.workflow.journey import JourneyResponse
@@ -362,7 +362,7 @@ def test_rt_other_005_household_alias_cannot_load_memory():
     })
     asyncio.run(save_household(
         store,
-        "SAATHI-AB12",
+        "SAATHI-AB12CD34EF",
         profile,
         REGISTRY,
         memory_consent=True,
@@ -380,14 +380,14 @@ def test_rt_memory_001_cross_household_profile_is_not_loaded():
     })
     asyncio.run(save_household(
         store,
-        "SAATHI-AB12",
+        "SAATHI-AB12CD34EF",
         profile,
         REGISTRY,
         memory_consent=True,
     ))
 
     missing_household = asyncio.run(
-        load_household(store, "SAATHI-CD34", REGISTRY)
+        load_household(store, "SAATHI-CD34GH56JK", REGISTRY)
     )
     assert missing_household is None
 
@@ -397,5 +397,5 @@ def test_rt_memory_001_cross_household_profile_is_not_loaded():
         JourneyRequest(
             action="interview",
             scheme_id="IGNWPS-MH",
-            return_code="SAATHI-AB12",
+            return_code="SAATHI-AB12CD34EF",
         )
