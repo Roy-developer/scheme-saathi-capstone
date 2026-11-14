@@ -333,6 +333,52 @@ def build_manifest() -> dict:
             if E4_PERSONA_SET.exists() and E4_RUNNER.exists() and E4_LLM_ARM.exists()
             else {"status": "e4_team_override_artifacts_missing"}
         ),
+        "e1_journey_freeze": (
+            {
+                "scope": (
+                    "E1 journey-wired C0/C1/C2 team-override runs on development personas, "
+                    "plus a held-out journey live report (team override, not PDF unseen held-out)."
+                ),
+                "paid_run_gate": {"authorised": True, "note": "Team-override free-model runs; spend record still required by PR #31 steps."},
+                "runners": {
+                    "run_e1_live": {"path": "scripts/run_e1_live.py", "sha256": sha256_file(ROOT / "scripts" / "run_e1_live.py")},
+                    "summarize_e1_live_report": {"path": "scripts/summarize_e1_live_report.py", "sha256": sha256_file(ROOT / "scripts" / "summarize_e1_live_report.py")},
+                },
+                "reports": {
+                    "team_override_journey_live": {"path": "eval/reports/e1_team_override_journey_live_2026-11-14.json", "sha256": sha256_file(ROOT / "eval" / "reports" / "e1_team_override_journey_live_2026-11-14.json")},
+                    "team_override_comparison": {"path": "eval/reports/e1_team_override_comparison_2026-11-14.json", "sha256": sha256_file(ROOT / "eval" / "reports" / "e1_team_override_comparison_2026-11-14.json")},
+                    "held_out_journey_live": {"path": "eval/reports/e1_held_out_journey_live_2026-11-14.json", "sha256": sha256_file(ROOT / "eval" / "reports" / "e1_held_out_journey_live_2026-11-14.json")},
+                    "e1_e4_scorecard": {"path": "eval/reports/e1_e4_scorecard_latest.json", "sha256": sha256_file(ROOT / "eval" / "reports" / "e1_e4_scorecard_latest.json")},
+                },
+                "status_doc": "docs/e1_team_override_status_2026-11-14.md",
+            }
+            if (ROOT / "scripts" / "run_e1_live.py").exists()
+            and (ROOT / "eval" / "reports" / "e1_team_override_journey_live_2026-11-14.json").exists()
+            else {"status": "e1_journey_artifacts_missing"}
+        ),
+        "e2_defences_freeze": (
+            {
+                "scope": (
+                    "E2 defences off/on, development only: 8 scripted application-boundary "
+                    "scenarios plus offline injection/ID/scam checks. Not independent, not frozen-independent."
+                ),
+                "paid_run_gate": {"authorised": False, "note": "E2 uses scripted models; no paid calls."},
+                "runners": {
+                    "runtime": {"path": "scripts/evaluate_e2_runtime.py", "sha256": sha256_file(ROOT / "scripts" / "evaluate_e2_runtime.py")},
+                    "defences_dev": {"path": "scripts/evaluate_e2_defences_dev.py", "sha256": sha256_file(ROOT / "scripts" / "evaluate_e2_defences_dev.py")},
+                },
+                "modules": {
+                    "e2_runner": {"path": "eval/harness/e2_runner.py", "sha256": sha256_file(ROOT / "eval" / "harness" / "e2_runner.py")},
+                },
+                "tests": {
+                    "test_e2_runtime": {"path": "tests/test_e2_runtime.py", "sha256": sha256_file(ROOT / "tests" / "test_e2_runtime.py")},
+                },
+                "record": {"path": "docs/E2_RUNTIME_RECORD_2026-11-14.md", "sha256": sha256_file(ROOT / "docs" / "E2_RUNTIME_RECORD_2026-11-14.md")},
+            }
+            if (ROOT / "scripts" / "evaluate_e2_runtime.py").exists()
+            and (ROOT / "docs" / "E2_RUNTIME_RECORD_2026-11-14.md").exists()
+            else {"status": "e2_artifacts_missing"}
+        ),
         "e1_team_override_freeze": (
             {
                 "scope": (
