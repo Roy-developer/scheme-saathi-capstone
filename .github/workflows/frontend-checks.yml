@@ -41,6 +41,7 @@ jobs:
           python -m pytest
           --ignore=tests/test_red_team_runtime.py
           --ignore=tests/test_e2_runtime.py
+          --ignore=tests/test_e1_workflow_comparison.py
 
       - name: Run Role 5 development evaluation gate
         run: python scripts/run_role5_dev_evals.py
@@ -91,6 +92,66 @@ jobs:
           print("E4 acceptance contract passed: 3 offline arms × 46 cases.")
           PY
 
+      # E1's hosted-CI scope is the offline integrated workflow comparison: the
+      # fixed workflow (C0), single agent (C1) and specialist team (C2) on the
+      # synthetic development cases with the pinned scripted model. No live
+      # model is called; the live and held-out E1 runs stay manual.
+      - name: Run E1 offline workflow comparison
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: >-
+          python -m pytest -q --disable-warnings
+          -o junit_family=legacy
+          --junitxml=eval/reports/e1_offline_ci_junit.xml
+          tests/test_e1_workflow_comparison.py
+
+      - name: Enforce E1 offline acceptance contract
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: |
+          python - <<'PY'
+          import json
+          import xml.etree.ElementTree as ET
+          from collections import Counter
+          from pathlib import Path
+
+          path = Path("eval/reports/e1_offline_ci_junit.xml")
+          if not path.is_file():
+              raise SystemExit(f"Missing E1 JUnit report: {path}")
+          cases = list(ET.parse(path).getroot().iter("testcase"))
+          if len(cases) != 9:
+              raise SystemExit(f"E1 expected 9 workflow cases (3 development cases x 3 arms); got {len(cases)}")
+          for case in cases:
+              for tag in ("failure", "error", "skipped"):
+                  if case.find(tag) is not None:
+                      raise SystemExit(f"E1 case {case.get('name')} has a {tag}")
+          observations = []
+          for case in cases:
+              props = {p.get("name"): p.get("value") for p in case.iter("property")}
+              if "e1_observation" not in props:
+                  raise SystemExit(f"E1 case {case.get('name')} recorded no observation")
+              observations.append(json.loads(props["e1_observation"]))
+          per_arm = Counter(o["arm_id"] for o in observations)
+          if per_arm != Counter({"C0": 3, "C1": 3, "C2": 3}):
+              raise SystemExit(f"E1 arms are not C0, C1 and C2 with 3 cases each: {dict(per_arm)}")
+          case_ids = {o["case_id"] for o in observations}
+          if len(case_ids) != 3 or any(
+              {o["arm_id"] for o in observations if o["case_id"] == cid} != {"C0", "C1", "C2"}
+              for cid in case_ids
+          ):
+              raise SystemExit("E1 every development case must run on all three arms")
+          for o in observations:
+              label = f"{o['arm_id']} {o['case_id']}"
+              if o["task_success"] is not True or o["error"] or o["timeout"]:
+                  raise SystemExit(f"E1 {label} did not succeed")
+              if o["policy_violations"]:
+                  raise SystemExit(f"E1 {label} recorded policy violations")
+              expected = "deterministic_workflow" if o["arm_id"] == "C0" else "scripted_model"
+              if o["outcome_source"] != expected:
+                  raise SystemExit(f"E1 {label} used {o['outcome_source']!r}, expected {expected!r}; live models are not permitted in automatic CI")
+              if o["arm_id"] == "C0" and o["model_calls"] != 0:
+                  raise SystemExit("E1 C0 must make no model calls")
+          print("E1 offline acceptance contract: PASS (9 cases, 3 arms, scripted model only)")
+          PY
+
       - name: Run approved application-path red-team gate
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: python scripts/evaluate_red_team_runtime.py
@@ -99,7 +160,7 @@ jobs:
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: python scripts/evaluate_e2_runtime.py
 
-      - name: Upload synthetic runtime and E3/E4 evaluation reports
+      - name: Upload synthetic runtime and E1/E3/E4 evaluation reports
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
@@ -108,6 +169,7 @@ jobs:
             eval/reports/red_team_runtime_latest.json
             eval/reports/e2_runtime_dev_latest.json
             eval/reports/reflexion_e3_ci_latest.json
+            eval/reports/e1_offline_ci_junit.xml
             eval/reports/e4_team_override_signature_ablation_2026-11-13.json
             eval/reports/e4_team_override_signature_ablation_2026-11-13_journey_qo_cases.json
           if-no-files-found: warn
